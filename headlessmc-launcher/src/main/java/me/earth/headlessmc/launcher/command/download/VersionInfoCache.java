@@ -1,0 +1,90 @@
+package me.earth.headlessmc.launcher.command.download;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import lombok.CustomLog;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.experimental.Delegate;
+import lombok.val;
+import me.earth.headlessmc.launcher.util.JsonUtil;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+@CustomLog
+class VersionInfoCache implements Collection<VersionInfo> {
+    private static final List<VersionInfo> EMPTY = new ArrayList<>(0);
+    private static final URL URL = getUrl();
+    @Delegate
+    private List<VersionInfo> infos = EMPTY;
+    @Getter
+    private String latestSnapshot = "unknown";
+    @Getter
+    private String latestRelease = "unknown";
+
+    public List<VersionInfo> cache(boolean force) {
+        if (infos != EMPTY && !force) {
+            return infos;
+        }
+
+        try (val is = URL.openStream()) {
+            val jo = JsonUtil.fromInput(is);
+            if (!jo.isJsonObject()) {
+                throw new IOException(jo + " is not a JsonObject!");
+            }
+
+            read(jo.getAsJsonObject());
+        } catch (IOException e) {
+            log.error("Couldn't download versions: " + e.getMessage());
+            infos = new ArrayList<>(0);
+            e.printStackTrace();
+        }
+
+        return infos;
+    }
+
+    private void read(JsonObject jo) throws IOException {
+        val latestR = JsonUtil.getString(jo, "latest", "release");
+        val latestS = JsonUtil.getString(jo, "latest", "snapshot");
+        log.debug("Latest: " + latestR + ", " + latestS);
+        latestRelease = latestR == null ? latestRelease : latestR;
+        latestSnapshot = latestS == null ? latestSnapshot : latestS;
+
+        val versions = JsonUtil.getArray(jo, "versions");
+        if (versions == null) {
+            throw new IOException("Couldn't find JsonObject versions!");
+        }
+
+        val infos = new ArrayList<VersionInfo>(versions.size());
+        for (int i = 0; i < versions.size(); i++) {
+            JsonElement entry = versions.get(i);
+            if (!entry.isJsonObject()) {
+                log.warning("Can't read version with id " + i);
+                continue;
+            }
+
+            infos.add(read(entry.getAsJsonObject(), i));
+        }
+
+        this.infos = infos;
+    }
+
+    private VersionInfo read(JsonObject jo, int id) {
+        val name = JsonUtil.getString(jo, "id");
+        val type = JsonUtil.getString(jo, "type");
+        val url = JsonUtil.getString(jo, "url");
+
+        return new VersionInfo(id, name, type, url);
+    }
+
+    @SneakyThrows
+    private static URL getUrl() {
+        return new URL(
+            "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+    }
+
+}

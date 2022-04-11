@@ -1,0 +1,68 @@
+package me.earth.headlessmc.launcher.launch;
+
+import lombok.Builder;
+import lombok.val;
+import me.earth.headlessmc.config.HmcProperties;
+import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.launcher.version.Features;
+import me.earth.headlessmc.launcher.version.Version;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+@Builder
+class Command {
+    private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";
+
+    private final List<String> classpath;
+    private final Launcher launcher;
+    private final Version version;
+    private final String natives;
+    private final boolean runtime;
+    private final OS os;
+
+    public List<String> build() throws LaunchException, AuthException {
+        val config = launcher.getConfig();
+        val java = launcher.getJavaService().findBestVersion(version.getJava());
+        if (java == null) {
+            throw new LaunchException();
+        }
+
+        val result = new ArrayList<String>();
+        result.add(java.getExecutable());
+        result.addAll(Arrays.asList(config.get(LauncherProperties.JVM_ARGS,
+                                               new String[0])));
+        if (runtime
+            && java.getVersion() > 8
+            && config.get(HmcProperties.DEENCAPSULATE, true)) {
+            System.err.println("Deencapsulating!");
+            result.add("-D" + HmcProperties.DEENCAPSULATE.getName() + "=true");
+        }
+
+        result.add("-Djava.library.path=" + natives);
+        result.add("-cp");
+        result.add(String.join("" + File.pathSeparatorChar, classpath));
+
+        val adapter = ArgumentAdapterHelper.create(launcher, version, natives);
+        result.addAll(adapter.build(os, Features.EMPTY, "jvm"));
+
+        if (runtime) {
+            result.add("-D" + HmcProperties.MAIN.getName() + "="
+                           + version.getMainClass());
+            result.add(RT_MAIN);
+        } else {
+            result.add(version.getMainClass());
+        }
+
+        result.addAll(adapter.build(os, Features.EMPTY, "game"));
+        result.addAll(Arrays.asList(config.get(LauncherProperties.GAME_ARGS,
+                                               new String[0])));
+        return result;
+    }
+
+}

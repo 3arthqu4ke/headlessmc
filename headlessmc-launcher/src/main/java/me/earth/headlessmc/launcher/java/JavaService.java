@@ -1,0 +1,68 @@
+package me.earth.headlessmc.launcher.java;
+
+import lombok.CustomLog;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import me.earth.headlessmc.api.config.HasConfig;
+import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.Service;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+// TODO: This!
+@CustomLog
+@RequiredArgsConstructor
+public class JavaService extends Service<Java> {
+    private final JavaVersionParser parser = new JavaVersionParser();
+    private final HasConfig cfg;
+
+    @Override
+    protected List<Java> update() {
+        val array = cfg.getConfig().get(LauncherProperties.JAVA, new String[0]);
+        val newVersions = new ArrayList<Java>(array.length);
+        for (val path : array) {
+            log.debug("Reading Java version at path: " + path);
+            if (path.trim().isEmpty()) {
+                continue;
+            }
+
+            try {
+                val majorVersion = parser.parse(path);
+                val java = new Java(path, majorVersion);
+                log.debug("Found Java: " + java);
+                newVersions.add(java);
+            } catch (IOException e) {
+                log.warning("Couldn't parse Java Version for path " + path);
+                e.printStackTrace();
+            }
+        }
+
+        return newVersions;
+    }
+
+    public Java findBestVersion(int version) {
+        Java best = null;
+        for (Java java : this) {
+            if (version == java.getVersion()) {
+                return java;
+            }
+
+            if (java.getVersion() > version && (best == null
+                || best.getVersion() - version > java.getVersion() - version)) {
+                best = java;
+            }
+        }
+
+        if (best == null) {
+            log.error("Couldn't find a Java Version >= " + version + "!");
+        } else {
+            log.warning("Couldn't find Java Version " + version
+                            + " falling back to " + best.getVersion());
+        }
+
+        return best;
+    }
+
+}

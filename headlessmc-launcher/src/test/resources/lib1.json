@@ -1,0 +1,22 @@
+{
+  "downloads": {
+    "artifact": {
+      "path": "",
+      "sha1": "",
+      "size": 1,
+      "url": ""
+    }
+  },
+  "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
+  "rules": [
+    {
+      "action": "allow"
+    },
+    {
+      "action": "disallow",
+      "os": {
+        "name": "osx"
+      }
+    }
+  ]
+}

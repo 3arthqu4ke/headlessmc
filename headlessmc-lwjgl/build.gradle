@@ -1,0 +1,43 @@
+apply plugin: 'headlessmc-modules'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://libraries.minecraft.net/'
+    }
+}
+
+module {
+    name = 'headlessmc.lwjgl'
+    access = ACC_OPEN
+
+    exports  'me/earth/headlessmc/lwjgl'
+    exports  'me/earth/headlessmc/lwjgl/api'
+    exports  'me/earth/headlessmc/lwjgl/transformer'
+    exports  'me/earth/headlessmc/lwjgl/redirections'
+    exports  'me/earth/headlessmc/lwjgl/util'
+    exports  'me/earth/headlessmc/lwjgl/agent'
+
+    requires 'java.instrument', ACC_STATIC
+    requires 'org.objectweb.asm.tree', ACC_STATIC
+    requires 'org.objectweb.asm', ACC_STATIC
+}
+
+dependencies {
+    compileOnly (group: 'net.minecraft', name: 'launchwrapper', version: '1.12') {
+        // Not sure if we should also exclude the other dependencies the launch-
+        // wrapper comes with. But the added lwjgl dependency can be nice to get
+        // an idea of what some classes look like.
+        exclude module: 'asm-debug-all'
+    }
+    compileOnly group: 'org.ow2.asm', name: 'asm', version: '9.2'
+    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.2'
+}
+
+jar {
+    archivesBaseName = 'headlessmc-lwjgl'
+    //noinspection GroovyAssignabilityCheck
+    manifest {
+        attributes 'TweakClass': 'me.earth.headlessmc.lwjgl.launchwrapper.LwjglTweaker'
+    }
+}

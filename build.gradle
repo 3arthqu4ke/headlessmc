@@ -1,0 +1,73 @@
+group 'me.earth.headlessmc'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+allprojects {
+    apply plugin: 'java'
+    //noinspection GroovyAssignabilityCheck
+    plugins.withType(JavaPlugin) {
+        repositories {
+            mavenCentral()
+            maven {
+                // TODO: not every project should inherit this repository
+                url 'https://jitpack.io'
+            }
+        }
+
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+
+        compileJava {
+            if (JavaVersion.current().ordinal()
+                    > JavaVersion.VERSION_1_8.ordinal()) {
+                options.compilerArgs.addAll(['--release', '8'])
+            }
+        }
+
+        configurations {
+            jarLibs
+        }
+
+        dependencies {
+            compileOnly 'org.projectlombok:lombok:1.18.22'
+            annotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+            testCompileOnly 'org.projectlombok:lombok:1.18.22'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+
+            testImplementation 'org.mockito:mockito-inline:4.3.1'
+            testImplementation 'org.mockito:mockito-junit-jupiter:4.3.1'
+
+            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+
+            implementation configurations.jarLibs
+        }
+
+        test {
+            useJUnitPlatform()
+        }
+
+        jar {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+            from {
+                configurations.jarLibs.collect {
+                    it.isDirectory() ? it : zipTree(it)
+                }
+            }
+        }
+    }
+}
+
+task copyJars(type: Copy, dependsOn: subprojects.jar) {
+    from(subprojects.jar)
+    into project.file('build/libs')
+}
+
+build {
+    dependsOn(subprojects.build)
+    finalizedBy(copyJars)
+}
