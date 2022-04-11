@@ -27,7 +27,7 @@ Here are some of the most important commands:
 | help | Lists commands and prints informations.| \<command/id\> \<arg\> -id |
 | quit | Exits HeadlessMc. | |
 | versions | Lists all Minecraft versions currently installed. | -release -snapshot -other |
-| download | Lists available Minecraft versions and downloads them. | \<version\> -release -snapshot -other -refresh |
+| download | Lists available Minecraft versions and downloads them. | \<version\> -id -release -snapshot -other -refresh |
 | login | Logs into a Microsoft account. | \<email\>, will open a context for entering the password. |
 | launch | Launches Minecraft. | \<version/id\> -commands -lwjgl -paulscode -lookup -jndi -noout -keep -exit |
 

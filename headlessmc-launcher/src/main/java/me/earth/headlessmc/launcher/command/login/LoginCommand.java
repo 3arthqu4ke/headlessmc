@@ -13,6 +13,9 @@ import java.util.function.Consumer;
 public class LoginCommand extends AbstractLauncherCommand {
     public LoginCommand(Launcher ctx) {
         super(ctx, "login", "Logs you into your account.");
+        args.put("<email>", "The email of the account to log in to.");
+        args.put("<password>", "If you enabled password mode or if you just" +
+            " don't care you can enter the password right away.");
     }
 
     @Override

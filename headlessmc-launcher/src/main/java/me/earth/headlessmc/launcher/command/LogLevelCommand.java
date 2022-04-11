@@ -14,6 +14,9 @@ import static me.earth.headlessmc.logging.LogLevelUtil.getLevels;
 public class LogLevelCommand extends AbstractCommand {
     public LogLevelCommand(HeadlessMc ctx) {
         super(ctx, "loglevel", "Set the loglevel of HeadlessMC's logger.");
+        args.put("<level>", "One of " + getLevels() + ". Decides how much" +
+            " log output you see. Warning: lower levels than INFO might" +
+            " leak sensitive information!");
     }
 
     @Override

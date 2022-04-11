@@ -1,12 +1,13 @@
 package me.earth.headlessmc.launcher.command;
 
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.java.Java;
-import me.earth.headlessmc.launcher.java.JavaService;
 
 public class JavaCommand extends AbstractLauncherCommand {
     public JavaCommand(Launcher launcher) {
-        super(launcher, "java", "Prints java information");
+        super(launcher, "java", "Reloads the config property "
+            + LauncherProperties.JAVA + ".");
     }
 
     @Override

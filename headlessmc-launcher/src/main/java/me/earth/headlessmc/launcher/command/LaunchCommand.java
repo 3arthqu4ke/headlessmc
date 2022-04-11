@@ -17,6 +17,20 @@ import java.util.UUID;
 public class LaunchCommand extends AbstractVersionCommand {
     public LaunchCommand(Launcher launcher) {
         super(launcher, "launch", "Launches the game.");
+        args.put("<version/id>", "Name or id of the version to launch." +
+            " If you use the id you need to use the -id flag as well.");
+        args.put("-id",
+                 "Use if you specified an id instead of a version name.");
+        args.put("-commands",
+                 "Starts the game with the built-in command line support.");
+        args.put("-lwjgl", "Removes lwjgl code, causing Minecraft" +
+            " not to render anything.");
+        args.put("-jndi", "Patches the Log4J vulnerability.");
+        args.put("-lookup", "Patches the Log4J vulnerability even harder.");
+        args.put("-paulscode", "Removes some error messages from the" +
+            " PaulsCode library which may annoy you if you started the" +
+            " game with the -lwjgl flag.");
+        args.put("-noout", "Doesn't print Minecrafts output to the console.");
     }
 
     @Override

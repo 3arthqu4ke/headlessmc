@@ -12,6 +12,7 @@ public class ConfigCommand extends AbstractLauncherCommand
     implements FindByCommand<Config> {
     public ConfigCommand(Launcher ctx) {
         super(ctx, "config", "Manage your configs.");
+        args.put("-refresh", "Reloads all configs from the disk.");
     }
 
     @Override

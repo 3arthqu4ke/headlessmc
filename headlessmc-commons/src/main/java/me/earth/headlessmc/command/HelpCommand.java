@@ -9,6 +9,8 @@ import me.earth.headlessmc.util.Table;
 public class HelpCommand extends AbstractCommand {
     public HelpCommand(HeadlessMc ctx) {
         super(ctx, "help", "Information about commands.");
+        args.put("<command>", "The name of the command to get help for.");
+        args.put("<arg>", "The name of the argument to get help for.");
     }
 
     @Override
@@ -19,7 +21,7 @@ public class HelpCommand extends AbstractCommand {
                 if (args.length > 2) {
                     String desc = cmd.getArgDescription(args[2]);
                     if (desc == null) {
-                        ctx.log("");
+                        ctx.log("No description found for '" + args[2] + "'.");
                     } else {
                         ctx.log(String.format(
                             "%s %s: %s", cmd.getName(), args[2], desc));
@@ -37,6 +39,7 @@ public class HelpCommand extends AbstractCommand {
                 new Table<Command>()
                     .withColumn("command", HasName::getName)
                     .withColumn("description", HasDescription::getDescription)
+                    .withColumn("args", this::argsToString)
                     .addAll(ctx.getCommandContext())
                     .build());
         }
@@ -50,6 +53,15 @@ public class HelpCommand extends AbstractCommand {
         }
 
         return null;
+    }
+
+    private String argsToString(Command command) {
+        StringBuilder sb = new StringBuilder();
+        for (String arg : command.getArgs()) {
+            sb.append(arg).append(" ");
+        }
+
+        return sb.toString();
     }
 
 }
