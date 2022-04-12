@@ -52,7 +52,7 @@ want to enter them everytime you can supply them using the properties (**at your
 In attempt to provide some debuggability HeadlessMc can control the game using commands when launching it with the 
 `-commands` flag. However, because I wanted this to be "not-version-specific", this is just java-reflection in form of
 commands. For more comfortable implementations, which you can use without java-knowledge, take a look at the 
-[HMC-Specifics](TODO). 
+[HMC-Specifics](https://github.com/3arthqu4ke/HMC-Specifics). 
 
 I don't want to go into greater detail about this because it's awful, and I don't even use it myself, so just a quick
 example on how to exit the game gracefully in Minecraft 1.12.2 vanilla:

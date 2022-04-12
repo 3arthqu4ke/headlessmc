@@ -67,10 +67,9 @@ class LibraryFactory {
 
                     // stupid but because we went the approach where
                     // we return multiple libraries we need this.
-                    Rule osRule = (osIn, f) -> {
-                        return os.equalsIgnoreCase(osIn.getType().getName())
-                            ? rule.apply(osIn, f) : Rule.Action.DISALLOW;
-                    };
+                    Rule osRule = (osIn, f) ->
+                        os.equalsIgnoreCase(osIn.getType().getName())
+                        ? rule.apply(osIn, f) : Rule.Action.DISALLOW;
 
                     val jo = entry.getValue().getAsJsonObject();
                     val url = JsonUtil.getString(jo, "url");
