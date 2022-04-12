@@ -80,7 +80,8 @@ public class FileManager {
                     file.createNewFile();
                 } catch (IOException e) {
                     // TODO: handle this better
-                    throw new FileException(e);
+                    throw new FileException("Can't create " + file + " : "
+                                                + e.getMessage());
                 }
             }
         }

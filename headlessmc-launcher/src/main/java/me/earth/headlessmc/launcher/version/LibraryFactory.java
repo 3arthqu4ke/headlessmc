@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.var;
 import me.earth.headlessmc.launcher.util.CollectionUtil;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
@@ -67,15 +68,23 @@ class LibraryFactory {
 
                     // stupid but because we went the approach where
                     // we return multiple libraries we need this.
-                    Rule osRule = (osIn, f) ->
-                        os.equalsIgnoreCase(osIn.getType().getName())
-                        ? rule.apply(osIn, f) : Rule.Action.DISALLOW;
+                    Rule osRule = (osIn, f) -> {
+                        return os.equalsIgnoreCase(osIn.getType().getName())
+                            ? rule.apply(osIn, f) : Rule.Action.DISALLOW;
+                    };
+
+                    var nativeExtractor = extractor;
+                    // if there was no extraction rule specified.
+                    if (!extractor.isExtracting()) {
+                        nativeExtractor = new ExtractorImpl();
+                    }
 
                     val jo = entry.getValue().getAsJsonObject();
                     val url = JsonUtil.getString(jo, "url");
                     val path = JsonUtil.getString(jo, "path");
-                    result.add(new LibraryImpl(natives, extractor, name, osRule,
-                                               baseUrl, url, path, true));
+                    result.add(new LibraryImpl(natives, nativeExtractor, name,
+                                               osRule, baseUrl, url, path,
+                                               true));
                 }
             }
         }

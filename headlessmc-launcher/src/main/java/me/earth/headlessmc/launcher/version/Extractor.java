@@ -9,4 +9,8 @@ public interface Extractor {
 
     void extract(String from, FileManager fileManager) throws IOException;
 
+    default boolean isExtracting() {
+        return false;
+    }
+
 }
