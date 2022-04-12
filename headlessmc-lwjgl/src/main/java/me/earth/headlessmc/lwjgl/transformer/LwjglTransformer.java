@@ -28,7 +28,9 @@ public class LwjglTransformer extends AbstractLwjglTransformer {
     @Override
     public void transform(ClassNode cn) {
         super.transform(cn);
-        patchClass(cn, (cn.access & ACC_INTERFACE) != 0);
+        if ((cn.access & ACC_MODULE) == 0) {
+            patchClass(cn, (cn.access & ACC_INTERFACE) != 0);
+        }
     }
 
     private void patchClass(ClassNode cn, boolean isInterface) {
