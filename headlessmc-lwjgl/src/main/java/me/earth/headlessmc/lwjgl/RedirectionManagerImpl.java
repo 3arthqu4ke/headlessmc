@@ -4,9 +4,9 @@ import lombok.var;
 import me.earth.headlessmc.lwjgl.api.Redirection;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
 import me.earth.headlessmc.lwjgl.redirections.CastRedirection;
+import me.earth.headlessmc.lwjgl.redirections.DefaultRedirections;
 import me.earth.headlessmc.lwjgl.redirections.LwjglRedirections;
 import me.earth.headlessmc.lwjgl.redirections.ObjectRedirection;
-import me.earth.headlessmc.lwjgl.redirections.DefaultRedirections;
 
 import java.util.HashMap;
 import java.util.Map;

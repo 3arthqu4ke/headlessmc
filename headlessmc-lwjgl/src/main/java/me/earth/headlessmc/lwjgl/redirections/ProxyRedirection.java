@@ -17,8 +17,7 @@ public class ProxyRedirection implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args)
         throws Throwable {
-        // TODO: do we really want to add the proxy: prefix?
-        String desc = "proxy:" + internalName + DescriptionUtil.getDesc(method);
+        String desc = internalName + DescriptionUtil.getDesc(method);
         Supplier<Redirection> fb = () -> manager;
         if (desc.endsWith(";equals(Ljava/lang/Object;)Z")) {
             fb = () -> DefaultRedirections.EQUALS;
