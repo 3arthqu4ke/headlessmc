@@ -31,7 +31,7 @@ public final class VersionService extends Service<Version> {
             return Collections.emptyList();
         }
 
-        val fact = new DefaultVersionFactory(cfg.getConfig());
+        val fact = new DefaultVersionFactory();
         val versions = new LinkedHashMap<String, Version>();
         val id = new AtomicInteger();
         for (val versionFolder : versionFolders) {

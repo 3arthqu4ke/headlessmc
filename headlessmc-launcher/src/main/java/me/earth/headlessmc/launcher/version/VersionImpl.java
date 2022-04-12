@@ -18,7 +18,7 @@ public class VersionImpl implements Version {
     private final String assets;
     private final String type;
     private final String assetsUrl;
-    private final int java;
+    private final Integer java;
     private final String mainClass;
     private final List<Library> libraries;
     private final List<Argument> arguments;

@@ -24,7 +24,7 @@ public interface Version extends HasName, HasId, HasParent<Version> {
 
     String getAssetsUrl();
 
-    int getJava();
+    Integer getJava();
 
     String getMainClass();
 

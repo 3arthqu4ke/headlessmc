@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher.launch;
 
+import lombok.CustomLog;
 import me.earth.headlessmc.launcher.version.Argument;
 import me.earth.headlessmc.launcher.version.Library;
 import me.earth.headlessmc.launcher.version.Version;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+@CustomLog
 class VersionMerger extends DelegatingVersion {
     public VersionMerger(Version version) {
         super(version);
@@ -20,8 +22,13 @@ class VersionMerger extends DelegatingVersion {
     }
 
     @Override
-    public int getJava() {
-        return get(Version::getJava);
+    public Integer getJava() {
+        Integer result = get(Version::getJava);
+        if (result == null) {
+            log.error("Version didn't specify a Java Version!!!");
+        }
+
+        return result == null ? 8 : result;
     }
 
     @Override
