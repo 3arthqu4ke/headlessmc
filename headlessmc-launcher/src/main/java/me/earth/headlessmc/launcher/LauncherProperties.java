@@ -22,6 +22,8 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<String> XUID = string("hmc.xuid");
     Property<String> CLIENT_ID = string("hmc.clientId");
+    Property<String> USER_PROPERTIES = string("hmc.userproperties");
+    Property<String> PROFILE_PROPERTIES = string("hmc.profileproperties");
 
     Property<String> LAUNCHER_NAME = string("hmc.launchername");
     Property<String> LAUNCHER_VERSION = string("hmc.launcherversion");

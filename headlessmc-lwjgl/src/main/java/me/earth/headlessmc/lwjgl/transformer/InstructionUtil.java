@@ -76,6 +76,10 @@ public final class InstructionUtil {
         }
     }
 
+    public static boolean isPrimitive(Type type) {
+        return getWrapper(type) != type;
+    }
+
     public static InsnList unbox(Type type) {
         String name;
         InsnList il = new InsnList();

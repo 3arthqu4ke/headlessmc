@@ -58,6 +58,12 @@ class ArgumentAdapterHelper {
         adapter.add("${auth_xuid}", config.get(LauncherProperties.XUID));
         // TODO: find out wtf this is
         adapter.add("${clientid}", config.get(LauncherProperties.CLIENT_ID));
+        // TODO: this is {} for the normal launcher too
+        adapter.add("${user_properties}", config.get(
+            LauncherProperties.USER_PROPERTIES, "{}"));
+        // TODO: find a version where this actually exists
+        adapter.add("${profile_properties}", config.get(
+            LauncherProperties.PROFILE_PROPERTIES, "{}"));
 
         return adapter;
     }

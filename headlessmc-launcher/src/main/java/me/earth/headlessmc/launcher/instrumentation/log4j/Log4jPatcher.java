@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.instrumentation.log4j;
 
 import lombok.CustomLog;
-import lombok.var;
 import me.earth.headlessmc.launcher.instrumentation.AbstractClassTransformer;
 import me.earth.headlessmc.launcher.instrumentation.Target;
 import org.objectweb.asm.tree.*;
@@ -23,6 +22,7 @@ public class Log4jPatcher extends AbstractClassTransformer {
 
     @Override
     protected void transform(ClassNode cn) {
+        // TODO: check desc of method for ARETURN compatible type
         for (MethodNode mn : cn.methods.stream()
                                        .filter(m -> "lookup".equals(m.name))
                                        .collect(Collectors.toList())) {
