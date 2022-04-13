@@ -37,7 +37,6 @@ class LibraryImpl implements Library {
 
         var n = natives.get(os.getType().getName());
         if (n != null && nativeLibrary) {
-            // TODO: check this!!!!!!!!!!!!!!!!
             sb.append("-")
               .append(n.replace("${arch}", os.isArch() ? "64" : "32"));
         }

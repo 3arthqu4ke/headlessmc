@@ -6,7 +6,6 @@ import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import lombok.var;
-import me.earth.headlessmc.launcher.util.CollectionUtil;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.util.ArrayList;
@@ -59,18 +58,30 @@ class LibraryFactory {
 
             val classifiers = downloads.getAsJsonObject().get("classifiers");
             if (classifiers != null && classifiers.isJsonObject()) {
-                for (Map.Entry<String, JsonElement> entry :
+                for (Map.Entry<String, JsonElement> e :
                     classifiers.getAsJsonObject().entrySet()) {
-                    val os = CollectionUtil.getKey(natives, entry.getKey());
-                    if (os == null || !entry.getValue().isJsonObject()) {
+                    val nativeEntry = getNativeEntry(natives, e.getKey());
+                    if (nativeEntry == null || !e.getValue().isJsonObject()) {
                         continue;
                     }
 
-                    // stupid but because we went the approach where
-                    // we return multiple libraries we need this.
+                    // nativeWithReplace for this library, ${arch} is replaced
+                    val nativeName = e.getKey();
+                    // name of the os
+                    val os = nativeEntry.getKey();
+                    // native name containing ${arch} to be replaced with 32/64
+                    val nativeWithReplace = nativeEntry.getValue();
                     Rule osRule = (osIn, f) -> {
-                        return os.equalsIgnoreCase(osIn.getType().getName())
-                            ? rule.apply(osIn, f) : Rule.Action.DISALLOW;
+                        // check that we have the right os
+                        if (os.equalsIgnoreCase(osIn.getType().getName())
+                            // check that we have the right arch version
+                            && nativeWithReplace.replace(
+                                "${arch}", osIn.isArch() ? "64" : "32")
+                                                .equals(nativeName)) {
+                            return rule.apply(osIn, f);
+                        }
+
+                        return Rule.Action.DISALLOW;
                     };
 
                     var nativeExtractor = extractor;
@@ -79,7 +90,7 @@ class LibraryFactory {
                         nativeExtractor = new ExtractorImpl();
                     }
 
-                    val jo = entry.getValue().getAsJsonObject();
+                    val jo = e.getValue().getAsJsonObject();
                     val url = JsonUtil.getString(jo, "url");
                     val path = JsonUtil.getString(jo, "path");
                     result.add(new LibraryImpl(natives, nativeExtractor, name,
@@ -95,6 +106,18 @@ class LibraryFactory {
         }
 
         return result;
+    }
+
+    private Map.Entry<String, String> getNativeEntry(Map<String, String> map,
+                                                     String classifier) {
+        for (Map.Entry<String, String> e : map.entrySet()) {
+            if (e.getValue().replace("${arch}", "32").equals(classifier)
+                || e.getValue().replace("${arch}", "64").equals(classifier)) {
+                return e;
+            }
+        }
+
+        return null;
     }
 
 }
