@@ -42,7 +42,12 @@ public class JavaService extends Service<Java> {
         return newVersions;
     }
 
-    public Java findBestVersion(int version) {
+    public Java findBestVersion(Integer version) {
+        if (version == null) {
+            log.error("Version was null, assuming Java 8 is needed!");
+            return findBestVersion(8);
+        }
+
         Java best = null;
         for (Java java : this) {
             if (version == java.getVersion()) {

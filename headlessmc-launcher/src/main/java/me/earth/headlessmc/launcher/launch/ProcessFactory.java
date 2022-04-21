@@ -41,6 +41,11 @@ public class ProcessFactory {
                        boolean runtime, boolean noOut)
         throws IOException, LaunchException, AuthException {
         version = new VersionMerger(version);
+        if (version.getArguments() == null) {
+            throw new LaunchException(
+                version.getName() + ": Version file and its parents" +
+                    " didn't contain arguments.");
+        }
 
         new AssetsDownloader(files, version.getAssetsUrl(), version.getAssets())
             .download();

@@ -25,8 +25,8 @@ support to a game without modifying classes it will be started using the runtime
 call the games main-class.
 
 **headlessmc-lwjgl**: contains the RedirectionApi and a class transformer which can be used by the launchers'
-instrumentation, injected as a JavaAgent or as a launchwrapper Tweaker (more implementations for Fabric and the new fml
-might follow) and will transform method in every `org.lwjgl` class this way:
+instrumentation, injected as a JavaAgent or as a launchwrapper Tweaker and will transform methods in every `org.lwjgl` 
+class this way:
 ```java
 public <type> method(<arg>... args) {
     return (<type>) RedirectionApi.invoke(this, "<owner>;method(<arg>)<type>", <type>.class, args);

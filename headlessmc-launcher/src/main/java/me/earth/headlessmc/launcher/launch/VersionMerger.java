@@ -62,7 +62,12 @@ class VersionMerger extends DelegatingVersion {
 
     private <T> List<T> merge(Function<Version, List<T>> func) {
         List<T> result = new ArrayList<>();
-        FamilyUtil.iterate(version, v -> result.addAll(func.apply(v)));
+        FamilyUtil.iterate(version, v -> {
+            List<T> list = func.apply(v);
+            if (list != null) {
+                result.addAll(list);
+            }
+        });
         return result;
     }
 

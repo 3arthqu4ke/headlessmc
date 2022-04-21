@@ -30,7 +30,10 @@ class Command {
         val config = launcher.getConfig();
         val java = launcher.getJavaService().findBestVersion(version.getJava());
         if (java == null) {
-            throw new LaunchException();
+            throw new LaunchException("Couldn't find Java version for "
+                                          + version.getName()
+                                          + ", requires Java "
+                                          + version.getJava());
         }
 
         val result = new ArrayList<String>();

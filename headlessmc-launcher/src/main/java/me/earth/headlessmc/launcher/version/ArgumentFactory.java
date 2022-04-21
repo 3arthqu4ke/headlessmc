@@ -20,6 +20,10 @@ class ArgumentFactory {
     // TODO: the Consumer here is kinda awful
     public List<Argument> parse(JsonElement arguments, Consumer<Boolean> format)
         throws VersionParseException {
+        if (arguments == null) {
+            return null;
+        }
+
         if (!arguments.isJsonObject()) {
             format.accept(false);
             return Arrays.stream(arguments.getAsString().split(" "))
