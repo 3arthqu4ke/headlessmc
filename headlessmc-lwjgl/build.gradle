@@ -18,6 +18,7 @@ module {
     exports  'me/earth/headlessmc/lwjgl/util'
     exports  'me/earth/headlessmc/lwjgl/agent'
 
+    requires 'java.desktop'
     requires 'java.instrument', ACC_STATIC
     requires 'org.objectweb.asm.tree', ACC_STATIC
     requires 'org.objectweb.asm', ACC_STATIC

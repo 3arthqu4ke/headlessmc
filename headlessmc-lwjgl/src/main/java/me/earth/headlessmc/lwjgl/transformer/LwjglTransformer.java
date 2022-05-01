@@ -30,6 +30,12 @@ public class LwjglTransformer extends AbstractLwjglTransformer {
         super.transform(cn);
         if ((cn.access & ACC_MODULE) == 0) {
             patchClass(cn, (cn.access & ACC_INTERFACE) != 0);
+            // make all non-static fields non-final
+            for (FieldNode fn : cn.fields) {
+                if ((fn.access & ACC_STATIC) == 0) {
+                    fn.access &= ~ACC_FINAL;
+                }
+            }
         }
     }
 
@@ -67,13 +73,17 @@ public class LwjglTransformer extends AbstractLwjglTransformer {
             || cn.superName.toLowerCase().contains("lwjgl")
             || cn.superName.equals(Type.getInternalName(Object.class)))) {
             // Add NoArgs Constructor for the ObjectRedirection
-            MethodVisitor mv = cn.visitMethod(ACC_PUBLIC, "<init>", "()V",
-                                              null, new String[0]);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, cn.superName, "<init>", "()V",
-                               false);
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(0, 0);
+            MethodNode mn = new MethodNode(ACC_PUBLIC, "<init>", "()V",
+                                           null, new String[0]);
+            InsnList il = new InsnList();
+            mn.instructions = il;
+            il.add(new VarInsnNode(ALOAD, 0));
+            il.add(new MethodInsnNode(INVOKESPECIAL, cn.superName, "<init>",
+                                      "()V", false));
+            injectRedirection(cn, mn, il);
+            il.add(new InsnNode(RETURN));
+            cn.methods.add(mn);
+            mn.visitMaxs(0, 0);
         }
     }
 

@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import me.earth.headlessmc.lwjgl.LwjglProperties;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
 
+import java.lang.reflect.Field;
 import java.nio.*;
 
 import static me.earth.headlessmc.lwjgl.api.Redirection.of;
@@ -36,9 +37,30 @@ public class LwjglRedirections {
                              Thread.sleep((long) ((double) args[0] * 1000L));
                              return null;
                          });
+
+        // 1.16.5-forge-36.2.22, ClientVisualization
+        manager.redirect("Lorg/lwjgl/glfw/GLFW;glfwCreateWindow(" +
+                             "IILjava/lang/CharSequence;JJ)J", of(1L));
+
+        // 1.16.5-forge-36.2.22, GlStateManager
+        manager.redirect(
+            "Lorg/lwjgl/opengl/GLCapabilities;<init>()V",
+            (obj, desc, type, args) -> {
+                try {
+                    Field field = obj.getClass().getDeclaredField("OpenGL30");
+                    field.setAccessible(true);
+                    field.set(obj, true);
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            });
+
         manager.redirect("Lorg/lwjgl/glfw/GLFW;glfwGetTime()D",
                          (obj, desc, type, args) ->
                              (System.nanoTime() - START) / 1_000_000_000.0D);
+
         // TODO: check this does what it's supposed to
         manager.redirect("Lorg/lwjgl/glfw/GLFW;glfwGetFramebufferSize(J[I[I)V",
                          (obj, desc, type, args) -> {
