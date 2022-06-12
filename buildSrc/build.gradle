@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'org.ow2.asm', name: 'asm', version: '9.2'
+    implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'
 }
 
 gradlePlugin {

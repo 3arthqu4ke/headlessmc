@@ -31,8 +31,8 @@ dependencies {
         // an idea of what some classes look like.
         exclude module: 'asm-debug-all'
     }
-    compileOnly group: 'org.ow2.asm', name: 'asm', version: '9.2'
-    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.2'
+    compileOnly group: 'org.ow2.asm', name: 'asm', version: '9.3'
+    compileOnly group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
 }
 
 jar {
