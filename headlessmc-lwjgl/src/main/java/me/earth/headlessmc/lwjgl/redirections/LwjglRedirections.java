@@ -223,6 +223,42 @@ public class LwjglRedirections {
 
         manager.redirect("Lorg/lwjgl/openal/ALC10;alcOpenDevice(" +
                              "Ljava/lang/CharSequence;)J", of(1L));
+
+
+        manager.redirect("Lorg/lwjgl/system/MemoryUtil;memSlice(" +
+                             "Ljava/nio/ByteBuffer;II)Ljava/nio/ByteBuffer;",
+                         (obj, desc, type, args) -> {
+                             // TODO: redirected for now to prevent console
+                             //  spam, but this should be done properly at some
+                             //  point. It looks as if the returned buffer is
+                             //  never used except for other redirected lwjgl
+                             //  methods, so null is fairly safe rn.
+                             /*
+                             ByteBuffer buffer = (ByteBuffer) args[0];
+                             if (buffer == null) {
+                                return null;
+                             }
+
+                             int offset = (int) args[1];
+                             int capacity = (int) args[2];
+
+                             int position = buffer.position() + offset;
+                             if (offset < 0 || buffer.limit() < position) {
+                                 throw new IllegalArgumentException();
+                             }
+
+                             if (capacity < 0 || buffer.capacity()
+                                 - position < capacity) {
+                                 throw new IllegalArgumentException();
+                             }
+
+                             // TODO: allocate new bytebuffer of size and
+                             //       copy bytes to that buffer
+
+                             */
+
+                             return null;
+                         });
     }
 
 }

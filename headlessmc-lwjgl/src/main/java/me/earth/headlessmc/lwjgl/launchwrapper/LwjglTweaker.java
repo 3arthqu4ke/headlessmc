@@ -25,8 +25,6 @@ public class LwjglTweaker implements ITweaker {
         Field exc = lcl.getClass().getDeclaredField("classLoaderExceptions");
         exc.setAccessible(true);
         ((Set<?>) exc.get(lcl)).remove("org.lwjgl.");
-        // TODO: check that I'm not stupid and that the LaunchWrapperTransformer
-        //  really doesn't get loaded by the LaunchClassloader
         lcl.registerTransformer(LaunchWrapperLwjglTransformer.class.getName());
     }
 
