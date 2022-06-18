@@ -63,6 +63,7 @@ public class ReflectionUtil {
      * @return a list of objects behind the fields in the given object.
      */
     public static <T> List<T> collect(Object object, Class<T> type) {
+        // TODO: is this actually being used?
         List<T> result = new ArrayList<>();
         iterate(object.getClass(), clazz -> {
             for (Field field : clazz.getDeclaredFields()) {

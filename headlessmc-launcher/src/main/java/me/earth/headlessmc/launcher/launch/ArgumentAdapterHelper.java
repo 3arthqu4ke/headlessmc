@@ -5,7 +5,6 @@ import lombok.var;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
-import me.earth.headlessmc.launcher.util.StringUtil;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
