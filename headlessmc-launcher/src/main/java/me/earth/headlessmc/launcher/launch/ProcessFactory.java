@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import lombok.var;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipFile;
 
 @CustomLog
 @RequiredArgsConstructor
@@ -52,6 +54,7 @@ public class ProcessFactory {
 
         val dlls = fileManager.createRelative("extracted");
         val targets = processLibraries(version, dlls);
+        addGameJar(version, targets);
         val command = Command.builder()
                              .classpath(instrumentation.instrument(targets))
                              .os(os)
@@ -81,10 +84,11 @@ public class ProcessFactory {
 
     private void addGameJar(Version version, List<Target> targets)
         throws IOException {
-        val gameJar = new File(version.getFolder(), version.getName() + ".jar");
+        var gameJar = new File(version.getFolder(), version.getName() + ".jar");
         log.debug("GameJar: " + gameJar.getAbsolutePath());
-        if (!gameJar.exists()) {
-            log.info("Downloading " + version.getName());
+        if (!gameJar.exists() || !checkZipIntact(gameJar) && gameJar.delete()) {
+            log.info("Downloading " + version.getName() + " from "
+                         + version.getClientDownload());
             IOUtil.download(version.getClientDownload(),
                             gameJar.getAbsolutePath());
         }
@@ -116,8 +120,22 @@ public class ProcessFactory {
             }
         }
 
-        addGameJar(version, targets);
         return targets;
+    }
+
+    private boolean checkZipIntact(File file) {
+        val name = file.getName();
+        var result = true;
+        if (name.endsWith(".jar") || name.endsWith(".zip")) {
+            try {
+                new ZipFile(file);
+            } catch (IOException e) {
+                log.error("Couldn't read " + name + " : " + e.getMessage());
+                result = false;
+            }
+        }
+
+        return result;
     }
 
 }
