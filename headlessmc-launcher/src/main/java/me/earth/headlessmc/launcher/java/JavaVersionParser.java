@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 class JavaVersionParser {
     private static final Pattern PATTERN = Pattern.compile(
-        "version \"([0-9]+\\.[0-9]+\\.[0-9]+(?:\\.[0-9]+)*)\"");
+        "version \"([0-9]+\\.[0-9]+\\.[0-9_]+(?:\\.[0-9]+)*)\"");
 
     public int parse(String path) throws IOException {
         Process prcs = new ProcessBuilder().command(path, "-version").start();
