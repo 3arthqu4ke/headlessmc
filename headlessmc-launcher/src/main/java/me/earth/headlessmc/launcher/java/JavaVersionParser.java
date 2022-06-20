@@ -4,14 +4,13 @@ import lombok.Cleanup;
 import me.earth.headlessmc.launcher.util.IOUtil;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class JavaVersionParser {
     private static final Pattern PATTERN = Pattern.compile(
-        "version \"([0-9]+\\.[0-9]+\\.[0-9_]+)\"");
+        "version \"([0-9]+\\.[0-9]+\\.[0-9]+(?:\\.[0-9]+)*)\"");
 
     public int parse(String path) throws IOException {
         Process prcs = new ProcessBuilder().command(path, "-version").start();
