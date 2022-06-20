@@ -12,12 +12,16 @@ class JavaVersionParser {
     private static final Pattern PATTERN = Pattern.compile(
         "version \"([0-9]+\\.[0-9]+\\.[0-9_]+(?:\\.[0-9]+)*)\"");
 
-    public int parse(String path) throws IOException {
+    public int parseVersionCommand(String path) throws IOException {
         Process prcs = new ProcessBuilder().command(path, "-version").start();
 
         @Cleanup
         BufferedReader reader = IOUtil.reader(prcs.getErrorStream());
         String output = IOUtil.read(reader);
+        return parseVersion(output);
+    }
+
+    public int parseVersion(String output) throws IOException {
         Matcher matcher = PATTERN.matcher(output);
         if (!matcher.find()) {
             throw new IOException("Couldn't parse '" + output + "'");

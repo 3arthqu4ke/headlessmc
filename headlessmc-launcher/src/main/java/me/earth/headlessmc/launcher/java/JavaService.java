@@ -29,7 +29,7 @@ public class JavaService extends Service<Java> {
             }
 
             try {
-                val majorVersion = parser.parse(path);
+                val majorVersion = parser.parseVersionCommand(path);
                 val java = new Java(path, majorVersion);
                 log.debug("Found Java: " + java);
                 newVersions.add(java);
