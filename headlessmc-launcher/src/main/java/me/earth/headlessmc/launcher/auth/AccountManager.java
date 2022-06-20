@@ -28,7 +28,9 @@ public class AccountManager implements Iterable<Account> {
         }
 
         log.warning("No Account has been specified!");
-        return new Account("???", "NoAccount", "???");
+        // TODO: check what else needs to be done to make this comply to any
+        //  EULA etc., the auth lib already checks for possession of the game
+        throw new AuthException("You can't play the game without an account!");
     }
 
     public Account login(String email, String password) throws AuthException {

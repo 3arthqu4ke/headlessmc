@@ -1,12 +1,10 @@
-package me.earth.headlessmc.api.mc.scheduling;
+package me.earth.headlessmc.api;
 
 import lombok.val;
-import me.earth.headlessmc.api.HasId;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

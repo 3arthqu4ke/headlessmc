@@ -21,6 +21,9 @@ public class LogLevelUtil {
     }
 
     public static void setLevel(Level level) {
+        // TODO: when loaded by another classloader (fabric/forge) our
+        //  LoggingHandler can't be found because the LogManager uses the
+        //  SystemClassloader to discover handlers.
         java.util.logging.Logger root = Logger.getLogger("");
         Handler[] handlers = root.getHandlers();
         for (Handler h : handlers) {

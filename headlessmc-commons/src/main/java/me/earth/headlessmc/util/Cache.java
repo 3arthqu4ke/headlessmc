@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+// TODO: is this actually being used?
 /**
  * Caches a value supplied by a given {@link Supplier}.
  *

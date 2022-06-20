@@ -10,7 +10,6 @@ import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
@@ -20,7 +19,6 @@ import me.earth.headlessmc.logging.LoggingHandler;
 import me.earth.headlessmc.logging.SimpleLog;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @CustomLog
 @UtilityClass
