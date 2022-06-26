@@ -5,7 +5,6 @@ import com.google.gson.JsonParseException;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.Service;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.JsonUtil;
@@ -21,7 +20,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public final class VersionService extends Service<Version> {
     private final FileManager files;
-    private final HasConfig cfg;
 
     @Override
     protected Collection<Version> update() {

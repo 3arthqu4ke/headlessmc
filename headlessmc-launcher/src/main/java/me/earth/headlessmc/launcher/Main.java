@@ -34,7 +34,7 @@ public final class Main {
         log.info(String.format("Detected: %s", os));
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
         log.info(String.format("Minecraft Directory: %s", mcFiles.getBase()));
-        val versions = Service.refresh(new VersionService(mcFiles, configs));
+        val versions = Service.refresh(new VersionService(mcFiles));
         val javas = Service.refresh(new JavaService(configs));
         val accounts = new AccountManager();
 
