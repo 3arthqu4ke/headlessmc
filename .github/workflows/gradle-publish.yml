@@ -27,11 +27,20 @@ jobs:
       - name: List files
         run: ls
 
-      - name: Upload a Build Artifact
+      - name: Publish jars
         uses: actions/upload-artifact@v3
         with:
           name: HeadlessMc
-          path: |
-            ./build/libs/headlessmc-*.jar
-            ./headlessmc-scripts/hmc
-            ./headlessmc-scripts/hmc.bat
+          path: ./build/libs/headlessmc-*.jar
+          
+      - name: Publish shell script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc
+          
+      - name: Publish bat script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc.bat
