@@ -1,0 +1,2 @@
+#!/bin/sh
+java -jar headlessmc-launcher-1.0.7-alpha.jar --command $@

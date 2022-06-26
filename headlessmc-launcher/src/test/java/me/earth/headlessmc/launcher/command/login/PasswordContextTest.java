@@ -14,6 +14,7 @@ public class PasswordContextTest {
         val ctx = new LaunchContext(launcher);
         launcher.setCommandContext(ctx);
         launcher.setHidingPasswords(false);
+        Assertions.assertFalse(launcher.isWaitingForInput());
         Assertions.assertEquals(ctx, launcher.getCommandContext());
         Assertions.assertFalse(launcher.isHidingPasswords());
 
@@ -21,10 +22,12 @@ public class PasswordContextTest {
         Assertions.assertInstanceOf(PasswordContext.class,
                                     launcher.getCommandContext());
         Assertions.assertTrue(launcher.isHidingPasswords());
+        Assertions.assertTrue(launcher.isWaitingForInput());
 
         launcher.getCommandContext().execute("abort");
         Assertions.assertFalse(launcher.isHidingPasswords());
         Assertions.assertEquals(ctx, launcher.getCommandContext());
+        Assertions.assertFalse(launcher.isWaitingForInput());
     }
 
 }

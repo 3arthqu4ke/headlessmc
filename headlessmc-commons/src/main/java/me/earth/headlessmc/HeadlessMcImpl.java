@@ -21,5 +21,11 @@ public class HeadlessMcImpl implements HeadlessMc {
     private final HasConfig configHolder;
     @Delegate
     private final PasswordAware passwordAware;
+    @Getter
+    @Setter
+    private boolean waitingForInput;
+    @Getter
+    @Setter
+    private boolean quickExitCli;
 
 }

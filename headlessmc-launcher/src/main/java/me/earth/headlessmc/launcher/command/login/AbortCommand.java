@@ -16,6 +16,7 @@ public class AbortCommand extends AbstractCommand {
     public void execute(String... args) {
         ctx.log("Aborting login...");
         ctx.setCommandContext(context);
+        ctx.setWaitingForInput(false);
         ctx.setHidingPasswords(false);
     }
 

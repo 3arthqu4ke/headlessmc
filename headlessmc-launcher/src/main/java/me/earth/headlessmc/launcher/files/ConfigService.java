@@ -48,7 +48,7 @@ public class ConfigService extends Service<Config> implements HasConfig {
         }
 
         setConfig(result.get(0));
-        log.info("Found " + result.size() + " config(s), active config: "
+        log.debug("Found " + result.size() + " config(s), active config: "
                      + getConfig().getName());
         return result;
     }
@@ -63,7 +63,7 @@ public class ConfigService extends Service<Config> implements HasConfig {
     }
 
     private Config load(File file, int id) throws IOException {
-        log.info("Reading config file: " + file.getAbsolutePath());
+        log.debug("Reading config file: " + file.getAbsolutePath());
         val name = StringUtil.cutOfEnd(file.getName(), ENDING.length());
         @Cleanup
         InputStream is = new FileInputStream(file);

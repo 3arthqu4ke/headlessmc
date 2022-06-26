@@ -16,6 +16,8 @@ public class MockedHeadlessMc implements HeadlessMc {
     private CommandContext commandContext = new CommandContextImpl(this);
     private Config config = ConfigImpl.empty();
     private boolean hidingPasswords = false;
+    private boolean waitingForInput = false;
+    private boolean quickExitCli = false;
     private String log = null;
 
     @Override
