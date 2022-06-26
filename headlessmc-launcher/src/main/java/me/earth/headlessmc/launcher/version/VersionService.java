@@ -8,17 +8,19 @@ import lombok.val;
 import me.earth.headlessmc.launcher.Service;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.JsonUtil;
-import me.earth.headlessmc.launcher.version.family.FamilyCleaner;
-import me.earth.headlessmc.launcher.version.family.FamilyUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @CustomLog
 @RequiredArgsConstructor
 public final class VersionService extends Service<Version> {
+    private final ParentVersionResolver resolver = new ParentVersionResolver();
     private final FileManager files;
 
     @Override
@@ -49,7 +51,7 @@ public final class VersionService extends Service<Version> {
             }
         }
 
-        resolveParentVersions(versions);
+        resolver.resolveParentVersions(versions);
         return versions.values();
     }
 
@@ -64,32 +66,6 @@ public final class VersionService extends Service<Version> {
         } catch (IOException | JsonParseException | VersionParseException e) {
             log.warning(file.getName() + ": " + e.getMessage());
         }
-    }
-
-    private void resolveParentVersions(Map<String, Version> versions) {
-        val invalid = new HashSet<Version>();
-        FamilyUtil.resolveParents(versions.values(), version -> {
-            val parentName = version.getParentName();
-            if (parentName == null) {
-                return null;
-            }
-
-            val parent = versions.get(parentName);
-            if (parent == null) {
-                log.warning("Couldn't find parent version "
-                                + parentName
-                                + " for version "
-                                + version.getName()
-                                + "!");
-                invalid.add(version);
-                return null;
-            }
-
-            return parent;
-        });
-
-        val cleaner = new FamilyCleaner<Version>();
-        cleaner.clean(versions.values(), invalid);
     }
 
 }

@@ -1,0 +1,48 @@
+package me.earth.headlessmc.launcher.launch;
+
+import lombok.SneakyThrows;
+import lombok.val;
+import me.earth.headlessmc.launcher.LauncherMock;
+import me.earth.headlessmc.launcher.UsesResources;
+import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.java.Java;
+import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.launcher.version.Version;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+
+public class CommandTest implements UsesResources {
+    private final Version version = getVersion("version_parent.json", 0);
+
+    @Test
+    @SneakyThrows
+    public void testCommand() {
+        val command = setupCommand();
+        Assertions.assertThrows(LaunchException.class, command::build);
+        LauncherMock.INSTANCE.getJavaService().add(new Java("dummy", 8));
+        Assertions.assertThrows(LaunchException.class, command::build);
+        LauncherMock.INSTANCE.getJavaService().add(new Java("java-17", 17));
+        val expected = "[java-17, -Dhmc.deencapsulate=true," +
+            " -Djava.library.path=natives_path, -cp, test;test, " +
+            "-DSomeSystemProperty=${some_arg}," +
+            " -Dhmc.main_method=path.to.MainClass," +
+            " me.earth.headlessmc.runtime.Main," +
+            " --username, dummy, --versionType, release]";
+
+        Assertions.assertEquals(expected, command.build().toString());
+    }
+
+    private Command setupCommand() {
+        return Command.builder()
+                      .classpath(Arrays.asList("test", "test"))
+                      .os(new OS("win", OS.Type.WINDOWS, "11", true))
+                      .natives("natives_path")
+                      .runtime(true)
+                      .version(version)
+                      .launcher(LauncherMock.INSTANCE)
+                      .build();
+    }
+
+}

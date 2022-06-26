@@ -1,6 +1,6 @@
 package me.earth.headlessmc.launcher.version;
 
-class DefaultVersionFactory extends VersionFactory {
+public class DefaultVersionFactory extends VersionFactory {
     private static final RuleFactory RF = new RuleFactory();
     private static final ExtractorFactory EF = new ExtractorFactory();
     private static final NativesFactory NF = new NativesFactory();

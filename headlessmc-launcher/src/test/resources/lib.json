@@ -1,13 +1,13 @@
 {
   "downloads": {
     "artifact": {
-      "path": "",
+      "path": "_download_path",
       "sha1": "",
       "size": 1,
-      "url": ""
+      "url": "_download_url"
     }
   },
-  "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
+  "name": "test:test:test",
   "rules": [
     {
       "action": "allow"

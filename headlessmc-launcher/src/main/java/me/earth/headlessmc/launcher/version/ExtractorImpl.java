@@ -32,9 +32,7 @@ class ExtractorImpl implements Extractor {
         val enumeration = jar.entries();
         while (enumeration.hasMoreElements()) {
             val je = enumeration.nextElement();
-            if (exceptions.stream()
-                          .noneMatch(e -> je.getName().startsWith(e))
-                && !je.isDirectory()) {
+            if (shouldExtract(je.getName()) && !je.isDirectory()) {
                 log.debug(
                     String.format("Extracting  : %s from %s to %s%s%s",
                                   je.getName(), jar.getName(),
@@ -48,6 +46,11 @@ class ExtractorImpl implements Extractor {
                 IOUtil.copy(is, os);
             }
         }
+    }
+
+    @Override
+    public boolean shouldExtract(String name) {
+        return name != null && exceptions.stream().noneMatch(name::startsWith);
     }
 
     @Override

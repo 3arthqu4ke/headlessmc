@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.Builder;
+import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.Launcher;
@@ -16,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Builder
+@CustomLog
 class Command {
     private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";
 
@@ -43,7 +45,7 @@ class Command {
         if (runtime
             && java.getVersion() > 8
             && config.get(HmcProperties.DEENCAPSULATE, true)) {
-            System.err.println("Deencapsulating!");
+            log.info("Java version > 8 detected, deencapsulating!");
             result.add("-D" + HmcProperties.DEENCAPSULATE.getName() + "=true");
         }
 
