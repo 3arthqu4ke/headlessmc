@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.UsesResources;
-import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Version;
@@ -24,14 +23,15 @@ public class CommandTest implements UsesResources {
         LauncherMock.INSTANCE.getJavaService().add(new Java("dummy", 8));
         Assertions.assertThrows(LaunchException.class, command::build);
         LauncherMock.INSTANCE.getJavaService().add(new Java("java-17", 17));
-        val expected = "[java-17, -Dhmc.deencapsulate=true," +
-            " -Djava.library.path=natives_path, -cp, test;test, " +
-            "-DSomeSystemProperty=${some_arg}," +
-            " -Dhmc.main_method=path.to.MainClass," +
-            " me.earth.headlessmc.runtime.Main," +
-            " --username, dummy, --versionType, release]";
+        val expected = Arrays.asList(
+            "java-17", "-Dhmc.deencapsulate=true",
+            "-Djava.library.path=natives_path", "-cp", "test;test",
+            "-DSomeSystemProperty=${some_arg}",
+            "-Dhmc.main_method=path.to.MainClass",
+            "me.earth.headlessmc.runtime.Main",
+            "--username", "dummy", "--versionType", "release");
 
-        Assertions.assertEquals(expected, command.build().toString());
+        Assertions.assertEquals(expected, command.build());
     }
 
     private Command setupCommand() {

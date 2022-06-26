@@ -49,6 +49,10 @@ allprojects {
 
         test {
             useJUnitPlatform()
+            testLogging {
+                events "failed"
+                exceptionFormat "full"
+            }
         }
 
         jar {
