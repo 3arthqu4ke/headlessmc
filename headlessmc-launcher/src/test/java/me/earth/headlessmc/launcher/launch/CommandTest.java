@@ -34,7 +34,6 @@ public class CommandTest implements UsesResources {
             "--username", "dummy", "--versionType", "release");
 
         Assertions.assertEquals(expected, command.build());
-        System.out.println(expected);
     }
 
     private Command setupCommand() {

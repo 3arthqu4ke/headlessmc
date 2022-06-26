@@ -8,7 +8,6 @@ import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.ConfigImpl;
 import me.earth.headlessmc.launcher.auth.Account;
 import me.earth.headlessmc.launcher.auth.AccountManager;
-import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -17,18 +16,20 @@ import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.SimpleLog;
 
+import java.io.File;
+
 @UtilityClass
 public class LauncherMock {
     public static final Launcher INSTANCE;
 
     static {
-        val fileManager = new FileManager("test");
+        val fileManager = new DummyFileManager("test");
         val configs = new ConfigService(fileManager);
         val in = new CommandLineImpl();
         val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in);
 
         val os = new OS("windows", OS.Type.WINDOWS, "11", true);
-        val mcFiles = new FileManager("test");
+        val mcFiles = new DummyFileManager("test");
         val versions = new VersionService(mcFiles);
         val javas = new JavaService(configs);
         val accounts = new DummyAccountManager();
@@ -44,6 +45,18 @@ public class LauncherMock {
         @Override
         public Account login(Config config) {
             return new Account("dummy", "dummy", "dummy");
+        }
+    }
+
+    private static final class DummyFileManager extends FileManager {
+        public DummyFileManager(String base) {
+            super(base);
+        }
+
+        @Override
+        public File get(String base, boolean isDir, boolean mk,
+                        String... path) {
+            return super.get(base, isDir, false, path);
         }
     }
 
