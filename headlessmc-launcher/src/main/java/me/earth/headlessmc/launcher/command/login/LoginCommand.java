@@ -37,6 +37,7 @@ public class LoginCommand extends AbstractLauncherCommand {
             ctx.log("Please use 'password <password>' to login." +
                         " Use 'abort' to cancel the login process.");
             ctx.setHidingPasswords(true);
+            ctx.setWaitingForInput(true);
             ctx.setCommandContext(new PasswordContext(ctx, action));
         }
     }
@@ -54,6 +55,8 @@ public class LoginCommand extends AbstractLauncherCommand {
             if (!passwordsHiddenBefore) {
                 ctx.setHidingPasswords(false);
             }
+
+            ctx.setWaitingForInput(false);
         };
     }
 

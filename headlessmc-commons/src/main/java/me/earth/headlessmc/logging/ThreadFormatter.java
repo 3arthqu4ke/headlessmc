@@ -16,7 +16,8 @@ public class ThreadFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         val dt = ZonedDateTime.ofInstant(Instant.now(), ZoneId.systemDefault());
-        @SuppressWarnings("deprecation") // we want to be compatible with Java 8
+        // we want to be compatible with Java 8
+        @SuppressWarnings({"deprecation", "RedundantSuppression"})
         val thread = getThread(record.getThreadID());
         val sb = new StringBuilder(getLength(record, thread)).append("[");
         appendTimeNumber(sb, dt.getHour());

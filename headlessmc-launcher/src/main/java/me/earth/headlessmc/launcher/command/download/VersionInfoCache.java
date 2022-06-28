@@ -47,7 +47,7 @@ class VersionInfoCache implements Collection<VersionInfo> {
         return infos;
     }
 
-    private void read(JsonObject jo) throws IOException {
+    public void read(JsonObject jo) throws IOException {
         val latestR = JsonUtil.getString(jo, "latest", "release");
         val latestS = JsonUtil.getString(jo, "latest", "snapshot");
         log.debug("Latest: " + latestR + ", " + latestS);

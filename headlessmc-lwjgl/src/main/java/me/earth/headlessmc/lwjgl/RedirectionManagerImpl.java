@@ -46,6 +46,10 @@ public class RedirectionManagerImpl implements RedirectionManager {
 
     private Redirection getFallback(String desc, Class<?> type) {
         if (desc.startsWith(Redirection.CAST_PREFIX)) {
+            // TODO: currently cast redirection looks like this:
+            //  <cast> java/lang/String
+            //  <init> <cast> java/lang/String
+            //  It contains no information about the calling class!
             return cast;
         }
 

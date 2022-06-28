@@ -1,0 +1,21 @@
+{
+  "game": [
+    "--arg",
+    "${arg}",
+    {
+      "rules": [
+        {
+          "action": "allow",
+          "features": {
+            "feature": true
+          }
+        }
+      ],
+      "value": "--demo"
+    }
+  ],
+  "jvm": [
+    "--something",
+    "${something}"
+  ]
+}

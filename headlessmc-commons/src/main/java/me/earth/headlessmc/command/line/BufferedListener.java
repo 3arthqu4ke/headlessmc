@@ -1,7 +1,7 @@
 package me.earth.headlessmc.command.line;
 
 import lombok.Cleanup;
-import me.earth.headlessmc.api.command.HasCommandContext;
+import me.earth.headlessmc.api.QuickExitCli;
 
 import java.io.*;
 
@@ -9,7 +9,7 @@ enum BufferedListener implements Listener {
     INSTANCE;
 
     @Override
-    public void listen(HasCommandContext context) {
+    public void listen(QuickExitCli context) {
         try {
             @Cleanup
             BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -18,6 +18,9 @@ enum BufferedListener implements Listener {
             String line;
             while ((line = in.readLine()) != null) {
                 context.getCommandContext().execute(line);
+                if (context.isQuickExitCli() && !context.isWaitingForInput()) {
+                    return;
+                }
             }
         } catch (IOException ioe) {
             throw new IOError(ioe);

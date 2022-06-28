@@ -23,6 +23,10 @@ public class ParseUtil {
 
     public static long parseL(String number, long min, long max)
         throws CommandException {
+        if (number == null) {
+            throw new CommandException("Couldn't parse null!");
+        }
+
         try {
             long result = Long.parseLong(number);
             if (result < min || result > max) {
@@ -45,6 +49,10 @@ public class ParseUtil {
 
     public static double parseD(String number, double min, double max)
         throws CommandException {
+        if (number == null) {
+            throw new CommandException("Couldn't parse null!");
+        }
+
         try {
             double result = Double.parseDouble(number);
             if (result < min || result > max) {

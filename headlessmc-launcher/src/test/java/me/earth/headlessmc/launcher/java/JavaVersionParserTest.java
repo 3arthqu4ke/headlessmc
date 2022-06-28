@@ -32,5 +32,5 @@ public class JavaVersionParserTest {
         Assertions.assertThrows(IOException.class,
                                 () -> parser.parseVersion("test"));
     }
-    
+
 }

@@ -2,13 +2,12 @@ package me.earth.headlessmc.launcher;
 
 import lombok.experimental.Delegate;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Supplier;
 
 public abstract class Service<T> implements Refreshable, Collection<T> {
-    @Delegate
-    protected Collection<T> contents = Collections.emptyList();
+    @Delegate                          // not empty list for testing purposes
+    protected Collection<T> contents = new ArrayList<>(0);
 
     protected abstract Collection<T> update();
 

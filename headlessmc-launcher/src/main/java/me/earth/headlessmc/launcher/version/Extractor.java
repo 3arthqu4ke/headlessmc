@@ -13,4 +13,8 @@ public interface Extractor {
         return false;
     }
 
+    default boolean shouldExtract(String name) {
+        return false;
+    }
+
 }

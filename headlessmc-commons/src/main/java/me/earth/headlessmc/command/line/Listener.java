@@ -1,6 +1,6 @@
 package me.earth.headlessmc.command.line;
 
-import me.earth.headlessmc.api.command.HasCommandContext;
+import me.earth.headlessmc.api.QuickExitCli;
 
 import java.io.IOError;
 import java.util.concurrent.ThreadFactory;
@@ -13,13 +13,13 @@ public interface Listener {
         return thread;
     };
 
-    void listen(HasCommandContext context) throws IOError;
+    void listen(QuickExitCli context) throws IOError;
 
-    default void listenAsync(HasCommandContext context) {
+    default void listenAsync(QuickExitCli context) {
         listenAsync(context, DEFAULT_THREAD_FACTORY);
     }
 
-    default void listenAsync(HasCommandContext context, ThreadFactory factory) {
+    default void listenAsync(QuickExitCli context, ThreadFactory factory) {
         factory.newThread(() -> listen(context)).start();
     }
 

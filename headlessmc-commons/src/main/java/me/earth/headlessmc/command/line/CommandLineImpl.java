@@ -4,7 +4,7 @@ import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.PasswordAware;
-import me.earth.headlessmc.api.command.HasCommandContext;
+import me.earth.headlessmc.api.QuickExitCli;
 
 @CustomLog
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public class CommandLineImpl extends PasswordAwareImpl implements Listener {
     }
 
     @Override
-    public void listen(HasCommandContext context) {
+    public void listen(QuickExitCli context) {
         val console = System.console();
         if (console == null) {
             log.error("Console is null, hiding passwords is not supported!");

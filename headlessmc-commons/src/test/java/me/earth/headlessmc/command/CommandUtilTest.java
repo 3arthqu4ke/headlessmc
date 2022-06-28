@@ -26,7 +26,6 @@ public class CommandUtilTest {
         for (Map.Entry<String, String[][]> e : c.entrySet()) {
             String[][] split = CommandUtil.split(e.getKey());
             String[][] expected = e.getValue();
-            System.err.println(Arrays.deepToString(split));
             Assertions.assertEquals(split.length, expected.length);
             for (int i = 0; i < split.length; i++) {
                 Assertions.assertEquals(expected[i].length, split[i].length);
