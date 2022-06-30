@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.command;
 
 import lombok.CustomLog;
+import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.CommandUtil;
@@ -12,6 +13,7 @@ import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @CustomLog
 public class LaunchCommand extends AbstractVersionCommand {
@@ -36,9 +38,20 @@ public class LaunchCommand extends AbstractVersionCommand {
     @Override
     public void execute(Version version, String... args)
         throws CommandException {
-        UUID uuid = UUID.randomUUID();
+        val uuid = UUID.randomUUID();
         ctx.log("Launching version " + version.getName() + ", " + uuid);
         val files = ctx.getFileManager().createRelative(uuid.toString());
+        val shutdownHook = new Thread(() -> {
+            try {
+                FileUtil.delete(files.getBase());
+            } catch (IOException e) {
+                log.error("Couldn't delete files of game "
+                              + files.getBase().getName()
+                              + ": " + e.getMessage());
+            }
+        });
+
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
 
         try {
             val process = ctx.getProcessFactory().run(
@@ -62,18 +75,13 @@ public class LaunchCommand extends AbstractVersionCommand {
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
         } finally {
             if (!CommandUtil.hasFlag("-keep", args)) {
-                try {
-                    log.debug("Deleting " + files.getBase().getAbsolutePath());
-                    FileUtil.delete(files.getBase());
-                } catch (IOException ioe) {
-                    log.error("Couldn't delete files of game "
-                                + files.getBase().getName()
-                                + ": " + ioe.getMessage());
-                    ioe.printStackTrace();
-                }
+                log.debug("Deleting " + files.getBase().getAbsolutePath());
+                //noinspection CallToThreadRun
+                shutdownHook.run();
+                Runtime.getRuntime().removeShutdownHook(shutdownHook);
             }
 
-            if (CommandUtil.hasFlag("-exit", args)) {
+            if (!CommandUtil.hasFlag("-exit", args)) {
                 System.exit(0);
             }
         }

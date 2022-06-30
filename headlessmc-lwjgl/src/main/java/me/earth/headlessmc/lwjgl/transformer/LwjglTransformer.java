@@ -2,10 +2,11 @@ package me.earth.headlessmc.lwjgl.transformer;
 
 import me.earth.headlessmc.lwjgl.api.Redirection;
 import me.earth.headlessmc.lwjgl.api.RedirectionApi;
-import org.objectweb.asm.MethodVisitor;
+import me.earth.headlessmc.lwjgl.api.Transformer;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -24,10 +25,14 @@ import static org.objectweb.asm.Opcodes.*;
  * <p>-All abstract and native methods will be turned into normal methods, with
  * their body transformed as described above.
  */
-public class LwjglTransformer extends AbstractLwjglTransformer {
+public class LwjglTransformer implements Transformer {
     @Override
     public void transform(ClassNode cn) {
-        super.transform(cn);
+        if (cn.module != null) {
+            cn.module.visitRequire("headlessmc.lwjgl", ACC_MANDATED, null);
+            cn.module.access |= ACC_OPEN;
+        }
+
         if ((cn.access & ACC_MODULE) == 0) {
             patchClass(cn, (cn.access & ACC_INTERFACE) != 0);
             // make all non-static fields non-final
@@ -37,6 +42,27 @@ public class LwjglTransformer extends AbstractLwjglTransformer {
                 }
             }
         }
+    }
+
+    private Type injectRedirection(ClassNode cn, MethodNode mn, InsnList il) {
+        boolean isStatic = Modifier.isStatic(mn.access);
+        if (isStatic) {
+            il.add(new LdcInsnNode(Type.getType("L" + cn.name + ";")));
+        } else {
+            il.add(new VarInsnNode(ALOAD, 0));
+        }
+
+        il.add(new LdcInsnNode("L" + cn.name + ";" + mn.name + mn.desc));
+        Type returnType = Type.getReturnType(mn.desc);
+        il.add(InstructionUtil.loadType(returnType));
+        loadArgArray(mn.desc, il, isStatic);
+
+        il.add(new MethodInsnNode(
+            INVOKESTATIC, Type.getInternalName(RedirectionApi.class),
+            Redirection.METHOD_NAME, Redirection.METHOD_DESC));
+
+        il.add(InstructionUtil.unbox(returnType));
+        return returnType;
     }
 
     private void patchClass(ClassNode cn, boolean isInterface) {
@@ -136,4 +162,27 @@ public class LwjglTransformer extends AbstractLwjglTransformer {
         return il;
     }
 
+    private void loadArgArray(String desc, InsnList il, boolean isStatic) {
+        Type[] args = Type.getArgumentTypes(desc);
+        il.add(new LdcInsnNode(args.length));
+        il.add(new TypeInsnNode(ANEWARRAY, Type.getInternalName(Object.class)));
+        for (int i = 0, v = isStatic ? 0 : 1; i < args.length; i++, v++) {
+            il.add(new InsnNode(DUP));
+
+            Type type = args[i];
+            il.add(new LdcInsnNode(i));
+            il.add(InstructionUtil.loadParam(type, v));
+            if (type.getSort() == Type.DOUBLE || type.getSort() == Type.LONG) {
+                // double and long take up two registers, so we skip one
+                v++;
+            }
+
+            MethodInsnNode boxing = InstructionUtil.box(type);
+            if (boxing != null) {
+                il.add(boxing);
+            }
+
+            il.add(new InsnNode(AASTORE));
+        }
+    }
 }

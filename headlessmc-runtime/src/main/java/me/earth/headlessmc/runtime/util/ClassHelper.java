@@ -10,6 +10,7 @@ import me.earth.headlessmc.util.Table;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClassHelper {
     private final Class<?> clazz;
-    private final Constructor<?>[] constructors;
+    private final Set<Constructor<?>> constructors;
     private final Set<Method> methods;
     private final Set<Field> fields;
 
@@ -42,7 +43,7 @@ public class ClassHelper {
     }
 
     public Table<Constructor<?>> getConstructorTable(boolean verbose) {
-        return getConstructorTable(verbose, constructors);
+        return getConstructorTable(constructors, verbose);
     }
 
     public Table<Method> getMethodTable(boolean verbose) {
@@ -59,9 +60,9 @@ public class ClassHelper {
     }
 
     public static Table<Constructor<?>> getConstructorTable(
-        boolean verbose, Constructor<?>... constructors) {
+        Iterable<Constructor<?>> constructors, boolean verbose) {
         return new Table<Constructor<?>>()
-            .add(constructors)
+            .addAll(constructors)
             .withColumn("access", ClassHelper::getAccess)
             .withColumn("args", c -> getArgs(verbose, c.getParameterTypes()));
     }
@@ -121,7 +122,8 @@ public class ClassHelper {
             fields.addAll(Arrays.asList(c.getDeclaredFields()));
         });
 
-        return new ClassHelper(clazz, constructors, methods, fields);
+        return new ClassHelper(
+            clazz, new HashSet<>(Arrays.asList(constructors)), methods, fields);
     }
 
 }

@@ -7,6 +7,10 @@ public class VM {
         this.memory = new Object[size];
     }
 
+    public int size() {
+        return memory.length;
+    }
+
     public void set(Object object, int address) throws SegmentationFault {
         checkSegfault(address);
         memory[address] = object;

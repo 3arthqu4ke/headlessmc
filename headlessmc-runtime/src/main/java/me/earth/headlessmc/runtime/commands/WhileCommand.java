@@ -33,6 +33,8 @@ public class WhileCommand extends AbstractRuntimeCommand {
                 if (obj instanceof Boolean && (Boolean) obj) {
                     log.debug("Executing " + args[2]);
                     ctx.getCommandContext().execute(args[2]);
+                } else {
+                    break;
                 }
             }
 

@@ -27,4 +27,15 @@ public abstract class AbstractReflectionCommand extends AbstractRuntimeCommand {
         this.execute(obj, address, args);
     }
 
+    protected Object[] parse(Class<?>[] parameterTypes, String... args)
+        throws CommandException {
+        Object[] arguments = new Object[parameterTypes.length];
+        for (int i = 0; i < arguments.length; i++) {
+            int argAddress = ParseUtil.parseI(args[args.length - i - 1]);
+            arguments[arguments.length - i - 1] = ctx.getVm().get(argAddress);
+        }
+
+        return arguments;
+    }
+
 }

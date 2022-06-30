@@ -19,6 +19,7 @@ public class RuntimeContext extends CommandContextImpl {
         add(TypeCommand.ofType(ctx, "long", ParseUtil::parseL));
         add(TypeCommand.ofType(ctx, "float", ParseUtil::parseF));
         add(TypeCommand.ofType(ctx, "double", ParseUtil::parseD));
+        add(new NewCommand(ctx));
         add(new PopCommand(ctx));
         add(new CopyCommand(ctx));
         add(new RunnableCommand(ctx));

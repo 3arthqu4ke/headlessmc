@@ -16,15 +16,15 @@ public class RunnableCommand extends AbstractRuntimeCommand {
             throw new CommandException("Please specify a command/address!");
         }
 
-        int addr = ParseUtil.parseI(args[2]);
+        int addr = ParseUtil.parseI(args[1]);
         Runnable runnable = () -> {
-            if (!args[1].isEmpty()) {
-                ctx.getCommandContext().execute(args[1]);
+            if (!args[2].isEmpty()) {
+                ctx.getCommandContext().execute(args[2]);
             }
         };
 
         ctx.getVm().set(runnable, addr);
-        ctx.log("Created Runnable for '" + args[1] + "' at " + addr);
+        ctx.log("Created Runnable for '" + args[2] + "' at " + addr);
     }
 
 }

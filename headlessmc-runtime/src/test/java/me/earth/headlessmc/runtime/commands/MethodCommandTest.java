@@ -1,30 +1,30 @@
 package me.earth.headlessmc.runtime.commands;
 
+import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
-import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.runtime.RuntimeTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MethodCommandTest extends RuntimeTest {
-    private final MethodCommand mc = new MethodCommand(ctx);
+public class MethodCommandTest implements RuntimeTest {
+    private final MethodCommand command = new MethodCommand(getRuntime());
 
     @Test
+    @SneakyThrows
     public void testExceptions() {
-        val type = CommandException.class;
-        var exc = assertThrows(type, mc::execute);
-        assertEquals("Specify an owner and name!", exc.getMessage());
-        exc = assertThrows(type, () -> mc.execute(""));
-        assertEquals("Specify an owner and name!", exc.getMessage());
-        exc = assertThrows(type, () -> mc.execute("", ""));
-        assertEquals("Specify an owner and name!", exc.getMessage());
-        exc = assertThrows(type, () -> mc.execute("", "", ""));
-        assertTrue(exc.getMessage().startsWith("Couldn't parse"));
-        exc = assertThrows(type, () -> mc.execute("", "1", ""));
-        assertTrue(exc.getMessage().startsWith("There's no Object at "));
-        // TODO: bla bla bla
+        val called = new AtomicBoolean();
+        assertFalse(called.get());
+        command.ctx.getVm().set(called, 0);
+        command.ctx.getVm().set(true, 1);
+
+        command.execute("method", "0", "set", "1", "1");
+        assertTrue(called.get());
+        assertNull(command.ctx.getVm().get(1));
+
+        // TODO: test methods with same name!
     }
 
 }

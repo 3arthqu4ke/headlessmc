@@ -6,7 +6,6 @@ import me.earth.headlessmc.command.ParseUtil;
 import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.util.ClassHelper;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.stream.Collectors;
 
 public class MethodCommand extends AbstractReflectionCommand {
@@ -24,12 +23,13 @@ public class MethodCommand extends AbstractReflectionCommand {
 
         Class<?> clazz = o instanceof Class ? (Class<?>) o : o.getClass();
         val helper = ClassHelper.of(clazz);
+        // TODO: this is fucked rn
         val methods = helper
             .getMethods()
             .stream()
-            .filter(m -> m.getName().equals(args[2]))
-            .filter(m -> args.length < 5
-                || ClassHelper.getArgs(true, m.getParameterTypes())
+            .filter(m -> m.getName().equals(args[2])
+                || args.length > 4
+                && ClassHelper.getArgs(true, m.getParameterTypes())
                               .equals(args[4]))
             .collect(Collectors.toList());
 
@@ -58,18 +58,13 @@ public class MethodCommand extends AbstractReflectionCommand {
                     + " store the result into.");
         }
 
-        Object[] arguments = new Object[method.getParameterTypes().length];
-        for (int i = 0; i < arguments.length; i++) {
-            int argAddress = ParseUtil.parseI(args[args.length - i - 1]);
-            arguments[arguments.length - i - 1] = ctx.getVm().get(argAddress);
-        }
-
+        Object[] arguments = parse(method.getParameterTypes(), args);
         int target = ParseUtil.parseI(args[3]);
         try {
             method.setAccessible(true);
             Object value = method.invoke(o, arguments);
             ctx.getVm().set(value, target);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
