@@ -89,6 +89,11 @@ public class FileManager {
         return file;
     }
 
+    public File[] listFiles() {
+        File[] result = getBase().listFiles();
+        return result == null ? new File[0] : result;
+    }
+
     public FileManager createRelative(String... base) {
         getDir(base);
         return relative(base);

@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.files;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import me.earth.headlessmc.launcher.util.IOConsumer;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,15 +11,20 @@ import java.nio.file.Files;
 @UtilityClass
 public class FileUtil {
     public static void delete(File file) throws IOException {
+        iterate(file, f -> Files.delete(f.toPath()));
+    }
+
+    public static void iterate(File file, IOConsumer<File> action)
+        throws IOException {
         for (File content : listFiles(file)) {
             if (content.isDirectory()) {
-                delete(content);
+                iterate(content, action);
             } else {
-                Files.delete(content.toPath());
+                action.accept(content);
             }
         }
 
-        Files.delete(file.toPath());
+        action.accept(file);
     }
 
     public static File[] listFiles(File file) {

@@ -11,10 +11,12 @@ import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
+import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.launcher.version.VersionUtil;
 import me.earth.headlessmc.logging.LoggingHandler;
@@ -42,6 +44,7 @@ public final class Main {
                                     new ProcessFactory(mcFiles, os), configs,
                                     javas, accounts);
         LauncherApi.setLauncher(launcher);
+        deleteOldFiles(launcher);
         versions.refresh();
         hmc.setCommandContext(new LaunchContext(launcher));
 
@@ -53,6 +56,24 @@ public final class Main {
         log.info(String.format("Minecraft Directory: %s", mcFiles.getBase()));
         hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
         in.listen(hmc);
+    }
+
+    private void deleteOldFiles(Launcher launcher) {
+        if (launcher.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
+            return;
+        }
+
+        for (val file : launcher.getFileManager().listFiles()) {
+            if (file.isDirectory() && UuidUtil.isUuid(file.getName())) {
+                try {
+                    log.debug("Deleting " + file.getAbsolutePath());
+                    FileUtil.delete(file);
+                } catch (IOException ioe) {
+                    log.error("Couldn't delete " + file.getName()
+                                  + " : " + ioe.getMessage());
+                }
+            }
+        }
     }
 
     private boolean isQuickExitCli(String[] args, Launcher launcher,
@@ -79,8 +100,13 @@ public final class Main {
         }
 
         if (quickExitCli) {
+            val command = cmd.toString();
+            if ("cli".equalsIgnoreCase(command.trim())) {
+                return false;
+            }
+
             launcher.setQuickExitCli(true);
-            launcher.getCommandContext().execute(cmd.toString());
+            launcher.getCommandContext().execute(command);
             if (launcher.isWaitingForInput()) {
                 in.listen(launcher);
             }

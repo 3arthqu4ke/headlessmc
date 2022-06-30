@@ -1,6 +1,7 @@
 package me.earth.headlessmc.logging;
 
 import lombok.Cleanup;
+import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.util.ResourceUtil;
 
 import java.io.*;
@@ -34,7 +35,10 @@ public class LoggingHandler extends StreamHandler {
         @Cleanup
         InputStream is = ResourceUtil.getHmcResource("logging.properties");
         LogManager.getLogManager().readConfiguration(is);
-        LogLevelUtil.setLevel(Level.INFO);
+        String property = System.getProperty(HmcProperties.LOGLEVEL.getName());
+        if (property == null || !LogLevelUtil.trySetLevel(property)) {
+            LogLevelUtil.setLevel(Level.INFO);
+        }
     }
 
 }
