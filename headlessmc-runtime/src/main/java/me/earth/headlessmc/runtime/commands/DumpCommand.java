@@ -9,6 +9,8 @@ import me.earth.headlessmc.runtime.util.ClassHelper;
 public class DumpCommand extends AbstractRuntimeCommand {
     public DumpCommand(Runtime ctx) {
         super(ctx, "dump", "Dumps the object at the given memory address.");
+        args.put("<addr>", "Address of the object to dump.");
+        args.put("-vm", "If all filled addresses should get dumped.");
     }
 
     @Override

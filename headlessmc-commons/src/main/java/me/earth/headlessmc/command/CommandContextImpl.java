@@ -23,21 +23,18 @@ public class CommandContextImpl implements CommandContext {
 
     @Override
     public void execute(String message) {
-        val partCommands = CommandUtil.split(message);
-        for (val partCommand : partCommands) {
-            boolean notFound = true;
-            for (val cmd : this) {
-                if (cmd.matches(partCommand)) {
-                    executeCommand(cmd, partCommand);
-                    notFound = false;
-                    break;
-                }
+        val args = CommandUtil.split(message);
+        boolean notFound = true;
+        for (val cmd : this) {
+            if (cmd.matches(args)) {
+                executeCommand(cmd, args);
+                notFound = false;
+                break;
             }
+        }
 
-            if (notFound) {
-                fail(partCommand);
-                return;
-            }
+        if (notFound) {
+            fail(args);
         }
     }
 

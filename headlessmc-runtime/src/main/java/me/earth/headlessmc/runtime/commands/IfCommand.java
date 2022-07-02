@@ -9,6 +9,9 @@ import me.earth.headlessmc.runtime.Runtime;
 public class IfCommand extends AbstractRuntimeCommand {
     public IfCommand(Runtime ctx) {
         super(ctx, "if", "Only executes something if a value is true.");
+        args.put("<addr>", "Address which might contain a Boolean.TRUE.");
+        args.put("<if>", "Command to execute if the address is true.");
+        args.put("<else>", "Command to execute if the address isn't true.");
     }
 
     @Override

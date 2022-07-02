@@ -27,6 +27,12 @@ public class RunnableCommandTest implements RuntimeTest {
         assertInstanceOf(Runnable.class, command.ctx.getVm().get(0));
         ((Runnable) command.ctx.getVm().get(0)).run();
         assertTrue((Boolean) command.ctx.getVm().get(0));
+
+        command.execute("runnable", "0", "boolean true 1", "string false 2");
+        assertInstanceOf(Runnable.class, command.ctx.getVm().get(0));
+        ((Runnable) command.ctx.getVm().get(0)).run();
+        assertTrue((Boolean) command.ctx.getVm().get(1));
+        assertEquals("false", command.ctx.getVm().get(2));
     }
 
 }

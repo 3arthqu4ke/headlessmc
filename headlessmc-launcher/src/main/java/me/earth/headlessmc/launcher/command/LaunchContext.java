@@ -20,6 +20,7 @@ public class LaunchContext extends CommandContextImpl {
         add(new PasswordCommand(ctx));
         add(new LoginCommand(ctx));
         add(new DownloadCommand(ctx));
+        add(new MultiCommand(ctx));
     }
 
 }

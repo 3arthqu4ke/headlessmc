@@ -10,7 +10,11 @@ import java.lang.reflect.Field;
 
 public class FieldCommand extends AbstractReflectionCommand {
     public FieldCommand(Runtime ctx) {
-        super(ctx, "field", "Gets a field.");
+        super(ctx, "field", "Gets/sets a field.");
+        args.put("<name>", "Name of the field.");
+        args.put("<get/set>",
+                 "Address to store the field into, or to set the field from.");
+        args.put("-set", "If the field should be set instead of retrieved.");
     }
 
     @Override

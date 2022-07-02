@@ -7,12 +7,17 @@ import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.util.ClassHelper;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class NewCommand extends AbstractReflectionCommand {
     public NewCommand(Runtime ctx) {
         super(ctx, "new", "Creates a new object.");
+        args.put("<target>", "Address to store the created object at.");
+        args.put("<constructor>",
+                 "Optional, Signature of a specific constructor.");
+        args.put("<args>", "Multiple addresses containing the arguments.");
     }
 
     @Override

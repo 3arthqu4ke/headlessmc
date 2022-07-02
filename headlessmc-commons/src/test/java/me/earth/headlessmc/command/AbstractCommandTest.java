@@ -14,7 +14,7 @@ public class AbstractCommandTest {
         Assertions.assertEquals(DummyCommand.DESC, command.getDescription());
         Assertions.assertFalse(command.getArgs().iterator().hasNext());
 
-        val expectedArg = "testArg";
+        val expectedArg = "<testArg>";
         val expectedArgDesc = "argDesc";
         command.args.put(expectedArg, expectedArgDesc);
         Assertions.assertTrue(command.getArgs().iterator().hasNext());
@@ -22,6 +22,8 @@ public class AbstractCommandTest {
                                 command.getArgs().iterator().next());
         Assertions.assertEquals(expectedArgDesc,
                                 command.getArgDescription(expectedArg));
+        Assertions.assertEquals(expectedArgDesc,
+                                command.getArgDescription("testArg"));
     }
 
     @Test

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Map;
 
 public class CommandContextTest {
     // own instance because we want to test the log
@@ -20,9 +21,11 @@ public class CommandContextTest {
         val ctx = new CommandContextImpl(HMC);
         ctx.add(TestCommands.COMMAND_1);
         ctx.add(TestCommands.COMMAND_2);
+        ctx.add(new MultiCommand(HMC));
+        HMC.setCommandContext(ctx);
         TestCommands.COMMAND_1.setUsed(false);
         TestCommands.COMMAND_2.setUsed(false);
-        Assertions.assertEquals(2, ctx.commands.size());
+        Assertions.assertEquals(3, ctx.commands.size());
         Assertions.assertEquals(TestCommands.COMMAND_1, ctx.commands.get(0));
         Assertions.assertEquals(TestCommands.COMMAND_2, ctx.commands.get(1));
 
@@ -39,7 +42,7 @@ public class CommandContextTest {
         Assertions.assertTrue(TestCommands.COMMAND_2.isUsed());
         TestCommands.COMMAND_2.setUsed(false);
 
-        ctx.execute("Command2;Command1");
+        ctx.execute("multi Command2 Command1");
         Assertions.assertTrue(TestCommands.COMMAND_1.isUsed());
         Assertions.assertTrue(TestCommands.COMMAND_2.isUsed());
         TestCommands.COMMAND_1.setUsed(false);
@@ -51,7 +54,7 @@ public class CommandContextTest {
         Assertions.assertFalse(TestCommands.COMMAND_1.isUsed());
         Assertions.assertFalse(TestCommands.COMMAND_2.isUsed());
         Assertions.assertEquals(
-            "Couldn't find command for '[test]', did you mean 'command1'?",
+            "Couldn't find command for '[test]', did you mean 'multi'?",
             HMC.getLog());
     }
 
@@ -88,6 +91,11 @@ public class CommandContextTest {
         @Override
         public String getArgDescription(String arg) {
             return "";
+        }
+
+        @Override
+        public Iterable<Map.Entry<String, String>> getArgs2Descriptions() {
+            return Collections.emptyList();
         }
 
         @Override

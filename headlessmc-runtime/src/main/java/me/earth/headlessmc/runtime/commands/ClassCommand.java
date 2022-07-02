@@ -5,10 +5,17 @@ import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.command.ParseUtil;
 import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.util.ClassHelper;
+import me.earth.headlessmc.runtime.util.ClassUtil;
 
 public class ClassCommand extends AbstractRuntimeCommand {
     public ClassCommand(Runtime ctx) {
         super(ctx, "class", "Get and load classes.");
+        args.put("<name>", "Name of the class.");
+        args.put("<addr>", "Address to store the class in.");
+        args.put("-syscl", "If the SystemClassloader should be used.");
+        args.put("-dump", "If information about the class should be printed.");
+        args.put("-primitive", "If the given class if primitive.");
+        args.put("-v", "If the class should get dumped verbosely.");
     }
 
     @Override
@@ -25,7 +32,10 @@ public class ClassCommand extends AbstractRuntimeCommand {
 
         boolean init = CommandUtil.hasFlag("-init", args);
         try {
-            Class<?> c = Class.forName(args[1], init, classLoader);
+            Class<?> c = CommandUtil.hasFlag("-primitive", args)
+                ? ClassUtil.getPrimitiveClass(args[1])
+                : Class.forName(args[1], init, classLoader);
+
             if (CommandUtil.hasFlag("-dump", args)) {
                 ClassHelper.of(c).dump(ctx, CommandUtil.hasFlag("-v", args));
             }

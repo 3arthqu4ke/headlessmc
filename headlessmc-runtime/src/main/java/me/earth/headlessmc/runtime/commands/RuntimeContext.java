@@ -3,6 +3,7 @@ package me.earth.headlessmc.runtime.commands;
 import me.earth.headlessmc.command.*;
 import me.earth.headlessmc.runtime.Runtime;
 
+// TODO: array command?
 public class RuntimeContext extends CommandContextImpl {
     public RuntimeContext(Runtime ctx) {
         super(ctx);
@@ -31,6 +32,7 @@ public class RuntimeContext extends CommandContextImpl {
         add(new PasswordCommand(ctx));
         add(new IfCommand(ctx));
         add(new WhileCommand(ctx));
+        add(new MultiCommand(ctx));
     }
 
 }

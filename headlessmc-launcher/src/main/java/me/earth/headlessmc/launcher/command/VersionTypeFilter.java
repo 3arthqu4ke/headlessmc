@@ -43,9 +43,9 @@ public class VersionTypeFilter<T> {
 
     public static Map<String, String> getArgs() {
         val result = new HashMap<String, String>();
-        result.put("-release", "Only displays versions of type 'release'.");
-        result.put("-snapshot", "Only displays versions of type 'snapshot'.");
-        result.put("-other", "Only displays versions of unknown type.");
+        result.put("-release", "Doesn't display versions of type 'release'.");
+        result.put("-snapshot", "Doesn't display versions of type 'snapshot'.");
+        result.put("-other", "Doesn't display versions of unknown type.");
         return result;
     }
 

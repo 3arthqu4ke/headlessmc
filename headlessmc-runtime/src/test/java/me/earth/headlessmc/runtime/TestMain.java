@@ -20,7 +20,8 @@ public class TestMain {
 
     public static final class DummyMain {
         @SneakyThrows
-        public static void main(String[] args) {
+        @SuppressWarnings("unused")
+        private static void main(String[] args) {
             log.info("Dummy main called!");
             Thread.sleep(Integer.MAX_VALUE);
         }

@@ -7,6 +7,7 @@ import me.earth.headlessmc.runtime.Runtime;
 public abstract class AbstractReflectionCommand extends AbstractRuntimeCommand {
     public AbstractReflectionCommand(Runtime ctx, String name, String desc) {
         super(ctx, name, desc);
+        args.put("<obj>", "Address of the object to use.");
     }
 
     protected abstract void execute(Object obj, int addr, String... args)

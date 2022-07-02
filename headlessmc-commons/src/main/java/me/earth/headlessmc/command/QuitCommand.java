@@ -5,7 +5,7 @@ import me.earth.headlessmc.command.AbstractCommand;
 
 public class QuitCommand extends AbstractCommand {
     public QuitCommand(HeadlessMc ctx) {
-        super(ctx, "quit", "Quits the launcher.");
+        super(ctx, "quit", "Quits HeadlessMc.");
     }
 
     @Override

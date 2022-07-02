@@ -20,11 +20,10 @@ public class CommandUtil {
      * @param message the message to split.
      * @return the message split into arguments.
      */
-    public static String[][] split(String message) {
-        List<String[]> result = new ArrayList<>();
+    public static String[] split(String message) {
+        List<String> result = new ArrayList<>();
         boolean quoted = false;
         boolean escaped = false;
-        List<String> currentCommand = new ArrayList<>();
         StringBuilder currentArg = new StringBuilder();
         for (int i = 0; i < message.length(); i++) {
             char ch = message.charAt(i);
@@ -35,7 +34,7 @@ public class CommandUtil {
                 escaped = true;
             } else if (ch == '"') {
                 if (quoted) {
-                    currentCommand.add(currentArg.toString());
+                    result.add(currentArg.toString());
                     currentArg = new StringBuilder();
                 }
 
@@ -45,32 +44,20 @@ public class CommandUtil {
                     currentArg.append(ch);
                 } else {
                     if (currentArg.length() != 0) {
-                        currentCommand.add(currentArg.toString());
+                        result.add(currentArg.toString());
                         currentArg = new StringBuilder();
                     }
                 }
-            } else if (ch == ';') {
-                if (currentArg.length() > 0) {
-                    currentCommand.add(currentArg.toString());
-                    currentArg = new StringBuilder();
-                }
-
-                result.add(currentCommand.toArray(new String[0]));
-                currentCommand = new ArrayList<>();
             } else {
                 currentArg.append(ch);
             }
         }
 
         if (currentArg.length() > 0) {
-            currentCommand.add(currentArg.toString());
+            result.add(currentArg.toString());
         }
 
-        if (currentCommand.size() > 0) {
-            result.add(currentCommand.toArray(new String[0]));
-        }
-
-        return result.toArray(new String[0][0]);
+        return result.toArray(new String[0]);
     }
 
     /**

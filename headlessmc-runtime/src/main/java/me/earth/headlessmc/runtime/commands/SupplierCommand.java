@@ -10,6 +10,9 @@ import java.util.function.Supplier;
 public class SupplierCommand extends AbstractRuntimeCommand {
     public SupplierCommand(Runtime ctx) {
         super(ctx, "supplier", "Turns the given command into a supplier.");
+        args.put("<cmd>", "The command to execute when 'get' is called.");
+        args.put("<addr>", "The address to store the supplier into.");
+        args.put("<result>", "The address to return the result of 'get' from.");
     }
 
     @Override

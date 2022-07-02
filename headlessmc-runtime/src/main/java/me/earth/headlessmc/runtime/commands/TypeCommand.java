@@ -12,8 +12,8 @@ public class TypeCommand extends AbstractRuntimeCommand {
     public TypeCommand(Runtime ctx, String name, String desc, TypeParser p) {
         super(ctx, name, desc);
         this.parser = p;
-        this.args.put("<obj>", "The object to allocate");
-        this.args.put("<address>", "Where to store the object");
+        this.args.put("<obj>", "The string to parse.");
+        this.args.put("<addr>", "Where to store the object");
     }
 
     public static TypeCommand ofType(Runtime ctx, String type, TypeParser p) {

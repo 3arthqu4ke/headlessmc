@@ -34,5 +34,6 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Long> DEFAULT_JAVA = number("hmc.version.defaultJava");
     Property<Boolean> KEEP_FILES = bool("hmc.keepfiles");
+    Property<String> LAUNCHER_PROFILES = string("hmc.launcher_profiles.json");
 
 }
