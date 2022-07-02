@@ -12,15 +12,15 @@ import me.earth.headlessmc.api.config.HasConfig;
 
 @RequiredArgsConstructor
 public class HeadlessMcImpl implements HeadlessMc {
-    @Getter
-    @Setter
-    private CommandContext commandContext;
     @Delegate
     private final LogsMessages log;
     @Delegate
     private final HasConfig configHolder;
     @Delegate
     private final PasswordAware passwordAware;
+    @Getter
+    @Setter
+    private CommandContext commandContext;
     @Getter
     @Setter
     private boolean waitingForInput;

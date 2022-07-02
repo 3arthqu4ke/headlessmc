@@ -76,7 +76,7 @@ class LibraryFactory {
                         if (os.equalsIgnoreCase(osIn.getType().getName())
                             // check that we have the right arch version
                             && nativeWithReplace.replace(
-                                "${arch}", osIn.isArch() ? "64" : "32")
+                                                    "${arch}", osIn.isArch() ? "64" : "32")
                                                 .equals(nativeName)) {
                             return rule.apply(osIn, f);
                         }

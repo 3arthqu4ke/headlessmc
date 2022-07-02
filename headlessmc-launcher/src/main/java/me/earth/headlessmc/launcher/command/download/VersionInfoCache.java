@@ -26,6 +26,12 @@ class VersionInfoCache implements Collection<VersionInfo> {
     @Getter
     private String latestRelease = "unknown";
 
+    @SneakyThrows
+    private static URL getUrl() {
+        return new URL(
+            "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+    }
+
     public List<VersionInfo> cache(boolean force) {
         if (infos != EMPTY && !force) {
             return infos;
@@ -79,12 +85,6 @@ class VersionInfoCache implements Collection<VersionInfo> {
         val url = JsonUtil.getString(jo, "url");
 
         return new VersionInfo(id, name, type, url);
-    }
-
-    @SneakyThrows
-    private static URL getUrl() {
-        return new URL(
-            "https://launchermeta.mojang.com/mc/game/version_manifest.json");
     }
 
 }

@@ -62,11 +62,11 @@ public class MethodCommand extends AbstractReflectionCommand {
 
         var result = methods.get(0);
         if (methods.size() > 1) {
-             val filteredByArgs = methods
-                 .stream()
-                 .filter(m -> ClassHelper.getArgs(true, m.getParameterTypes())
-                                         .equals(args[3]))
-                 .findFirst();
+            val filteredByArgs = methods
+                .stream()
+                .filter(m -> ClassHelper.getArgs(true, m.getParameterTypes())
+                                        .equals(args[3]))
+                .findFirst();
 
             if (!filteredByArgs.isPresent()) {
                 ctx.log("Following methods with name '" + args[2] + "' are "
@@ -87,7 +87,7 @@ public class MethodCommand extends AbstractReflectionCommand {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private String joinArray(int startIndex, String...args) {
+    private String joinArray(int startIndex, String... args) {
         val sb = new StringBuilder();
         for (int i = startIndex; i < args.length; i++) {
             sb.append(" ").append(args[i]);

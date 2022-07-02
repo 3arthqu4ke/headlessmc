@@ -7,11 +7,11 @@ public interface Redirection {
     String METHOD_DESC = "(Ljava/lang/Object;Ljava/lang/String;" +
         "Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;";
 
-    Object invoke(Object obj, String desc, Class<?> type, Object... args)
-        throws Throwable;
-
     static Redirection of(Object value) {
         return (obj, desc, type, args) -> value;
     }
+
+    Object invoke(Object obj, String desc, Class<?> type, Object... args)
+        throws Throwable;
 
 }

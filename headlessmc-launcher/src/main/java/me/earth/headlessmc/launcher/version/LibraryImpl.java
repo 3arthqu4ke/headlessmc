@@ -1,6 +1,8 @@
 package me.earth.headlessmc.launcher.version;
 
-import lombok.*;
+import lombok.Data;
+import lombok.val;
+import lombok.var;
 import me.earth.headlessmc.launcher.os.OS;
 
 import java.io.File;

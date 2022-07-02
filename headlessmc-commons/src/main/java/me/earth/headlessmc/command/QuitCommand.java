@@ -1,7 +1,6 @@
 package me.earth.headlessmc.command;
 
 import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.command.AbstractCommand;
 
 public class QuitCommand extends AbstractCommand {
     public QuitCommand(HeadlessMc ctx) {

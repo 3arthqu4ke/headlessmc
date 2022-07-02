@@ -21,7 +21,8 @@ import java.util.Properties;
 public class ConfigService extends Service<Config> implements HasConfig {
     private static final String ENDING = ".properties";
     private final FileManager fileManager;
-    @Getter @Setter
+    @Getter
+    @Setter
     private Config config;
 
     @Override
@@ -49,7 +50,7 @@ public class ConfigService extends Service<Config> implements HasConfig {
 
         setConfig(result.get(0));
         log.debug("Found " + result.size() + " config(s), active config: "
-                     + getConfig().getName());
+                      + getConfig().getName());
         return result;
     }
 

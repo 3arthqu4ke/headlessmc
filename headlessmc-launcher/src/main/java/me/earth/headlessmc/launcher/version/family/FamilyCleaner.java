@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.version.family;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.HasName;
-import me.earth.headlessmc.api.HeadlessMc;
 
 import java.util.Collection;
 import java.util.Set;
@@ -32,8 +31,8 @@ public class FamilyCleaner<T extends HasParent<T> & HasName> {
             family.getMembers().forEach(member -> {
                 if (invalids.add(member)) {
                     log.warning(member.getName()
-                                   + "'s family has malformed "
-                                   + "members, ignoring it.");
+                                    + "'s family has malformed "
+                                    + "members, ignoring it.");
                 }
             });
         }
@@ -44,8 +43,8 @@ public class FamilyCleaner<T extends HasParent<T> & HasName> {
             family.getMembers().forEach(parent -> {
                 if (invalids.add(parent)) {
                     log.warning("Parents of "
-                                   + parent.getName()
-                                   + " are circular!");
+                                    + parent.getName()
+                                    + " are circular!");
                 }
             });
         }

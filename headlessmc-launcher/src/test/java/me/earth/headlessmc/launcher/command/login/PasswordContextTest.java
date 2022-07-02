@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.command.login;
 
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import org.junit.jupiter.api.Assertions;

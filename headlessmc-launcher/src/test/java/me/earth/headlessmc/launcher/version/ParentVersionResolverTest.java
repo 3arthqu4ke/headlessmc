@@ -6,7 +6,6 @@ import me.earth.headlessmc.launcher.UsesResources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.HashMap;
 
 public class ParentVersionResolverTest implements UsesResources {

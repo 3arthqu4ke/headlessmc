@@ -23,33 +23,6 @@ public class ClassHelper {
     private final Set<Method> methods;
     private final Set<Field> fields;
 
-    public void dump(LogsMessages out, boolean verbose) {
-        out.log("-----------------------------------");
-        Class<?> superClass = clazz.getSuperclass();
-        out.log(clazz.getName() + " : "
-                    + (superClass == null ? "null" : superClass.getName())
-                    + ", " + getArgs(verbose, clazz.getInterfaces()));
-        out.log("--------------Fields---------------");
-        out.log(getFieldTable(verbose).build());
-        out.log("-----------Constructors------------");
-        out.log(getConstructorTable(verbose).build());
-        out.log("--------------Methods--------------");
-        out.log(getMethodTable(verbose).build());
-        out.log("-----------------------------------");
-    }
-
-    public Table<Field> getFieldTable(boolean verbose) {
-        return getFieldTable(fields, verbose);
-    }
-
-    public Table<Constructor<?>> getConstructorTable(boolean verbose) {
-        return getConstructorTable(constructors, verbose);
-    }
-
-    public Table<Method> getMethodTable(boolean verbose) {
-        return getMethodTable(methods, verbose);
-    }
-
     public static Table<Field> getFieldTable(Iterable<Field> fields,
                                              boolean verbose) {
         return new Table<Field>()
@@ -124,6 +97,33 @@ public class ClassHelper {
 
         return new ClassHelper(
             clazz, new HashSet<>(Arrays.asList(constructors)), methods, fields);
+    }
+
+    public void dump(LogsMessages out, boolean verbose) {
+        out.log("-----------------------------------");
+        Class<?> superClass = clazz.getSuperclass();
+        out.log(clazz.getName() + " : "
+                    + (superClass == null ? "null" : superClass.getName())
+                    + ", " + getArgs(verbose, clazz.getInterfaces()));
+        out.log("--------------Fields---------------");
+        out.log(getFieldTable(verbose).build());
+        out.log("-----------Constructors------------");
+        out.log(getConstructorTable(verbose).build());
+        out.log("--------------Methods--------------");
+        out.log(getMethodTable(verbose).build());
+        out.log("-----------------------------------");
+    }
+
+    public Table<Field> getFieldTable(boolean verbose) {
+        return getFieldTable(fields, verbose);
+    }
+
+    public Table<Constructor<?>> getConstructorTable(boolean verbose) {
+        return getConstructorTable(constructors, verbose);
+    }
+
+    public Table<Method> getMethodTable(boolean verbose) {
+        return getMethodTable(methods, verbose);
     }
 
 }

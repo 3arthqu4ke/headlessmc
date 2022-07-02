@@ -25,14 +25,14 @@ public class ArgumentAdapterTest implements UsesResources {
 
         val adapter = new ArgumentAdapter(merger.getArguments());
         Assertions.assertEquals(Arrays.asList(
-            "-DThing=Thing", "-XstartOnFirstThread",
-                "-DSomeSystemProperty=${some_arg}", "-cp", "${classpath}"),
-            adapter.build(mac_os, features, "jvm"));
+                                    "-DThing=Thing", "-XstartOnFirstThread",
+                                    "-DSomeSystemProperty=${some_arg}", "-cp", "${classpath}"),
+                                adapter.build(mac_os, features, "jvm"));
 
         Assertions.assertEquals(Arrays.asList(
-            "--username", "${auth_player_name}",
-            "--versionType", "${version_type}"),
-            adapter.build(mac_os, features, "game"));
+                                    "--username", "${auth_player_name}",
+                                    "--versionType", "${version_type}"),
+                                adapter.build(mac_os, features, "game"));
 
         // TODO: too lazy to add more rn, but test around with features, os etc.
     }

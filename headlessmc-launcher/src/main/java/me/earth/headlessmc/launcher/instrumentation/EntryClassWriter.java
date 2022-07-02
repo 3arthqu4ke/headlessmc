@@ -21,6 +21,17 @@ public class EntryClassWriter extends ClassWriter {
         this.classLoader = EntryClassLoader.from(stream);
     }
 
+    @Override
+    protected String getCommonSuperClass(String type1, String type2) {
+        try {
+            return super.getCommonSuperClass(type1, type2);
+        } catch (TypeNotPresentException | NoClassDefFoundError e) {
+            log.error("Couldn't find common super class! " + type1 + ", "
+                          + type2 + " : " + e.getMessage());
+            return "java/lang/Object";
+        }
+    }
+
     // TODO: can we improve this and not create a new ClassLoader everytime?
     private static final class EntryClassLoader extends URLClassLoader {
         public EntryClassLoader(URL[] urls) {
@@ -35,17 +46,6 @@ public class EntryClassWriter extends ClassWriter {
             }
 
             return new EntryClassLoader(urls.toArray(new URL[0]));
-        }
-    }
-
-    @Override
-    protected String getCommonSuperClass(String type1, String type2) {
-        try {
-            return super.getCommonSuperClass(type1, type2);
-        } catch (TypeNotPresentException | NoClassDefFoundError e) {
-            log.error("Couldn't find common super class! " + type1 + ", "
-                          + type2 + " : " + e.getMessage());
-            return "java/lang/Object";
         }
     }
 

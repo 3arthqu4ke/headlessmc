@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 public class TableTest {
     private static final String EXPECTED =
         "text     length\n" +
-        "Test     4\n" +
-        "Test2    5\n" +
-        "Test3_   6";
+            "Test     4\n" +
+            "Test2    5\n" +
+            "Test3_   6";
 
     @Test
     public void testTable() {

@@ -16,6 +16,10 @@ public class ConfigImpl implements Config {
     @Getter
     private final int id;
 
+    public static Config empty() {
+        return new ConfigImpl(new Properties(), "empty", -1);
+    }
+
     @Override
     public <T> T getValue(Property<T> property, Supplier<T> defaultValue) {
         String value = System.getProperty(property.getName());
@@ -28,10 +32,6 @@ public class ConfigImpl implements Config {
 
         T result = property.parse(value);
         return result == null ? defaultValue.get() : result;
-    }
-
-    public static Config empty() {
-        return new ConfigImpl(new Properties(), "empty", -1);
     }
 
 }

@@ -11,6 +11,10 @@ public class Lwjgl {
         this.string = (String) string;
     }
 
+    public static Lwjgl factoryMethod(String dontCall) {
+        return null;
+    }
+
     public byte[] returnsByteArray(String dummy) {
         return null;
     }
@@ -25,10 +29,6 @@ public class Lwjgl {
 
     public short someShortMethod() {
         return (short) 0;
-    }
-
-    public static Lwjgl factoryMethod(String dontCall) {
-        return null;
     }
 
 }

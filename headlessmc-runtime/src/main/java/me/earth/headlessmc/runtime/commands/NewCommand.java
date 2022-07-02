@@ -34,8 +34,8 @@ public class NewCommand extends AbstractReflectionCommand {
             .getConstructors()
             .stream()
             .filter(c -> args.length > 3
-                &&  ClassHelper.getArgs(true, c.getParameterTypes())
-                               .equalsIgnoreCase(args[3]))
+                && ClassHelper.getArgs(true, c.getParameterTypes())
+                              .equalsIgnoreCase(args[3]))
             .findFirst()
             // java generic insanity
             .<List<Constructor<?>>>map(Collections::singletonList)

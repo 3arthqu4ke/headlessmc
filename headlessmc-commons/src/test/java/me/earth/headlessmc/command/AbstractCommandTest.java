@@ -44,13 +44,13 @@ public class AbstractCommandTest {
             super(ctx, NAME, DESC);
         }
 
+        public static DummyCommand getCommand() {
+            return new DummyCommand(MockedHeadlessMc.INSTANCE);
+        }
+
         @Override
         public void execute(String... args) {
 
-        }
-
-        public static DummyCommand getCommand() {
-            return new DummyCommand(MockedHeadlessMc.INSTANCE);
         }
     }
 

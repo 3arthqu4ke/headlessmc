@@ -7,18 +7,18 @@ import java.nio.ByteBuffer;
  */
 @SuppressWarnings("unused")
 public abstract class AbstractLwjglClass {
-    public abstract void abstractMethod();
-
-    public long someMethod() {
-        return 100L;
-    }
-
     public static ByteBuffer returnsAbstractByteBuffer(String arg) {
         return ByteBuffer.wrap(new byte[0]);
     }
 
     public static AbstractLwjglClass factoryMethod(String dontCall) {
         return null;
+    }
+
+    public abstract void abstractMethod();
+
+    public long someMethod() {
+        return 100L;
     }
 
 }

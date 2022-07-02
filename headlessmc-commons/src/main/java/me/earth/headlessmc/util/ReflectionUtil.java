@@ -57,9 +57,9 @@ public class ReflectionUtil {
      * objects. Objects which are <tt>null</tt> will be skipped and {@link
      * IllegalAccessException}s will be swallowed.
      *
-     * @param object  the object whose fields to collect.
-     * @param type fields of this type will be collected.
-     * @param <T>  the type of the field to collect.
+     * @param object the object whose fields to collect.
+     * @param type   fields of this type will be collected.
+     * @param <T>    the type of the field to collect.
      * @return a list of objects behind the fields in the given object.
      */
     public static <T> List<T> collect(Object object, Class<T> type) {

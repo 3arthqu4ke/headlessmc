@@ -12,13 +12,13 @@ import java.nio.IntBuffer;
 public enum STBIImageRedirection implements Redirection {
     INSTANCE;
 
-    private static final BufferedImage DUMMY =
-        new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     public static final String DESC =
         "Lorg/lwjgl/stb/STBImage;stbi_load_from_memory(" +
             "Ljava/nio/ByteBuffer;Ljava/nio/IntBuffer;" +
             "Ljava/nio/IntBuffer;Ljava/nio/IntBuffer;" +
             "I)Ljava/nio/ByteBuffer;";
+    private static final BufferedImage DUMMY =
+        new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
     @Override
     public Object invoke(Object obj, String desc, Class<?> type, Object... args)

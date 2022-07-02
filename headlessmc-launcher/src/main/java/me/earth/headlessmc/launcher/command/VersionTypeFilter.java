@@ -17,6 +17,18 @@ import java.util.stream.Collectors;
 public class VersionTypeFilter<T> {
     private final Function<T, String> typeGetter;
 
+    public static VersionTypeFilter<Version> forVersions() {
+        return new VersionTypeFilter<>(Version::getType);
+    }
+
+    public static Map<String, String> getArgs() {
+        val result = new HashMap<String, String>();
+        result.put("-release", "Doesn't display versions of type 'release'.");
+        result.put("-snapshot", "Doesn't display versions of type 'snapshot'.");
+        result.put("-other", "Doesn't display versions of unknown type.");
+        return result;
+    }
+
     public Collection<T> apply(Collection<T> collection, String... args) {
         var r = collection;
         r = filter("-release", r, t -> !"release".equalsIgnoreCase(t), args);
@@ -35,18 +47,6 @@ public class VersionTypeFilter<T> {
         }
 
         return coll;
-    }
-
-    public static VersionTypeFilter<Version> forVersions() {
-        return new VersionTypeFilter<>(Version::getType);
-    }
-
-    public static Map<String, String> getArgs() {
-        val result = new HashMap<String, String>();
-        result.put("-release", "Doesn't display versions of type 'release'.");
-        result.put("-snapshot", "Doesn't display versions of type 'snapshot'.");
-        result.put("-other", "Doesn't display versions of unknown type.");
-        return result;
     }
 
 }

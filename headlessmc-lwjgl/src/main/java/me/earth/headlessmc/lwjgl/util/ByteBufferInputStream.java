@@ -6,7 +6,8 @@ import java.nio.ByteBuffer;
 
 /**
  * {@link InputStream} wrapping a {@link ByteBuffer}. Note that every read will
- * advance the buffer. */
+ * advance the buffer.
+ */
 // TODO: we should/could also read without advancing the buffer
 public class ByteBufferInputStream extends InputStream {
     private final ByteBuffer buffer;

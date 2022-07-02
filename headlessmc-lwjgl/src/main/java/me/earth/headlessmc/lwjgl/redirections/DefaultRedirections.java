@@ -8,7 +8,6 @@ import java.util.Map;
 
 @UtilityClass
 public class DefaultRedirections {
-    private static final Map<Class<?>, Redirection> DEFAULTS = new HashMap<>();
     public static final Redirection NULL =
         (obj, desc, type, args) -> null;
     public static final Redirection BOOLEAN =
@@ -33,10 +32,7 @@ public class DefaultRedirections {
         (obj, desc, type, args) -> args[0] == args[1];
     public static final Redirection HASHCODE =
         (obj, desc, type, args) -> System.identityHashCode(args[0]);
-
-    public static Redirection fallback(Class<?> type, Redirection object) {
-        return DEFAULTS.getOrDefault(type, object);
-    }
+    private static final Map<Class<?>, Redirection> DEFAULTS = new HashMap<>();
 
     static {
         DEFAULTS.put(void.class, NULL);
@@ -50,6 +46,10 @@ public class DefaultRedirections {
         DEFAULTS.put(char.class, CHAR);
         DEFAULTS.put(String.class, STRING);
         DEFAULTS.put(CharSequence.class, STRING);
+    }
+
+    public static Redirection fallback(Class<?> type, Redirection object) {
+        return DEFAULTS.getOrDefault(type, object);
     }
 
 }

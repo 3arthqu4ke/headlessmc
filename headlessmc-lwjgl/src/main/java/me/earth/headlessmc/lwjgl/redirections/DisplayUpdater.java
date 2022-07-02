@@ -22,14 +22,6 @@ public class DisplayUpdater implements Redirection {
         this(getTime());
     }
 
-    @Override
-    public Object invoke(Object obj, String desc, Class<?> type, Object... args)
-        throws Throwable {
-        // we could scale this with the refresh rate?
-        Thread.sleep(time);
-        return null;
-    }
-
     private static long getTime() {
         try {
             return Long.parseLong(
@@ -37,6 +29,14 @@ public class DisplayUpdater implements Redirection {
         } catch (NumberFormatException nfe) {
             return 10L;
         }
+    }
+
+    @Override
+    public Object invoke(Object obj, String desc, Class<?> type, Object... args)
+        throws Throwable {
+        // we could scale this with the refresh rate?
+        Thread.sleep(time);
+        return null;
     }
 
 }

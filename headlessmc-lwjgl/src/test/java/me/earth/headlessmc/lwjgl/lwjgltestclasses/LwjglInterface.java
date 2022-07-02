@@ -5,14 +5,14 @@ package me.earth.headlessmc.lwjgl.lwjgltestclasses;
  */
 @SuppressWarnings("unused")
 public interface LwjglInterface {
+    static LwjglInterface factoryMethod(String dontCall) {
+        return null;
+    }
+
     void abstractMethod();
 
     default int someMethod() {
         return 0;
-    }
-
-    static LwjglInterface factoryMethod(String dontCall) {
-        return null;
     }
 
 }

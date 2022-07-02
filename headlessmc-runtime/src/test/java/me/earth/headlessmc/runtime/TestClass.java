@@ -12,10 +12,10 @@ public class TestClass<T> {
 
     private static final String STATIC_FINAL_FIELD = "test";
     static int STATIC_FIELD;
+    public final String ctr;
     protected final T final_field = null;
     public long field_with_100 = 100L;
     public String value;
-    public final String ctr;
     public T secondVal;
     public String calledMethod;
     public String parameter;
@@ -39,15 +39,15 @@ public class TestClass<T> {
         this.ctr = NOARGS_CTR;
     }
 
+    static String staticMethod(long arg, String... args) {
+        return "";
+    }
+
     public void setter(String value) {
         this.value = value;
     }
 
     public String method() {
-        return "";
-    }
-
-    static String staticMethod(long arg, String... args) {
         return "";
     }
 

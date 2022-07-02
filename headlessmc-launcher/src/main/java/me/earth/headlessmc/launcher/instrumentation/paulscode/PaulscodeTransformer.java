@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.instrumentation.paulscode;
 
 import lombok.CustomLog;
-import lombok.var;
 import me.earth.headlessmc.launcher.instrumentation.AbstractClassTransformer;
 import me.earth.headlessmc.launcher.instrumentation.Target;
 import org.objectweb.asm.Opcodes;

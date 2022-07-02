@@ -23,7 +23,7 @@ public class EntryStream extends InputStream {
 
     public static EntryStream of(byte[] bytes, List<Target> ts, JarEntry je) {
         InputStream is = new ByteArrayInputStream(bytes);
-        EntryStream res =  new EntryStream(is, ts, je);
+        EntryStream res = new EntryStream(is, ts, je);
         res.setTransformed(true);
         return res;
     }

@@ -1,7 +1,5 @@
 package me.earth.headlessmc.command;
 
-import javafx.beans.binding.MapExpression;
-import lombok.val;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.Command;
@@ -32,7 +30,7 @@ public class HelpCommand extends AbstractCommand {
                     }
                 } else {
                     ctx.log(String.format("%s : %s", cmd.getName(),
-                                                   cmd.getDescription()));
+                                          cmd.getDescription()));
                     ctx.log(
                         new Table<Map.Entry<String, String>>()
                             .withColumn("arg", Map.Entry::getKey)

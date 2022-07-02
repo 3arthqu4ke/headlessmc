@@ -8,7 +8,6 @@ import me.earth.headlessmc.api.command.CommandException;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class YesNoContext implements CommandContext {

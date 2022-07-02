@@ -1,8 +1,8 @@
 package me.earth.headlessmc.lwjgl.launchwrapper;
 
 import me.earth.headlessmc.lwjgl.api.Transformer;
-import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
 import me.earth.headlessmc.lwjgl.transformer.AsmUtil;
+import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
