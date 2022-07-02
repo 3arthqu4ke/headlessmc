@@ -9,6 +9,8 @@ import me.earth.headlessmc.runtime.util.ClassHelper;
 public class DumpCommand extends AbstractRuntimeCommand {
     public DumpCommand(Runtime ctx) {
         super(ctx, "dump", "Dumps the object at the given memory address.");
+        args.put("<addr>", "Address of the object to dump.");
+        args.put("-vm", "If all filled addresses should get dumped.");
     }
 
     @Override
@@ -17,13 +19,22 @@ public class DumpCommand extends AbstractRuntimeCommand {
             throw new CommandException("Please specify an address!");
         }
 
-        int address = ParseUtil.parseI(args[1]);
-        Object obj = ctx.getVm().get(address);
-        if (obj instanceof Class) {
-            Class<?> c = (Class<?>) obj;
-            ClassHelper.of(c).dump(ctx, CommandUtil.hasFlag("-v", args));
+        if (args[1].equalsIgnoreCase("-vm")) {
+            for (int i = 0; i < ctx.getVm().size(); i++) {
+                Object obj = ctx.getVm().get(i);
+                if (obj != null) {
+                    ctx.log(i + " : " + obj);
+                }
+            }
         } else {
-            ctx.log(obj == null ? "null" : obj.toString());
+            int address = ParseUtil.parseI(args[1]);
+            Object obj = ctx.getVm().get(address);
+            if (obj instanceof Class) {
+                Class<?> c = (Class<?>) obj;
+                ClassHelper.of(c).dump(ctx, CommandUtil.hasFlag("-v", args));
+            } else {
+                ctx.log(obj == null ? "null" : obj.toString());
+            }
         }
     }
 

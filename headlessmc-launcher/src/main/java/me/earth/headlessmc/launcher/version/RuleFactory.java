@@ -78,9 +78,9 @@ class RuleFactory {
     private Rule ofOs(String type, Pattern version, Rule.Action action) {
         val osType = type == null ? null : OS.Type.valueOf(type.toUpperCase());
         return (os, features) -> osType != null && osType != os.getType()
-                || version != null && !version.matcher(os.getVersion()).find()
-                ? Rule.Action.UNDECIDED
-                : action;
+            || version != null && !version.matcher(os.getVersion()).find()
+            ? Rule.Action.UNDECIDED
+            : action;
     }
 
     private Rule ofFeature(Map<String, Boolean> features, Rule.Action action) {

@@ -10,6 +10,10 @@ import java.util.function.Function;
 public class FunctionCommand extends AbstractRuntimeCommand {
     public FunctionCommand(Runtime ctx) {
         super(ctx, "function", "Turns the given command into a function.");
+        args.put("<cmd>", "The command to be executed on apply.");
+        args.put("<addr>", "Where to store the function to.");
+        args.put("<in>", "Address to store the input at.");
+        args.put("<out>", "Address to return the output from.");
     }
 
     @Override

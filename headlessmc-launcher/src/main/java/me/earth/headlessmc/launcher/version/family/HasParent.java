@@ -12,6 +12,7 @@ public interface HasParent<T> {
     T getParent();
 
     // TODO: maybe move the mutability into a separate interface?
+
     /**
      * Sets the parent for this object. The given parent will now be returned by
      * {@link HasParent#getParent()}.

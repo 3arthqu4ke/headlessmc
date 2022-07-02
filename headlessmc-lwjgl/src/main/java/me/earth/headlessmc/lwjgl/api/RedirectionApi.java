@@ -21,6 +21,7 @@ public class RedirectionApi {
 
     /**
      * {@link me.earth.headlessmc.lwjgl.transformer.LwjglTransformer}.
+     *
      * @see Redirection
      */
     @SuppressWarnings("unused") // used by the transformer

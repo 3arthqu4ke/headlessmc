@@ -4,7 +4,6 @@ import lombok.Data;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.jar.JarFile;
 
 @Data

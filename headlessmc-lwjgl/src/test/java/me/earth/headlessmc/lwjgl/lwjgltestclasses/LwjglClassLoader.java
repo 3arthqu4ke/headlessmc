@@ -10,11 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This classloader can load all classes inside the
- * {@code me.earth.headlessmc.lwjgl.lwjgltestclasses} package
- * (which are on the SystemClassLoaders classpath), running them through the
- * given {@link Transformer}. Every other class will be loaded by the
- * SystemClassLoader.
+ * This classloader can load all classes inside the {@code
+ * me.earth.headlessmc.lwjgl.lwjgltestclasses} package (which are on the
+ * SystemClassLoaders classpath), running them through the given {@link
+ * Transformer}. Every other class will be loaded by the SystemClassLoader.
  */
 @RequiredArgsConstructor
 public class LwjglClassLoader extends ClassLoader {

@@ -7,7 +7,7 @@ import me.earth.headlessmc.launcher.java.Java;
 public class JavaCommand extends AbstractLauncherCommand {
     public JavaCommand(Launcher launcher) {
         super(launcher, "java", "Reloads the config property "
-            + LauncherProperties.JAVA + ".");
+            + LauncherProperties.JAVA.getName() + ".");
     }
 
     @Override

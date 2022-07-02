@@ -31,7 +31,17 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String getArgDescription(String arg) {
-        return args.get(arg);
+        String desc = args.get(arg);
+        if (desc == null) {
+            desc = args.get("<" + arg + ">");
+        }
+
+        return desc;
+    }
+
+    @Override
+    public Iterable<Map.Entry<String, String>> getArgs2Descriptions() {
+        return args.entrySet();
     }
 
 }

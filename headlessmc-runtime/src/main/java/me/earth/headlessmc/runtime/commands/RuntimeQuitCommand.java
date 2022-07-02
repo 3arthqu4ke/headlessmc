@@ -8,6 +8,7 @@ import me.earth.headlessmc.command.YesNoContext;
 public class RuntimeQuitCommand extends QuitCommand {
     public RuntimeQuitCommand(HeadlessMc ctx) {
         super(ctx);
+        args.put("-y", "Will not ask you if you want to quit.");
     }
 
     @Override

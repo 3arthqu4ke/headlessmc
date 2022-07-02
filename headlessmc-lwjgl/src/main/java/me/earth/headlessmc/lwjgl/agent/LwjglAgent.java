@@ -1,8 +1,8 @@
 package me.earth.headlessmc.lwjgl.agent;
 
-import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
 import me.earth.headlessmc.lwjgl.api.Transformer;
 import me.earth.headlessmc.lwjgl.transformer.AsmUtil;
+import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -16,6 +16,14 @@ import java.security.ProtectionDomain;
  */
 public class LwjglAgent implements ClassFileTransformer {
     private final Transformer transformer = new LwjglTransformer();
+
+    public static void premain(String args, Instrumentation instrumentation) {
+        instrumentation.addTransformer(new LwjglAgent());
+    }
+
+    public static void agentmain(String args, Instrumentation instrumentation) {
+        instrumentation.addTransformer(new LwjglAgent());
+    }
 
     @Override
     public byte[] transform(ClassLoader loader, String className,
@@ -31,14 +39,6 @@ public class LwjglAgent implements ClassFileTransformer {
         }
 
         return classfileBuffer;
-    }
-
-    public static void premain(String args, Instrumentation instrumentation) {
-        instrumentation.addTransformer(new LwjglAgent());
-    }
-
-    public static void agentmain(String args, Instrumentation instrumentation) {
-        instrumentation.addTransformer(new LwjglAgent());
     }
 
 }

@@ -7,6 +7,7 @@ import me.earth.headlessmc.runtime.Runtime;
 public abstract class AbstractReflectionCommand extends AbstractRuntimeCommand {
     public AbstractReflectionCommand(Runtime ctx, String name, String desc) {
         super(ctx, name, desc);
+        args.put("<obj>", "Address of the object to use.");
     }
 
     protected abstract void execute(Object obj, int addr, String... args)
@@ -25,6 +26,17 @@ public abstract class AbstractReflectionCommand extends AbstractRuntimeCommand {
         }
 
         this.execute(obj, address, args);
+    }
+
+    protected Object[] parse(Class<?>[] parameterTypes, String... args)
+        throws CommandException {
+        Object[] arguments = new Object[parameterTypes.length];
+        for (int i = 0; i < arguments.length; i++) {
+            int argAddress = ParseUtil.parseI(args[args.length - i - 1]);
+            arguments[arguments.length - i - 1] = ctx.getVm().get(argAddress);
+        }
+
+        return arguments;
     }
 
 }

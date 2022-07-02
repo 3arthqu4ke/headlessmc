@@ -17,7 +17,7 @@ public class ArgumentFactoryTest implements UsesResources {
         Assertions.assertFalse(format[0]);
 
         var args = factory.parse(getJsonElement("arguments_old.json"),
-                                      f -> format[0] = f);
+                                 f -> format[0] = f);
         Assertions.assertFalse(format[0]);
         Assertions.assertEquals(4, args.size());
         args.forEach(arg -> {
@@ -30,7 +30,7 @@ public class ArgumentFactoryTest implements UsesResources {
         Assertions.assertEquals("${version_type}", args.get(3).getValue());
 
         args = factory.parse(getJsonObject("arguments.json"),
-                                  f -> format[0] = f);
+                             f -> format[0] = f);
         Assertions.assertTrue(format[0]);
         Assertions.assertEquals(5, args.size());
 

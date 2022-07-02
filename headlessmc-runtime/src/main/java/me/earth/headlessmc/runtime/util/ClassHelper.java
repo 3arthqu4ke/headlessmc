@@ -10,6 +10,7 @@ import me.earth.headlessmc.util.Table;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,36 +19,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ClassHelper {
     private final Class<?> clazz;
-    private final Constructor<?>[] constructors;
+    private final Set<Constructor<?>> constructors;
     private final Set<Method> methods;
     private final Set<Field> fields;
-
-    public void dump(LogsMessages out, boolean verbose) {
-        out.log("-----------------------------------");
-        Class<?> superClass = clazz.getSuperclass();
-        out.log(clazz.getName() + " : "
-                    + (superClass == null ? "null" : superClass.getName())
-                    + ", " + getArgs(verbose, clazz.getInterfaces()));
-        out.log("--------------Fields---------------");
-        out.log(getFieldTable(verbose).build());
-        out.log("-----------Constructors------------");
-        out.log(getConstructorTable(verbose).build());
-        out.log("--------------Methods--------------");
-        out.log(getMethodTable(verbose).build());
-        out.log("-----------------------------------");
-    }
-
-    public Table<Field> getFieldTable(boolean verbose) {
-        return getFieldTable(fields, verbose);
-    }
-
-    public Table<Constructor<?>> getConstructorTable(boolean verbose) {
-        return getConstructorTable(verbose, constructors);
-    }
-
-    public Table<Method> getMethodTable(boolean verbose) {
-        return getMethodTable(methods, verbose);
-    }
 
     public static Table<Field> getFieldTable(Iterable<Field> fields,
                                              boolean verbose) {
@@ -59,9 +33,9 @@ public class ClassHelper {
     }
 
     public static Table<Constructor<?>> getConstructorTable(
-        boolean verbose, Constructor<?>... constructors) {
+        Iterable<Constructor<?>> constructors, boolean verbose) {
         return new Table<Constructor<?>>()
-            .add(constructors)
+            .addAll(constructors)
             .withColumn("access", ClassHelper::getAccess)
             .withColumn("args", c -> getArgs(verbose, c.getParameterTypes()));
     }
@@ -121,7 +95,35 @@ public class ClassHelper {
             fields.addAll(Arrays.asList(c.getDeclaredFields()));
         });
 
-        return new ClassHelper(clazz, constructors, methods, fields);
+        return new ClassHelper(
+            clazz, new HashSet<>(Arrays.asList(constructors)), methods, fields);
+    }
+
+    public void dump(LogsMessages out, boolean verbose) {
+        out.log("-----------------------------------");
+        Class<?> superClass = clazz.getSuperclass();
+        out.log(clazz.getName() + " : "
+                    + (superClass == null ? "null" : superClass.getName())
+                    + ", " + getArgs(verbose, clazz.getInterfaces()));
+        out.log("--------------Fields---------------");
+        out.log(getFieldTable(verbose).build());
+        out.log("-----------Constructors------------");
+        out.log(getConstructorTable(verbose).build());
+        out.log("--------------Methods--------------");
+        out.log(getMethodTable(verbose).build());
+        out.log("-----------------------------------");
+    }
+
+    public Table<Field> getFieldTable(boolean verbose) {
+        return getFieldTable(fields, verbose);
+    }
+
+    public Table<Constructor<?>> getConstructorTable(boolean verbose) {
+        return getConstructorTable(constructors, verbose);
+    }
+
+    public Table<Method> getMethodTable(boolean verbose) {
+        return getMethodTable(methods, verbose);
     }
 
 }

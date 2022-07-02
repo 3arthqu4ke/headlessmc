@@ -5,6 +5,7 @@ import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.launch.LaunchException;
@@ -36,7 +37,7 @@ public class LaunchCommand extends AbstractVersionCommand {
     @Override
     public void execute(Version version, String... args)
         throws CommandException {
-        UUID uuid = UUID.randomUUID();
+        val uuid = UUID.randomUUID();
         ctx.log("Launching version " + version.getName() + ", " + uuid);
         val files = ctx.getFileManager().createRelative(uuid.toString());
 
@@ -49,6 +50,7 @@ public class LaunchCommand extends AbstractVersionCommand {
                 CommandUtil.hasFlag("-lookup", args),
                 CommandUtil.hasFlag("-paulscode", args),
                 CommandUtil.hasFlag("-noout", args));
+
             try {
                 int status = process.waitFor();
                 ctx.log("Minecraft exited with code: " + status);
@@ -61,19 +63,21 @@ public class LaunchCommand extends AbstractVersionCommand {
             throw new CommandException(String.format(
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
         } finally {
-            if (!CommandUtil.hasFlag("-keep", args)) {
+            // for some reason both ShutdownHooks and File.deleteOnExit are
+            // not really working, that's why we Main.deleteOldFiles, too.
+            if (!CommandUtil.hasFlag("-keep", args)
+                && !ctx.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
                 try {
-                    log.debug("Deleting " + files.getBase().getAbsolutePath());
+                    log.info("Deleting " + files.getBase().getName());
                     FileUtil.delete(files.getBase());
-                } catch (IOException ioe) {
+                } catch (IOException e) {
                     log.error("Couldn't delete files of game "
-                                + files.getBase().getName()
-                                + ": " + ioe.getMessage());
-                    ioe.printStackTrace();
+                                  + files.getBase().getName()
+                                  + ": " + e.getMessage());
                 }
             }
 
-            if (CommandUtil.hasFlag("-exit", args)) {
+            if (!CommandUtil.hasFlag("-exit", args)) {
                 System.exit(0);
             }
         }

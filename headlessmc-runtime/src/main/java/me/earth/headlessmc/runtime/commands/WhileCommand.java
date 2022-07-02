@@ -9,6 +9,10 @@ import me.earth.headlessmc.runtime.Runtime;
 public class WhileCommand extends AbstractRuntimeCommand {
     public WhileCommand(Runtime ctx) {
         super(ctx, "while", "Repeatedly executes a command.");
+        args.put("<addr>", "The address to check, while its 'true'" +
+            " the while loop will run.");
+        args.put("<cmd>",
+                 "The command to execute while the while loop is running");
     }
 
     @Override
@@ -33,6 +37,8 @@ public class WhileCommand extends AbstractRuntimeCommand {
                 if (obj instanceof Boolean && (Boolean) obj) {
                     log.debug("Executing " + args[2]);
                     ctx.getCommandContext().execute(args[2]);
+                } else {
+                    break;
                 }
             }
 

@@ -8,6 +8,21 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 
 public class FamilyUtilTest {
+    public static HasParentImpl[] setupFamily() {
+        val member1 = new HasParentImpl();
+        val member2 = new HasParentImpl(member1);
+        val member3 = new HasParentImpl(member2);
+
+        val invalidMember1 = new HasParentImpl();
+        val invalidMember2 = new HasParentImpl(invalidMember1);
+        invalidMember1.setParent(invalidMember2);
+
+        val invalidMember3 = new HasParentImpl(invalidMember1);
+
+        return new HasParentImpl[]{member1, member2, member3,
+            invalidMember1, invalidMember2, invalidMember3};
+    }
+
     @Test
     public void testGetOldestParent() {
         val family = setupFamily();
@@ -92,21 +107,6 @@ public class FamilyUtilTest {
         Assertions.assertTrue(family.getMembers().contains(array[3]));
         Assertions.assertTrue(family.getMembers().contains(array[4]));
         Assertions.assertFalse(family.getMembers().contains(array[5]));
-    }
-
-    public static HasParentImpl[] setupFamily() {
-        val member1 = new HasParentImpl();
-        val member2 = new HasParentImpl(member1);
-        val member3 = new HasParentImpl(member2);
-
-        val invalidMember1 = new HasParentImpl();
-        val invalidMember2 = new HasParentImpl(invalidMember1);
-        invalidMember1.setParent(invalidMember2);
-
-        val invalidMember3 = new HasParentImpl(invalidMember1);
-
-        return new HasParentImpl[]{member1, member2, member3,
-            invalidMember1, invalidMember2, invalidMember3};
     }
 
 }

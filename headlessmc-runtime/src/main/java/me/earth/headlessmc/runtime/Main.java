@@ -20,8 +20,8 @@ public class Main {
                     + "' was null, can't call mainClass!");
         }
 
-        log.info("Initializing Runtime...");
         LoggingHandler.apply();
+        log.info("Initializing Runtime...");
         val in = new CommandLineImpl();
         val runtime = RuntimeApi.init(config, in);
         in.listenAsync(runtime);

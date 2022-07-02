@@ -6,6 +6,8 @@ import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.HasDescription;
 import me.earth.headlessmc.util.Table;
 
+import java.util.Map;
+
 public class HelpCommand extends AbstractCommand {
     public HelpCommand(HeadlessMc ctx) {
         super(ctx, "help", "Information about commands.");
@@ -28,11 +30,17 @@ public class HelpCommand extends AbstractCommand {
                     }
                 } else {
                     ctx.log(String.format("%s : %s", cmd.getName(),
-                                                   cmd.getDescription()));
+                                          cmd.getDescription()));
+                    ctx.log(
+                        new Table<Map.Entry<String, String>>()
+                            .withColumn("arg", Map.Entry::getKey)
+                            .withColumn("description", Map.Entry::getValue)
+                            .addAll(cmd.getArgs2Descriptions())
+                            .build());
                 }
             } else {
                 ctx.log(
-                    String.format("Couldn't find command %s", name));
+                    String.format("Couldn't find command %s", args[1]));
             }
         } else {
             ctx.log(

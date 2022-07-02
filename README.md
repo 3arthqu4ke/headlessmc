@@ -18,7 +18,7 @@ this:
 ```properties
 hmc.java.versions=C:/Program Files/Java/jre-<version>/bin/java;C:/Program Files/Java/jdk-<version>/bin/java
 ```
-After you are done, type `config -refresh;java -refresh`, press enter, and you are ready start.
+After you are done, type `config -refresh` then `java -refresh`, press enter, and you are ready start.
 Here are some of the most important commands:
 
 | Name        | Description | Args/Flags  |
@@ -32,9 +32,7 @@ Here are some of the most important commands:
 
 Arguments passed to commands have to be separated using spaces. If you
 want to pass an Argument which contains spaces you need to escape it using quotation marks, like this:
-`"argument with spaces"`. Multiple commands can be executed at once by separating them with semicolons
-(Not sure if I'm going to keep this feature). Quotation marks, semicolons and backslashes can be escaped by using a
-backslash.
+`"argument with spaces"`. Quotation marks and backslashes can be escaped by using a backslash.
 
 HeadlessMc can be configured using properties. These can be passed as SystemProperties from the command line or via the 
 `HeadlessMc/config.properties` file. Additional configs can be added to the `HeadlessMc/configs` folder. For available

@@ -7,6 +7,8 @@ import me.earth.headlessmc.runtime.Runtime;
 public class CopyCommand extends AbstractRuntimeCommand {
     public CopyCommand(Runtime ctx) {
         super(ctx, "move", "Copies objects in memory.");
+        args.put("<from>", "Address to copy the object from.");
+        args.put("<to>", "Address to copy the object into.");
     }
 
     @Override

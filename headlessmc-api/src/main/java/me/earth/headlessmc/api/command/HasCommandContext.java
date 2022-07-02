@@ -13,7 +13,8 @@ public interface HasCommandContext {
     CommandContext getCommandContext();
 
     /**
-     * Sets the {@link CommandContext} returned by {@link #getCommandContext()}.
+     * Sets the {@link CommandContext} returned by {@link
+     * #getCommandContext()}.
      *
      * @param context the command context to set.
      */

@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher;
 
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.config.HmcProperties;
-import me.earth.headlessmc.lwjgl.LwjglProperties;
 
 import static me.earth.headlessmc.config.PropertyTypes.*;
 
@@ -34,5 +33,7 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> AUTH_TYPE = string("hmc.authtype");
 
     Property<Long> DEFAULT_JAVA = number("hmc.version.defaultJava");
+    Property<Boolean> KEEP_FILES = bool("hmc.keepfiles");
+    Property<String> LAUNCHER_PROFILES = string("hmc.launcher_profiles.json");
 
 }

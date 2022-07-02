@@ -4,7 +4,6 @@ import lombok.CustomLog;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @CustomLog
@@ -13,6 +12,13 @@ public class FileManager {
 
     public FileManager(String base) {
         this.base = base;
+    }
+
+    public static FileManager mkdir(String path) {
+        File file = Paths.get(path).toFile();
+        //noinspection ResultOfMethodCallIgnored
+        file.mkdirs();
+        return new FileManager(file.getAbsolutePath());
     }
 
     public File getBase() {
@@ -89,6 +95,11 @@ public class FileManager {
         return file;
     }
 
+    public File[] listFiles() {
+        File[] result = getBase().listFiles();
+        return result == null ? new File[0] : result;
+    }
+
     public FileManager createRelative(String... base) {
         getDir(base);
         return relative(base);
@@ -98,13 +109,6 @@ public class FileManager {
         return new FileManager(this.base
                                    + File.separator
                                    + String.join(File.separator, base));
-    }
-
-    public static FileManager mkdir(String path) {
-        File file = Paths.get(path).toFile();
-        //noinspection ResultOfMethodCallIgnored
-        file.mkdirs();
-        return new FileManager(file.getAbsolutePath());
     }
 
     public String getPath() {
