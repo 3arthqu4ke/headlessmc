@@ -7,7 +7,7 @@ application {
     mainClass = MAIN_CLASS
 }
 
-version = '1.1.0-alpha'
+version = '1.2.0'
 
 run {
     standardInput = System.in
