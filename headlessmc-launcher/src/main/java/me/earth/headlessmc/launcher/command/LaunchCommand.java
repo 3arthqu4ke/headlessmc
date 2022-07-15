@@ -45,10 +45,14 @@ public class LaunchCommand extends AbstractVersionCommand {
             val process = ctx.getProcessFactory().run(
                 version, ctx, files,
                 CommandUtil.hasFlag("-commands", args),
-                CommandUtil.hasFlag("-lwjgl", args),
+                CommandUtil.hasFlag("-lwjgl", args)
+                    ^ ctx.getConfig()
+                         .get(LauncherProperties.INVERT_HEADLESS_FLAG, false),
                 CommandUtil.hasFlag("-jndi", args),
                 CommandUtil.hasFlag("-lookup", args),
-                CommandUtil.hasFlag("-paulscode", args),
+                CommandUtil.hasFlag("-paulscode", args)
+                    ^ ctx.getConfig()
+                         .get(LauncherProperties.INVERT_PAULS_FLAG, false),
                 CommandUtil.hasFlag("-noout", args));
 
             try {
