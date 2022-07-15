@@ -60,7 +60,7 @@ public class ThreadFormatter extends Formatter {
         return 20 // "[::] [/] []: \n"
             + thread.length()
             + record.getLevel().getName().length()
-            + record.getMessage().length()
+            + (record.getMessage() == null ? 4 : record.getMessage().length())
             + record.getLoggerName().length();
     }
 
