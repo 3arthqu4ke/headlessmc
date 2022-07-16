@@ -2,9 +2,14 @@ package me.earth.headlessmc.launcher;
 
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.config.HmcProperties;
+import me.earth.headlessmc.launcher.files.ConfigService;
 
 import static me.earth.headlessmc.config.PropertyTypes.*;
 
+/**
+ * Properties used by the launcher. These can be set as SystemProperties or in
+ * the config file managed by the {@link ConfigService}.
+ */
 public interface LauncherProperties extends HmcProperties {
     Property<String> MC_DIR = string("hmc.mcdir");
     Property<String> GAME_DIR = string("hmc.gamedir");
@@ -29,11 +34,12 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<String> EMAIL = string("hmc.email");
     Property<String> PASSWORD = string("hmc.password");
-    Property<String> AUTH_TOKEN = string("hmc.authtoken");
-    Property<String> AUTH_TYPE = string("hmc.authtype");
 
-    Property<Long> DEFAULT_JAVA = number("hmc.version.defaultJava");
     Property<Boolean> KEEP_FILES = bool("hmc.keepfiles");
+    Property<Boolean> UPDATE_PROFILES = bool("hmc.update.profiles");
     Property<String> LAUNCHER_PROFILES = string("hmc.launcher_profiles.json");
+
+    Property<Boolean> INVERT_HEADLESS_FLAG = bool("hmc.invert.headless.flag");
+    Property<Boolean> INVERT_PAULS_FLAG = bool("hmc.invert.pauls.flag");
 
 }
