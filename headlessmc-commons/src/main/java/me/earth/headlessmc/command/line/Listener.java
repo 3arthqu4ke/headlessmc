@@ -5,6 +5,7 @@ import me.earth.headlessmc.api.QuickExitCli;
 import java.io.IOError;
 import java.util.concurrent.ThreadFactory;
 
+@FunctionalInterface
 public interface Listener {
     ThreadFactory DEFAULT_THREAD_FACTORY = runnable -> {
         Thread thread = new Thread(runnable);

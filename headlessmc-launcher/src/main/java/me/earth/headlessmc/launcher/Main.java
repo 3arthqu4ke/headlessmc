@@ -3,10 +3,8 @@ package me.earth.headlessmc.launcher;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.HeadlessMcImpl;
 import me.earth.headlessmc.command.line.CommandLineImpl;
-import me.earth.headlessmc.command.line.Listener;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.ConfigService;
@@ -48,7 +46,7 @@ public final class Main {
         versions.refresh();
         hmc.setCommandContext(new LaunchContext(launcher));
 
-        if (isQuickExitCli(args, launcher, in)) {
+        if (QuickExitCliHandler.checkQuickExit(launcher, in, args)) {
             return;
         }
 
@@ -74,45 +72,6 @@ public final class Main {
                 }
             }
         }
-    }
-
-    private boolean isQuickExitCli(String[] args, Launcher launcher,
-                                   Listener in) {
-        var quickExitCli = false;
-        val cmd = new StringBuilder();
-        for (val arg : args) {
-            if (arg == null) {
-                continue;
-            }
-
-            if (arg.equalsIgnoreCase("--version")) {
-                launcher.log("HeadlessMc - " + Launcher.VERSION);
-                return true;
-            }
-
-            if (quickExitCli) {
-                cmd.append(arg).append(" ");
-            }
-
-            if (arg.equalsIgnoreCase("--command")) {
-                quickExitCli = true;
-            }
-        }
-
-        if (quickExitCli) {
-            val command = cmd.toString();
-            if ("cli".equalsIgnoreCase(command.trim())) {
-                return false;
-            }
-
-            launcher.setQuickExitCli(true);
-            launcher.getCommandContext().execute(command);
-            if (launcher.isWaitingForInput()) {
-                in.listen(launcher);
-            }
-        }
-
-        return quickExitCli;
     }
 
 }
