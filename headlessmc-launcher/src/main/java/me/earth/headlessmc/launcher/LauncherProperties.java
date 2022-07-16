@@ -23,11 +23,8 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<String[]> JVM_ARGS = array("hmc.jvmargs", " ");
     Property<String[]> GAME_ARGS = array("hmc.gameargs", " ");
-
-    Property<String> XUID = string("hmc.xuid");
-    Property<String> CLIENT_ID = string("hmc.clientId");
-    Property<String> USER_PROPERTIES = string("hmc.userproperties");
-    Property<String> PROFILE_PROPERTIES = string("hmc.profileproperties");
+    Property<String> CLASS_PATH = string("hmc.additional.classpath");
+    Property<String> CUSTOM_MAIN_CLASS = string("hmc.main.class");
 
     Property<String> LAUNCHER_NAME = string("hmc.launchername");
     Property<String> LAUNCHER_VERSION = string("hmc.launcherversion");
@@ -36,10 +33,14 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> PASSWORD = string("hmc.password");
 
     Property<Boolean> KEEP_FILES = bool("hmc.keepfiles");
-    Property<Boolean> UPDATE_PROFILES = bool("hmc.update.profiles");
-    Property<String> LAUNCHER_PROFILES = string("hmc.launcher_profiles.json");
+    Property<Boolean> STORE_ACCOUNTS = bool("hmc.store.accounts");
 
     Property<Boolean> INVERT_HEADLESS_FLAG = bool("hmc.invert.headless.flag");
     Property<Boolean> INVERT_PAULS_FLAG = bool("hmc.invert.pauls.flag");
+
+    Property<String> XUID = string("hmc.xuid");
+    Property<String> CLIENT_ID = string("hmc.clientId");
+    Property<String> USER_PROPERTIES = string("hmc.userproperties");
+    Property<String> PROFILE_PROPERTIES = string("hmc.profileproperties");
 
 }

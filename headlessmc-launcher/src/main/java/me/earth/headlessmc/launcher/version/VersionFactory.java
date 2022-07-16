@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
+// TODO: check if we could make this easier using @SerializedName
 @RequiredArgsConstructor
 class VersionFactory {
     private final LibraryFactory libraryFactory;

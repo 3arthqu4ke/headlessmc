@@ -7,7 +7,8 @@ import static me.earth.headlessmc.config.PropertyTypes.bool;
 import static me.earth.headlessmc.config.PropertyTypes.string;
 
 /**
- * Properties shared by both the HeadlessMc-Runtime and the HeadlessMc-Launcher.
+ * Properties shared by both the HeadlessMc-Runtime and the
+ * HeadlessMc-Launcher.
  */
 public interface HmcProperties {
     /**

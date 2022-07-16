@@ -42,15 +42,16 @@ public class ProcessFactory {
                        Launcher launcher, FileManager fileManager,
                        boolean runtime, boolean noOut)
         throws IOException, LaunchException, AuthException {
+        if (launcher.getAccountManager().getLastAccount() == null) {
+            launcher.getAccountManager().login(launcher.getConfig());
+        }
+
         version = new VersionMerger(version);
         if (version.getArguments() == null) {
             throw new LaunchException(
                 version.getName() + ": Version file and its parents" +
                     " didn't contain arguments.");
         }
-
-        new AssetsDownloader(files, version.getAssetsUrl(), version.getAssets())
-            .download();
 
         val dlls = fileManager.createRelative("extracted");
         val targets = processLibraries(version, dlls);
@@ -65,13 +66,18 @@ public class ProcessFactory {
                              .build()
                              .build();
 
+        new AssetsDownloader(files, version.getAssetsUrl(), version.getAssets())
+            .download();
+
         log.debug(command.toString());
-        val dir = launcher.getConfig().get(LauncherProperties.GAME_DIR,
-                                           launcher.getMcFiles().getPath());
+        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR,
+                                           launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
         return new ProcessBuilder()
             .command(command)
-            .directory(new File(dir))
+            .directory(dir)
             .redirectError(noOut
                                ? ProcessBuilder.Redirect.PIPE
                                : ProcessBuilder.Redirect.INHERIT)
