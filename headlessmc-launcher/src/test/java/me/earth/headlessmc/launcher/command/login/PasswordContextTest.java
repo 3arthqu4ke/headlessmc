@@ -13,6 +13,7 @@ public class PasswordContextTest {
         val ctx = new LaunchContext(launcher);
         launcher.setCommandContext(ctx);
         launcher.setHidingPasswords(false);
+        launcher.setWaitingForInput(false);
         Assertions.assertFalse(launcher.isWaitingForInput());
         Assertions.assertEquals(ctx, launcher.getCommandContext());
         Assertions.assertFalse(launcher.isHidingPasswords());
