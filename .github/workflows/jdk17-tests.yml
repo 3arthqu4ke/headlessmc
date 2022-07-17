@@ -20,6 +20,27 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Run Gradle tests
+      - name: Build with Gradle
         run: |
-          ./gradlew test
+          ./gradlew build
+          
+      - name: List files
+        run: ls
+
+      - name: Publish jars
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./build/libs/headlessmc-*.jar
+          
+      - name: Publish shell script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc
+          
+      - name: Publish bat script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc.bat
