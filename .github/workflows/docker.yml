@@ -1,12 +1,16 @@
-name: ci
+name: docker
 
 on:
-  push:
-  pull_request:
+  workflow_run:
+    workflows: ["Gradle Build"]
+    branches: [master]
+    types:
+      - completed
 
 jobs:
   docker:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       -
         name: Set up QEMU
