@@ -15,18 +15,17 @@ public class QuickExitCliHandler {
      * will get collected into a command. If the args contain no "--command",
      * the command is empty or "cli" <tt>false</tt> will be returned. Otherwise
      * <tt>true</tt> will be returned, the given {@link Launcher}s command
-     * context will be run on the given command and
-     * {@link Launcher#setQuickExitCli(boolean)} will be set to
+     * context will be run on the given command and {@link
+     * Launcher#setQuickExitCli(boolean)} will be set to
      * <tt>true</tt>. If a command needs more input it can set
      * {@link Launcher#setWaitingForInput(boolean)} to <tt>true</tt> which will
      * cause this method call the given {@link Listener}. An exception are the
      * args "--version", "-version" or "version". These will also return
      * <tt>true</tt> and print {@link Launcher#VERSION}.
      *
-     *
      * @param launcher the launcher.
-     * @param in the Listener to call when a command waits for input.
-     * @param args the arguments to check.
+     * @param in       the Listener to call when a command waits for input.
+     * @param args     the arguments to check.
      * @return <tt>true</tt> if the launcher shouldn't listen to more commands.
      */
     public static boolean checkQuickExit(Launcher launcher, Listener in,

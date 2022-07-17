@@ -36,9 +36,11 @@ class ArgumentAdapterHelper {
 
         adapter.add("${version_name}", version.getName());
         adapter.add("${version_type}", "release");
-        val dir = config.get(LauncherProperties.GAME_DIR,
-                             launcher.getMcFiles().getPath());
-        adapter.add("${game_directory}", dir);
+        val dir = new File(config.get(LauncherProperties.GAME_DIR,
+                             launcher.getMcFiles().getPath()));
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
+        adapter.add("${game_directory}", dir.getAbsolutePath());
         adapter.add("${assets_index_name}", version.getAssets());
         adapter.add("${auth_access_token}", account.getToken());
         adapter.add("${user_type}", account.getType());

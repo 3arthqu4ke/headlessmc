@@ -45,8 +45,11 @@ public class LoginCommand extends AbstractLauncherCommand {
     private Consumer<String> login(String email) {
         val passwordsHiddenBefore = ctx.isHidingPasswords();
         return password -> {
+            ctx.log("Logging in...");
             try {
-                ctx.getAccountManager().login(email, password);
+                val account = ctx.getAccountManager().login(email, password);
+                ctx.log("Logged into account " + account.getName()
+                            + " successfully!");
             } catch (AuthException e) {
                 ctx.log("Failed to log you in: " + e.getMessage());
                 e.printStackTrace();

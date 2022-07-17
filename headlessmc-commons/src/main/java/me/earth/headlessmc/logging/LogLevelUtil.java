@@ -30,6 +30,10 @@ public class LogLevelUtil {
      * @return <tt>true</tt> if the level has been successfully parsed and set.
      */
     public static boolean trySetLevel(String lvl) {
+        if ("debug".equalsIgnoreCase(lvl)) {
+            setLevel(FINE);
+        }
+
         try {
             setLevel(Level.parse(lvl));
             return true;

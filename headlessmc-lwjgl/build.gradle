@@ -11,12 +11,12 @@ module {
     name = 'headlessmc.lwjgl'
     access = ACC_OPEN
 
-    exports  'me/earth/headlessmc/lwjgl'
-    exports  'me/earth/headlessmc/lwjgl/api'
-    exports  'me/earth/headlessmc/lwjgl/transformer'
-    exports  'me/earth/headlessmc/lwjgl/redirections'
-    exports  'me/earth/headlessmc/lwjgl/util'
-    exports  'me/earth/headlessmc/lwjgl/agent'
+    exports 'me/earth/headlessmc/lwjgl'
+    exports 'me/earth/headlessmc/lwjgl/api'
+    exports 'me/earth/headlessmc/lwjgl/transformer'
+    exports 'me/earth/headlessmc/lwjgl/redirections'
+    exports 'me/earth/headlessmc/lwjgl/util'
+    exports 'me/earth/headlessmc/lwjgl/agent'
 
     requires 'java.desktop'
     requires 'java.instrument', ACC_STATIC
@@ -25,7 +25,7 @@ module {
 }
 
 dependencies {
-    compileOnly (group: 'net.minecraft', name: 'launchwrapper', version: '1.12') {
+    compileOnly(group: 'net.minecraft', name: 'launchwrapper', version: '1.12') {
         // Not sure if we should also exclude the other dependencies the launch-
         // wrapper comes with. But the added lwjgl dependency can be nice to get
         // an idea of what some classes look like.

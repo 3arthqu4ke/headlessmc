@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.Builder;
 import lombok.CustomLog;
 import lombok.val;
+import lombok.var;
 import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -51,18 +52,20 @@ class Command {
 
         result.add("-Djava.library.path=" + natives);
         result.add("-cp");
-        result.add(String.join("" + File.pathSeparatorChar, classpath));
+        result.add(String.join("" + File.pathSeparatorChar, classpath)
+                       + config.get(LauncherProperties.CLASS_PATH, ""));
 
         val adapter = ArgumentAdapterHelper.create(launcher, version, natives);
         result.addAll(adapter.build(os, Features.EMPTY, "jvm"));
 
+        var mainClass = version.getMainClass();
         if (runtime) {
             result.add("-D" + HmcProperties.MAIN.getName() + "="
                            + version.getMainClass());
-            result.add(RT_MAIN);
-        } else {
-            result.add(version.getMainClass());
+            mainClass = RT_MAIN;
         }
+
+        result.add(config.get(LauncherProperties.CUSTOM_MAIN_CLASS, mainClass));
 
         result.addAll(adapter.build(os, Features.EMPTY, "game"));
         result.addAll(Arrays.asList(config.get(LauncherProperties.GAME_ARGS,

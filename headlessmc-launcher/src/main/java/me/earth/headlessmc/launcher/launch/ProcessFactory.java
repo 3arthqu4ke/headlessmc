@@ -31,26 +31,29 @@ public class ProcessFactory {
 
     public Process run(Version version, Launcher launcher, FileManager files,
                        boolean runtime, boolean lwjgl, boolean jndi,
-                       boolean lookup, boolean paulscode, boolean noOut)
+                       boolean lookup, boolean paulscode, boolean noOut,
+                       boolean noIn)
         throws LaunchException, AuthException, IOException {
         val instrumentation = InstrumentationHelper.create(
             files, lwjgl, runtime, jndi, lookup, paulscode);
-        return run(version, instrumentation, launcher, files, runtime, noOut);
+        return run(
+            version, instrumentation, launcher, files, runtime, noOut, noIn);
     }
 
     public Process run(Version version, Instrumentation instrumentation,
                        Launcher launcher, FileManager fileManager,
-                       boolean runtime, boolean noOut)
+                       boolean runtime, boolean noOut, boolean noIn)
         throws IOException, LaunchException, AuthException {
+        if (launcher.getAccountManager().getLastAccount() == null) {
+            launcher.getAccountManager().login(launcher.getConfig());
+        }
+
         version = new VersionMerger(version);
         if (version.getArguments() == null) {
             throw new LaunchException(
                 version.getName() + ": Version file and its parents" +
                     " didn't contain arguments.");
         }
-
-        new AssetsDownloader(files, version.getAssetsUrl(), version.getAssets())
-            .download();
 
         val dlls = fileManager.createRelative("extracted");
         val targets = processLibraries(version, dlls);
@@ -65,20 +68,27 @@ public class ProcessFactory {
                              .build()
                              .build();
 
+        new AssetsDownloader(files, version.getAssetsUrl(), version.getAssets())
+            .download();
+
         log.debug(command.toString());
-        val dir = launcher.getConfig().get(LauncherProperties.GAME_DIR,
-                                           launcher.getMcFiles().getPath());
+        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR,
+                                           launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
         return new ProcessBuilder()
             .command(command)
-            .directory(new File(dir))
+            .directory(dir)
             .redirectError(noOut
                                ? ProcessBuilder.Redirect.PIPE
                                : ProcessBuilder.Redirect.INHERIT)
             .redirectOutput(noOut
                                 ? ProcessBuilder.Redirect.PIPE
                                 : ProcessBuilder.Redirect.INHERIT)
-            .redirectInput(ProcessBuilder.Redirect.INHERIT)
+            .redirectInput(noIn
+                               ? ProcessBuilder.Redirect.PIPE
+                               : ProcessBuilder.Redirect.INHERIT)
             .start();
     }
 

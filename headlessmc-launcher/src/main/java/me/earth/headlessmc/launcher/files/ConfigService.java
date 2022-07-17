@@ -55,6 +55,7 @@ public class ConfigService extends Service<Config> implements HasConfig {
     }
 
     private void load(File file, int id, List<Config> configs) {
+        log.debug("Loading " + file.getAbsolutePath());
         try {
             configs.add(load(file, id));
         } catch (IOException e) {

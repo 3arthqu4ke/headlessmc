@@ -68,10 +68,10 @@ allprojects {
 
 task copyJars(type: Copy, dependsOn: subprojects.jar) {
     from(subprojects.jar)
-    into project.file('build/libs')
+    into project.file(System.getProperty('hmc.jar.dir', 'build/libs'))
 }
 
-build {
-    dependsOn(subprojects.build)
+jar {
+    dependsOn(subprojects.jar)
     finalizedBy(copyJars)
 }

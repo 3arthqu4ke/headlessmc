@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class JsonUtil {
+    public static final Gson PRETTY_PRINT =
+        new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new Gson();
+
     /**
      * @param file
      * @return
@@ -28,6 +32,8 @@ public class JsonUtil {
     public static JsonElement fromInput(InputStream stream) throws IOException {
         try (InputStreamReader reader = new InputStreamReader(stream)) {
             return JsonParser.parseReader(reader);
+        } catch (JsonParseException e) {
+            throw new IOException(e);
         }
     }
 
@@ -41,6 +47,13 @@ public class JsonUtil {
         val result = getElement(jo, path);
         return result == null || !result.isJsonObject()
             ? null
+            : result.getAsJsonObject();
+    }
+
+    public static JsonObject getObjectOrNew(JsonElement jo, String... path) {
+        val result = getElement(jo, path);
+        return result == null || !result.isJsonObject()
+            ? new JsonObject()
             : result.getAsJsonObject();
     }
 

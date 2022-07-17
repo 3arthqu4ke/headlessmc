@@ -8,6 +8,8 @@ import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.ConfigImpl;
 import me.earth.headlessmc.launcher.auth.Account;
 import me.earth.headlessmc.launcher.auth.AccountManager;
+import me.earth.headlessmc.launcher.auth.AccountStore;
+import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -32,16 +34,24 @@ public class LauncherMock {
         val mcFiles = new DummyFileManager("test");
         val versions = new VersionService(mcFiles);
         val javas = new JavaService(configs);
-        val accounts = new DummyAccountManager();
+
+        val store = new AccountStore(fileManager, configs);
+        val validator = new AccountValidator();
+        val accounts = new DummyAccountManager(store, validator);
 
         INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
                                 new ProcessFactory(mcFiles, os), configs,
-                                javas, accounts);
+                                javas, accounts, validator);
 
         INSTANCE.getConfigService().setConfig(ConfigImpl.empty());
     }
 
     private static final class DummyAccountManager extends AccountManager {
+        public DummyAccountManager(AccountStore accountStore,
+                                   AccountValidator validator) {
+            super(accountStore, validator);
+        }
+
         @Override
         public Account login(Config config) {
             return new Account("dummy", "dummy", "dummy");

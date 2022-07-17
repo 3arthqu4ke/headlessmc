@@ -32,7 +32,6 @@ public class PasswordCommand extends AbstractCommand {
                             + " containing spaces please escape it with \"");
         }
 
-        ctx.log("Logging in...");
         consumer.accept(args[1]);
         ctx.setCommandContext(commandContext);
         ctx.setWaitingForInput(false);

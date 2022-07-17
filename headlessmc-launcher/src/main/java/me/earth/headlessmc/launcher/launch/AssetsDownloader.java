@@ -16,6 +16,7 @@ import java.util.Map;
 
 // TODO: support legacy assets!!!
 // TODO: whats the map_to_resources thing?
+// TODO: can we download in parallel?
 @CustomLog
 @RequiredArgsConstructor
 class AssetsDownloader {
