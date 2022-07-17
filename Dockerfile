@@ -11,6 +11,7 @@ COPY --from=java17 /usr/java/openjdk-17 /usr/java/openjdk-17
 COPY . /headlessmc
 WORKDIR /headlessmc
 
+RUN chmod +x ./gradlew
 RUN ./gradlew build -Dhmc.jar.dir=headlessmc-scripts
 
 WORKDIR /headlessmc/headlessmc-scripts
