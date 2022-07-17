@@ -2,7 +2,6 @@ package me.earth.headlessmc.api;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 
@@ -13,9 +12,13 @@ public class HasNameTest {
     public void testGetByName() {
         val names = new ArrayList<HasName>();
         for (int i = 0; i < 10; i++) {
-            val hasName = Mockito.mock(HasName.class);
             val name = "Test" + i;
-            Mockito.when(hasName.getName()).thenReturn(name);
+            val hasName = new HasName() {
+                @Override
+                public String getName() {
+                    return name;
+                }
+            };
 
             assertNull(HasName.getByName(name, names));
 
