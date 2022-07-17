@@ -36,4 +36,6 @@ jar {
     manifest {
         attributes('Main-Class': MAIN_CLASS)
     }
+
+    exclude("module-info.class")
 }
