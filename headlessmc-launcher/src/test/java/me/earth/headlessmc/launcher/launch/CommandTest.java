@@ -31,7 +31,7 @@ public class CommandTest implements UsesResources {
             "-DSomeSystemProperty=${some_arg}",
             "-Dhmc.main_method=path.to.MainClass",
             "me.earth.headlessmc.runtime.Main",
-            "--username", "dummy", "--versionType", "release");
+            "--username", "d", "--versionType", "release");
 
         Assertions.assertEquals(expected, command.build());
     }
