@@ -2,6 +2,7 @@ name: docker publish with tag
 
 on:
   release:
+    types: [published]
 
 jobs:
   docker:
