@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.command;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -31,7 +32,9 @@ public class LaunchCommand extends AbstractVersionCommand {
         args.put("-paulscode", "Removes some error messages from the" +
             " PaulsCode library which may annoy you if you started the" +
             " game with the -lwjgl flag.");
+        // TODO: is this really necessary?
         args.put("-noout", "Doesn't print Minecrafts output to the console.");
+        args.put("-quit", "Quit HeadlessMc after launching the game.");
     }
 
     @Override
@@ -41,19 +44,19 @@ public class LaunchCommand extends AbstractVersionCommand {
         ctx.log("Launching version " + version.getName() + ", " + uuid);
         val files = ctx.getFileManager().createRelative(uuid.toString());
 
+        boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
         try {
-            val process = ctx.getProcessFactory().run(
-                version, ctx, files,
+            val process = ctx.getProcessFactory().run(version, ctx, files,
                 CommandUtil.hasFlag("-commands", args),
-                CommandUtil.hasFlag("-lwjgl", args)
-                    ^ ctx.getConfig()
-                         .get(LauncherProperties.INVERT_HEADLESS_FLAG, false),
-                CommandUtil.hasFlag("-jndi", args),
+                flag("-lwjgl", LauncherProperties.INVERT_LWJGL_FLAG, args),
+                flag("-jndi", LauncherProperties.INVERT_JNDI_FLAG, args),
                 CommandUtil.hasFlag("-lookup", args),
-                CommandUtil.hasFlag("-paulscode", args)
-                    ^ ctx.getConfig()
-                         .get(LauncherProperties.INVERT_PAULS_FLAG, false),
-                CommandUtil.hasFlag("-noout", args));
+                flag("-paulscode", LauncherProperties.INVERT_PAULS_FLAG, args),
+                quit || CommandUtil.hasFlag("-noout", args), quit);
+
+            if (quit) {
+                System.exit(0);
+            }
 
             try {
                 int status = process.waitFor();
@@ -64,7 +67,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             }
         } catch (IOException | LaunchException | AuthException e) {
             e.printStackTrace();
-            throw new CommandException(String.format(
+            ctx.log(String.format(
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
         } finally {
             // for some reason both ShutdownHooks and File.deleteOnExit are
@@ -81,10 +84,14 @@ public class LaunchCommand extends AbstractVersionCommand {
                 }
             }
 
-            if (!CommandUtil.hasFlag("-exit", args)) {
+            if (!CommandUtil.hasFlag("-stay", args)) {
                 System.exit(0);
             }
         }
+    }
+
+    private boolean flag(String flg, Property<Boolean> inv, String... args) {
+        return CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(inv, false);
     }
 
 }

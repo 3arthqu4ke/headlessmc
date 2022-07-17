@@ -31,16 +31,18 @@ public class ProcessFactory {
 
     public Process run(Version version, Launcher launcher, FileManager files,
                        boolean runtime, boolean lwjgl, boolean jndi,
-                       boolean lookup, boolean paulscode, boolean noOut)
+                       boolean lookup, boolean paulscode, boolean noOut,
+                       boolean noIn)
         throws LaunchException, AuthException, IOException {
         val instrumentation = InstrumentationHelper.create(
             files, lwjgl, runtime, jndi, lookup, paulscode);
-        return run(version, instrumentation, launcher, files, runtime, noOut);
+        return run(
+            version, instrumentation, launcher, files, runtime, noOut, noIn);
     }
 
     public Process run(Version version, Instrumentation instrumentation,
                        Launcher launcher, FileManager fileManager,
-                       boolean runtime, boolean noOut)
+                       boolean runtime, boolean noOut, boolean noIn)
         throws IOException, LaunchException, AuthException {
         if (launcher.getAccountManager().getLastAccount() == null) {
             launcher.getAccountManager().login(launcher.getConfig());
@@ -84,7 +86,9 @@ public class ProcessFactory {
             .redirectOutput(noOut
                                 ? ProcessBuilder.Redirect.PIPE
                                 : ProcessBuilder.Redirect.INHERIT)
-            .redirectInput(ProcessBuilder.Redirect.INHERIT)
+            .redirectInput(noIn
+                               ? ProcessBuilder.Redirect.PIPE
+                               : ProcessBuilder.Redirect.INHERIT)
             .start();
     }
 
