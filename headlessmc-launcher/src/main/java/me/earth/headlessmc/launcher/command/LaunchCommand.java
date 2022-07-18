@@ -46,7 +46,8 @@ public class LaunchCommand extends AbstractVersionCommand {
 
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
         try {
-            val process = ctx.getProcessFactory().run(version, ctx, files,
+            val process = ctx.getProcessFactory().run(
+                version, ctx, files,
                 CommandUtil.hasFlag("-commands", args),
                 flag("-lwjgl", LauncherProperties.INVERT_LWJGL_FLAG, args),
                 flag("-jndi", LauncherProperties.INVERT_JNDI_FLAG, args),

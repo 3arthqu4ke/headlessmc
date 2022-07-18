@@ -7,10 +7,10 @@ import me.earth.headlessmc.api.QuickExitCli;
 @CustomLog
 @RequiredArgsConstructor
 public class CommandLineImpl implements Listener, PasswordAware {
+    private final PasswordAware ctx;
     @Getter
     @Setter
     private boolean hidingPasswords;
-    private final PasswordAware ctx;
 
     public CommandLineImpl() {
         this.ctx = this;

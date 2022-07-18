@@ -14,6 +14,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LaunchWrapperTest {
     public static String PASSED = "hmc.launchwrapper.test.passed";
 
+    private static int getJavaVersion() {
+        return parseVersion(System.getProperty("java.version"));
+    }
+
+    private static int parseVersion(String version) {
+        if (version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf(".");
+            if (dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+
+        return Integer.parseInt(version);
+    }
+
     @Test
     public void testParseJavaVersion() {
         assertEquals(8, parseVersion("1.8.0_241"));
@@ -63,23 +80,6 @@ public class LaunchWrapperTest {
 
         assertEquals("true", System.getProperty(PASSED));
         System.setProperty(PASSED, "false");
-    }
-
-    private static int getJavaVersion() {
-        return parseVersion(System.getProperty("java.version"));
-    }
-
-    private static int parseVersion(String version) {
-        if (version.startsWith("1.")) {
-            version = version.substring(2, 3);
-        } else {
-            int dot = version.indexOf(".");
-            if (dot != -1) {
-                version = version.substring(0, dot);
-            }
-        }
-
-        return Integer.parseInt(version);
     }
 
 }

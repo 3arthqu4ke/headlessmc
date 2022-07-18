@@ -4,10 +4,10 @@ import lombok.val;
 import me.earth.headlessmc.lwjgl.LwjglInstrumentationTest;
 import me.earth.headlessmc.lwjgl.launchwrapper.LaunchWrapperLwjglTransformer;
 import me.earth.headlessmc.lwjgl.launchwrapper.LaunchWrapperTest;
+import net.minecraft.launchwrapper.Launch;
 import org.lwjgl.AbstractLwjglClass;
 import org.lwjgl.Lwjgl;
 import org.lwjgl.LwjglInterface;
-import net.minecraft.launchwrapper.Launch;
 
 import static org.junit.jupiter.api.Assertions.*;
 

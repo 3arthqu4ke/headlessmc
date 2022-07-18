@@ -5,16 +5,16 @@ import lombok.val;
 import lombok.var;
 import me.earth.headlessmc.lwjgl.api.RedirectionApi;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
-import org.lwjgl.AbstractLwjglClass;
-import org.lwjgl.Lwjgl;
-import org.lwjgl.LwjglClassLoader;
-import org.lwjgl.LwjglInterface;
 import me.earth.headlessmc.lwjgl.redirections.DefaultRedirections;
 import me.earth.headlessmc.lwjgl.redirections.ObjectRedirection;
 import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
 import me.earth.headlessmc.lwjgl.util.DescriptionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.AbstractLwjglClass;
+import org.lwjgl.Lwjgl;
+import org.lwjgl.LwjglClassLoader;
+import org.lwjgl.LwjglInterface;
 
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
@@ -24,6 +24,51 @@ import static org.junit.jupiter.api.Assertions.*;
 public class LwjglInstrumentationTest {
     private static final RedirectionManager MANAGER =
         RedirectionApi.getRedirectionManager();
+
+    @SneakyThrows
+    public static void testRedirections(Object object, Class<?> clazz) {
+        val called = new boolean[]{false};
+        for (val method : clazz.getDeclaredMethods()) {
+            if (method.getParameterTypes().length > 0
+                // when running with coverage methods get added
+                || method.getName().contains("$")) {
+                continue;
+            }
+
+            val descriptor = DescriptionUtil.getDesc(clazz)
+                + DescriptionUtil.getDesc(method);
+            if (descriptor.endsWith(";toString()Ljava/lang/String;")) {
+                continue;
+            }
+
+            if (descriptor.endsWith(";hashCode()I") && clazz.isInterface()) {
+                method.setAccessible(true);
+                assertNotNull(method.invoke(object));
+                continue;
+            }
+
+            MANAGER.redirect(descriptor, (obj, desc, type, args) -> {
+                called[0] = true;
+                if (type.isPrimitive()) {
+                    val fb = DefaultRedirections.fallback(
+                        type, new ObjectRedirection(MANAGER));
+                    assertNotNull(fb);
+                    return fb.invoke(obj, desc, type, args);
+                }
+
+                return null;
+            });
+
+            called[0] = false;
+            method.setAccessible(true);
+            val result = method.invoke(object);
+            if (!method.getReturnType().isPrimitive()) {
+                Assertions.assertNull(result, descriptor);
+            }
+
+            Assertions.assertTrue(called[0], descriptor);
+        }
+    }
 
     @Test
     @SneakyThrows
@@ -182,51 +227,6 @@ public class LwjglInstrumentationTest {
         result = returnsAbstractByteBuffer.invoke(obj, "test");
         assertNotNull(result);
         Assertions.assertEquals(byteBuffer, result);
-    }
-
-    @SneakyThrows
-    public static void testRedirections(Object object, Class<?> clazz) {
-        val called = new boolean[]{false};
-        for (val method : clazz.getDeclaredMethods()) {
-            if (method.getParameterTypes().length > 0
-                // when running with coverage methods get added
-                || method.getName().contains("$")) {
-                continue;
-            }
-
-            val descriptor = DescriptionUtil.getDesc(clazz)
-                + DescriptionUtil.getDesc(method);
-            if (descriptor.endsWith(";toString()Ljava/lang/String;")) {
-                continue;
-            }
-
-            if (descriptor.endsWith(";hashCode()I") && clazz.isInterface()) {
-                method.setAccessible(true);
-                assertNotNull(method.invoke(object));
-                continue;
-            }
-
-            MANAGER.redirect(descriptor, (obj, desc, type, args) -> {
-                called[0] = true;
-                if (type.isPrimitive()) {
-                    val fb = DefaultRedirections.fallback(
-                        type, new ObjectRedirection(MANAGER));
-                    assertNotNull(fb);
-                    return fb.invoke(obj, desc, type, args);
-                }
-
-                return null;
-            });
-
-            called[0] = false;
-            method.setAccessible(true);
-            val result = method.invoke(object);
-            if (!method.getReturnType().isPrimitive()) {
-                Assertions.assertNull(result, descriptor);
-            }
-
-            Assertions.assertTrue(called[0], descriptor);
-        }
     }
 
     @SneakyThrows

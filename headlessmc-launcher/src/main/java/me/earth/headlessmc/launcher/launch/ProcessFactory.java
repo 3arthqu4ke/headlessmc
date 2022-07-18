@@ -73,7 +73,7 @@ public class ProcessFactory {
 
         log.debug(command.toString());
         val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR,
-                                           launcher.getMcFiles().getPath()));
+                                                    launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();

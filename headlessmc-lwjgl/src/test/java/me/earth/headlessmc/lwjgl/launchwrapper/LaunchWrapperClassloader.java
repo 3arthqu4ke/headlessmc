@@ -12,27 +12,6 @@ public class LaunchWrapperClassloader extends URLClassLoader {
         super(setupUrls(), ClassLoader.getSystemClassLoader());
     }
 
-    @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return this.loadClass(name, false);
-    }
-
-    @Override
-    public Class<?> loadClass(String name, boolean resolve)
-        throws ClassNotFoundException {
-        Class<?> clazz = findClass(name);
-        if (resolve) {
-            resolveClass(clazz);
-        }
-
-        return clazz;
-    }
-
-    @Override
-    public Class<?> findClass(String name) throws ClassNotFoundException {
-        return getParent().loadClass(name);
-    }
-
     private static URL[] setupUrls() {
         String[] cp = System.getProperty("java.class.path").split(
             System.getProperty("path.separator", File.pathSeparator));
@@ -52,6 +31,27 @@ public class LaunchWrapperClassloader extends URLClassLoader {
         }
 
         return urls.toArray(new URL[0]);
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return this.loadClass(name, false);
+    }
+
+    @Override
+    public Class<?> loadClass(String name, boolean resolve)
+        throws ClassNotFoundException {
+        Class<?> clazz = findClass(name);
+        if (resolve) {
+            resolveClass(clazz);
+        }
+
+        return clazz;
+    }
+
+    @Override
+    public Class<?> findClass(String name) throws ClassNotFoundException {
+        return getParent().loadClass(name);
     }
 
 }

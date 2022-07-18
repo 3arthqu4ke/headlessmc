@@ -7,7 +7,6 @@ import me.earth.headlessmc.lwjgl.util.DescriptionUtil;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.function.Supplier;
 
 @RequiredArgsConstructor
