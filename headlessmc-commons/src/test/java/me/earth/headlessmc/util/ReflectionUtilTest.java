@@ -3,9 +3,11 @@ package me.earth.headlessmc.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+public class ReflectionUtilTest extends AbstractUtilityClassTest {
+    public ReflectionUtilTest() {
+        super(ReflectionUtil.class);
+    }
 
-public class ReflectionUtilTest {
     @Test
     public void testReflectionUtil_iterate() {
         Class<?> clazz = ReflectionUtil.iterate(SubClass.class, c -> c);
@@ -25,21 +27,10 @@ public class ReflectionUtilTest {
         Assertions.assertEquals(SuperClass.class, clazz);
     }
 
-    @Test
-    public void test_collect() {
-        SubClass object = new SubClass();
-        List<String> collected = ReflectionUtil.collect(object, String.class);
-        Assertions.assertEquals(2, collected.size());
-        Assertions.assertEquals(object.subClassString, collected.get(0));
-        Assertions.assertEquals(object.superClassString, collected.get(1));
-    }
-
     private static class SuperClass {
-        public final String superClassString = "test";
     }
 
     private static final class SubClass extends SuperClass {
-        public final String subClassString = "subClassString";
     }
 
 }

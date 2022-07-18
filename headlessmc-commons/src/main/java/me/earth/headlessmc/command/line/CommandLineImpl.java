@@ -1,14 +1,15 @@
 package me.earth.headlessmc.command.line;
 
-import lombok.CustomLog;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import lombok.*;
 import me.earth.headlessmc.api.PasswordAware;
 import me.earth.headlessmc.api.QuickExitCli;
 
 @CustomLog
 @RequiredArgsConstructor
-public class CommandLineImpl extends PasswordAwareImpl implements Listener {
+public class CommandLineImpl implements Listener, PasswordAware {
+    @Getter
+    @Setter
+    private boolean hidingPasswords;
     private final PasswordAware ctx;
 
     public CommandLineImpl() {

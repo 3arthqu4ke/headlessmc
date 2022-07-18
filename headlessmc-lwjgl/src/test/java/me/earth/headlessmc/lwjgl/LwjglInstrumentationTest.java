@@ -5,10 +5,10 @@ import lombok.val;
 import lombok.var;
 import me.earth.headlessmc.lwjgl.api.RedirectionApi;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
-import me.earth.headlessmc.lwjgl.lwjgltestclasses.AbstractLwjglClass;
-import me.earth.headlessmc.lwjgl.lwjgltestclasses.Lwjgl;
-import me.earth.headlessmc.lwjgl.lwjgltestclasses.LwjglClassLoader;
-import me.earth.headlessmc.lwjgl.lwjgltestclasses.LwjglInterface;
+import org.lwjgl.AbstractLwjglClass;
+import org.lwjgl.Lwjgl;
+import org.lwjgl.LwjglClassLoader;
+import org.lwjgl.LwjglInterface;
 import me.earth.headlessmc.lwjgl.redirections.DefaultRedirections;
 import me.earth.headlessmc.lwjgl.redirections.ObjectRedirection;
 import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
@@ -19,8 +19,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LwjglInstrumentationTest {
     private static final RedirectionManager MANAGER =
@@ -41,7 +40,7 @@ public class LwjglInstrumentationTest {
             "Abstract method in an interface should still be abstract");
 
         val obj = callFactoryMethod(lwjglInterface);
-        Assertions.assertNotNull(obj);
+        assertNotNull(obj);
         testRedirections(obj, lwjglInterface);
     }
 
@@ -54,7 +53,7 @@ public class LwjglInstrumentationTest {
         assertDoesNotThrow(() -> lwjglClass.getConstructor(),
                            "A no-args constructor should've been added!");
         val obj = callFactoryMethod(lwjglClass);
-        Assertions.assertNotNull(obj);
+        assertNotNull(obj);
         testRedirections(obj, lwjglClass);
     }
 
@@ -67,18 +66,18 @@ public class LwjglInstrumentationTest {
 
         val lwjglClass = load(Lwjgl.class);
         val obj = callFactoryMethod(lwjglClass);
-        Assertions.assertNotNull(obj);
+        assertNotNull(obj);
         var method = lwjglClass.getMethod("returnsByteArray", String.class);
         method.setAccessible(true);
         var result = method.invoke(obj, "test");
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
         Assertions.assertInstanceOf(byte[].class, result);
         Assertions.assertArrayEquals(new byte[0], (byte[]) result);
 
         method = lwjglClass.getMethod("returns2dIntArray", String.class);
         method.setAccessible(true);
         result = method.invoke(obj, "test");
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
         Assertions.assertInstanceOf(int[][].class, result);
         Assertions.assertArrayEquals(new int[][]{}, (int[][]) result);
     }
@@ -160,7 +159,7 @@ public class LwjglInstrumentationTest {
             "Abstract method in class should get implemented");
 
         val obj = callFactoryMethod(abstractClass);
-        Assertions.assertNotNull(obj);
+        assertNotNull(obj);
         testRedirections(obj, abstractClass);
     }
 
@@ -181,12 +180,12 @@ public class LwjglInstrumentationTest {
         val byteBuffer = ByteBuffer.wrap(new byte[0]);
         MANAGER.redirect(descriptor, (object, desc, type, args) -> byteBuffer);
         result = returnsAbstractByteBuffer.invoke(obj, "test");
-        Assertions.assertNotNull(result);
+        assertNotNull(result);
         Assertions.assertEquals(byteBuffer, result);
     }
 
     @SneakyThrows
-    private void testRedirections(Object object, Class<?> clazz) {
+    public static void testRedirections(Object object, Class<?> clazz) {
         val called = new boolean[]{false};
         for (val method : clazz.getDeclaredMethods()) {
             if (method.getParameterTypes().length > 0
@@ -197,12 +196,22 @@ public class LwjglInstrumentationTest {
 
             val descriptor = DescriptionUtil.getDesc(clazz)
                 + DescriptionUtil.getDesc(method);
+            if (descriptor.endsWith(";toString()Ljava/lang/String;")) {
+                continue;
+            }
+
+            if (descriptor.endsWith(";hashCode()I") && clazz.isInterface()) {
+                method.setAccessible(true);
+                assertNotNull(method.invoke(object));
+                continue;
+            }
+
             MANAGER.redirect(descriptor, (obj, desc, type, args) -> {
                 called[0] = true;
                 if (type.isPrimitive()) {
                     val fb = DefaultRedirections.fallback(
                         type, new ObjectRedirection(MANAGER));
-                    Assertions.assertNotNull(fb);
+                    assertNotNull(fb);
                     return fb.invoke(obj, desc, type, args);
                 }
 
@@ -213,10 +222,10 @@ public class LwjglInstrumentationTest {
             method.setAccessible(true);
             val result = method.invoke(object);
             if (!method.getReturnType().isPrimitive()) {
-                Assertions.assertNull(result);
+                Assertions.assertNull(result, descriptor);
             }
 
-            Assertions.assertTrue(called[0]);
+            Assertions.assertTrue(called[0], descriptor);
         }
     }
 

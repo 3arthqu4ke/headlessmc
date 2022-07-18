@@ -1,4 +1,4 @@
-package me.earth.headlessmc.lwjgl.lwjgltestclasses;
+package org.lwjgl;
 
 /**
  * {@link me.earth.headlessmc.lwjgl.LwjglInstrumentationTest}

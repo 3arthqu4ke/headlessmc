@@ -10,4 +10,6 @@ public interface LwjglProperties {
     String BITS_PER_PIXEL = "hmc.lwjgl.bitsperpixel";
     String JNI_VERSION = "hmc.lwjgl.nativejniversion";
 
+    String TWEAKER_MAIN_CLASS = "hmc.tweaker.main.class";
+
 }

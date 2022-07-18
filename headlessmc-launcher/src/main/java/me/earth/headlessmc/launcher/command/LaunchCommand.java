@@ -69,6 +69,13 @@ public class LaunchCommand extends AbstractVersionCommand {
             e.printStackTrace();
             ctx.log(String.format(
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
+        } catch (Throwable t) {
+            val msg = String.format(
+                "Couldn't launch %s: %s", version.getName(), t.getMessage());
+            log.error(msg);
+            ctx.log(msg);
+            t.printStackTrace();
+            throw t;
         } finally {
             // for some reason both ShutdownHooks and File.deleteOnExit are
             // not really working, that's why we Main.deleteOldFiles, too.

@@ -2,10 +2,15 @@ package me.earth.headlessmc.command;
 
 import lombok.SneakyThrows;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.util.AbstractUtilityClassTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class ParseUtilTest {
+public class ParseUtilTest extends AbstractUtilityClassTest {
+    public ParseUtilTest() {
+        super(ParseUtil.class);
+    }
+
     @Test
     @SneakyThrows
     public void testParseLong() {

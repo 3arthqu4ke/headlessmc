@@ -24,6 +24,11 @@ module {
     requires 'org.objectweb.asm', ACC_STATIC
 }
 
+configurations {
+    // make launchwrapper available to tests
+    testImplementation.extendsFrom compileOnly
+}
+
 dependencies {
     compileOnly(group: 'net.minecraft', name: 'launchwrapper', version: '1.12') {
         // Not sure if we should also exclude the other dependencies the launch-

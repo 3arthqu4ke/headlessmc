@@ -12,12 +12,13 @@ import me.earth.headlessmc.config.ConfigImpl;
 @Setter
 public class MockedHeadlessMc implements HeadlessMc {
     // no enum cause @Setter
-    public static final HeadlessMc INSTANCE = new MockedHeadlessMc();
+    public static final MockedHeadlessMc INSTANCE = new MockedHeadlessMc();
     private CommandContext commandContext = new CommandContextImpl(this);
     private Config config = ConfigImpl.empty();
     private boolean hidingPasswords = false;
     private boolean waitingForInput = false;
     private boolean quickExitCli = false;
+    private boolean hidingPasswordsSupported = true;
     private String log = null;
 
     @Override

@@ -3,6 +3,7 @@ package me.earth.headlessmc.command;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.Command;
+import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.HasDescription;
 import me.earth.headlessmc.util.Table;
 
@@ -16,14 +17,15 @@ public class HelpCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(String... args) {
+    public void execute(String... args) throws CommandException {
         if (args.length > 1) {
             Command cmd = findCommand(args[1]);
             if (cmd != null) {
                 if (args.length > 2) {
                     String desc = cmd.getArgDescription(args[2]);
                     if (desc == null) {
-                        ctx.log("No description found for '" + args[2] + "'.");
+                        throw new CommandException(
+                            "No description found for '" + args[2] + "'.");
                     } else {
                         ctx.log(String.format(
                             "%s %s: %s", cmd.getName(), args[2], desc));
@@ -39,7 +41,7 @@ public class HelpCommand extends AbstractCommand {
                             .build());
                 }
             } else {
-                ctx.log(
+                throw new CommandException(
                     String.format("Couldn't find command %s", args[1]));
             }
         } else {
