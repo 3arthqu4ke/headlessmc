@@ -189,7 +189,9 @@ public class LwjglInstrumentationTest {
     private void testRedirections(Object object, Class<?> clazz) {
         val called = new boolean[]{false};
         for (val method : clazz.getDeclaredMethods()) {
-            if (method.getParameterTypes().length > 0) {
+            if (method.getParameterTypes().length > 0
+                // when running with coverage methods get added
+                || method.getName().contains("$")) {
                 continue;
             }
 
@@ -208,6 +210,7 @@ public class LwjglInstrumentationTest {
             });
 
             called[0] = false;
+            method.setAccessible(true);
             val result = method.invoke(object);
             if (!method.getReturnType().isPrimitive()) {
                 Assertions.assertNull(result);
