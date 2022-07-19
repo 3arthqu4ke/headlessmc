@@ -24,8 +24,8 @@ dependencies {
     jarLibs group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
 
     testImplementation(testFixtures(project(':headlessmc-commons')))
-    testCompileOnly 'org.apache.logging.log4j:log4j-api:2.18.0'
-    testCompileOnly 'org.apache.logging.log4j:log4j-core:2.18.0'
+    testImplementation 'org.apache.logging.log4j:log4j-api:2.18.0'
+    testImplementation 'org.apache.logging.log4j:log4j-core:2.18.0'
 }
 
 processResources {
