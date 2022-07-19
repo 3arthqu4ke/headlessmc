@@ -1,3 +1,13 @@
+plugins {
+    id "java-test-fixtures"
+}
+
 dependencies {
     implementation project(':headlessmc-api')
+
+    testFixturesCompileOnly project(':headlessmc-api')
+    testFixturesCompileOnly 'org.projectlombok:lombok:1.18.22'
+    testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testFixturesRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }

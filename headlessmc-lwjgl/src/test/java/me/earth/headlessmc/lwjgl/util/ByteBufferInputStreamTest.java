@@ -27,4 +27,16 @@ public class ByteBufferInputStreamTest {
         }
     }
 
+    @Test
+    public void testByteBufferInputStreamMethod2() throws IOException {
+        val bytes = new byte[]{1, 2};
+        val byteBuffer = ByteBuffer.wrap(bytes);
+        try (val is = new ByteBufferInputStream(byteBuffer)) {
+            val bytes2 = new byte[2];
+            assertEquals(2, is.read(bytes2, 0, 2));
+            assertEquals(0, is.available());
+            assertEquals(-1, is.read(bytes2, 0, 2));
+        }
+    }
+
 }

@@ -1,27 +1,39 @@
 package me.earth.headlessmc.lwjgl.util;
 
-import org.junit.jupiter.api.Assertions;
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
 
-public class DescriptionUtilTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class DescriptionUtilTest extends AbstractUtilityTest<DescriptionUtil> {
     @Test
-    public void testGetDesc_Method() throws NoSuchMethodException {
+    public void testGetDescMethod() throws NoSuchMethodException {
         Method method = DescriptionUtilTest.class.getDeclaredMethod(
             "testMethod", boolean.class, byte.class, short.class, int.class,
             long.class, double.class, float.class, char.class, String.class);
         String expected = method.getName() + Type.getMethodDescriptor(method);
         String actual = DescriptionUtil.getDesc(method);
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
     }
 
     @Test
-    public void testGetDesc_Class() {
+    public void testGetDescArray() {
         String expected = Type.getDescriptor(DescriptionUtilTest.class);
         String actual = DescriptionUtil.getDesc(DescriptionUtilTest.class);
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetDescOfArray() {
+        Class<?> s1 = String[].class;
+        assertEquals("[Ljava/lang/String;", DescriptionUtil.getDesc(s1));
+        Class<?> s2 = String[][].class;
+        assertEquals("[[Ljava/lang/String;", DescriptionUtil.getDesc(s2));
+        Class<?> s3 = int[][][].class;
+        assertEquals("[[[I", DescriptionUtil.getDesc(s3));
     }
 
     @SuppressWarnings("unused")

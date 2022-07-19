@@ -24,6 +24,11 @@ run
 # HeadlessMC
 /HeadlessMC/
 /headlessmc-launcher/HeadlessMC/
+
+# Created by some launcher test
 /headlessmc-launcher/test/
+/test/
+
+# Created by LaunchWrapper tests
 /headlessmc-lwjgl/logs/
 /logs/

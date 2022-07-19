@@ -39,6 +39,8 @@ dependencies {
 
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'
     implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
+
+    testImplementation(testFixtures(project(':headlessmc-commons')))
 }
 
 jar {

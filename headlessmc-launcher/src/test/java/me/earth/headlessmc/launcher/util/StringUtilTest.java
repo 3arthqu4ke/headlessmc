@@ -1,9 +1,10 @@
 package me.earth.headlessmc.launcher.util;
 
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class StringUtilTest {
+public class StringUtilTest extends AbstractUtilityTest<StringUtil> {
     @Test
     public void testCutOfEnd() {
         Assertions.assertThrows(IllegalArgumentException.class,

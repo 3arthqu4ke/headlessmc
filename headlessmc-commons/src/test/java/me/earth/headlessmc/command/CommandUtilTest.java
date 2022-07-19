@@ -1,17 +1,13 @@
 package me.earth.headlessmc.command;
 
-import me.earth.headlessmc.util.AbstractUtilityClassTest;
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandUtilTest extends AbstractUtilityClassTest {
-    public CommandUtilTest() {
-        super(CommandUtil.class);
-    }
-
+public class CommandUtilTest extends AbstractUtilityTest<CommandUtil> {
     @Test
     public void testSplit() {
         Map<String, String[]> c = new HashMap<>();
