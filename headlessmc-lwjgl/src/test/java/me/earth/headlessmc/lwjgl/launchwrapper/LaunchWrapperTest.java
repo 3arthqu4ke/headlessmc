@@ -62,6 +62,7 @@ public class LaunchWrapperTest {
 
         System.setProperty("legacy.debugClassLoading", "true");
         System.setProperty("legacy.debugClassLoadingFiner", "true");
+        System.setProperty("formatMsgNoLookups", "true");
 
         val cl = new LaunchWrapperClassloader();
         val launch = cl.loadClass("net.minecraft.launchwrapper.Launch");

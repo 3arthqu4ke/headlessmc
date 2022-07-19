@@ -12,11 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class InstrumentationTest {
     @SneakyThrows
-    protected Class<?> instrument(Class<?> clazz, Transformer transformer) {
+    public static Class<?> instrument(Class<?> clazz, Transformer transformer) {
         String path = clazz.getName().replace(".", "/").concat(".class");
-        try (val is = this.getClass()
-                          .getClassLoader()
-                          .getResourceAsStream(path)) {
+        try (val is = InstrumentationTest.class.getClassLoader()
+                                               .getResourceAsStream(path)) {
             assertNotNull(is);
             val es = new EntryStream(is, emptyList(), new JarEntry(path));
             try (val clIs = transformer.transform(es)) {

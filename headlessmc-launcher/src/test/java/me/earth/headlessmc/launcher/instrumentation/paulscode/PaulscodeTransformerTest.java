@@ -37,7 +37,7 @@ public class PaulscodeTransformerTest extends InstrumentationTest {
 
     @SneakyThrows
     private void testLibrary(Class<?> clazz, boolean inv) {
-        val obj = clazz.newInstance();
+        val obj = clazz.getConstructor().newInstance();
         val getter = clazz.getMethod("getMessage");
 
         clazz.getMethod("message", String.class).invoke(obj, "test");

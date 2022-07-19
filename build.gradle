@@ -21,8 +21,7 @@ allprojects {
         targetCompatibility = JavaVersion.VERSION_1_8
 
         compileJava {
-            if (JavaVersion.current().ordinal()
-                    > JavaVersion.VERSION_1_8.ordinal()) {
+            if (JavaVersion.current() > JavaVersion.VERSION_1_8) {
                 options.compilerArgs.addAll(['--release', '8'])
             }
         }

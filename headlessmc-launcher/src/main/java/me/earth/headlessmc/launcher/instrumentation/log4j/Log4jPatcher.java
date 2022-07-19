@@ -5,6 +5,7 @@ import me.earth.headlessmc.launcher.instrumentation.AbstractClassTransformer;
 import me.earth.headlessmc.launcher.instrumentation.Target;
 import org.objectweb.asm.tree.*;
 
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.ARETURN;
@@ -31,6 +32,10 @@ public class Log4jPatcher extends AbstractClassTransformer {
             insns.add(new LdcInsnNode("HeadlessMc prevented Log4j lookup!"));
             insns.add(new InsnNode(ARETURN));
             mn.instructions = insns;
+            mn.tryCatchBlocks = new ArrayList<>();
+            mn.localVariables = new ArrayList<>();
+            mn.parameters = new ArrayList<>();
+            mn.visitMaxs(0, 0);
         }
     }
 
