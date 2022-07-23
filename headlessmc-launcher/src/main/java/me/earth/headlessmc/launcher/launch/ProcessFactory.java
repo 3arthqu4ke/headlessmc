@@ -113,6 +113,7 @@ public class ProcessFactory {
         val targets = new ArrayList<Target>(version.getLibraries().size());
         for (val library : version.getLibraries()) {
             if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
+                log.debug("Checking: " + library);
                 String libPath = library.getPath(os);
                 val path = files.getDir("libraries") + File.separator + libPath;
                 if (!new File(path).exists()) {

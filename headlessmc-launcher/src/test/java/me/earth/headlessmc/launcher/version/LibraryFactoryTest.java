@@ -8,17 +8,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class LibraryFactoryTest implements UsesResources {
+public class LibraryFactoryTest
+    implements UsesResources, ParsesLibraries {
+
     @Test
     public void test() {
-        val rf = new RuleFactory();
-        val ef = new ExtractorFactory();
-        val nf = new NativesFactory();
-        val factory = new LibraryFactory(rf, ef, nf);
-
-        val jo = getJsonObject("lib.json");
-        val libs = factory.parse(jo);
-
+        val libs = parse(getJsonObject("lib.json"));
         assertEquals(1, libs.size());
         OS os = new OS("Windows", OS.Type.WINDOWS, "10", false);
         Features feat = Features.EMPTY;

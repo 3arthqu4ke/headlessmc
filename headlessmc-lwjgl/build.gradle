@@ -31,13 +31,13 @@ configurations {
 
 dependencies {
     compileOnly(group: 'net.minecraft', name: 'launchwrapper', version: '1.12') {
-        // Not sure if we should also exclude the other dependencies the launch-
-        // wrapper comes with. But the added lwjgl dependency can be nice to get
-        // an idea of what some classes look like.
         exclude module: 'asm-debug-all'
         // exclude unsafe log4j 2.0.9
         exclude module: 'log4j-api'
         exclude module: 'log4j-core'
+        // We don't exclude the LWJGL dependency because even though it's
+        // outdated, it can be nice to get an idea of what some Lwjgl classes
+        // look like when debugging the LWJGL instrumentation.
     }
 
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'

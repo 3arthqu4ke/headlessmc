@@ -7,6 +7,7 @@ repositories {
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'jacoco'
     //noinspection GroovyAssignabilityCheck
     plugins.withType(JavaPlugin) {
         repositories {
@@ -49,6 +50,12 @@ allprojects {
                 events "failed"
                 exceptionFormat "full"
             }
+
+            finalizedBy jacocoTestReport
+        }
+
+        jacocoTestReport {
+            dependsOn test
         }
 
         jar {
@@ -62,6 +69,21 @@ allprojects {
     }
 }
 
+task jacocoRootReport(type: JacocoReport, group: 'verification') {
+    description = 'Generates an aggregate report from all subprojects'
+    dependsOn(subprojects.test)
+
+    additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.from = files(subprojects.sourceSets.main.output)
+    executionData.from = files(subprojects.jacocoTestReport.executionData)
+
+    reports {
+        html.enabled true
+        xml.enabled true
+    }
+}
+
 task copyJars(type: Copy, dependsOn: subprojects.jar) {
     from(subprojects.jar)
     into project.file(System.getProperty('hmc.jar.dir', 'build/libs'))
@@ -70,4 +92,17 @@ task copyJars(type: Copy, dependsOn: subprojects.jar) {
 jar {
     dependsOn(subprojects.jar)
     finalizedBy(copyJars)
+}
+
+// the launchers report will otherwise contain coverage data about some of the
+// libraries we use in those two jars, e.g. xdarks Deencapsulation
+tasks.withType(JacocoReport) {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                '**/headlessmc/headlessmc-runtime.jar',
+                '**/headlessmc/headlessmc-lwjgl.jar'
+            ])
+        }))
+    }
 }

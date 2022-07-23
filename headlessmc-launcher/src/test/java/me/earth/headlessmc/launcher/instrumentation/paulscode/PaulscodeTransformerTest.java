@@ -17,6 +17,9 @@ public class PaulscodeTransformerTest extends InstrumentationTest {
         val invalidTarget = new Target(false, "test");
         assertFalse(transformer.matches(invalidTarget));
 
+        val invalidTarget2 = new Target(false, "paulscode");
+        assertFalse(transformer.matches(invalidTarget2));
+
         val validTarget = new Target(false, ".minecraft\\libraries\\com\\" +
             "paulscode\\soundsystem\\20120107\\soundsystem-20120107.jar\"");
         assertTrue(transformer.matches(validTarget));

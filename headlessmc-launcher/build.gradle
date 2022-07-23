@@ -42,4 +42,5 @@ jar {
     }
 
     exclude("module-info.class")
+    exclude("META-INF/maven/com.google.code.gson/**")
 }

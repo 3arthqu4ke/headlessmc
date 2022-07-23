@@ -1,11 +1,16 @@
+# HeadlessMc
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6a86b3e62d3b47909de670b09737f8fd)](https://www.codacy.com/gh/3arthqu4ke/HeadlessMc/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=3arthqu4ke/HeadlessMc&amp;utm_campaign=Badge_Grade)
+![](https://github.com/3arthqu4ke/HeadlessMc/actions/workflows/gradle-publish.yml/badge.svg)
+![GitHub](https://img.shields.io/github/license/3arthqu4ke/HeadlessMc)
+[![Docker Image Size](https://badgen.net/docker/size/3arthqu4ke/headlessmc?icon=docker&label=image%20size)](https://hub.docker.com/r/3arthqu4ke/headlessmc/)
+![Github last-commit](https://img.shields.io/github/last-commit/3arthqu4ke/HeadlessMc)
+
 > :warning: HeadlessMc will not allow you to play without having bought Minecraft!
 
-## HeadlessMc
-
-HeadlessMc allows you to launch Minecraft from the command line. It also allows you to instrument the game: before
+HeadlessMc allows you to launch Minecraft from the command line. It is also able to instrument the game: before
 launch the bytecode of the games libraries can be modified. HeadlessMc aims to use this feature to
 
-* add a command line interface to Minecraft, which allows you to control the game.
+* add a command line interface to Minecraft, which can control the game.
 * redirect every method in the lwjgl library, causing Minecraft not to render anything, thus making it "headless".
 * patch the Log4J vulnerability.
 
