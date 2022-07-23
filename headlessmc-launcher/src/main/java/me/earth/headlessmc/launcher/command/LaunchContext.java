@@ -10,6 +10,7 @@ public class LaunchContext extends CommandContextImpl {
         super(ctx);
         add(new LaunchCommand(ctx));
         add(new QuitCommand(ctx));
+        add(new FabricCommand(ctx));
         add(new JsonCommand(ctx));
         add(new HelpCommand(ctx));
         add(new JavaCommand(ctx));
