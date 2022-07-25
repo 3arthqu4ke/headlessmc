@@ -3,7 +3,6 @@ package me.earth.headlessmc.command;
 import me.earth.headlessmc.MockedHeadlessMc;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,27 +15,27 @@ public class YesNoContextTest {
         YesNoContext ctx = new YesNoContext(result -> value[0] = result, hmc);
         hmc.setCommandContext(ctx);
         assertFalse(hmc.isWaitingForInput());
-        Assertions.assertEquals(ctx, hmc.getCommandContext());
+        assertEquals(ctx, hmc.getCommandContext());
 
         ctx.execute("t");
         assertFalse(hmc.isWaitingForInput());
-        Assertions.assertEquals(ctx, hmc.getCommandContext());
+        assertEquals(ctx, hmc.getCommandContext());
         assertNull(value[0]);
 
         ctx.execute("y");
-        Assertions.assertTrue(value[0]);
+        assertTrue(value[0]);
         ctx.execute("n");
         assertFalse(value[0]);
 
         assertFalse(hmc.isWaitingForInput());
         YesNoContext.goBackAfter(hmc, result -> value[0] = result);
-        Assertions.assertTrue(hmc.isWaitingForInput());
-        Assertions.assertNotEquals(ctx, hmc.getCommandContext());
+        assertTrue(hmc.isWaitingForInput());
+        assertNotEquals(ctx, hmc.getCommandContext());
 
         hmc.getCommandContext().execute("y");
         assertFalse(hmc.isWaitingForInput());
-        Assertions.assertTrue(value[0]);
-        Assertions.assertEquals(ctx, hmc.getCommandContext());
+        assertTrue(value[0]);
+        assertEquals(ctx, hmc.getCommandContext());
     }
 
     @Test

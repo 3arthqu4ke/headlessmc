@@ -1,10 +1,8 @@
 package me.earth.headlessmc.launcher.util;
 
-import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.launcher.auth.AccountValidator;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

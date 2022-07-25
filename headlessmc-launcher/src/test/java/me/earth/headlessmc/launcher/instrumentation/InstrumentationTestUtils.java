@@ -10,12 +10,12 @@ import java.util.jar.JarEntry;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class InstrumentationTest {
+public class InstrumentationTestUtils {
     @SneakyThrows
     public static Class<?> instrument(Class<?> clazz, Transformer transformer) {
         String path = clazz.getName().replace(".", "/").concat(".class");
-        try (val is = InstrumentationTest.class.getClassLoader()
-                                               .getResourceAsStream(path)) {
+        try (val is = InstrumentationTestUtils.class.getClassLoader()
+                                                    .getResourceAsStream(path)) {
             assertNotNull(is);
             val es = new EntryStream(is, emptyList(), new JarEntry(path));
             try (val clIs = transformer.transform(es)) {

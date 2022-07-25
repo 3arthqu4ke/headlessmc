@@ -38,7 +38,7 @@ public class HelpCommandTest {
 
         @Override
         public void execute(String... args) {
-
+            // dummy
         }
     }
 

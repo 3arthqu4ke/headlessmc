@@ -33,7 +33,7 @@ public class QuitCommandTest {
             System.setSecurityManager(new SecurityManager() {
                 @Override
                 public void checkPermission(Permission perm) {
-
+                    // NOP
                 }
 
                 @Override

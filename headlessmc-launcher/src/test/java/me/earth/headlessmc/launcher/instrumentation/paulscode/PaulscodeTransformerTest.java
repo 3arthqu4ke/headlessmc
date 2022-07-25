@@ -2,14 +2,14 @@ package me.earth.headlessmc.launcher.instrumentation.paulscode;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import me.earth.headlessmc.launcher.instrumentation.InstrumentationTest;
+import me.earth.headlessmc.launcher.instrumentation.InstrumentationTestUtils;
 import me.earth.headlessmc.launcher.instrumentation.Target;
 import org.junit.jupiter.api.Test;
 import paulscode.sound.Library;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PaulscodeTransformerTest extends InstrumentationTest {
+public class PaulscodeTransformerTest extends InstrumentationTestUtils {
     @Test
     public void testMatches() {
         val transformer = new PaulscodeTransformer();
@@ -29,12 +29,14 @@ public class PaulscodeTransformerTest extends InstrumentationTest {
     @SneakyThrows
     public void testPaulsCodeInstrumentation() {
         val transformer = new PaulscodeTransformer();
-        val transformedClass = instrument(Library.class, transformer);
+        val transformedClass = assertDoesNotThrow(
+            () -> instrument(Library.class, transformer));
         testLibrary(transformedClass, true);
     }
 
     @Test
     public void testLibrary() {
+        assertNull(new Library().getMessage());
         testLibrary(Library.class, false);
     }
 

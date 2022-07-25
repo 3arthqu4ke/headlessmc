@@ -10,9 +10,9 @@
 HeadlessMc allows you to launch Minecraft from the command line. It is also able to instrument the game: before
 launch the bytecode of the games libraries can be modified. HeadlessMc aims to use this feature to
 
-* add a command line interface to Minecraft, which can control the game.
-* redirect every method in the lwjgl library, causing Minecraft not to render anything, thus making it "headless".
-* patch the Log4J vulnerability.
+  * add a command line interface to Minecraft, which can control the game.
+  * redirect every method in the lwjgl library, causing Minecraft not to render anything, thus making it "headless".
+  * patch the Log4J vulnerability.
 
 ## How to use
 
@@ -37,6 +37,8 @@ the most important commands:
 | download | Lists available Minecraft versions and downloads them. | \<version\> -id -release -snapshot -other -refresh |
 | login | Logs into a Microsoft account. | \<email\>, will open a context for entering the password. |
 | launch | Launches Minecraft. | \<version/id\> -commands -lwjgl -paulscode -lookup -jndi -noout -keep -exit |
+| forge | Installs Minecraft Forge. | \<version/id\> \<--uid\> |
+| fabric | Installs Fabric. | \<version/id\> |
 
 Arguments passed to commands have to be separated using spaces. If you want to pass an Argument which contains spaces
 you need to escape it using quotation marks, like this:
@@ -84,7 +86,8 @@ Look [here](DEV.md) for more in-depth documentation about the project.
 
 Some cool libraries we use:
 
-* [OpenAuth by Litarvan](https://github.com/Litarvan/OpenAuth)
-* [Deencapsulation by xxDark](https://github.com/xxDark/deencapsulation)
+  * [OpenAuth by Litarvan](https://github.com/Litarvan/OpenAuth)
+  * [Deencapsulation by xxDark](https://github.com/xxDark/deencapsulation)
+  * [Forge-CLI by TeamKun](https://github.com/TeamKun/ForgeCLI), which we [customized](https://github.com/3arthqu4ke/ForgeCLI).
 
 HeadlessMc is licensed under the [MIT License](LICENSE).

@@ -12,7 +12,7 @@ import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 
-import static me.earth.headlessmc.launcher.instrumentation.InstrumentationTest.instrument;
+import static me.earth.headlessmc.launcher.instrumentation.InstrumentationTestUtils.instrument;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Log4jPatchTests extends AbstractUtilityTest<Patchers> {
