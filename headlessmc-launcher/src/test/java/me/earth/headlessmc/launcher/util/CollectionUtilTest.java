@@ -1,10 +1,11 @@
 package me.earth.headlessmc.launcher.util;
 
 import lombok.val;
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class CollectionUtilTest {
+public class CollectionUtilTest extends AbstractUtilityTest<CollectionUtil> {
     @Test
     public void testListOf() {
         val first = "first";

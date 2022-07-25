@@ -28,9 +28,11 @@ import static org.objectweb.asm.Opcodes.*;
 public class LwjglTransformer implements Transformer {
     @Override
     public void transform(ClassNode cn) {
-        if (cn.module != null) {
-            cn.module.visitRequire("headlessmc.lwjgl", ACC_MANDATED, null);
-            cn.module.access |= ACC_OPEN;
+        try {
+            transformModule(cn);
+        } catch (NoSuchFieldError ignored) {
+            // If we run this Transformer via the LaunchWrapper we could be on
+            // an older ASM version which doesnt have the module field yet.
         }
 
         if ((cn.access & ACC_MODULE) == 0) {
@@ -41,6 +43,13 @@ public class LwjglTransformer implements Transformer {
                     fn.access &= ~ACC_FINAL;
                 }
             }
+        }
+    }
+
+    private void transformModule(ClassNode cn) {
+        if (cn.module != null) {
+            cn.module.visitRequire("headlessmc.lwjgl", ACC_MANDATED, null);
+            cn.module.access |= ACC_OPEN;
         }
     }
 

@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.util;
 
 import lombok.val;
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -8,7 +9,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UuidUtilTest {
+public class UuidUtilTest extends AbstractUtilityTest<UuidUtil> {
     @Test
     public void testIsUuid() {
         for (int i = 0; i < 10; i++) {

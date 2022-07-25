@@ -32,10 +32,32 @@ public class EntryClassWriter extends ClassWriter {
         }
     }
 
-    // TODO: can we improve this and not create a new ClassLoader everytime?
+    @CustomLog
     private static final class EntryClassLoader extends URLClassLoader {
         public EntryClassLoader(URL[] urls) {
             super(urls, EntryClassLoader.class.getClassLoader());
+        }
+
+        @Override
+        protected Class<?> findClass(String name)
+            throws ClassNotFoundException {
+            try {
+                return super.findClass(name);
+            } catch (ClassNotFoundException e) {
+                log.debug(e.getMessage());
+                return getParent().loadClass(name);
+            }
+        }
+
+        @Override
+        protected Class<?> loadClass(String name, boolean resolve)
+            throws ClassNotFoundException {
+            try {
+                return super.loadClass(name, resolve);
+            } catch (ClassNotFoundException e) {
+                log.debug(e.getMessage());
+                return getParent().loadClass(name);
+            }
         }
 
         public static EntryClassLoader from(EntryStream stream)

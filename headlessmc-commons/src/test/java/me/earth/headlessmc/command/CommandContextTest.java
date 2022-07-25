@@ -19,6 +19,8 @@ public class CommandContextTest {
     @Test
     public void testCommandContextImpl() {
         val ctx = new CommandContextImpl(HMC);
+        Assertions.assertDoesNotThrow(() -> ctx.execute("test"));
+
         ctx.add(TestCommands.COMMAND_1);
         ctx.add(TestCommands.COMMAND_2);
         ctx.add(new MultiCommand(HMC));
@@ -29,6 +31,10 @@ public class CommandContextTest {
         Assertions.assertEquals(TestCommands.COMMAND_1, ctx.commands.get(0));
         Assertions.assertEquals(TestCommands.COMMAND_2, ctx.commands.get(1));
 
+        Assertions.assertFalse(TestCommands.COMMAND_1.isUsed());
+        Assertions.assertFalse(TestCommands.COMMAND_2.isUsed());
+
+        ctx.execute("");
         Assertions.assertFalse(TestCommands.COMMAND_1.isUsed());
         Assertions.assertFalse(TestCommands.COMMAND_2.isUsed());
 

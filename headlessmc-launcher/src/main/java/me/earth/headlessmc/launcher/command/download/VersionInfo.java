@@ -4,6 +4,7 @@ import lombok.Data;
 import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
 
+// TODO: @SerializedName
 @Data
 class VersionInfo implements HasId, HasName {
     private final int id;

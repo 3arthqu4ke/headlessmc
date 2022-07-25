@@ -9,8 +9,8 @@ class ExportsOrOpens {
         this.pkg = pkg.replace('\\.', '/')
         this.access = access
         this.to = to == null ? null : Arrays.stream(to as String[])
-                                            .map(s -> s.replace('\\.', '/'))
-                                            .toArray(String[]::new)
+                .map(s -> s.replace('\\.', '/'))
+                .toArray(String[]::new)
     }
 
 }

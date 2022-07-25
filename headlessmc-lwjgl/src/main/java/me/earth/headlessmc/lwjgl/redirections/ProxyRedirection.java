@@ -15,7 +15,7 @@ public class ProxyRedirection implements InvocationHandler {
     private final String internalName;
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args)
+    public Object invoke(Object proxy, Method method, Object[] argsIn)
         throws Throwable {
         String desc = internalName + DescriptionUtil.getDesc(method);
         Supplier<Redirection> fb = () -> manager;
@@ -25,6 +25,12 @@ public class ProxyRedirection implements InvocationHandler {
             fb = () -> DefaultRedirections.HASHCODE;
         }
 
+        Object[] args = new Object[argsIn == null ? 1 : argsIn.length + 1];
+        // there's basically no way the method is static
+        args[0] = proxy;
+        if (argsIn != null) {
+            System.arraycopy(argsIn, 0, args, 1, argsIn.length);
+        }
         return manager.invoke(desc, method.getReturnType(), proxy, fb, args);
     }
 

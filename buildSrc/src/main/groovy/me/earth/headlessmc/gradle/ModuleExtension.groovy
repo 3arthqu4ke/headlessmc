@@ -1,3 +1,4 @@
+//file:noinspection unused
 package me.earth.headlessmc.gradle
 
 import groovy.transform.PackageScope
@@ -6,15 +7,15 @@ import org.gradle.api.provider.Property
 
 abstract class ModuleExtension {
     /** For Modules only. */
-    public static final int ACC_OPEN = 0x0020;
+    public static final int ACC_OPEN = 0x0020
     /** For 'requires' */
-    public static final int ACC_STATIC = 0x0040;
+    public static final int ACC_STATIC = 0x0040
     /** For 'requires' */
-    public static final int ACC_TRANSITIVE = 0x0020;
+    public static final int ACC_TRANSITIVE = 0x0020
     /** For everything */
-    public static final int ACC_SYNTHETIC = 0x1000;
+    public static final int ACC_SYNTHETIC = 0x1000
     /** For everything */
-    public static final int ACC_MANDATED = 0x8000;
+    public static final int ACC_MANDATED = 0x8000
 
     abstract Property<String> getName()
 
@@ -25,22 +26,22 @@ abstract class ModuleExtension {
     abstract Property<String> getVersion()
 
     @PackageScope
-    final List<String> packages = new ArrayList<>()
+    final List<String> packages = []
 
     @PackageScope
-    final List<String> uses = new ArrayList<>()
+    final List<String> uses = []
 
     @PackageScope
-    final List<ExportsOrOpens> opens = new ArrayList<>()
+    final List<ExportsOrOpens> opens = []
 
     @PackageScope
-    final List<Provides> provides = new ArrayList<>()
+    final List<Provides> provides = []
 
     @PackageScope
-    final List<ExportsOrOpens> exports = new ArrayList<>()
+    final List<ExportsOrOpens> exports = []
 
     @PackageScope
-    final List<Requires> requires = new ArrayList<>()
+    final List<Requires> requires = []
 
     abstract DirectoryProperty getDirectory()
 

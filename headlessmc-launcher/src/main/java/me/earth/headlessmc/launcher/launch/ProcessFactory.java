@@ -40,7 +40,7 @@ public class ProcessFactory {
             version, instrumentation, launcher, files, runtime, noOut, noIn);
     }
 
-    public Process run(Version version, Instrumentation instrumentation,
+    public Process run(Version versionIn, Instrumentation instrumentation,
                        Launcher launcher, FileManager fileManager,
                        boolean runtime, boolean noOut, boolean noIn)
         throws IOException, LaunchException, AuthException {
@@ -48,7 +48,7 @@ public class ProcessFactory {
             launcher.getAccountManager().login(launcher.getConfig());
         }
 
-        version = new VersionMerger(version);
+        val version = new VersionMerger(versionIn);
         if (version.getArguments() == null) {
             throw new LaunchException(
                 version.getName() + ": Version file and its parents" +
@@ -73,7 +73,7 @@ public class ProcessFactory {
 
         log.debug(command.toString());
         val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR,
-                                           launcher.getMcFiles().getPath()));
+                                                    launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
@@ -113,6 +113,7 @@ public class ProcessFactory {
         val targets = new ArrayList<Target>(version.getLibraries().size());
         for (val library : version.getLibraries()) {
             if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
+                log.debug("Checking: " + library);
                 String libPath = library.getPath(os);
                 val path = files.getDir("libraries") + File.separator + libPath;
                 if (!new File(path).exists()) {

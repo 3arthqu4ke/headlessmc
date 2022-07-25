@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher.version;
 
+import lombok.CustomLog;
 import lombok.Data;
 import lombok.val;
 import lombok.var;
@@ -9,7 +10,10 @@ import java.io.File;
 import java.util.Map;
 
 @Data
+@CustomLog
 class LibraryImpl implements Library {
+    private static final String URL = "https://libraries.minecraft.net/";
+
     private final Map<String, String> natives;
     private final Extractor extractor;
     private final String name;
@@ -52,7 +56,12 @@ class LibraryImpl implements Library {
             return url;
         }
 
-        return baseUrl + path;
+        if (baseUrl == null) {
+            log.debug("Assuming " + getName() + " has base url " + URL);
+            return URL + path.replace(File.separator, "/");
+        }
+
+        return baseUrl + path.replace(File.separator, "/");
     }
 
 }

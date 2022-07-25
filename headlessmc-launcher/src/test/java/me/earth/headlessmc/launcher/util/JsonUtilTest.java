@@ -6,10 +6,13 @@ import com.google.gson.JsonPrimitive;
 import lombok.val;
 import lombok.var;
 import me.earth.headlessmc.launcher.UsesResources;
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class JsonUtilTest implements UsesResources {
+public class JsonUtilTest extends AbstractUtilityTest<JsonUtil>
+    implements UsesResources {
+
     @Test
     public void testGetString() {
         val jo = getJsonObject("nested.json");

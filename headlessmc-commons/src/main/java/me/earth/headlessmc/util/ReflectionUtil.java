@@ -2,9 +2,6 @@ package me.earth.headlessmc.util;
 
 import lombok.experimental.UtilityClass;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -47,40 +44,6 @@ public class ReflectionUtil {
 
             current = current.getSuperclass();
         }
-
-        return result;
-    }
-
-    /**
-     * Goes through every field in the objects class and its super classes,
-     * accesses the objects assigned to them and returns a list of those
-     * objects. Objects which are <tt>null</tt> will be skipped and {@link
-     * IllegalAccessException}s will be swallowed.
-     *
-     * @param object the object whose fields to collect.
-     * @param type   fields of this type will be collected.
-     * @param <T>    the type of the field to collect.
-     * @return a list of objects behind the fields in the given object.
-     */
-    public static <T> List<T> collect(Object object, Class<T> type) {
-        // TODO: is this actually being used?
-        List<T> result = new ArrayList<>();
-        iterate(object.getClass(), clazz -> {
-            for (Field field : clazz.getDeclaredFields()) {
-                if (type.isAssignableFrom(field.getType())) {
-                    field.setAccessible(true);
-                    try {
-                        Object obj = field.get(object);
-                        if (obj != null) {
-                            result.add(type.cast(obj));
-                        }
-                    } catch (IllegalAccessException e) {
-                        // should we throw this instead?
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
 
         return result;
     }

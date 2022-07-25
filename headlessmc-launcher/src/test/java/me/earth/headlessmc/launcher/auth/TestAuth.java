@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.logging.Level;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @CustomLog
@@ -31,7 +32,7 @@ public class TestAuth {
             new AccountStore(LauncherMock.INSTANCE.getFileManager(),
                              LauncherMock.INSTANCE), VALIDATOR).login(config);
         log.info(account.toString());
-        VALIDATOR.validate(account);
+        assertDoesNotThrow(() -> VALIDATOR.validate(account));
     }
 
     @Test

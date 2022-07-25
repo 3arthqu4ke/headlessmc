@@ -17,7 +17,8 @@ public class Instrumentation {
     private final List<Transformer> transformers;
     private final File base;
 
-    public List<String> instrument(List<Target> targets) throws IOException {
+    public List<String> instrument(List<Target> targetsIn) throws IOException {
+        var targets = targetsIn;
         if (transformers.isEmpty()) {
             return targets.stream()
                           .map(Target::getPath)

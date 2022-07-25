@@ -12,7 +12,7 @@ abstract class GenerateModuleTask extends DefaultTask {
     @TaskAction
     void generateModule() {
         def me = extension.get()
-        if (me.getName().getOrNull() == null) {
+        if (me.getName().orNull == null) {
             project.logger.error("ModulePlugin will not generate a" +
                     " module-info.class, no name has been specified.")
             return

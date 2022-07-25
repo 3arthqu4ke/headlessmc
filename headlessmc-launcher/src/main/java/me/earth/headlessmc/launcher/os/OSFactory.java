@@ -30,13 +30,14 @@ public class OSFactory {
         return getGeneric(config, LauncherProperties.OS_VERSION, "os.version");
     }
 
-    private static OS.Type getType(Config config, String os) {
+    private static OS.Type getType(Config config, String osIn) {
         val type = config.get(LauncherProperties.OS_TYPE);
         if (type != null) {
             return OS.Type.valueOf(type.toUpperCase());
         }
 
         OS.Type result;
+        String os = osIn;
         if ((os = os.toLowerCase(Locale.ENGLISH)).contains("nux")
             || os.contains("solaris")
             || os.contains("nix")

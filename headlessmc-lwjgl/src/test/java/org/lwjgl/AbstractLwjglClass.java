@@ -1,4 +1,4 @@
-package me.earth.headlessmc.lwjgl.lwjgltestclasses;
+package org.lwjgl;
 
 import java.nio.ByteBuffer;
 

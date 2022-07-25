@@ -56,6 +56,7 @@ public class DownloadCommand extends AbstractLauncherCommand
             log.debug("Downloading version " + version.getName() + " from "
                           + version.getUrl() + " to " + file.getAbsolutePath());
             IOUtil.download(version.getUrl(), file.getAbsolutePath());
+            ctx.getVersionService().refresh();
             ctx.log("Download successful!");
         } catch (IOException ioe) {
             throw new CommandException("Couldn't download version "

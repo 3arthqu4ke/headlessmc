@@ -24,22 +24,43 @@ module {
     requires 'org.objectweb.asm', ACC_STATIC
 }
 
+configurations {
+    // make launchwrapper available to tests
+    testImplementation.extendsFrom compileOnly
+}
+
 dependencies {
     compileOnly(group: 'net.minecraft', name: 'launchwrapper', version: '1.12') {
-        // Not sure if we should also exclude the other dependencies the launch-
-        // wrapper comes with. But the added lwjgl dependency can be nice to get
-        // an idea of what some classes look like.
         exclude module: 'asm-debug-all'
+        // exclude unsafe log4j 2.0.9
+        exclude module: 'log4j-api'
+        exclude module: 'log4j-core'
+        // We don't exclude the LWJGL dependency because even though it's
+        // outdated, it can be nice to get an idea of what some Lwjgl classes
+        // look like when debugging the LWJGL instrumentation.
     }
 
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'
     implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
+
+    testImplementation(testFixtures(project(':headlessmc-commons')))
+    // Only for the LaunchWrapperTest, which is skipped on Java > 8
+    if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
+        testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.18.0'
+        testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.18.0'
+    }
 }
 
 jar {
     archivesBaseName = 'headlessmc-lwjgl'
     //noinspection GroovyAssignabilityCheck
     manifest {
+        // TODO: test tweaker?
         attributes 'TweakClass': 'me.earth.headlessmc.lwjgl.launchwrapper.LwjglTweaker'
+        // TODO: test java agent
+        attributes 'Premain-Class': 'me.earth.headlessmc.lwjgl.agent.LwjglAgent'
+        attributes 'Agent-Class': 'me.earth.headlessmc.lwjgl.agent.LwjglAgent'
+        attributes 'Can-Redefine-Classes': true
+        attributes 'Can-Retransform-Classes': true
     }
 }

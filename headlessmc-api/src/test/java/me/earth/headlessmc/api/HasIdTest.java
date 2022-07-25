@@ -2,7 +2,6 @@ package me.earth.headlessmc.api;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 
@@ -13,8 +12,13 @@ public class HasIdTest {
     public void testGetById() {
         val names = new ArrayList<HasId>();
         for (int id = 0; id < 10; id++) {
-            val hasName = Mockito.mock(HasId.class);
-            Mockito.when(hasName.getId()).thenReturn(id);
+            int finalId = id;
+            val hasName = new HasId() {
+                @Override
+                public int getId() {
+                    return finalId;
+                }
+            };
 
             assertNull(HasId.getById(id, names));
             assertNull(HasId.getById(String.valueOf(id), names));

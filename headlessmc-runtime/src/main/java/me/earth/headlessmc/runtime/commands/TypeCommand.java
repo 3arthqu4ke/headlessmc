@@ -1,6 +1,5 @@
 package me.earth.headlessmc.runtime.commands;
 
-import lombok.Builder;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.ParseUtil;
 import me.earth.headlessmc.runtime.Runtime;
@@ -8,7 +7,6 @@ import me.earth.headlessmc.runtime.Runtime;
 public class TypeCommand extends AbstractRuntimeCommand {
     private final TypeParser parser;
 
-    @Builder
     public TypeCommand(Runtime ctx, String name, String desc, TypeParser p) {
         super(ctx, name, desc);
         this.parser = p;

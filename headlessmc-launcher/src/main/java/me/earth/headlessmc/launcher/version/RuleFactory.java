@@ -69,9 +69,7 @@ class RuleFactory {
             version = Pattern.compile(versionObject.getAsString());
         }
 
-        // TODO: this!!!
-        val arch = os.getAsJsonObject().get("arch");
-
+        // val arch = os.getAsJsonObject().get("arch"); TODO: this?
         return ofOs(type, version, action);
     }
 

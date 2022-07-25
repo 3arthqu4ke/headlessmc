@@ -2,12 +2,13 @@ package me.earth.headlessmc.launcher.util;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 
-public class IOUtilTest {
+public class IOUtilTest extends AbstractUtilityTest<IOUtil> {
     @Test
     public void testCopy() throws IOException {
         val array = new byte[]{0, 1, 2, 3};

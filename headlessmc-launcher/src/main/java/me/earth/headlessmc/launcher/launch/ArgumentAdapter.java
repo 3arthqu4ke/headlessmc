@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 @CustomLog
 class ArgumentAdapter {
@@ -33,10 +32,6 @@ class ArgumentAdapter {
 
     public void remove(String argument) {
         arguments.removeIf(a -> argument.equalsIgnoreCase(a.getValue()));
-    }
-
-    public void remove(Pattern argument) {
-        arguments.removeIf(a -> argument.matcher(a.getValue()).find());
     }
 
     public List<String> build(OS os, Features features, String type) {

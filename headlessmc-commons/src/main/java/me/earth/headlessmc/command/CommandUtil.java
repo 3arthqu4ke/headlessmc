@@ -93,8 +93,18 @@ public class CommandUtil {
         return prev[s2.length()];
     }
 
-    public static boolean hasFlag(String arg, String[] args) {
+    public static boolean hasFlag(String arg, String... args) {
         return Arrays.stream(args).anyMatch(s -> s.equalsIgnoreCase(arg));
+    }
+
+    public static String getOption(String option, String... args) {
+        for (int i = 0; i < args.length; i++) {
+            if (option.equalsIgnoreCase(args[i]) && i < args.length - 1) {
+                return args[i + 1];
+            }
+        }
+
+        return null;
     }
 
 }

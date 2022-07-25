@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.val;
 import me.earth.headlessmc.launcher.util.JsonUtil;
+import me.earth.headlessmc.launcher.util.URLs;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,19 +19,14 @@ import java.util.List;
 @CustomLog
 class VersionInfoCache implements Collection<VersionInfo> {
     private static final List<VersionInfo> EMPTY = new ArrayList<>(0);
-    private static final URL URL = getUrl();
+    private static final URL URL = URLs.url(
+        "https://launchermeta.mojang.com/mc/game/version_manifest.json");
     @Delegate
     private List<VersionInfo> infos = EMPTY;
     @Getter
     private String latestSnapshot = "unknown";
     @Getter
     private String latestRelease = "unknown";
-
-    @SneakyThrows
-    private static URL getUrl() {
-        return new URL(
-            "https://launchermeta.mojang.com/mc/game/version_manifest.json");
-    }
 
     public List<VersionInfo> cache(boolean force) {
         if (infos != EMPTY && !force) {

@@ -5,8 +5,6 @@ public interface PasswordAware {
 
     void setHidingPasswords(boolean hidingPasswords);
 
-    default boolean isHidingPasswordsSupported() {
-        return true;
-    }
+    boolean isHidingPasswordsSupported();
 
 }

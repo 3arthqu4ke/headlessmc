@@ -1,4 +1,4 @@
-package me.earth.headlessmc.lwjgl.lwjgltestclasses;
+package org.lwjgl;
 
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.lwjgl.api.Transformer;
@@ -38,7 +38,7 @@ public class LwjglClassLoader extends ClassLoader {
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException {
         String path = name.replace('.', '/').concat(".class");
-        if (path.startsWith("me/earth/headlessmc/lwjgl/lwjgltestclasses")) {
+        if (path.startsWith("org/lwjgl")) {
             try (InputStream is = getParent().getResourceAsStream(path)) {
                 if (is == null) {
                     throw new ClassNotFoundException("Couldn't load " + path);
