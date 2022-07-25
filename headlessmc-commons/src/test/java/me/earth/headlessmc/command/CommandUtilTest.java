@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class CommandUtilTest extends AbstractUtilityTest<CommandUtil> {
     @Test
     public void testSplit() {
@@ -23,7 +25,7 @@ public class CommandUtilTest extends AbstractUtilityTest<CommandUtil> {
         for (Map.Entry<String, String[]> e : c.entrySet()) {
             String[] split = CommandUtil.split(e.getKey());
             String[] expected = e.getValue();
-            Assertions.assertArrayEquals(expected, split);
+            assertArrayEquals(expected, split);
         }
     }
 
@@ -34,17 +36,27 @@ public class CommandUtilTest extends AbstractUtilityTest<CommandUtil> {
         String sett = "stte";
         String buzz = "buzz";
 
-        Assertions.assertEquals(2, CommandUtil.levenshtein(test, tset));
-        Assertions.assertEquals(4, CommandUtil.levenshtein(test, sett));
-        Assertions.assertEquals(4, CommandUtil.levenshtein(buzz, test));
+        assertEquals(2, CommandUtil.levenshtein(test, tset));
+        assertEquals(4, CommandUtil.levenshtein(test, sett));
+        assertEquals(4, CommandUtil.levenshtein(buzz, test));
     }
 
     @Test
     public void testHasArg() {
         String[] array = new String[]{"test", "-arg"};
-        Assertions.assertTrue(CommandUtil.hasFlag("-arg", array));
-        Assertions.assertTrue(CommandUtil.hasFlag("-ARg", array));
-        Assertions.assertFalse(CommandUtil.hasFlag("-wasd", array));
+        assertTrue(CommandUtil.hasFlag("-arg", array));
+        assertTrue(CommandUtil.hasFlag("-ARg", array));
+        assertFalse(CommandUtil.hasFlag("-wasd", array));
+    }
+
+    @Test
+    public void testGetOption() {
+        String[] array = new String[]{"--test", "option"};
+        assertEquals("option", CommandUtil.getOption("--test", array));
+        assertEquals("option", CommandUtil.getOption("--Test", array));
+        assertNull(CommandUtil.getOption("--notThere"));
+        assertNull(CommandUtil.getOption("--test", "--test"));
+        assertNull(CommandUtil.getOption("--test"));
     }
 
 }

@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.command;
 import me.earth.headlessmc.command.*;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.download.DownloadCommand;
+import me.earth.headlessmc.launcher.command.forge.ForgeCommand;
 import me.earth.headlessmc.launcher.command.login.LoginCommand;
 
 public class LaunchContext extends CommandContextImpl {
@@ -11,6 +12,7 @@ public class LaunchContext extends CommandContextImpl {
         add(new LaunchCommand(ctx));
         add(new QuitCommand(ctx));
         add(new FabricCommand(ctx));
+        add(new ForgeCommand(ctx));
         add(new JsonCommand(ctx));
         add(new HelpCommand(ctx));
         add(new JavaCommand(ctx));

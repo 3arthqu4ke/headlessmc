@@ -13,7 +13,6 @@ allprojects {
         repositories {
             mavenCentral()
             maven {
-                // TODO: not every project should inherit this repository
                 url 'https://jitpack.io'
             }
         }

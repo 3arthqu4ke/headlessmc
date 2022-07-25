@@ -83,6 +83,8 @@ public class FabricCommand extends AbstractVersionCommand {
                         + ". Failed to install fabric for version "
                         + version.getName());
             }
+
+            ctx.getVersionService().refresh();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Thread got interrupted!");
