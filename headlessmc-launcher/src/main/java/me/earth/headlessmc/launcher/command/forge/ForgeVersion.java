@@ -14,6 +14,7 @@ public class ForgeVersion implements HasName {
     @SerializedName("version")
     private String name;
 
+    @Data
     public static class Requires {
         @SerializedName("equals")
         private String equals;
