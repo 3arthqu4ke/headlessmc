@@ -10,9 +10,9 @@
 HeadlessMc allows you to launch Minecraft from the command line. It is also able to instrument the game: before
 launch the bytecode of the games libraries can be modified. HeadlessMc aims to use this feature to
 
-  * add a command line interface to Minecraft, which can control the game.
-  * redirect every method in the lwjgl library, causing Minecraft not to render anything, thus making it "headless".
-  * patch the Log4J vulnerability.
+*   add a command line interface to Minecraft, which can control the game.
+*   redirect every method in the lwjgl library, causing Minecraft not to render anything, thus making it "headless".
+*   patch the Log4J vulnerability.
 
 ## How to use
 
@@ -86,8 +86,8 @@ Look [here](DEV.md) for more in-depth documentation about the project.
 
 Some cool libraries we use:
 
-  * [OpenAuth by Litarvan](https://github.com/Litarvan/OpenAuth)
-  * [Deencapsulation by xxDark](https://github.com/xxDark/deencapsulation)
-  * [Forge-CLI by TeamKun](https://github.com/TeamKun/ForgeCLI), which we [customized](https://github.com/3arthqu4ke/ForgeCLI).
+*   [OpenAuth by Litarvan](https://github.com/Litarvan/OpenAuth)
+*   [Deencapsulation by xxDark](https://github.com/xxDark/deencapsulation)
+*   [Forge-CLI by TeamKun](https://github.com/TeamKun/ForgeCLI), which we [customized](https://github.com/3arthqu4ke/ForgeCLI).
 
 HeadlessMc is licensed under the [MIT License](LICENSE).

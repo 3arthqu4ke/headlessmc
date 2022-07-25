@@ -31,7 +31,12 @@ public class PaulscodeTransformerTest extends InstrumentationTestUtils {
         val transformer = new PaulscodeTransformer();
         val transformedClass = assertDoesNotThrow(
             () -> instrument(Library.class, transformer));
+
         testLibrary(transformedClass, true);
+
+        val obj = transformedClass.getConstructor().newInstance();
+        val getter = transformedClass.getMethod("getMessage");
+        assertNull(getter.invoke(obj));
     }
 
     @Test

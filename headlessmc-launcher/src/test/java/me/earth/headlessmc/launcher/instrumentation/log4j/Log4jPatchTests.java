@@ -17,20 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class Log4jPatchTests extends AbstractUtilityTest<Patchers> {
     @Test
-    public void testMatches() {
-        val transformer = Patchers.LOOKUP;
-        val invalidTarget = new Target(false, "somePath");
-        assertFalse(transformer.matches(invalidTarget));
-        val validTarget = new Target(false, "log4j");
-        assertTrue(transformer.matches(validTarget));
-    }
-
-    @Test
     @SneakyThrows
     public void testInstrumentInterpolator() {
         val transformer = Patchers.LOOKUP;
-        Class<?> clazz = assertDoesNotThrow(
-            () -> instrument(Interpolator.class, transformer));
+        assertFalse(transformer.matches(new Target(false, "test")));
+        assertTrue(transformer.matches(new Target(false, "log4j")));
+        Class<?> clazz = instrument(Interpolator.class, transformer);
         testClass(clazz, false);
     }
 
@@ -38,8 +30,9 @@ public class Log4jPatchTests extends AbstractUtilityTest<Patchers> {
     @SneakyThrows
     public void testInstrumentJndi() {
         val transformer = Patchers.JNDI;
-        Class<?> clazz =  assertDoesNotThrow(
-            () -> instrument(JndiLookup.class, transformer));
+        assertFalse(transformer.matches(new Target(false, "test")));
+        assertTrue(transformer.matches(new Target(false, "log4j")));
+        Class<?> clazz =  instrument(JndiLookup.class, transformer);
         // unsafe is necessary because the jndi constructor throws an Exception.
         testClass(clazz, true);
     }
