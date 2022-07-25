@@ -23,6 +23,7 @@ if __name__ == '__main__':
     if used_input or (len(argv) > 2 and argv[2] == '-f') or input(f"Set version to {version} (y/n)?{linesep}") == 'y':
         base = path.abspath(path.join(path.dirname(__file__), '..'))
         update(path.join(base, 'headlessmc-scripts', 'hmc'), r"(.*headlessmc-launcher-).*(.jar.*)", version)
+        update(path.join(base, 'headlessmc-scripts', 'hmw'), r"(.*headlessmc-launcher-).*(.jar.*)", version)
         update(path.join(base, 'headlessmc-scripts', 'hmc.bat'), r"(.*headlessmc-launcher-).*(.jar.*)", version)
         update(path.join(base, 'headlessmc-launcher', 'build.gradle'), r"(version = ').*('.*)", version)
         update(path.join(base, 'headlessmc-launcher', 'src', 'main', 'java', 'me', 'earth', 'headlessmc',
