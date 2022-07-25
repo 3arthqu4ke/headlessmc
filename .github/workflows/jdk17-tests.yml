@@ -3,6 +3,7 @@ name: JDK-17-Tests
 on:
   push:
   pull_request:
+    types: [opened, reopened]
 
 jobs:
   build:
