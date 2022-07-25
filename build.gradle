@@ -100,7 +100,8 @@ tasks.withType(JacocoReport) {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                 '**/headlessmc/headlessmc-runtime.jar',
-                '**/headlessmc/headlessmc-lwjgl.jar'
+                '**/headlessmc/headlessmc-lwjgl.jar',
+                '**/headlessmc/forge-cli.jar',
             ])
         }))
     }

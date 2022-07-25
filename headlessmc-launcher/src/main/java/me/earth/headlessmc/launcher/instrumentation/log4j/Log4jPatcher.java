@@ -18,7 +18,7 @@ public class Log4jPatcher extends AbstractClassTransformer {
 
     @Override
     public boolean matches(Target target) {
-        return target.getPath().contains("log4j");
+        return target.getPath().toLowerCase().contains("log4j");
     }
 
     @Override

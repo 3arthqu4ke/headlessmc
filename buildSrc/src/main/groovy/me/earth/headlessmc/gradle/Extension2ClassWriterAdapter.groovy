@@ -1,20 +1,19 @@
 package me.earth.headlessmc.gradle
 
-
-import org.objectweb.asm.ClassWriter
-
 import static me.earth.headlessmc.gradle.ModuleExtension.ACC_MANDATED
 import static org.objectweb.asm.Opcodes.ACC_MODULE
 import static org.objectweb.asm.Opcodes.V9
+
+import org.objectweb.asm.ClassWriter
 
 class Extension2ClassWriterAdapter {
     static ClassWriter toClassWriter(ModuleExtension me) {
         def cw = new ClassWriter(0)
         cw.visit(V9, ACC_MODULE, "module-info", null, null, null)
         def mw = cw.visitModule(
-                me.name.get(), me.access.getOrElse(0), me.version.getOrNull())
+                me.name.get(), me.access.getOrElse(0), me.version.orNull)
 
-        if (me.mainClass.isPresent()) {
+        if (me.mainClass.present) {
             mw.visitMainClass(me.mainClass.get())
         }
 

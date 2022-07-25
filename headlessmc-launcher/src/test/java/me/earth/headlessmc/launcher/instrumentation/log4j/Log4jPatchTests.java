@@ -29,7 +29,8 @@ public class Log4jPatchTests extends AbstractUtilityTest<Patchers> {
     @SneakyThrows
     public void testInstrumentInterpolator() {
         val transformer = Patchers.LOOKUP;
-        Class<?> clazz = instrument(Interpolator.class, transformer);
+        Class<?> clazz = assertDoesNotThrow(
+            () -> instrument(Interpolator.class, transformer));
         testClass(clazz, false);
     }
 
@@ -37,7 +38,8 @@ public class Log4jPatchTests extends AbstractUtilityTest<Patchers> {
     @SneakyThrows
     public void testInstrumentJndi() {
         val transformer = Patchers.JNDI;
-        Class<?> clazz = instrument(JndiLookup.class, transformer);
+        Class<?> clazz =  assertDoesNotThrow(
+            () -> instrument(JndiLookup.class, transformer));
         // unsafe is necessary because the jndi constructor throws an Exception.
         testClass(clazz, true);
     }

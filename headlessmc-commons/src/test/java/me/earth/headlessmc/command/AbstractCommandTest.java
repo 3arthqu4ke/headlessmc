@@ -74,7 +74,7 @@ public class AbstractCommandTest {
 
         @Override
         public void execute(String... args) {
-
+            // dummy
         }
     }
 

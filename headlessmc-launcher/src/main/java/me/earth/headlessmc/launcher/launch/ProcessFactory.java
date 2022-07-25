@@ -40,7 +40,7 @@ public class ProcessFactory {
             version, instrumentation, launcher, files, runtime, noOut, noIn);
     }
 
-    public Process run(Version version, Instrumentation instrumentation,
+    public Process run(Version versionIn, Instrumentation instrumentation,
                        Launcher launcher, FileManager fileManager,
                        boolean runtime, boolean noOut, boolean noIn)
         throws IOException, LaunchException, AuthException {
@@ -48,7 +48,7 @@ public class ProcessFactory {
             launcher.getAccountManager().login(launcher.getConfig());
         }
 
-        version = new VersionMerger(version);
+        val version = new VersionMerger(versionIn);
         if (version.getArguments() == null) {
             throw new LaunchException(
                 version.getName() + ": Version file and its parents" +
