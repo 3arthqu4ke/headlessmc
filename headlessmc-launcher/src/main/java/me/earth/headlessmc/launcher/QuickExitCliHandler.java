@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher;
 
+import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import lombok.var;
@@ -8,6 +9,7 @@ import me.earth.headlessmc.command.line.Listener;
 /**
  * @see me.earth.headlessmc.api.QuickExitCli
  */
+@CustomLog
 @UtilityClass
 public class QuickExitCliHandler {
     /**
@@ -44,8 +46,11 @@ public class QuickExitCliHandler {
             launcher.setQuickExitCli(true);
             launcher.getCommandContext().execute(cmd);
             if (launcher.isWaitingForInput()) {
+                log.debug("Waiting for more input...");
                 in.listen(launcher);
             }
+
+            log.debug("Exiting QuickExitCli");
         }
 
         return cmd != null;

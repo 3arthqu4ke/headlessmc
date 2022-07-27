@@ -1,11 +1,13 @@
 package me.earth.headlessmc.command.line;
 
+import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.PasswordAware;
 import me.earth.headlessmc.api.QuickExitCli;
 
 import java.io.Console;
 
+@CustomLog
 @RequiredArgsConstructor
 class ConsoleListener implements Listener {
     private final PasswordAware ctx;
@@ -18,8 +20,12 @@ class ConsoleListener implements Listener {
             ? String.valueOf(console.readPassword())
             : console.readLine()) != null) {
             context.getCommandContext().execute(line);
-            if (context.isQuickExitCli() && !context.isWaitingForInput()) {
-                return;
+            if (context.isQuickExitCli()) {
+                if (!context.isWaitingForInput()) {
+                    break;
+                }
+
+                log.debug("Waiting for more input...");
             }
         }
     }

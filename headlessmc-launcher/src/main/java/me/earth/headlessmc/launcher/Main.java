@@ -29,7 +29,34 @@ import java.io.IOException;
 @CustomLog
 @UtilityClass
 public final class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        Throwable throwable = null;
+        try {
+            runHeadlessMc(args);
+        } catch (Throwable t) {
+            throwable = t;
+        } finally {
+            /*
+            These "System.exit()" calls are here because of the LoginCommands
+            -webview option. It seems that after closing the JFrame there is
+            still either the AWT, Webview or Javafx thread running, keeping the
+            program alive. I played around with the code of the OpenAuth lib and
+            could not find a good solution. E.g. LoginFrame DISPOSE_ON_CLOSE
+            prevents further LoginFrames from getting displayed. The only ok
+            option I found was to make the LoginFrame a Singleton and dispose it
+            manually at the end but that prevents multiple LoginFrames at the
+            same time.
+             */
+            if (throwable == null) {
+                System.exit(0);
+            } else {
+                throwable.printStackTrace();
+                System.exit(-1);
+            }
+        }
+    }
+
+    private void runHeadlessMc(String... args) throws IOException {
         LoggingHandler.apply();
         val files = FileManager.mkdir("HeadlessMC");
         val configs = Service.refresh(new ConfigService(files));
@@ -56,14 +83,12 @@ public final class Main {
         versions.refresh();
         hmc.setCommandContext(new LaunchContext(launcher));
 
-        if (QuickExitCliHandler.checkQuickExit(launcher, in, args)) {
-            return;
+        if (!QuickExitCliHandler.checkQuickExit(launcher, in, args)) {
+            log.info(String.format("Detected: %s", os));
+            log.info(String.format("Minecraft Dir: %s", mcFiles.getBase()));
+            hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
+            in.listen(hmc);
         }
-
-        log.info(String.format("Detected: %s", os));
-        log.info(String.format("Minecraft Directory: %s", mcFiles.getBase()));
-        hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
-        in.listen(hmc);
     }
 
     private void deleteOldFiles(Launcher launcher) {
