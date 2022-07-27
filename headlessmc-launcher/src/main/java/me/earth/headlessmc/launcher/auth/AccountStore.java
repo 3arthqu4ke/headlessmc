@@ -44,7 +44,7 @@ public class AccountStore {
     }
 
     public void save(Account account) throws IOException {
-        if (!cfg.getConfig().get(LauncherProperties.STORE_ACCOUNTS, false)) {
+        if (!cfg.getConfig().get(LauncherProperties.STORE_ACCOUNTS, true)) {
             return;
         }
 

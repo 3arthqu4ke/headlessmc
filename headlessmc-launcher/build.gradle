@@ -25,7 +25,10 @@ dependencies {
     jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.3'
     jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
     jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
-    jarLibs group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
+
+    // For now until https://github.com/Litarvan/OpenAuth/pull/20 has been merged
+    // jarLibs group: 'com.github.Litarvan', name: 'OpenAuth', version: '1.1.2'
+    jarLibs group: 'com.github.3arthqu4ke', name: 'OpenAuth', version: 'master-SNAPSHOT'
 
     includeJarInResources (group: 'com.github.3arthqu4ke', name: 'ForgeCLI',
             classifier: 'all', version: '1.1.2') {
