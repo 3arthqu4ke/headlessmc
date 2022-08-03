@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.launch.LaunchException;
+import me.earth.headlessmc.launcher.launch.LaunchOptions;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class LaunchCommand extends AbstractVersionCommand {
         // TODO: is this really necessary?
         args.put("-noout", "Doesn't print Minecrafts output to the console.");
         args.put("-quit", "Quit HeadlessMc after launching the game.");
+        args.put("--jvm", "Jvm args to use.");
     }
 
     @Override
@@ -47,14 +49,11 @@ public class LaunchCommand extends AbstractVersionCommand {
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
         try {
             val process = ctx.getProcessFactory().run(
-                version, ctx, files,
-                CommandUtil.hasFlag("-commands", args),
-                flag("-lwjgl", LauncherProperties.INVERT_LWJGL_FLAG, args),
-                flag("-jndi", LauncherProperties.INVERT_JNDI_FLAG, args),
-                CommandUtil.hasFlag("-lookup", args),
-                flag("-paulscode", LauncherProperties.INVERT_PAULS_FLAG, args),
-                quit || CommandUtil.hasFlag("-noout", args), quit);
-
+                LaunchOptions.builder()
+                             .version(version)
+                             .launcher(ctx)
+                             .files(files).parseFlags(ctx, quit, args)
+                             .build());
             if (quit) {
                 System.exit(0);
             }

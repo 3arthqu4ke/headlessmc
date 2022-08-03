@@ -64,7 +64,8 @@ public final class VersionService extends Service<Version> {
                                         id::getAndIncrement);
             versions.put(version.getName(), version);
         } catch (IOException | JsonParseException | VersionParseException e) {
-            log.warning(file.getName() + ": " + e.getMessage());
+            log.warning(file.getName() + ", " + e.getClass() + ": "
+                            + e.getMessage());
         }
     }
 

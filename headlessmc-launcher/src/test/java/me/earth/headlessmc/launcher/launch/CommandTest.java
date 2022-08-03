@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class CommandTest implements UsesResources {
     private final Version version = getVersion("version_parent.json", 0);
@@ -40,6 +41,7 @@ public class CommandTest implements UsesResources {
         return Command.builder()
                       .classpath(Arrays.asList("test", "test"))
                       .os(new OS("win", OS.Type.WINDOWS, "11", true))
+                      .jvmArgs(Collections.emptyList())
                       .natives("natives_path")
                       .runtime(true)
                       .version(version)

@@ -6,6 +6,7 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.log4j.Patchers;
 import me.earth.headlessmc.launcher.instrumentation.lwjgl.HmcLwjglTransformer;
 import me.earth.headlessmc.launcher.instrumentation.paulscode.PaulscodeTransformer;
+import me.earth.headlessmc.launcher.launch.LaunchOptions;
 
 import java.util.ArrayList;
 
@@ -13,6 +14,12 @@ import java.util.ArrayList;
 public class InstrumentationHelper {
     public static final String RUNTIME_JAR = "headlessmc-runtime.jar";
     public static final String LWJGL_JAR = "headlessmc-lwjgl.jar";
+
+    public static Instrumentation create(LaunchOptions options) {
+        return create(options.getFiles(), options.isLwjgl(),
+                      options.isRuntime(), options.isJndi(),
+                      options.isLookup(), options.isPaulscode());
+    }
 
     public static Instrumentation create(FileManager fileManager,
                                          boolean lwjgl,

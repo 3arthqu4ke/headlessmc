@@ -23,6 +23,7 @@ class Command {
     private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";
 
     private final List<String> classpath;
+    private final List<String> jvmArgs;
     private final Launcher launcher;
     private final Version version;
     private final String natives;
@@ -43,6 +44,8 @@ class Command {
         result.add(java.getExecutable());
         result.addAll(Arrays.asList(config.get(LauncherProperties.JVM_ARGS,
                                                new String[0])));
+        result.addAll(jvmArgs);
+
         if (runtime
             && java.getVersion() > 8
             && config.get(HmcProperties.DEENCAPSULATE, true)) {

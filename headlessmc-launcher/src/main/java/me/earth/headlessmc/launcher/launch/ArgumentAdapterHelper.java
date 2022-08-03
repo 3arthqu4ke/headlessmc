@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher.launch;
 
+import lombok.experimental.UtilityClass;
 import lombok.val;
 import lombok.var;
 import me.earth.headlessmc.launcher.Launcher;
@@ -9,6 +10,7 @@ import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
 
+@UtilityClass
 class ArgumentAdapterHelper {
     public static ArgumentAdapter create(Launcher launcher,
                                          Version version,

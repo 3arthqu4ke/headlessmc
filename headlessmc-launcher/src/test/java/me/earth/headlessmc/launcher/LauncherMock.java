@@ -13,25 +13,24 @@ import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
-import me.earth.headlessmc.launcher.launch.ProcessFactory;
+import me.earth.headlessmc.launcher.launch.MockProcessFactory;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.SimpleLog;
-
-import java.io.File;
 
 @UtilityClass
 public class LauncherMock {
     public static final Launcher INSTANCE;
 
     static {
-        val fileManager = new DummyFileManager("test");
+        val base = new FileManager("build");
+        val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
         val in = new CommandLineImpl();
         val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in);
 
         val os = new OS("windows", OS.Type.WINDOWS, "11", true);
-        val mcFiles = new DummyFileManager("test");
+        val mcFiles = base.createRelative("mcFiles");
         val versions = new VersionService(mcFiles);
         val javas = new JavaService(configs);
 
@@ -40,7 +39,7 @@ public class LauncherMock {
         val accounts = new DummyAccountManager(store, validator);
 
         INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
-                                new ProcessFactory(mcFiles, os), configs,
+                                new MockProcessFactory(mcFiles, os), configs,
                                 javas, accounts, validator);
 
         INSTANCE.getConfigService().setConfig(ConfigImpl.empty());
@@ -55,18 +54,6 @@ public class LauncherMock {
         @Override
         public Account login(Config config) {
             return new Account("d", "d", "d", "d");
-        }
-    }
-
-    private static final class DummyFileManager extends FileManager {
-        public DummyFileManager(String base) {
-            super(base);
-        }
-
-        @Override
-        public File get(String base, boolean isDir, boolean mk,
-                        String... path) {
-            return super.get(base, isDir, false, path);
         }
     }
 
