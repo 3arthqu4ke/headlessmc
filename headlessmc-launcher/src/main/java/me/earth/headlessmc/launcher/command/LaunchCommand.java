@@ -52,7 +52,8 @@ public class LaunchCommand extends AbstractVersionCommand {
                 LaunchOptions.builder()
                              .version(version)
                              .launcher(ctx)
-                             .files(files).parseFlags(ctx, quit, args)
+                             .files(files)
+                             .parseFlags(ctx, quit, args)
                              .build());
             if (quit) {
                 System.exit(0);
