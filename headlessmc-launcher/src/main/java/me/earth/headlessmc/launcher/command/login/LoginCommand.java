@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.command.login;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
@@ -20,6 +21,11 @@ public class LoginCommand extends AbstractLauncherCommand {
 
     @Override
     public void execute(String... args) throws CommandException {
+        if (CommandUtil.hasFlag("-webview", args)) {
+            loginWithWebView();
+            return;
+        }
+
         if (args.length < 2) {
             throw new CommandException("Please specify an email!");
         }
@@ -61,6 +67,17 @@ public class LoginCommand extends AbstractLauncherCommand {
 
             ctx.setWaitingForInput(false);
         };
+    }
+
+    private void loginWithWebView() {
+        ctx.log("Starting web view...");
+        try {
+            val account = ctx.getAccountManager().loginWithWebView();
+            ctx.log("Logged into account " + account.getName()
+                        + " successfully.");
+        } catch (AuthException e) {
+            ctx.log("Failed to log in: " + e.getMessage());
+        }
     }
 
 }

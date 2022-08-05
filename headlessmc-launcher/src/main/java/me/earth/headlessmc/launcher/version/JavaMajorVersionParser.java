@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.version;
 
 import com.google.gson.JsonElement;
 import lombok.val;
+import me.earth.headlessmc.launcher.java.JavaVersionParser;
 
 class JavaMajorVersionParser {
     public Integer parse(JsonElement element) {
@@ -11,7 +12,8 @@ class JavaMajorVersionParser {
 
         val version = element.getAsJsonObject().get("majorVersion");
         return version != null
-            ? Integer.parseInt(version.getAsString())
+            ? Integer.parseInt(JavaVersionParser.getMajorVersion(
+                version.getAsString()))
             : null;
     }
 

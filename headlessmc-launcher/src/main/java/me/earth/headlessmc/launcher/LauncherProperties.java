@@ -39,6 +39,7 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> INVERT_PAULS_FLAG = bool("hmc.invert.pauls.flag");
     Property<Boolean> INVERT_QUIT_FLAG = bool("hmc.invert.quit.flag");
     Property<Boolean> INVERT_JNDI_FLAG = bool("hmc.invert.jndi.flag");
+    Property<Boolean> INVERT_LOOKUP_FLAG = bool("hmc.invert.lookup.flag");
 
     Property<String> XUID = string("hmc.xuid");
     Property<String> CLIENT_ID = string("hmc.clientId");

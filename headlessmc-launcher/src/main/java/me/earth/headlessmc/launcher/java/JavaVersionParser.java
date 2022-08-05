@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class JavaVersionParser {
+public class JavaVersionParser {
     private static final Pattern PATTERN = Pattern.compile(
         "version \"([0-9]+\\.[0-9]+\\.[0-9_]+(?:\\.[0-9]+)*)\"");
 
@@ -30,7 +30,7 @@ class JavaVersionParser {
         return Integer.parseInt(getMajorVersion(matcher.group(1)));
     }
 
-    private String getMajorVersion(String versionString) {
+    public static String getMajorVersion(String versionString) {
         String[] split = versionString.split("\\.");
         if (split[0].equals("1")) {
             return split[1];

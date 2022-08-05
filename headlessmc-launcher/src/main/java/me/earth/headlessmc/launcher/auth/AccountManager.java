@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-// TODO: support Mojang?
 // TODO: when another config is loaded invalidate lastAccount?
 @CustomLog
 @RequiredArgsConstructor
@@ -56,15 +55,30 @@ public class AccountManager implements Iterable<Account> {
         try {
             val authenticator = new MicrosoftAuthenticator();
             val result = authenticator.loginWithCredentials(email, password);
-            val account = toAccount(result);
-            validator.validate(account);
+            val account = setAccount(result);
             cache.put(hash, account);
-            lastAccount = account;
-            save(account);
             return account;
         } catch (MicrosoftAuthenticationException e) {
             throw new AuthException(e.getMessage());
         }
+    }
+
+    public Account loginWithWebView() throws AuthException {
+        val authenticator = new MicrosoftAuthenticator();
+        try {
+            val result = authenticator.loginWithWebview();
+            return setAccount(result);
+        } catch (MicrosoftAuthenticationException e) {
+            throw new AuthException(e.getMessage());
+        }
+    }
+
+    public Account setAccount(MicrosoftAuthResult result) throws AuthException {
+        val account = toAccount(result);
+        validator.validate(account);
+        lastAccount = account;
+        save(account);
+        return account;
     }
 
     @Override
