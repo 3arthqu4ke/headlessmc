@@ -31,7 +31,7 @@ public class LwjglAgent implements ClassFileTransformer {
                             ProtectionDomain protectionDomain,
                             byte[] classfileBuffer)
         throws IllegalClassFormatException {
-        if (className.contains("lwjgl")) {
+        if (className != null && className.startsWith("org/lwjgl")) {
             ClassNode node = AsmUtil.read(classfileBuffer);
             transformer.transform(node);
             // TODO: make writer.getClassLoader() return the given loader?

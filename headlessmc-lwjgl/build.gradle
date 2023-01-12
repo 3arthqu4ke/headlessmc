@@ -55,12 +55,28 @@ jar {
     archivesBaseName = 'headlessmc-lwjgl'
     //noinspection GroovyAssignabilityCheck
     manifest {
-        // TODO: test tweaker?
         attributes 'TweakClass': 'me.earth.headlessmc.lwjgl.launchwrapper.LwjglTweaker'
-        // TODO: test java agent
         attributes 'Premain-Class': 'me.earth.headlessmc.lwjgl.agent.LwjglAgent'
         attributes 'Agent-Class': 'me.earth.headlessmc.lwjgl.agent.LwjglAgent'
         attributes 'Can-Redefine-Classes': true
         attributes 'Can-Retransform-Classes': true
+    }
+}
+
+task testAgent(type: Test, dependsOn: jar) {
+    group = 'verification'
+    useJUnitPlatform()
+    testLogging {
+        events "failed"
+        exceptionFormat "full"
+    }
+
+    jvmArgs = [
+        "-javaagent:" + projectDir + "/build/libs/headlessmc-lwjgl.jar",
+        '-Dhmc.lwjgl.agenttest=true'
+    ]
+
+    filter {
+        includeTestsMatching 'me.earth.headlessmc.lwjgl.agent.AgentTest'
     }
 }

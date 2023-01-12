@@ -26,6 +26,11 @@ public class LaunchWrapperTarget {
         assertEquals(Launch.classLoader,
                      LwjglInterface.class.getClassLoader());
 
+        testLwjglClasses();
+        System.setProperty(LaunchWrapperTest.PASSED, "true");
+    }
+
+    public static void testLwjglClasses() {
         val lwjgl = Lwjgl.factoryMethod("test");
         assertNotNull(lwjgl);
         LwjglInstrumentationTest.testRedirections(lwjgl, lwjgl.getClass());
@@ -39,8 +44,6 @@ public class LaunchWrapperTarget {
         val iLwjgl = LwjglInterface.factoryMethod("test");
         assertNotNull(iLwjgl);
         LwjglInstrumentationTest.testRedirections(iLwjgl, LwjglInterface.class);
-
-        System.setProperty(LaunchWrapperTest.PASSED, "true");
     }
 
 }
