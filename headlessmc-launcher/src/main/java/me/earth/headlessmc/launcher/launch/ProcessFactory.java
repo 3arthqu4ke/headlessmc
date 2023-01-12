@@ -59,6 +59,7 @@ public class ProcessFactory {
                              .runtime(options.isRuntime())
                              .version(version)
                              .launcher(launcher)
+                             .lwjgl(options.isLwjgl())
                              .build()
                              .build();
 

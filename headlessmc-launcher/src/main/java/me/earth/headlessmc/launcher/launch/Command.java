@@ -28,6 +28,7 @@ class Command {
     private final Version version;
     private final String natives;
     private final boolean runtime;
+    private final boolean lwjgl;
     private final OS os;
 
     public List<String> build() throws LaunchException, AuthException {
@@ -51,6 +52,10 @@ class Command {
             && config.get(HmcProperties.DEENCAPSULATE, true)) {
             log.info("Java version > 8 detected, deencapsulating!");
             result.add("-D" + HmcProperties.DEENCAPSULATE.getName() + "=true");
+        }
+
+        if (lwjgl && config.get(LauncherProperties.JOML_NO_UNSAFE, true)) {
+            result.add("-Djoml.nounsafe=true");
         }
 
         result.add("-Djava.library.path=" + natives);
