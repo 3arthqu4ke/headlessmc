@@ -1,5 +1,6 @@
 # HeadlessMc
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/6a86b3e62d3b47909de670b09737f8fd)](https://www.codacy.com/gh/3arthqu4ke/HeadlessMc/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=3arthqu4ke/HeadlessMc&amp;utm_campaign=Badge_Grade)
+[![GitHub All Releases](https://img.shields.io/github/downloads/3arthqu4ke/HeadlessMc/total.svg)](https://github.com/3arthqu4ke/HeadlessMc/releases)
 ![](https://github.com/3arthqu4ke/HeadlessMc/actions/workflows/gradle-publish.yml/badge.svg)
 ![GitHub](https://img.shields.io/github/license/3arthqu4ke/HeadlessMc)
 [![Docker Image Size](https://badgen.net/docker/size/3arthqu4ke/headlessmc?icon=docker&label=image%20size)](https://hub.docker.com/r/3arthqu4ke/headlessmc/)
