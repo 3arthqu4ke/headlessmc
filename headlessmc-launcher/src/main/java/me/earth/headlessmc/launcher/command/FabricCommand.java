@@ -3,6 +3,8 @@ package me.earth.headlessmc.launcher.command;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.command.ParseUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.files.FileUtil;
@@ -12,9 +14,7 @@ import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @CustomLog
 public class FabricCommand extends AbstractVersionCommand {
@@ -24,6 +24,8 @@ public class FabricCommand extends AbstractVersionCommand {
     public FabricCommand(Launcher ctx) {
         super(ctx, "fabric", "Downloads Fabric for the specified version.");
         args.put("<version>", "The version to download.");
+        args.put("--jvm", "Jvm args for the Fabric Installer.");
+        args.put("--java", "Java version to use (e.g. 8, 17).");
     }
 
     @Override
@@ -36,7 +38,7 @@ public class FabricCommand extends AbstractVersionCommand {
 
         try {
             downloadInstaller(url, jar);
-            install(ver, jar);
+            install(ver, jar, args);
         } finally {
             try {
                 log.debug("Deleting: " + jar.getAbsolutePath());
@@ -62,10 +64,23 @@ public class FabricCommand extends AbstractVersionCommand {
         }
     }
 
-    private void install(Version version, File jarFile)
+    private void install(Version version, File jarFile, String... args)
         throws CommandException {
-        val java = ctx.getJavaService().findBestVersion(17);
-        val command = getCommand(version, java, jarFile);
+        int bestVersion = 17;
+        val javaVersion = CommandUtil.getOption("--java", args);
+        if (javaVersion != null) {
+            bestVersion = ParseUtil.parseI(javaVersion);
+        }
+
+        val java = ctx.getJavaService().findBestVersion(bestVersion);
+
+        val jvmArgs = CommandUtil.getOption("--jvm", args);
+        List<String> jvm = Collections.emptyList();
+        if (jvmArgs != null) {
+            jvm = new ArrayList<>(Arrays.asList(CommandUtil.split(jvmArgs)));
+        }
+
+        val command = getCommand(version, java, jarFile, jvm);
 
         try {
             log.debug("Launching Fabric-Installer for command: " + command);
@@ -96,9 +111,11 @@ public class FabricCommand extends AbstractVersionCommand {
         }
     }
 
-    protected List<String> getCommand(Version version, Java java, File jar) {
+    protected List<String> getCommand(Version version, Java java, File jar,
+                                      List<String> jvm) {
         val command = new ArrayList<String>();
         command.add(java.getExecutable());
+        command.addAll(jvm);
         command.add("-jar");
         command.add(jar.getAbsolutePath());
         command.add("client");
