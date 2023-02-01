@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.version.ParsesVersions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +37,7 @@ public class FabricCommandTest implements UsesResources, ParsesVersions {
         val java = new Java("dummyJava", 17);
         val jar = new File("dummyJar");
 
-        val result = command.getCommand(version, java, jar);
+        val result = command.getCommand(version, java, jar, new ArrayList<>());
         assertEquals(Arrays.asList(
             "dummyJava", "-jar", jar.getAbsolutePath(), "client",
             "-noprofile", "-mcversion", "1.19"), result);
