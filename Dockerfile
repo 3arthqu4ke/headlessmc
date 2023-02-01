@@ -7,6 +7,7 @@ FROM openjdk:8u332-jdk
 
 COPY --from=java17 /usr/java/openjdk-17 /usr/java/openjdk-17
 
+# For some reason the jdk17 image does not come with any certificates, which causes problems
 RUN cp --remove-destination /usr/local/openjdk-8/jre/lib/security/cacerts /usr/java/openjdk-17/lib/security/cacerts
 
 COPY . /headlessmc
