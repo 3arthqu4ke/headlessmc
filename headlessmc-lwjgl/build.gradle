@@ -41,7 +41,7 @@ dependencies {
     }
 
     implementation group: 'org.ow2.asm', name: 'asm', version: '9.3'
-    implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.3'
+    implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.4'
 
     testImplementation(testFixtures(project(':headlessmc-commons')))
     // Only for the LaunchWrapperTest, which is skipped on Java > 8
