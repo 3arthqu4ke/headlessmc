@@ -1,0 +1,31 @@
+version: 2
+updates:
+
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "18:00"
+      timezone: "Europe/Berlin"
+    assignees:
+      - "3arthqu4ke"
+    reviewers:
+      - "3arthqu4ke"
+    commit-message:
+      prefix: "gradle"
+      include: "scope"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "18:00"
+      timezone: "Europe/Berlin"
+    assignees:
+      - "3arthqu4ke"
+    reviewers:
+      - "3arthqu4ke"
+    commit-message:
+      prefix: "github-actions"
+      include: "scope"
+      
