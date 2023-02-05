@@ -22,7 +22,7 @@ dependencies {
     jarLibs project(':headlessmc-commons')
     jarLibs project(':headlessmc-lwjgl')
 
-    jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.3'
+    jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.4'
     jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.4'
     jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.8.9'
     jarLibs group: 'com.github.3arthqu4ke', name: 'OpenAuth', version: 'headlessmc-SNAPSHOT'
