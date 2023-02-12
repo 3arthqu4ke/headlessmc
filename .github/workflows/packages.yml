@@ -1,0 +1,27 @@
+name: Publish artifact to github packages
+
+on:
+  workflow_dispatch:
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: 8
+          distribution: temurin
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Publish with gradle
+        env:
+          IS_MAVEN_PUB: true
+          DEPLOY_TO_GITHUB_PACKAGES_URL: https://maven.pkg.github.com/3arthqu4ke/HeadlessMc
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./gradlew publish
