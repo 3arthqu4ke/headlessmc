@@ -27,7 +27,7 @@ public class LogLevelUtil {
      * via {@link #setLevel(Level)}.
      *
      * @param lvl the level to parse and set.
-     * @return <tt>true</tt> if the level has been successfully parsed and set.
+     * @return {@code true} if the level has been successfully parsed and set.
      */
     public static boolean trySetLevel(String lvl) {
         if ("debug".equalsIgnoreCase(lvl)) {

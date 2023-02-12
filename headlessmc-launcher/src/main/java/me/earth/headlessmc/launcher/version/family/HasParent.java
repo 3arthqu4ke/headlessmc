@@ -7,7 +7,7 @@ package me.earth.headlessmc.launcher.version.family;
  */
 public interface HasParent<T> {
     /**
-     * @return the parent for this object or <tt>null</tt> if it has no parents.
+     * @return the parent for this object or {@code null} if it has no parents.
      */
     T getParent();
 

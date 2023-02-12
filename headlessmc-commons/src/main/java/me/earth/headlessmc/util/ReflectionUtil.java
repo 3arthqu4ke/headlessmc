@@ -25,13 +25,13 @@ public class ReflectionUtil {
 
     /**
      * Iterates over the super classes of the given class. Will stop iterating
-     * if the given Function returns a value which is not <tt>null</tt> and
+     * if the given Function returns a value which is not {@code null} and
      * returns that value.
      *
      * @param clazz  the clazz whose super classes will be iterated over.
      * @param action the function every class is applied to.
      * @param <T>    the type of value returned by the given function.
-     * @return the first value returned by the given function or <tt>null</tt>.
+     * @return the first value returned by the given function or {@code null}.
      */
     public static <T> T iterate(Class<?> clazz, Function<Class<?>, T> action) {
         T result = null;

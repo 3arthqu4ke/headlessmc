@@ -48,7 +48,7 @@ public class FamilyUtil {
      *
      * @param family       the child's to find parents for.
      * @param parentFinder a function finding a parent for each child. Should
-     *                     return <tt>null</tt> if the child has no parents.
+     *                     return {@code null} if the child has no parents.
      * @param <T>          the type of the HasParents.
      */
     public static <T extends HasParent<T>> void resolveParents(
@@ -90,15 +90,15 @@ public class FamilyUtil {
      * @param child         the child whose ancestors to iterate over.
      * @param defaultResult supplies the default result to return when none of
      *                      the calls to the given function returned a value
-     *                      that was not <tt>null</tt>. This is useful to
+     *                      that was not {@code null}. This is useful to
      *                      prevent problems with unboxing etc.
      * @param action        action to perform for every ancestor. Should return
-     *                      a value which is not <tt>null</tt> if you wish to
+     *                      a value which is not {@code null} if you wish to
      *                      stop iterating. Will be called for the given child
      *                      first.
      * @param <T>           the type of the child and it's ancestors.
-     * @return <tt>true</tt> if the action returned <tt>true</tt>, otherwise
-     * <tt>false</tt>.
+     * @return {@code true} if the action returned {@code true}, otherwise
+     * {@code false}.
      */
     public static <T extends HasParent<T>, S> S iterateParents(
         T child,
