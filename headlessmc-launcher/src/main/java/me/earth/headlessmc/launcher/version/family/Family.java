@@ -18,7 +18,7 @@ public class Family<T extends HasParent<T>> {
     }
 
     /**
-     * @return <tt>true</tt>, if, at some point, a member has a parent
+     * @return {@code true}, if, at some point, a member has a parent
      * which is also a child of his.
      */
     public boolean isCircular() {

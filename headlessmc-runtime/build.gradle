@@ -1,10 +1,6 @@
 dependencies {
-    jarLibs project(':headlessmc-api')
-    jarLibs project(':headlessmc-commons')
+    jarLibsApi project(':headlessmc-api')
+    jarLibsApi project(':headlessmc-commons')
 
     jarLibs group: 'com.github.xxDark', name: 'deencapsulation', version: 'master-SNAPSHOT'
-}
-
-jar {
-    archivesBaseName = 'headlessmc-runtime'
 }

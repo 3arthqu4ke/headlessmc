@@ -1,5 +1,8 @@
-group 'me.earth.headlessmc'
-version '1.0-SNAPSHOT'
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '5.0.0'
+}
 
 repositories {
     mavenCentral()
@@ -8,67 +11,180 @@ repositories {
 allprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
-    //noinspection GroovyAssignabilityCheck
-    plugins.withType(JavaPlugin) {
-        repositories {
-            mavenCentral()
-            maven {
-                url 'https://jitpack.io'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.franzbecker.gradle-lombok'
+
+    group 'me.earth.headlessmc'
+    version rootProject.project_version
+
+    repositories {
+        mavenCentral()
+
+        maven {
+            name 'JitPackMaven'
+            url 'https://jitpack.io'
+        }
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    compileJava {
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.compilerArgs.addAll(['--release', '8'])
+        }
+    }
+
+    configurations {
+        jarLibs
+        jarLibsApi
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.26'
+        annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.26'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+        implementation configurations.jarLibs
+        api configurations.jarLibsApi
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "failed"
+            exceptionFormat "full"
+        }
+
+        finalizedBy jacocoTestReport
+    }
+
+    jacocoTestReport {
+        dependsOn test
+    }
+
+    jar {
+        archivesBaseName = project.name
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from {
+            configurations.jarLibs.collect {
+                it.isDirectory() ? it : zipTree(it)
             }
         }
+    }
 
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-
-        compileJava {
-            if (JavaVersion.current() > JavaVersion.VERSION_1_8) {
-                options.compilerArgs.addAll(['--release', '8'])
-            }
+    java {
+        // because we are using lomboks var
+        if (!JavaVersion.current().isJava9Compatible()) {
+            withSourcesJar()
+            withJavadocJar()
         }
+    }
 
-        configurations {
-            jarLibs
-        }
-
-        dependencies {
-            compileOnly 'org.projectlombok:lombok:1.18.26'
-            annotationProcessor 'org.projectlombok:lombok:1.18.26'
-
-            testCompileOnly 'org.projectlombok:lombok:1.18.26'
-            testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
-
-            testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
-            testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-
-            implementation configurations.jarLibs
-        }
-
-        test {
-            useJUnitPlatform()
-            testLogging {
-                events "failed"
-                exceptionFormat "full"
-            }
-
-            finalizedBy jacocoTestReport
-        }
-
-        jacocoTestReport {
-            dependsOn test
-        }
-
-        jar {
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-            from {
-                configurations.jarLibs.collect {
-                    it.isDirectory() ? it : zipTree(it)
+    // TODO: even though we are doing all of this Intellij
+    //  still complains about bytecode not matching the source...
+    if (sourceSets.main.java.srcDirs.stream().anyMatch { it.exists()}
+            // var keyword causes issues in DelombokTask with newer jdks
+        && !JavaVersion.current().isJava9Compatible()) {
+        tasks.register('delombok', DelombokTask) {
+            dependsOn compileJava
+            ext.outputDir = file(buildDir.toPath().resolve('delombok'))
+            outputs.dir(ext.outputDir)
+            sourceSets.main.java.srcDirs.each {
+                if (it.exists()) {
+                    inputs.dir(it)
+                    args(it, '-f', 'suppressWarnings:skip',
+                             '-f', 'generated:skip',
+                             '-f', 'danceAroundIdeChecks:skip',
+                             '-f', 'generateDelombokComment:skip',
+                             '-f', 'javaLangAsFQN:skip',
+                             '-d', ext.outputDir)
                 }
             }
+        }
+
+        javadoc {
+            dependsOn delombok
+            source = delombok.outputDir
+            options.addStringOption('Xdoclint:none', '-quiet')
+            options.linkSource true
+        }
+
+        sourcesJar {
+            dependsOn delombok
+            from delombok.outputDir
+            // I tried every single exclude/include pattern but I could not get any to work
+            exclude (fileTreeElement -> {
+                return !((FileTreeElement) fileTreeElement)
+                    .getFile()
+                    .toPath()
+                    .toAbsolutePath()
+                    .startsWith(delombok.outputDir.toPath().toAbsolutePath())
+            })
+        }
+    }
+
+    // since we are not creating javadoc and sources on java 9+ skip
+    if (!JavaVersion.current().isJava9Compatible()) {
+        def pubSuffix = System.getenv('IS_MAVEN_PUB') != null
+                ? ''
+                : System.getenv('GITHUB_RUN_NUMBER') != null && System.getenv('GITHUB_SHA') != null
+                ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
+                : '-local'
+
+        publishing {
+            publications {
+                "${project.name.toLowerCase()}"(MavenPublication) {
+                    ((MavenPublication) it).groupId "${project.group}"
+                    ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase()}"
+                    ((MavenPublication) it).version "${project.version}${pubSuffix}"
+                    // TODO: testFixtures are part of commons artifact?
+                    from components.java
+                }
+            }
+
+            repositories {
+                // mavenLocal()
+                maven {
+                    name = 'BuildDirMaven'
+                    url = rootProject.layout.buildDirectory.dir('maven')
+                }
+
+                if (System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL') != null) {
+                    maven {
+                        name = 'GithubPagesMaven'
+                        url = System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL')
+                        credentials {
+                            username = System.getenv('GITHUB_USER')
+                            password = System.getenv('GITHUB_TOKEN')
+                        }
+                    }
+                }
+            }
+        }
+
+        publish {
+            dependsOn(build)
         }
     }
 }
 
-task jacocoRootReport(type: JacocoReport, group: 'verification') {
+dependencies {
+    // create maven publication that contains all modules
+    api project(':headlessmc-api')
+    api project(':headlessmc-commons')
+    api project(':headlessmc-launcher')
+    api project(':headlessmc-lwjgl')
+    api project(':headlessmc-runtime')
+}
+
+tasks.register('jacocoRootReport', JacocoReport) {
     description = 'Generates an aggregate report from all subprojects'
     dependsOn(subprojects.test)
 
@@ -83,7 +199,8 @@ task jacocoRootReport(type: JacocoReport, group: 'verification') {
     }
 }
 
-task copyJars(type: Copy, dependsOn: subprojects.jar) {
+tasks.register('copyJars', Copy) {
+    dependsOn subprojects.jar
     from(subprojects.jar)
     into project.file(System.getProperty('hmc.jar.dir', 'build/libs'))
 }
@@ -95,6 +212,7 @@ jar {
 
 // the launchers report will otherwise contain coverage data about some of the
 // libraries we use in those two jars, e.g. xdarks Deencapsulation
+//noinspection ConfigurationAvoidance (idk does not seem to work with it)
 tasks.withType(JacocoReport) {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {

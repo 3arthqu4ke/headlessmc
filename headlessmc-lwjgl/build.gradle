@@ -3,6 +3,7 @@ apply plugin: 'headlessmc-modules'
 repositories {
     mavenCentral()
     maven {
+        name 'MinecraftMaven'
         url 'https://libraries.minecraft.net/'
     }
 }
@@ -52,7 +53,6 @@ dependencies {
 }
 
 jar {
-    archivesBaseName = 'headlessmc-lwjgl'
     //noinspection GroovyAssignabilityCheck
     manifest {
         attributes 'TweakClass': 'me.earth.headlessmc.lwjgl.launchwrapper.LwjglTweaker'
@@ -63,7 +63,8 @@ jar {
     }
 }
 
-task testAgent(type: Test, dependsOn: jar) {
+tasks.register('testAgent', Test) {
+    dependsOn jar
     group = 'verification'
     useJUnitPlatform()
     testLogging {
@@ -72,7 +73,7 @@ task testAgent(type: Test, dependsOn: jar) {
     }
 
     jvmArgs = [
-        "-javaagent:" + projectDir + "/build/libs/headlessmc-lwjgl.jar",
+        "-javaagent:$projectDir/build/libs/headlessmc-lwjgl.jar",
         '-Dhmc.lwjgl.agenttest=true'
     ]
 

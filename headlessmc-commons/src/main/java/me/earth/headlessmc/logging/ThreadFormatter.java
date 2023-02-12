@@ -9,8 +9,8 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * Produces log messages like this: <tt>"[23:18:58] [main/INFO] [Test]:
- * Test"</tt>, because Javas Formatter doesn't support getting the Thread name.
+ * Produces log messages like this: {@literal "[23:18:58] [main/INFO] [Test]:
+ * Test"}, because Javas Formatter doesn't support getting the Thread name.
  */
 public class ThreadFormatter extends Formatter {
     @Override

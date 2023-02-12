@@ -1,9 +1,9 @@
 plugins {
-    id "java-test-fixtures"
+    id 'java-test-fixtures'
 }
 
 dependencies {
-    implementation project(':headlessmc-api')
+    api project(':headlessmc-api')
 
     testFixturesCompileOnly project(':headlessmc-api')
     testFixturesCompileOnly 'org.projectlombok:lombok:1.18.26'

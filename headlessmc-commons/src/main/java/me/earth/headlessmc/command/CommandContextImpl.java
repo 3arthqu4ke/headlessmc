@@ -16,6 +16,7 @@ import java.util.List;
 import static me.earth.headlessmc.command.CommandUtil.levenshtein;
 
 @RequiredArgsConstructor
+@SuppressWarnings({"unchecked", "RedundantSuppression"}) // delegate
 public class CommandContextImpl implements CommandContext {
     @Delegate(types = Iterable.class)
     protected final List<Command> commands = new ArrayList<>();

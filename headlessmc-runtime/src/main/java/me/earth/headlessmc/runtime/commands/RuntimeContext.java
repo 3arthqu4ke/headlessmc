@@ -4,6 +4,7 @@ import me.earth.headlessmc.command.*;
 import me.earth.headlessmc.runtime.Runtime;
 
 // TODO: array command?
+@SuppressWarnings({"unchecked", "RedundantSuppression"}) // delegate
 public class RuntimeContext extends CommandContextImpl {
     public RuntimeContext(Runtime ctx) {
         super(ctx);
