@@ -7,6 +7,13 @@ application {
     mainClass = MAIN_CLASS
 }
 
+repositories {
+    maven {
+        name 'OpenAuthMaven'
+        url 'https://litarvan.github.io/maven'
+    }
+}
+
 run {
     standardInput = System.in
 }
@@ -23,7 +30,7 @@ dependencies {
     jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.4'
     jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.4'
     jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
-    jarLibs group: 'com.github.3arthqu4ke', name: 'OpenAuth', version: 'headlessmc-SNAPSHOT'
+    jarLibs group: 'fr.litarvan', name: 'openauth', version: '1.1.4'
 
     includeJarInResources (group: 'com.github.3arthqu4ke', name: 'ForgeCLI', classifier: 'all', version: '1.1.2') {
         // this is to make it build, jar will still have legacy classes
