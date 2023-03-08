@@ -32,3 +32,4 @@ run
 # Created by LaunchWrapper tests
 /headlessmc-lwjgl/logs/
 /logs/
+/headlessmc-launcher-*.jar

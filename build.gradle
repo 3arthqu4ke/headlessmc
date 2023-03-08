@@ -77,6 +77,12 @@ allprojects {
                 it.isDirectory() ? it : zipTree(it)
             }
         }
+
+        from {
+            configurations.jarLibsApi.collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
     }
 
     java {
@@ -222,5 +228,23 @@ tasks.withType(JacocoReport) {
                 '**/headlessmc/forge-cli.jar',
             ])
         }))
+    }
+}
+
+allprojects {
+    afterEvaluate {
+        tasks.withType(GenerateMavenPom).configureEach {
+            if (it.pom == null) {
+                return
+            }
+            it.pom.withXml {
+                asNode().dependencies.dependency.each { dependency ->
+                    // I dislike that we have to exclude deencapsulation and OpenAuth. Could we publish them as well?
+                    if (dependency.artifactId.last().value().last() in ['junit-jupiter-api', 'junit-jupiter-engine', 'ForgeCLI', 'OpenAuth', 'deencapsulation']) {
+                        assert dependency.parent().remove(dependency)
+                    }
+                }
+            }
+        }
     }
 }
