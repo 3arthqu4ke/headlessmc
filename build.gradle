@@ -20,6 +20,10 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            name '3arthMaven'
+            url 'https://3arthqu4ke.github.io/maven'
+        }
 
         maven {
             name 'JitPackMaven'
