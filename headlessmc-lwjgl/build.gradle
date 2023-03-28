@@ -75,7 +75,7 @@ tasks.register('testAgent', Test) {
     }
 
     jvmArgs = [
-        "-javaagent:$projectDir/build/libs/headlessmc-lwjgl.jar",
+        "-javaagent:$projectDir/build/libs/headlessmc-lwjgl-${rootProject.version}-release.jar",
         '-Dhmc.lwjgl.agenttest=true'
     ]
 
@@ -83,3 +83,5 @@ tasks.register('testAgent', Test) {
         includeTestsMatching 'me.earth.headlessmc.lwjgl.agent.AgentTest'
     }
 }
+
+test.finalizedBy(testAgent)
