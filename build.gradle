@@ -1,6 +1,7 @@
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
 plugins {
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
     id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
@@ -13,6 +14,7 @@ allprojects {
     apply plugin: 'jacoco'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'io.franzbecker.gradle-lombok'
 
     group 'me.earth.headlessmc'
@@ -76,17 +78,6 @@ allprojects {
     jar {
         archivesBaseName = project.name
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from {
-            configurations.jarLibs.collect {
-                it.isDirectory() ? it : zipTree(it)
-            }
-        }
-
-        from {
-            configurations.jarLibsApi.collect {
-                it.isDirectory() ? it : zipTree(it)
-            }
-        }
     }
 
     java {
@@ -139,6 +130,13 @@ allprojects {
             })
         }
     }
+
+    shadowJar {
+        configurations = [project.configurations.jarLibs, project.configurations.jarLibsApi]
+        classifier 'release'
+    }
+
+    jar.finalizedBy(shadowJar)
 
     // since we are not creating javadoc and sources on java 9+ skip
     if (!JavaVersion.current().isJava9Compatible()) {
