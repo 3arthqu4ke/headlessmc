@@ -42,16 +42,16 @@ dependencies {
     testImplementation(testFixtures(project(':headlessmc-commons')))
     testImplementation 'org.apache.logging.log4j:log4j-api:2.20.0'
     testImplementation 'org.apache.logging.log4j:log4j-core:2.20.0'
-
-    runtimeOnly configurations.includeJarInResources
 }
 
 processResources {
     into('headlessmc') {
-        from project(':headlessmc-runtime')['jar']
+        from project(':headlessmc-runtime')['shadowJar']
         from project(':headlessmc-lwjgl')['jar']
         from configurations.includeJarInResources
-        rename 'ForgeCLI-(.*)-all.jar', 'forge-cli.jar'
+        rename 'forgecli(.*).jar', 'forge-cli.jar'
+        rename 'headlessmc-lwjgl(.*).jar', 'headlessmc-lwjgl.jar'
+        rename 'headlessmc-runtime(.*).jar', 'headlessmc-runtime.jar'
     }
 }
 
@@ -63,4 +63,39 @@ jar {
 
     exclude("module-info.class")
     exclude("META-INF/maven/com.google.code.gson/**")
+}
+
+// shadowJar always explodes the contents of jars and cannot distinguish between
+// a dependency and a jar in our resources, this works around that.
+// https://github.com/johnrengelman/shadow/issues/111#issuecomment-317233031
+tasks.register('shadowBugWorkaround', Jar) {
+    dependsOn jar
+    dependsOn project(':headlessmc-runtime')['shadowJar']
+    dependsOn project(':headlessmc-lwjgl')['jar']
+
+    destinationDirectory.set(layout.buildDirectory.dir('shadow-bug-workaround'))
+
+    into ('headlessmc') {
+        from configurations.includeJarInResources
+        from project(':headlessmc-runtime')['shadowJar']
+        from project(':headlessmc-lwjgl')['jar']
+
+        rename 'forgecli(.*).jar', 'forge-cli.jar'
+        rename 'headlessmc-lwjgl(.*).jar', 'headlessmc-lwjgl.jar'
+        rename 'headlessmc-runtime(.*).jar', 'headlessmc-runtime.jar'
+    }
+}
+
+shadowJar {
+    dependsOn shadowBugWorkaround
+    from shadowBugWorkaround
+
+    exclude("META-INF/maven/com.google.code.gson/**")
+    exclude("META-INF/versions/**")
+    exclude("headlessmc/META-INF/**")
+    exclude("me/earth/headlessmc/runtime/**")
+    exclude("dev/xdark/**")
+    exclude("net/kunmc/lab/**")
+    exclude("module-info.class")
+    exclude("LICENSE")
 }

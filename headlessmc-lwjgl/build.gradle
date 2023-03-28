@@ -41,8 +41,10 @@ dependencies {
         // look like when debugging the LWJGL instrumentation.
     }
 
-    implementation group: 'org.ow2.asm', name: 'asm', version: '9.5'
-    implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.5'
+    // TODO: the RedirectionApi should be in a separate module, since it
+    //  does not need ASM and ASM might not be available at runtime
+    jarLibsApi group: 'org.ow2.asm', name: 'asm', version: '9.5'
+    jarLibsApi group: 'org.ow2.asm', name: 'asm-tree', version: '9.5'
 
     testImplementation(testFixtures(project(':headlessmc-commons')))
     // Only for the LaunchWrapperTest, which is skipped on Java > 8
