@@ -41,14 +41,14 @@ dependencies {
         // look like when debugging the LWJGL instrumentation.
     }
 
-    implementation group: 'org.ow2.asm', name: 'asm', version: '9.4'
-    implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.4'
+    implementation group: 'org.ow2.asm', name: 'asm', version: '9.5'
+    implementation group: 'org.ow2.asm', name: 'asm-tree', version: '9.5'
 
     testImplementation(testFixtures(project(':headlessmc-commons')))
     // Only for the LaunchWrapperTest, which is skipped on Java > 8
     if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
-        testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.19.0'
-        testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.19.0'
+        testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.20.0'
+        testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.20.0'
     }
 }
 
