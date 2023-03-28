@@ -243,8 +243,7 @@ allprojects {
             }
             it.pom.withXml {
                 asNode().dependencies.dependency.each { dependency ->
-                    // I dislike that we have to exclude deencapsulation and OpenAuth. Could we publish them as well?
-                    if (dependency.artifactId.last().value().last() in ['junit-jupiter-api', 'junit-jupiter-engine', 'ForgeCLI', 'OpenAuth', 'deencapsulation']) {
+                    if (dependency.artifactId.last().value().last() in ['junit-jupiter-api', 'junit-jupiter-engine', 'forgecli']) {
                         assert dependency.parent().remove(dependency)
                     }
                 }
