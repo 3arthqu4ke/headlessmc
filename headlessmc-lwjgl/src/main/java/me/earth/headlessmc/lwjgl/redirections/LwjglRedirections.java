@@ -224,7 +224,6 @@ public class LwjglRedirections {
         manager.redirect("Lorg/lwjgl/openal/ALC10;alcOpenDevice(" +
                              "Ljava/lang/CharSequence;)J", of(1L));
 
-
         manager.redirect("Lorg/lwjgl/system/MemoryUtil;memSlice(" +
                              "Ljava/nio/ByteBuffer;II)Ljava/nio/ByteBuffer;",
                          (obj, desc, type, args) -> {
@@ -259,6 +258,15 @@ public class LwjglRedirections {
 
                              return null;
                          });
+
+        // 1.20
+        manager.redirect("Lorg/lwjgl/system/MemoryUtil;" +
+                             "memIntBuffer(JI)Ljava/nio/IntBuffer;",
+                         (obj, desc, type, args) ->
+                             IntBuffer.wrap(new int[(int) args[1]])
+        );
+
+        CustomBufferRedirection.redirect(manager);
     }
 
 }
