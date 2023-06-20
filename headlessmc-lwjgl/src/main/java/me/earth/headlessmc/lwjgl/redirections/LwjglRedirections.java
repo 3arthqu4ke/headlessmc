@@ -267,6 +267,9 @@ public class LwjglRedirections {
         );
 
         CustomBufferRedirection.redirect(manager);
+
+        // 1.20.1
+        ForgeDisplayWindowRedirections.redirect(manager);
     }
 
 }
