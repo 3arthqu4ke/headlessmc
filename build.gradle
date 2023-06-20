@@ -159,11 +159,6 @@ allprojects {
 
             repositories {
                 // mavenLocal()
-                maven {
-                    name = 'BuildDirMaven'
-                    url = rootProject.layout.buildDirectory.dir('maven')
-                }
-
                 if (System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL') != null) {
                     maven {
                         name = 'GithubPagesMaven'
@@ -172,6 +167,11 @@ allprojects {
                             username = System.getenv('GITHUB_USER')
                             password = System.getenv('GITHUB_TOKEN')
                         }
+                    }
+                } else {
+                    maven {
+                        name = 'BuildDirMaven'
+                        url = rootProject.layout.buildDirectory.dir('maven')
                     }
                 }
             }
