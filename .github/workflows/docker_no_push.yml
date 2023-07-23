@@ -1,0 +1,29 @@
+name: Docker test image build
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Build
+        uses: docker/build-push-action@v4
+        with:
+          push: false
+          tags: 3arthqu4ke/headlessmc:latest
+      - name: Publish bat script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc.bat
+          
