@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @CustomLog
 @Disabled("Authentification tests are only meant to be tested manually.")
 public class TestAuth {
-    private static final Account DUMMY = new Account("d", "d", "d", "d");
+    private static final Account DUMMY = new Account("d", "d", "d", "d", "d", "d");
     private static final AccountValidator VALIDATOR = new AccountValidator();
 
     @Test
