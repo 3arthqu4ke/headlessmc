@@ -1,4 +1,4 @@
-rootProject.name = 'HeadlessMC'
+rootProject.name = 'headlessmc'
 include 'headlessmc-api'
 include 'headlessmc-commons'
 include 'headlessmc-runtime'

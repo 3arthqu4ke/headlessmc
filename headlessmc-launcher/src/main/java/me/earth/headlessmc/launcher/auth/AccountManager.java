@@ -113,7 +113,9 @@ public class AccountManager implements Iterable<Account> {
         return new Account(result.getProfile().getName(),
                            result.getProfile().getId(),
                            result.getAccessToken(),
-                           result.getRefreshToken());
+                           result.getRefreshToken(),
+                           result.getXuid(),
+                           result.getClientId());
     }
 
 }

@@ -53,7 +53,7 @@ public class LauncherMock {
 
         @Override
         public Account login(Config config) {
-            return new Account("d", "d", "d", "d");
+            return new Account("d", "d", "d", "d", "d", "d");
         }
     }
 

@@ -25,4 +25,12 @@ public class Account implements HasName {
     @SerializedName("refreshToken")
     private String refreshToken;
 
+    @ToString.Exclude
+    @SerializedName("xuid")
+    private String xuid;
+
+    @ToString.Exclude
+    @SerializedName("clientId")
+    private String clientId;
+
 }
