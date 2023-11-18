@@ -5,10 +5,8 @@ import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.util.ResourceUtil;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.LogRecord;
-import java.util.logging.StreamHandler;
+import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * A {@link StreamHandler} logging to {@link FileDescriptor#out} using a {@link
@@ -21,9 +19,23 @@ public class LoggingHandler extends StreamHandler {
     }
 
     public static void apply() throws IOException {
-        @Cleanup
-        InputStream is = ResourceUtil.getHmcResource("logging.properties");
-        LogManager.getLogManager().readConfiguration(is);
+        try {
+            // check LoggingHandler can actually load the class from the SystemClassLoader
+            ClassLoader.getSystemClassLoader().loadClass(LoggingHandler.class.getName());
+            @Cleanup
+            InputStream is = ResourceUtil.getHmcResource("logging.properties");
+            LogManager.getLogManager().readConfiguration(is);
+        } catch (Exception ignored) {
+            Handler[] handlers = Logger.getLogger("").getHandlers();
+            for (Handler handler : handlers) {
+                if (handler != null && !(handler instanceof FileHandler)) {
+                    Logger.getLogger("").removeHandler(handler);
+                }
+            }
+            // add the Handler manually
+            Logger.getLogger("").addHandler(new LoggingHandler());
+        }
+
         String property = System.getProperty(HmcProperties.LOGLEVEL.getName());
         if (property == null || !LogLevelUtil.trySetLevel(property)) {
             LogLevelUtil.setLevel(Level.INFO);

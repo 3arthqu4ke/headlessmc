@@ -7,7 +7,9 @@ import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 

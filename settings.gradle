@@ -4,4 +4,4 @@ include 'headlessmc-commons'
 include 'headlessmc-runtime'
 include 'headlessmc-lwjgl'
 include 'headlessmc-launcher'
-
+include 'headlessmc-launcher-jfx'

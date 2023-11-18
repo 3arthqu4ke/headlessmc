@@ -157,6 +157,13 @@ allprojects {
                     ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase()}"
                     ((MavenPublication) it).version "${project.version}${pubSuffix}"
                     // TODO: testFixtures are part of commons artifact?
+                    // Exclude shadowJars from publication
+                    components.withType(AdhocComponentWithVariants).forEach { c ->
+                        c.withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+                            skip()
+                        }
+                    }
+
                     from components.java
                 }
             }
@@ -184,6 +191,8 @@ allprojects {
         publish {
             dependsOn(build)
         }
+    } else {
+        project.logger.warn('Cannot publish on Java 9+ as we are not generating JavaDocs!')
     }
 }
 
@@ -213,7 +222,13 @@ tasks.register('jacocoRootReport', JacocoReport) {
 
 tasks.register('copyJars', Copy) {
     dependsOn subprojects.shadowJar
-    from(subprojects.shadowJar)
+    subprojects.each { subproject ->
+        // jfx jar is > 100MB, I do not want to fill my github storage?
+        if (subproject.name != 'headlessmc-launcher-jfx') {
+            from(subproject.shadowJar)
+        }
+    }
+
     into project.file(System.getProperty('hmc.jar.dir', 'build/libs'))
 }
 
