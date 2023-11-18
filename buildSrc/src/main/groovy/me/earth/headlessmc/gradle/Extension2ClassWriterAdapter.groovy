@@ -1,10 +1,10 @@
 package me.earth.headlessmc.gradle
 
+import org.objectweb.asm.ClassWriter
+
 import static me.earth.headlessmc.gradle.ModuleExtension.ACC_MANDATED
 import static org.objectweb.asm.Opcodes.ACC_MODULE
 import static org.objectweb.asm.Opcodes.V9
-
-import org.objectweb.asm.ClassWriter
 
 class Extension2ClassWriterAdapter {
     static ClassWriter toClassWriter(ModuleExtension me) {

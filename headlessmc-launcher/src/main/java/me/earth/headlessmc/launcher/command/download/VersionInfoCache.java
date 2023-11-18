@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.CustomLog;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.val;
 import me.earth.headlessmc.launcher.util.JsonUtil;

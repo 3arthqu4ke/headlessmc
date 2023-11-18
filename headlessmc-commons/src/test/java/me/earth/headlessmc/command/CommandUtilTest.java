@@ -1,7 +1,6 @@
 package me.earth.headlessmc.command;
 
 import me.earth.headlessmc.util.AbstractUtilityTest;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

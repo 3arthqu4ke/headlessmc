@@ -5,9 +5,8 @@ import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.util.ResourceUtil;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.logging.*;
 import java.util.logging.Logger;
+import java.util.logging.*;
 
 /**
  * A {@link StreamHandler} logging to {@link FileDescriptor#out} using a {@link
