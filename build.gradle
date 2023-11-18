@@ -157,6 +157,13 @@ allprojects {
                     ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase()}"
                     ((MavenPublication) it).version "${project.version}${pubSuffix}"
                     // TODO: testFixtures are part of commons artifact?
+                    // Exclude shadowJars from publication
+                    components.withType(AdhocComponentWithVariants).forEach { c ->
+                        c.withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+                            skip()
+                        }
+                    }
+
                     from components.java
                 }
             }
