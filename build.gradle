@@ -184,6 +184,8 @@ allprojects {
         publish {
             dependsOn(build)
         }
+    } else {
+        project.logger.warn('Cannot publish on Java 9+ as we are not generating JavaDocs!')
     }
 }
 
