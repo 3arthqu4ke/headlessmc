@@ -213,7 +213,13 @@ tasks.register('jacocoRootReport', JacocoReport) {
 
 tasks.register('copyJars', Copy) {
     dependsOn subprojects.shadowJar
-    from(subprojects.shadowJar)
+    subprojects.each { subproject ->
+        // jfx jar is > 100MB, I do not want to fill my github storage?
+        if (subproject.name != 'headlessmc-launcher-jfx') {
+            from(subproject.shadowJar)
+        }
+    }
+
     into project.file(System.getProperty('hmc.jar.dir', 'build/libs'))
 }
 
