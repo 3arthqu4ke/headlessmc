@@ -67,6 +67,10 @@ public class AccountManager implements Iterable<Account> {
         val authenticator = new MicrosoftAuthenticator();
         try {
             val result = authenticator.loginWithWebview();
+            if (result == null) {
+                throw new AuthException("Did not login into any account.");
+            }
+
             return setAccount(result);
         } catch (MicrosoftAuthenticationException e) {
             throw new AuthException(e.getMessage());

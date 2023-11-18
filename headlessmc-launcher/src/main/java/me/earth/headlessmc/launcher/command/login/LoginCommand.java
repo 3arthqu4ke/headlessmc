@@ -77,6 +77,9 @@ public class LoginCommand extends AbstractLauncherCommand {
                         + " successfully.");
         } catch (AuthException e) {
             ctx.log("Failed to log in: " + e.getMessage());
+        } catch (NoClassDefFoundError e) {
+            log.debug(e.getMessage());
+            ctx.log("Your version of Java does not support Webview! It usually comes bundled with JDK 8 or in the headlessmc-launcher-jfx jar.");
         }
     }
 
