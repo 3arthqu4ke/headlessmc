@@ -10,6 +10,8 @@ import me.earth.headlessmc.launcher.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 // TODO: This!
 @CustomLog
@@ -20,7 +22,14 @@ public class JavaService extends Service<Java> {
 
     @Override
     protected List<Java> update() {
-        val array = cfg.getConfig().get(LauncherProperties.JAVA, new String[0]);
+        val systemDefaultJavaHome = Optional.ofNullable(System.getenv("JAVA_HOME"));
+        val currentJavaHome = Optional.ofNullable(System.getProperty("java.home"));
+        val foundJavaHomes = Stream.of(systemDefaultJavaHome, currentJavaHome)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(javaHome -> javaHome + "/bin/java")
+                .toArray(String[]::new);
+        val array = cfg.getConfig().get(LauncherProperties.JAVA, foundJavaHomes);
         val newVersions = new ArrayList<Java>(array.length);
         for (val path : array) {
             log.debug("Reading Java version at path: " + path);
