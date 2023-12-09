@@ -148,10 +148,6 @@ public class LwjglRedirections {
                              "memAlloc(I)Ljava/nio/ByteBuffer;",
                          (obj, desc, type, args) -> ByteBuffer.wrap(
                              new byte[(int) args[0]]));
-        manager.redirect("Lorg/lwjgl/system/MemoryUtil;memRealloc" +
-                             "(Ljava/nio/ByteBuffer;I)Ljava/nio/ByteBuffer;",
-                         (obj, desc, type, args) -> ByteBuffer.wrap(
-                             new byte[(int) args[1]]));
         manager.redirect("Lorg/lwjgl/system/MemoryStack;" +
                              "mallocInt(I)Ljava/nio/IntBuffer;",
                          (obj, desc, type, args) -> IntBuffer.wrap(
@@ -270,6 +266,9 @@ public class LwjglRedirections {
 
         // 1.20.1
         ForgeDisplayWindowRedirections.redirect(manager);
+
+        // 1.20.4 (3?)
+        MemReallocRedirections.redirect(manager);
     }
 
 }
