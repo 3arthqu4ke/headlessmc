@@ -49,5 +49,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> PROFILE_PROPERTIES = string("hmc.profileproperties");
 
     Property<String> FABRIC_URL = string("hmc.fabric.url");
+    Property<Boolean> OFFLINE = bool("hmc.offline");
 
 }

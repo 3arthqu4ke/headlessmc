@@ -20,6 +20,7 @@ public class AccountManager implements Iterable<Account> {
     private final Map<Integer, Account> cache = new ConcurrentHashMap<>();
     private final AccountStore accountStore;
     private final AccountValidator validator;
+    private final OfflineChecker offlineChecker;
     @Getter
     private Account lastAccount;
 
@@ -38,6 +39,10 @@ public class AccountManager implements Iterable<Account> {
         val password = config.get(LauncherProperties.PASSWORD);
         if (email != null && password != null) {
             return this.login(email, password);
+        }
+
+        if (offlineChecker.isOffline()) {
+            return new Account("Offline", "0", "0", "0", "0", "0");
         }
 
         log.warning("No valid account found!");

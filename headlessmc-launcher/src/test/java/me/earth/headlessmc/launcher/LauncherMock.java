@@ -6,10 +6,7 @@ import me.earth.headlessmc.HeadlessMcImpl;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.ConfigImpl;
-import me.earth.headlessmc.launcher.auth.Account;
-import me.earth.headlessmc.launcher.auth.AccountManager;
-import me.earth.headlessmc.launcher.auth.AccountStore;
-import me.earth.headlessmc.launcher.auth.AccountValidator;
+import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -48,7 +45,7 @@ public class LauncherMock {
     private static final class DummyAccountManager extends AccountManager {
         public DummyAccountManager(AccountStore accountStore,
                                    AccountValidator validator) {
-            super(accountStore, validator);
+            super(accountStore, validator, new TestOfflineChecker());
         }
 
         @Override

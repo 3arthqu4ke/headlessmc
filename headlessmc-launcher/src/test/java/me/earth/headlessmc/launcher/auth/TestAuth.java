@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.launcher.LauncherMock;
+import me.earth.headlessmc.launcher.TestOfflineChecker;
 import me.earth.headlessmc.logging.LogLevelUtil;
 import me.earth.headlessmc.logging.LoggingHandler;
 import org.junit.jupiter.api.Disabled;
@@ -28,9 +29,11 @@ public class TestAuth {
         LogLevelUtil.setLevel(Level.ALL);
         LauncherMock.INSTANCE.getConfigService().refresh();
         val config = LauncherMock.INSTANCE.getConfigService().getConfig();
-        Account account = new AccountManager(
-            new AccountStore(LauncherMock.INSTANCE.getFileManager(),
-                             LauncherMock.INSTANCE), VALIDATOR).login(config);
+        val store = new AccountStore(LauncherMock.INSTANCE.getFileManager(),
+                                     LauncherMock.INSTANCE);
+        val checker = new TestOfflineChecker();
+        val manager = new AccountManager(store, VALIDATOR, checker);
+        val account = manager.login(config);
         log.info(account.toString());
         assertDoesNotThrow(() -> VALIDATOR.validate(account));
     }

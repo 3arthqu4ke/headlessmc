@@ -9,6 +9,7 @@ import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
+import me.earth.headlessmc.launcher.auth.OfflineChecker;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
@@ -73,7 +74,7 @@ public final class Main {
 
         val validator = new AccountValidator();
         val accountStore = new AccountStore(files, configs);
-        val accounts = new AccountManager(accountStore, validator);
+        val accounts = new AccountManager(accountStore, validator, new OfflineChecker(configs));
 
         val launcher = new Launcher(hmc, versions, mcFiles, files,
                                     new ProcessFactory(mcFiles, os), configs,
