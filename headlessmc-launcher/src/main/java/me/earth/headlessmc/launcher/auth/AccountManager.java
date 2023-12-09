@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @CustomLog
 @RequiredArgsConstructor
 public class AccountManager implements Iterable<Account> {
+    private static final String OFFLINE_UUID = "22689332a7fd41919600b0fe1135ee34";
     private final Map<Integer, Account> cache = new ConcurrentHashMap<>();
     private final AccountStore accountStore;
     private final AccountValidator validator;
@@ -42,7 +43,7 @@ public class AccountManager implements Iterable<Account> {
         }
 
         if (offlineChecker.isOffline()) {
-            return new Account("Offline", "0", "0", "0", "0", "0");
+            return new Account("Offline", OFFLINE_UUID, "", "", "", "");
         }
 
         log.warning("No valid account found!");

@@ -1,8 +1,6 @@
 package me.earth.headlessmc.launcher.auth;
 
 import lombok.RequiredArgsConstructor;
-import me.earth.headlessmc.api.config.Config;
-import me.earth.headlessmc.launcher.LauncherApi;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.files.ConfigService;
 
