@@ -29,6 +29,14 @@ public class JavaVersionParserTest {
                 "Java HotSpot(TM) 64-Bit Server VM (build 25.331-b09," +
                 " mixed mode)");
         Assertions.assertEquals(8, version);
+
+        version = parser.parseVersion(
+            "java version \"17-internal\" 2021-09-14\nOpenJDK" +
+                " Runtime Environment (build 17-internal+0-adhoc..src)\n" +
+                "OpenJDK 64-Bit Server VM (build 17-" +
+                "internal+0-adhoc..src)");
+        Assertions.assertEquals(17, version);
+
         Assertions.assertThrows(IOException.class,
                                 () -> parser.parseVersion("test"));
     }
