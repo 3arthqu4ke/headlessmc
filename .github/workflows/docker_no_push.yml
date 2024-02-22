@@ -22,7 +22,7 @@ jobs:
           push: false
           tags: 3arthqu4ke/headlessmc:latest
       - name: Publish bat script
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
           path: ./headlessmc-scripts/hmc.bat
