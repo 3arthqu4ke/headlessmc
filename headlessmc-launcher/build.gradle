@@ -32,7 +32,7 @@ dependencies {
     jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     jarLibs group: 'fr.litarvan', name: 'openauth', version: '1.1.6'
 
-    includeJarInResources ('net.kunmc.lab:forgecli:1.1.0:all') {
+    includeJarInResources ('net.kunmc.lab:forgecli:1.2.0:all') {
         // this is to make it build, jar will still have legacy classes
         exclude module: 'legacy'
         exclude module: 'asm'
@@ -49,6 +49,7 @@ processResources {
         from project(':headlessmc-runtime')['shadowJar']
         from project(':headlessmc-lwjgl')['jar']
         from configurations.includeJarInResources
+        rename 'ForgeCLI(.*).jar', 'forge-cli.jar'
         rename 'forgecli(.*).jar', 'forge-cli.jar'
         rename 'headlessmc-lwjgl(.*).jar', 'headlessmc-lwjgl.jar'
         rename 'headlessmc-runtime(.*).jar', 'headlessmc-runtime.jar'
