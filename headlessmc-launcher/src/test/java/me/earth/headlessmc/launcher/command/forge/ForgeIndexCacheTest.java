@@ -11,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ForgeIndexCacheTest extends ForgeIndexCache
     implements UsesResources {
 
+    public ForgeIndexCacheTest() {
+        super(LEX_FORGE_INDICES);
+    }
+
     @Test
     public void testRead() throws IOException {
         val versions = this.read(getJsonElement("forge_index.json"));

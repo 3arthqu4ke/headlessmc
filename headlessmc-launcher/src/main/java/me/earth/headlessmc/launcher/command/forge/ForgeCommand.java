@@ -16,18 +16,16 @@ import java.util.stream.Collectors;
 
 @CustomLog
 public class ForgeCommand extends AbstractVersionCommand {
+    private final ForgeInstaller installer;
     private final ForgeIndexCache cache;
 
-    public ForgeCommand(Launcher ctx) {
-        this(ctx, new ForgeIndexCache());
-    }
-
-    public ForgeCommand(Launcher ctx, ForgeIndexCache cache) {
-        super(ctx, "forge", "Downloads forge.");
-        args.put("<version>", "The version to download forge for.");
-        args.put("--uid", "Specify a specific forge version.");
-        args.put("-refresh", "Refresh index of forge versions.");
-        args.put("-list", "List forge versions for the specified version.");
+    public ForgeCommand(Launcher ctx, String name, ForgeInstaller installer, ForgeIndexCache cache) {
+        super(ctx, name, "Downloads " + name + ".");
+        args.put("<version>", "The version to download " + name + " for.");
+        args.put("--uid", "Specify a specific " + name + " version.");
+        args.put("-refresh", "Refresh index of " + name + " versions.");
+        args.put("-list", "List " + name + " versions for the specified version.");
+        this.installer = installer;
         this.cache = cache;
     }
 
@@ -71,7 +69,7 @@ public class ForgeCommand extends AbstractVersionCommand {
         val uuid = UUID.randomUUID();
         val fm = ctx.getFileManager().createRelative(uuid.toString());
         try {
-            new ForgeInstaller(ctx).install(version, fm);
+            installer.install(version, fm);
             ctx.getVersionService().refresh();
         } catch (IOException e) {
             val message = "Failed to install forge for version " + ver.getName()
@@ -94,6 +92,16 @@ public class ForgeCommand extends AbstractVersionCommand {
                     .withColumn("version", ForgeVersion::getVersion)
                     .withColumn("uid", ForgeVersion::getName)
                     .build());
+    }
+
+    public static ForgeCommand lexforge(Launcher launcher) {
+        ForgeInstaller installer = new ForgeInstaller(ForgeRepoFormat.lexForge(), launcher, "Forge", ForgeRepoFormat.LEX_FORGE_URL);
+        return new ForgeCommand(launcher, "forge", installer, new ForgeIndexCache(ForgeIndexCache.LEX_FORGE_INDICES));
+    }
+
+    public static ForgeCommand neoforge(Launcher launcher) {
+        ForgeInstaller installer = new ForgeInstaller(ForgeRepoFormat.neoForge(), launcher, "NeoForge", ForgeRepoFormat.NEO_FORGE_URL);
+        return new ForgeCommand(launcher, "neoforge", installer, new ForgeIndexCache(ForgeIndexCache.NEO_FORGE_INDICES));
     }
 
 }

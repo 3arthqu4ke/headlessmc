@@ -22,19 +22,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ForgeInstaller {
     private static final String FORGE_CLI = "forge-cli.jar";
-    private static final String BASE_URL =
-        "https://maven.minecraftforge.net/net/minecraftforge/forge/";
 
+    private final ForgeRepoFormat repoFormat;
     private final Launcher launcher;
+    private final String forgeName;
+    private final String baseUrl;
 
     public void install(ForgeVersion version, FileManager fileManager)
         throws IOException {
         val cli = new ResourceExtractor(fileManager, FORGE_CLI).extract();
-        val fileName = "forge-" + version.getFullName() + "-installer.jar";
-        val url = BASE_URL + version.getFullName() + "/" + fileName;
-        log.debug("Downloading Installer from " + url);
+        val fileName = repoFormat.getFileName(version);
+        // TODO: delete installer?
         val installer = fileManager.create(fileName);
-        downloadInstaller(version, installer, fileName);
+        downloadInstaller(version, installer);
 
         val java = launcher.getJavaService().findBestVersion(8);
         val mc = launcher.getMcFiles();
@@ -56,7 +56,7 @@ public class ForgeInstaller {
                                           + version.getFullName()
                                           + ", exitCode: " + exitCode);
             } else {
-                launcher.log("Forge " + version.getFullName()
+                launcher.log(forgeName + version.getFullName()
                                  + " installed successfully!");
             }
         } catch (InterruptedException e) {
@@ -78,17 +78,17 @@ public class ForgeInstaller {
         return command;
     }
 
-    protected void downloadInstaller(ForgeVersion v, File file, String name)
+    protected void downloadInstaller(ForgeVersion version, File file)
         throws IOException {
-        var url = BASE_URL + v.getFullName() + "/" + name;
+        var url = repoFormat.getUrl(baseUrl, version);
         log.debug("Downloading Installer from " + url);
         try {
             IOUtil.download(url, file.getAbsolutePath());
         } catch (IOException e) {
             log.debug("Failed to download Forge from " + url + ": "
                           + e.getMessage());
-            url = BASE_URL + v.getFullName() + "-" + v.getVersion()
-                + "/forge-" + v.getFullName() + "-" + v.getVersion()
+            url = baseUrl + version.getFullName() + "-" + version.getVersion()
+                + "/forge-" + version.getFullName() + "-" + version.getVersion()
                 + "-installer.jar";
             log.debug("Downloading from forge from " + url);
             IOUtil.download(url, file.getAbsolutePath());

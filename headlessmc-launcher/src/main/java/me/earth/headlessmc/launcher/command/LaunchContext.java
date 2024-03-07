@@ -12,7 +12,8 @@ public class LaunchContext extends CommandContextImpl {
         add(new LaunchCommand(ctx));
         add(new QuitCommand(ctx));
         add(new FabricCommand(ctx));
-        add(new ForgeCommand(ctx));
+        add(ForgeCommand.lexforge(ctx));
+        add(ForgeCommand.neoforge(ctx));
         add(new JsonCommand(ctx));
         add(new HelpCommand(ctx));
         add(new JavaCommand(ctx));

@@ -7,6 +7,7 @@ import me.earth.headlessmc.launcher.util.AbstractDownloadService;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +15,11 @@ import static me.earth.headlessmc.launcher.util.URLs.url;
 
 @CustomLog
 public class ForgeIndexCache extends AbstractDownloadService<ForgeVersion> {
-    public ForgeIndexCache() {
-        super(url("https://meta.multimc.org/v1/net.minecraftforge/index.json"));
+    public static final URL LEX_FORGE_INDICES = url("https://meta.prismlauncher.org/v1/net.minecraftforge/index.json");
+    public static final URL NEO_FORGE_INDICES = url("https://meta.prismlauncher.org/v1/net.neoforged/index.json");
+
+    public ForgeIndexCache(URL url) {
+        super(url);
     }
 
     @Override
