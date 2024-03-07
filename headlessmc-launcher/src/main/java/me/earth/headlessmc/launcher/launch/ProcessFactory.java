@@ -19,7 +19,9 @@ import me.earth.headlessmc.launcher.version.Version;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 @CustomLog
@@ -102,10 +104,16 @@ public class ProcessFactory {
         // TODO: proper features
         val features = Features.EMPTY;
         val targets = new ArrayList<Target>(version.getLibraries().size());
+        Set<String> libraries = new HashSet<>();
+        Set<String> libPaths = new HashSet<>();
         for (val library : version.getLibraries()) {
-            if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
+            if (library.getRule().apply(os, features) == Rule.Action.ALLOW && libraries.add(library.getName())) {
                 log.debug("Checking: " + library);
                 String libPath = library.getPath(os);
+                if (!libPaths.add(libPath)) {
+                    continue;
+                }
+
                 val path = files.getDir("libraries") + File.separator + libPath;
                 if (!new File(path).exists()) {
                     String url = library.getUrl(libPath);

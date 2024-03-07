@@ -50,6 +50,7 @@ public class LwjglTransformer implements Transformer {
         if (cn.module != null) {
             cn.module.visitRequire("headlessmc.lwjgl", ACC_MANDATED, null);
             cn.module.access |= ACC_OPEN;
+            cn.module.opens = null; // Forge: InvalidModuleDescriptorException: The opens table for an open module must be 0 length
         }
     }
 
