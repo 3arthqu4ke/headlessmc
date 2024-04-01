@@ -1,24 +1,19 @@
 package me.earth.headlessmc.command;
 
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.command.CommandException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static me.earth.headlessmc.command.CommandUtil.levenshtein;
 
 @RequiredArgsConstructor
 @SuppressWarnings({"unchecked", "RedundantSuppression"}) // delegate
 public class CommandContextImpl implements CommandContext {
-    @Delegate(types = Iterable.class)
     protected final List<Command> commands = new ArrayList<>();
     protected final HeadlessMc log;
 
@@ -70,6 +65,11 @@ public class CommandContextImpl implements CommandContext {
                         Arrays.toString(args), command.getName()));
             }
         }
+    }
+
+    @Override
+    public Iterator<Command> iterator() {
+        return commands.iterator();
     }
 
 }
