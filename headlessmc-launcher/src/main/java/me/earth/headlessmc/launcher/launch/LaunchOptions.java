@@ -39,8 +39,8 @@ public class LaunchOptions {
         public LaunchOptionsBuilder parseFlags(
             Launcher ctx, boolean quit, String... args) {
             return this
-                .runtime(CommandUtil.hasFlag("-commands", args))
-                .lwjgl(flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args))
+                .runtime(CommandUtil.hasFlag("-commands", args))    // if offline only allow launching with the lwjgl flag!
+                .lwjgl(flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args) || launcher.getAccountManager().getOfflineChecker().isOffline())
                 .jndi(flag(ctx, "-jndi", INVERT_JNDI_FLAG, args))
                 .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, args))
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))
