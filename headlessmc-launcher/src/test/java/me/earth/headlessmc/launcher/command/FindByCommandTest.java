@@ -50,7 +50,7 @@ public class FindByCommandTest {
         command.execute("test", "Object1", "-regex");
         assertEquals("Object1", command.obj.getName());
         command.execute("test", "Object.*", "-regex");
-        assertEquals("Object1", command.obj.getName());
+        assertEquals("Object3", command.obj.getName());
     }
 
     private static class TestObject implements HasName, HasId {

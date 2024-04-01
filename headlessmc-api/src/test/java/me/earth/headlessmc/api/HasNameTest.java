@@ -52,7 +52,7 @@ public class HasNameTest {
 
             getByRegex = HasName.getByRegex(Pattern.compile("Test[0-9]"), names);
             assertNotNull(getByRegex);
-            assertEquals("Test0", getByRegex.getName()); // should always be the first
+            assertEquals("Test" + i, getByRegex.getName()); // should always be the first
         }
     }
 
