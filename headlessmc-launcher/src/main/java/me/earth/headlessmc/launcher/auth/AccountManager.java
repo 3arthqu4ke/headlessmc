@@ -21,6 +21,7 @@ public class AccountManager implements Iterable<Account> {
     private final Map<Integer, Account> cache = new ConcurrentHashMap<>();
     private final AccountStore accountStore;
     private final AccountValidator validator;
+    @Getter
     private final OfflineChecker offlineChecker;
     @Getter
     private Account lastAccount;

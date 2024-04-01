@@ -50,5 +50,6 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<String> FABRIC_URL = string("hmc.fabric.url");
     Property<Boolean> OFFLINE = bool("hmc.offline");
+    Property<Boolean> RE_THROW_LAUNCH_EXCEPTIONS = bool("hmc.rethrow.launch.exceptions");
 
 }

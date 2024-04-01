@@ -16,6 +16,8 @@ import me.earth.headlessmc.launcher.version.Version;
 import java.io.IOException;
 import java.util.UUID;
 
+import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS;
+
 @CustomLog
 public class LaunchCommand extends AbstractVersionCommand {
     public LaunchCommand(Launcher launcher) {
@@ -70,6 +72,9 @@ public class LaunchCommand extends AbstractVersionCommand {
             e.printStackTrace();
             ctx.log(String.format(
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
+            if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
+                throw new RuntimeException(e);
+            }
         } catch (Throwable t) {
             val msg = String.format(
                 "Couldn't launch %s: %s", version.getName(), t.getMessage());
