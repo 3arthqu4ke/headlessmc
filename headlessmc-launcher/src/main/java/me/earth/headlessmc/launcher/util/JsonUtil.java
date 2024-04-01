@@ -19,11 +19,11 @@ public class JsonUtil {
     public static final Gson GSON = new Gson();
 
     /**
-     * @param file
-     * @return
-     * @throws IOException
-     * @throws JsonIOException
-     * @throws JsonSyntaxException
+     * @param file the file to parse.
+     * @return the JsonElement parsed from the file.
+     * @throws IOException if something goes wrong.
+     * @throws JsonIOException if something goes wrong.
+     * @throws JsonSyntaxException if something goes wrong.
      */
     public static JsonElement fromFile(File file) throws IOException {
         return fromInput(new FileInputStream(file));
