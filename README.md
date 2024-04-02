@@ -6,7 +6,7 @@
 [![Docker Image Size](https://badgen.net/docker/size/3arthqu4ke/headlessmc?icon=docker&label=image%20size)](https://hub.docker.com/r/3arthqu4ke/headlessmc/)
 ![Github last-commit](https://img.shields.io/github/last-commit/3arthqu4ke/HeadlessMc)
 
-> :warning: HeadlessMc will not allow you to play without having bought Minecraft!
+> :warning: HeadlessMc will not allow you to play without having bought Minecraft! Accounts will always be validated. Offline accounts can only be used to run the game headlessly in CI/CD pipelines.
 
 HeadlessMc allows you to launch Minecraft from the command line. It is also able to instrument the game: before
 launch the bytecode of the games libraries can be modified. HeadlessMc aims to use this feature to
