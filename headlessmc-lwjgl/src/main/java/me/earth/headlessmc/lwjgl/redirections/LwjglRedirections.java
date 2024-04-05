@@ -134,7 +134,7 @@ public class LwjglRedirections {
 
         // blaze3d NativeImage checks that values are != 0 for this function
         manager.redirect("Lorg/lwjgl/system/MemoryUtil;nmemAlloc(J)J", of(1L));
-        manager.redirect("org/lwjgl/system/MemoryUtil;nmemCalloc(JJ)J", of(1L));
+        manager.redirect("Lorg/lwjgl/system/MemoryUtil;nmemCalloc(JJ)J", of(1L));
 
         // TODO: because MemoryUtil and the Buffers are actually being used,
         //  redirect all methods inside those to return proper Buffers?
