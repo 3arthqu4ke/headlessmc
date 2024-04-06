@@ -32,27 +32,33 @@ public class ArgumentFactoryTest implements UsesResources {
         args = factory.parse(getJsonObject("arguments.json"),
                              f -> format[0] = f);
         Assertions.assertTrue(format[0]);
-        Assertions.assertEquals(5, args.size());
+        Assertions.assertEquals(7, args.size());
 
         Assertions.assertEquals("game", args.get(0).getType());
         Assertions.assertEquals("game", args.get(1).getType());
         Assertions.assertEquals("game", args.get(2).getType());
+        Assertions.assertEquals("game", args.get(3).getType());
+        Assertions.assertEquals("game", args.get(4).getType());
 
-        Assertions.assertEquals("jvm", args.get(3).getType());
-        Assertions.assertEquals("jvm", args.get(4).getType());
+        Assertions.assertEquals("jvm", args.get(5).getType());
+        Assertions.assertEquals("jvm", args.get(6).getType());
 
         Assertions.assertEquals(Rule.ALLOW, args.get(0).getRule());
         Assertions.assertEquals(Rule.ALLOW, args.get(1).getRule());
-        Assertions.assertEquals(Rule.ALLOW, args.get(3).getRule());
-        Assertions.assertEquals(Rule.ALLOW, args.get(4).getRule());
+        Assertions.assertEquals(Rule.ALLOW, args.get(5).getRule());
+        Assertions.assertEquals(Rule.ALLOW, args.get(6).getRule());
 
         Assertions.assertNotEquals(Rule.ALLOW, args.get(2).getRule());
+        Assertions.assertNotEquals(Rule.ALLOW, args.get(3).getRule());
+        Assertions.assertNotEquals(Rule.ALLOW, args.get(4).getRule());
 
         Assertions.assertEquals("--arg", args.get(0).getValue());
         Assertions.assertEquals("${arg}", args.get(1).getValue());
         Assertions.assertEquals("--demo", args.get(2).getValue());
-        Assertions.assertEquals("--something", args.get(3).getValue());
-        Assertions.assertEquals("${something}", args.get(4).getValue());
+        Assertions.assertEquals("value1", args.get(3).getValue());
+        Assertions.assertEquals("value2", args.get(4).getValue());
+        Assertions.assertEquals("--something", args.get(5).getValue());
+        Assertions.assertEquals("${something}", args.get(6).getValue());
     }
 
 }
