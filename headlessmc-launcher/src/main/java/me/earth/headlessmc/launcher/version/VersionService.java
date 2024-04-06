@@ -62,7 +62,11 @@ public final class VersionService extends Service<Version> {
             JsonElement je = JsonUtil.fromFile(file);
             val version = factory.parse(je.getAsJsonObject(), folder,
                                         id::getAndIncrement);
-            versions.put(version.getName(), version);
+            if (version.getName() == null) {
+                log.warning("Failed to read version " + file.getName() + ", it did not provide a name!");
+            } else {
+                versions.put(version.getName(), version);
+            }
         } catch (IOException | JsonParseException | VersionParseException e) {
             log.warning(file.getName() + ", " + e.getClass() + ": "
                             + e.getMessage());

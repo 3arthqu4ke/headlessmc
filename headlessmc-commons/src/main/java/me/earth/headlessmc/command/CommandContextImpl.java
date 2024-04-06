@@ -6,6 +6,8 @@ import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.config.HmcProperties;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -39,6 +41,9 @@ public class CommandContextImpl implements CommandContext {
             cmd.execute(args);
         } catch (CommandException commandException) {
             log.log(commandException.getMessage());
+            if (log.getConfig().get(HmcProperties.EXIT_ON_FAILED_COMMAND, false)) {
+                System.exit(-1);
+            }
         }
     }
 
@@ -65,10 +70,14 @@ public class CommandContextImpl implements CommandContext {
                         Arrays.toString(args), command.getName()));
             }
         }
+
+        if (log.getConfig().get(HmcProperties.EXIT_ON_FAILED_COMMAND, false)) {
+            System.exit(-1);
+        }
     }
 
     @Override
-    public Iterator<Command> iterator() {
+    public @NotNull Iterator<Command> iterator() {
         return commands.iterator();
     }
 

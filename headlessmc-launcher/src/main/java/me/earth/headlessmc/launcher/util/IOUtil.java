@@ -41,6 +41,15 @@ public class IOUtil {
         }
     }
 
+    public static byte[] downloadBytes(String from) throws IOException {
+        val url = new URL(from);
+        @Cleanup
+        val is = url.openStream();
+        val baos = new ByteArrayOutputStream();
+        IOUtil.copy(is, baos);
+        return baos.toByteArray();
+    }
+
     public static void download(String from, String path) throws IOException {
         val url = new URL(from);
         @Cleanup

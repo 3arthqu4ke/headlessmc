@@ -47,8 +47,9 @@ public class Table<T> {
                 ? new ArrayList<>(Collections.singletonList("-"))
                 : this.elements.stream()
                                .map(e.function)
+                               .map(str -> str == null ? "null" : str)
                                .collect(Collectors.toList());
-            entries.add(0, e.name);
+            entries.add(0, String.valueOf(e.name));
             // let's hope the Terminal uses a fixed-width font
             columnWidths.add(entries.stream()
                                     .map(String::length)
@@ -56,8 +57,12 @@ public class Table<T> {
                                     .get());
             return entries;
         }).collect(Collectors.toList());
+        return build(columns, columnWidths);
+    }
+
+    private String build(List<List<String>> columns, List<Integer> columnWidths) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; columns.size() > 0 && i < columns.get(0).size(); i++) {
+        for (int i = 0; !columns.isEmpty() && i < columns.get(0).size(); i++) {
             for (int j = 0; j < columns.size(); j++) {
                 String entry = columns.get(j).get(i);
                 int width = columnWidths.get(j);

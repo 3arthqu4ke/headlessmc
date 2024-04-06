@@ -54,9 +54,13 @@ class ArgumentFactory {
                 new ArgumentImpl(arg, type, Rule.ALLOW));
         }
 
-        val value = element.getAsJsonObject().get("value");
+        JsonElement value = element.getAsJsonObject().get("value");
         if (value == null) {
-            throw new VersionParseException();
+            // https://github.com/3arthqu4ke/headlessmc/issues/141#issuecomment-2041048918
+            value = element.getAsJsonObject().get("values");
+            if (value == null) {
+                throw new VersionParseException("Failed to parse value(s) in argument of type " + type + ", element: " + element);
+            }
         }
 
         val rules = element.getAsJsonObject().get("rules");

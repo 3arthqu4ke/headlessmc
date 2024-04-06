@@ -27,4 +27,9 @@ public interface HmcProperties {
      */
     Property<String> LOGLEVEL = string("hmc.loglevel");
 
+    /**
+     * Quits on a failed command. For more strictness in CI/CD pipelines.
+     */
+    Property<Boolean> EXIT_ON_FAILED_COMMAND = bool("hmc.exit.on.failed.command");
+
 }

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+// TODO: move to Paths?!?!?!?!?!?!
+// TODO: Why were we using Files in the first place?
 @CustomLog
 public class FileManager {
     private final String base;
