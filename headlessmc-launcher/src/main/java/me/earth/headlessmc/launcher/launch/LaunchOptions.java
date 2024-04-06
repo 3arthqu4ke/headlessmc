@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.Builder;
+import lombok.CustomLog;
 import lombok.Data;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.config.Property;
@@ -18,6 +19,7 @@ import static me.earth.headlessmc.launcher.LauncherProperties.*;
 
 @Data
 @Builder
+@CustomLog
 public class LaunchOptions {
     private final Version version;
     private final Launcher launcher;
@@ -38,9 +40,16 @@ public class LaunchOptions {
 
         public LaunchOptionsBuilder parseFlags(
             Launcher ctx, boolean quit, String... args) {
+            boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args);
+            // if offline only allow launching with the lwjgl flag!
+            if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
+                log.warning("You are offline, game will start in headless mode!");
+                //lwjgl = true;
+            }
+
             return this
-                .runtime(CommandUtil.hasFlag("-commands", args))    // if offline only allow launching with the lwjgl flag!
-                .lwjgl(flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args) || launcher.getAccountManager().getOfflineChecker().isOffline())
+                .runtime(CommandUtil.hasFlag("-commands", args))
+                .lwjgl(lwjgl)
                 .jndi(flag(ctx, "-jndi", INVERT_JNDI_FLAG, args))
                 .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, args))
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))

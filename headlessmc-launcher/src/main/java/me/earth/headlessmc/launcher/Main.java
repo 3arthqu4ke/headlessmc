@@ -77,7 +77,7 @@ public final class Main {
         val accounts = new AccountManager(accountStore, validator, new OfflineChecker(configs));
 
         val launcher = new Launcher(hmc, versions, mcFiles, files,
-                                    new ProcessFactory(mcFiles, os), configs,
+                                    new ProcessFactory(mcFiles, configs, os), configs,
                                     javas, accounts, validator);
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);

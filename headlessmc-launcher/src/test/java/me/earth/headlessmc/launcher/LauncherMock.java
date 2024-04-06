@@ -39,7 +39,7 @@ public class LauncherMock {
         val accounts = new DummyAccountManager(store, validator);
 
         INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
-                                new MockProcessFactory(mcFiles, os), configs,
+                                new MockProcessFactory(mcFiles, configs, os), configs,
                                 javas, accounts, validator);
 
         INSTANCE.getConfigService().setConfig(ConfigImpl.empty());

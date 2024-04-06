@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.launch;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.Instrumentation;
@@ -21,8 +22,8 @@ public class MockProcessFactory extends ProcessFactory {
     private ProcessBuilder builder;
     private LaunchOptions options;
 
-    public MockProcessFactory(FileManager files, OS os) {
-        super(files, os);
+    public MockProcessFactory(FileManager files, HasConfig hasConfig, OS os) {
+        super(files, hasConfig, os);
     }
 
     @Override

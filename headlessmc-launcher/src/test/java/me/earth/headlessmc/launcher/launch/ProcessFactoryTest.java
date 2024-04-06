@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.SneakyThrows;
 import lombok.val;
 import lombok.var;
+import me.earth.headlessmc.MockedHeadlessMc;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ public class ProcessFactoryTest {
         val launcher = LauncherMock.INSTANCE;
         val processFactory = new ProcessFactory(
             launcher.getFileManager(),
+            MockedHeadlessMc.INSTANCE,
             new OS("win", OS.Type.WINDOWS, "10", true));
 
         var invalid = new File("DOES_NOT_EXIST!!!!");

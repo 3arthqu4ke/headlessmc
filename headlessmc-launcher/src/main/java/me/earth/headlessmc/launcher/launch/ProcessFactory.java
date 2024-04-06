@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import lombok.var;
+import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileManager;
@@ -28,6 +29,7 @@ import java.util.zip.ZipFile;
 @RequiredArgsConstructor
 public class ProcessFactory {
     private final FileManager files;
+    private final HasConfig config;
     private final OS os;
 
     public Process run(LaunchOptions options)
@@ -154,7 +156,7 @@ public class ProcessFactory {
 
     protected void downloadAssets(FileManager files, Version version)
         throws IOException {
-        new AssetsDownloader(files, version.getAssetsUrl(), version.getAssets())
+        new AssetsDownloader(files, config, version.getAssetsUrl(), version.getAssets())
             .download();
     }
 
