@@ -72,7 +72,10 @@ public class FabricCommand extends AbstractVersionCommand {
             bestVersion = ParseUtil.parseI(javaVersion);
         }
 
-        val java = ctx.getJavaService().findBestVersion(bestVersion);
+        Java java = ctx.getJavaService().findBestVersion(bestVersion);
+        if (java == null) {
+            java = ctx.getJavaService().findBestVersion(8);
+        }
 
         val jvmArgs = CommandUtil.getOption("--jvm", args);
         List<String> jvm = Collections.emptyList();
