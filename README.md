@@ -41,6 +41,9 @@ the most important commands:
 | forge | Installs Minecraft Forge. | \<version/id\> \<--uid\> |
 | fabric | Installs Fabric. | \<version/id\> |
 
+To launch the game in headless mode type use the launch command with the `-lwjgl` flag:
+`launch <version> -lwjgl`
+
 Arguments passed to commands have to be separated using spaces. If you want to pass an Argument which contains spaces
 you need to escape it using quotation marks, like this:
 `"argument with spaces"`. Quotation marks and backslashes can be escaped by using a backslash.
