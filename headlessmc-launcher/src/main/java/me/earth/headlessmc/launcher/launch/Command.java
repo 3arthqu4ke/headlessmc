@@ -43,8 +43,12 @@ class Command {
 
         val result = new ArrayList<String>();
         result.add(java.getExecutable());
-        result.addAll(Arrays.asList(config.get(LauncherProperties.JVM_ARGS,
-                                               new String[0])));
+        result.addAll(Arrays.asList(config.get(LauncherProperties.JVM_ARGS, new String[0])));
+        if (config.get(LauncherProperties.SET_LIBRARY_DIR, true)) {
+            System.out.println(launcher.getMcFiles().getDir("libraries").getAbsolutePath());
+            result.add("-DlibraryDirectory=" + launcher.getMcFiles().getDir("libraries").getAbsolutePath());
+        }
+
         result.addAll(jvmArgs);
 
         if (runtime

@@ -44,7 +44,7 @@ public class LaunchOptions {
             // if offline only allow launching with the lwjgl flag!
             if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
                 log.warning("You are offline, game will start in headless mode!");
-                //lwjgl = true;
+                lwjgl = true;
             }
 
             return this
