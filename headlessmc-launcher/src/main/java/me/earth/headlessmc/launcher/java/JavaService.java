@@ -63,6 +63,7 @@ public class JavaService extends Service<Java> {
                 return java;
             }
 
+            // uhhhhhhhhhhhhhhhhhhhh what?!?!?!
             if (java.getVersion() > version && (best == null
                 || best.getVersion() - version > java.getVersion() - version)) {
                 best = java;
