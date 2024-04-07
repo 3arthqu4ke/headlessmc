@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.launcher.LauncherMock;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.UsesResources;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.os.OS;
@@ -25,6 +26,7 @@ public class CommandTest implements UsesResources {
         LauncherMock.INSTANCE.getJavaService().add(new Java("dummy", 8));
         Assertions.assertThrows(LaunchException.class, command::build);
         LauncherMock.INSTANCE.getJavaService().add(new Java("java-17", 17));
+        System.setProperty(LauncherProperties.SET_LIBRARY_DIR.getName(), "false");
         val expected = Arrays.asList(
             "java-17", "-Dhmc.deencapsulate=true",
             "-Djava.library.path=natives_path", "-cp",

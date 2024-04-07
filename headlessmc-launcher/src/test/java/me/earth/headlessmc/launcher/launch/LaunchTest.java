@@ -6,6 +6,7 @@ import lombok.val;
 import lombok.var;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherMock;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.util.IOUtil;
@@ -23,6 +24,7 @@ public class LaunchTest {
     @Test
     @SneakyThrows
     public void testLaunch() {
+        System.setProperty(LauncherProperties.SET_LIBRARY_DIR.getName(), "false");
         setupLauncher();
         var builder = ((MockProcessFactory) launcher.getProcessFactory())
             .getBuilder();
@@ -50,6 +52,7 @@ public class LaunchTest {
 
     @Test
     public void testWithVmArgs() {
+        System.setProperty(LauncherProperties.SET_LIBRARY_DIR.getName(), "false");
         setupLauncher();
         launcher.getCommandContext().execute(
             // TODO: all this escaping is kinda ehh
