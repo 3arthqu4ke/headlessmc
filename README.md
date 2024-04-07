@@ -6,6 +6,7 @@
 [![Docker Image Size](https://badgen.net/docker/size/3arthqu4ke/headlessmc?icon=docker&label=image%20size)](https://hub.docker.com/r/3arthqu4ke/headlessmc/)
 ![Github last-commit](https://img.shields.io/github/last-commit/3arthqu4ke/HeadlessMc)
 
+> [!WARNING]
 > NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 > 
 > HeadlessMc will not allow you to play without having bought Minecraft! 
