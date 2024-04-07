@@ -81,7 +81,7 @@ public class ForgeInstaller {
     protected void downloadInstaller(ForgeVersion version, File file)
         throws IOException {
         var url = repoFormat.getUrl(baseUrl, version);
-        log.warning("Downloading Installer from " + url);
+        log.debug("Downloading Installer from " + url);
         try {
             IOUtil.download(url, file.getAbsolutePath());
         } catch (IOException e) {
