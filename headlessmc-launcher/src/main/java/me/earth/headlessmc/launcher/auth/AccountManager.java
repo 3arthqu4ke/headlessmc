@@ -43,7 +43,7 @@ public class AccountManager implements Iterable<Account> {
             return this.login(email, password);
         }
 
-        if (offlineChecker.isOffline()) {
+        if (true) {
             return new Account("Offline", OFFLINE_UUID, "", "", "", "");
         }
 

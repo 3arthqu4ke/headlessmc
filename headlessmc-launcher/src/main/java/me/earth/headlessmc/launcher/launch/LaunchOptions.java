@@ -42,10 +42,10 @@ public class LaunchOptions {
             Launcher ctx, boolean quit, String... args) {
             boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args);
             // if offline only allow launching with the lwjgl flag!
-            if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
-                log.warning("You are offline, game will start in headless mode!");
-                lwjgl = true;
-            }
+            //if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
+            //    log.warning("You are offline, game will start in headless mode!");
+            //    lwjgl = true;
+            //}
 
             return this
                 .runtime(CommandUtil.hasFlag("-commands", args))

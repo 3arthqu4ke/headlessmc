@@ -22,6 +22,10 @@ public class JavaService extends Service<Java> {
 
     @Override
     protected List<Java> update() {
+        if (cfg.getConfig().get(LauncherProperties.IN_MEMORY, true)) {
+            return new ArrayList<>(0);
+        }
+
         val systemDefaultJavaHome = Optional.ofNullable(System.getenv("JAVA_HOME"));
         val currentJavaHome = Optional.ofNullable(System.getProperty("java.home"));
         val foundJavaHomes = Stream.of(systemDefaultJavaHome, currentJavaHome)
