@@ -11,10 +11,7 @@ import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.auth.OfflineChecker;
 import me.earth.headlessmc.launcher.command.LaunchContext;
-import me.earth.headlessmc.launcher.files.ConfigService;
-import me.earth.headlessmc.launcher.files.FileManager;
-import me.earth.headlessmc.launcher.files.FileUtil;
-import me.earth.headlessmc.launcher.files.MinecraftFinder;
+import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
@@ -60,6 +57,9 @@ public final class Main {
     private void runHeadlessMc(String... args) throws IOException {
         LoggingHandler.apply();
         val files = FileManager.mkdir("HeadlessMC");
+
+        AutoConfiguration.runAutoConfiguration(files);
+
         val configs = Service.refresh(new ConfigService(files));
         LogLevelUtil.trySetLevel(
             configs.getConfig().get(HmcProperties.LOGLEVEL, "INFO"));
