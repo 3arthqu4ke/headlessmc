@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-java -jar headlessmc-launcher-1.9.5.jar --command $@
+java -jar headlessmc-launcher-1.10.0.jar --command $@
