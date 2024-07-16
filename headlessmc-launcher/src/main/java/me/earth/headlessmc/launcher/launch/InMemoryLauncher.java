@@ -27,6 +27,7 @@ public class InMemoryLauncher {
     private final Command command;
 
     public void launch() throws IOException, LaunchException, AuthException {
+        log.warning("The In-Memory Launcher is a BETA feature and has not been thoroughly tested yet!");
         String mainClass = command.getActualMainClass(new ArrayList<>());
         URL[] classpathUrls = new URL[command.getClasspath().size()];
         for (int i = 0; i < command.getClasspath().size(); i++) {
