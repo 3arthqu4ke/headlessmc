@@ -72,6 +72,12 @@ public class FamilyUtil {
         });
     }
 
+    public static <T extends HasParent<T>> void iterateTopDown(
+        T child,
+        Consumer<T> action) {
+        reverse(child).forEach(action);
+    }
+
     /**
      * Calls {@link FamilyUtil#iterateParents(HasParent, Supplier, Function)}
      * for the defaultResult <tt>() -> null</tt>.
