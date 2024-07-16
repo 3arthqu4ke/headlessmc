@@ -25,8 +25,8 @@ public class ArgumentAdapterTest implements UsesResources {
 
         val adapter = new ArgumentAdapter(merger.getArguments());
         Assertions.assertEquals(Arrays.asList(
-                                    "-DThing=Thing", "-XstartOnFirstThread",
-                                    "-DSomeSystemProperty=${some_arg}", "-cp", "${classpath}"),
+                                    "-XstartOnFirstThread", "-DSomeSystemProperty=${some_arg}",
+                                    "-cp", "${classpath}", "-DThing=Thing"),
                                 adapter.build(mac_os, features, "jvm"));
 
         Assertions.assertEquals(Arrays.asList(

@@ -62,5 +62,8 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> ASSETS_BACKOFF = bool("hmc.assets.backoff");
 
     Property<Boolean> SET_LIBRARY_DIR = bool("hmc.set.library.dir");
+    Property<Boolean> NO_AUTO_CONFIG = bool("hmc.no.auto.config");
+
+    // TODO: system property to set if we are running in memory!
 
 }

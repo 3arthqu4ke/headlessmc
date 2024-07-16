@@ -6,6 +6,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.AbstractCommand;
 import me.earth.headlessmc.logging.LogLevelUtil;
 
+import java.util.Locale;
 import java.util.logging.Level;
 
 import static me.earth.headlessmc.logging.LogLevelUtil.getLevels;
@@ -28,7 +29,7 @@ public class LogLevelCommand extends AbstractCommand {
 
         Level level;
         try {
-            level = Level.parse(args[1].toUpperCase());
+            level = Level.parse(args[1].toUpperCase(Locale.ENGLISH));
         } catch (Exception e) {
             throw new CommandException("Couldn't set level to '" + args[1]
                                            + "', please use one of "

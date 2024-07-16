@@ -9,6 +9,7 @@ import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -39,7 +40,7 @@ class RuleFactory {
             return Rule.UNDECIDED;
         }
 
-        val action = Rule.Action.valueOf(a.getAsString().toUpperCase());
+        val action = Rule.Action.valueOf(a.getAsString().toUpperCase(Locale.ENGLISH));
         val os = ruleJo.get("os");
         val feat = ruleJo.get("features");
         val rules = new ArrayList<Rule>(os != null && feat != null ? 3 : 2);
@@ -74,7 +75,7 @@ class RuleFactory {
     }
 
     private Rule ofOs(String type, Pattern version, Rule.Action action) {
-        val osType = type == null ? null : OS.Type.valueOf(type.toUpperCase());
+        val osType = type == null ? null : OS.Type.valueOf(type.toUpperCase(Locale.ENGLISH));
         return (os, features) -> osType != null && osType != os.getType()
             || version != null && !version.matcher(os.getVersion()).find()
             ? Rule.Action.UNDECIDED

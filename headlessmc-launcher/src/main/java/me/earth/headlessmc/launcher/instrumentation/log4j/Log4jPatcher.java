@@ -6,6 +6,7 @@ import me.earth.headlessmc.launcher.instrumentation.Target;
 import org.objectweb.asm.tree.*;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static org.objectweb.asm.Opcodes.ARETURN;
@@ -18,7 +19,7 @@ public class Log4jPatcher extends AbstractClassTransformer {
 
     @Override
     public boolean matches(Target target) {
-        return target.getPath().toLowerCase().contains("log4j");
+        return target.getPath().toLowerCase(Locale.ENGLISH).contains("log4j");
     }
 
     @Override

@@ -15,6 +15,7 @@ import me.earth.headlessmc.util.Table;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Locale;
 
 @CustomLog
 public class DownloadCommand extends AbstractLauncherCommand
@@ -79,7 +80,7 @@ public class DownloadCommand extends AbstractLauncherCommand
          */
         Collection<VersionInfo> versions =
             cache.cache(CommandUtil.hasFlag("-refresh", args));
-        if (args.length < 2 || super.args.containsKey(args[1].toLowerCase())) {
+        if (args.length < 2 || super.args.containsKey(args[1].toLowerCase(Locale.ENGLISH))) {
             Collection<VersionInfo> filtered =
                 new VersionTypeFilter<>(VersionInfo::getType)
                     .apply(versions, args);

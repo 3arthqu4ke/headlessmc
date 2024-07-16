@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ public class DummyAssets {
     }
 
     public byte @Nullable [] getResource(String name) {
-        return bytes.get(getFileEnding(name).toLowerCase());
+        return bytes.get(getFileEnding(name).toLowerCase(Locale.ENGLISH));
     }
 
     public String getFileEnding(String name) {

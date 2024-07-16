@@ -32,6 +32,7 @@ public class LaunchOptions {
     private final boolean paulscode;
     private final boolean noOut;
     private final boolean noIn;
+    private final boolean inMemory;
 
     public static class LaunchOptionsBuilder {
         private LaunchOptionsBuilder() {
@@ -50,6 +51,7 @@ public class LaunchOptions {
             return this
                 .runtime(CommandUtil.hasFlag("-commands", args))
                 .lwjgl(lwjgl)
+                .inMemory(CommandUtil.hasFlag("-inmemory", args))
                 .jndi(flag(ctx, "-jndi", INVERT_JNDI_FLAG, args))
                 .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, args))
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))

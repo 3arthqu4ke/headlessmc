@@ -55,7 +55,7 @@ public class ProcessFactory {
         val dlls = options.getFiles().createRelative("extracted");
         val targets = processLibraries(version, dlls);
         addGameJar(version, targets);
-        val command = Command.builder()
+        val commandBuilder = Command.builder()
                              .classpath(instrumentation.instrument(targets))
                              .os(os)
                              .jvmArgs(options.getAdditionalJvmArgs())
@@ -63,10 +63,10 @@ public class ProcessFactory {
                              .runtime(options.isRuntime())
                              .version(version)
                              .launcher(launcher)
+                             .inMemory(options.isInMemory())
                              .lwjgl(options.isLwjgl())
-                             .build()
                              .build();
-
+        val command = commandBuilder.build();
         downloadAssets(files, version);
         log.debug(command.toString());
         val dir = new File(launcher.getConfig().get(
@@ -74,6 +74,10 @@ public class ProcessFactory {
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
+        if (options.isInMemory()) {
+            new InMemoryLauncher(files, config, os, options, commandBuilder).launch();
+        }
+
         return this.run(new ProcessBuilder()
             .command(command)
             .directory(dir)

@@ -30,6 +30,7 @@ public class LaunchCommand extends AbstractVersionCommand {
                  "Starts the game with the built-in command line support.");
         args.put("-lwjgl", "Removes lwjgl code, causing Minecraft" +
             " not to render anything.");
+        args.put("-inmemory", "Launches the game in the same JVM headlessmc is running in.");
         args.put("-jndi", "Patches the Log4J vulnerability.");
         args.put("-lookup", "Patches the Log4J vulnerability even harder.");
         args.put("-paulscode", "Removes some error messages from the" +

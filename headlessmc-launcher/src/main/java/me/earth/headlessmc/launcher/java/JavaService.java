@@ -6,6 +6,7 @@ import lombok.val;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.Service;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,26 +33,35 @@ public class JavaService extends Service<Java> {
         val array = cfg.getConfig().get(LauncherProperties.JAVA, foundJavaHomes);
         val newVersions = new ArrayList<Java>(array.length);
         for (val path : array) {
-            log.debug("Reading Java version at path: " + path);
-            if (path.trim().isEmpty()) {
-                continue;
-            }
-
-            try {
-                val majorVersion = parser.parseVersionCommand(path);
-                val java = new Java(path, majorVersion);
-                log.debug("Found Java: " + java);
+            Java java = scanJava(path);
+            if (java != null) {
                 newVersions.add(java);
-            } catch (IOException e) {
-                log.warning("Couldn't parse Java Version for path " + path);
-                e.printStackTrace();
             }
         }
 
         return newVersions;
     }
 
-    public Java findBestVersion(Integer version) {
+    public @Nullable Java scanJava(String path) {
+        log.debug("Reading Java version at path: " + path);
+        if (path.trim().isEmpty()) {
+            return null;
+        }
+
+        try {
+            val majorVersion = parser.parseVersionCommand(path);
+            val java = new Java(path, majorVersion);
+            log.debug("Found Java: " + java);
+            return java;
+        } catch (IOException e) {
+            log.warning("Couldn't parse Java Version for path " + path);
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public @Nullable Java findBestVersion(Integer version) {
         if (version == null) {
             log.error("Version was null, assuming Java 8 is needed!");
             return findBestVersion(8);

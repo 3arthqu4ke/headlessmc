@@ -2,6 +2,8 @@ package me.earth.headlessmc.command;
 
 import me.earth.headlessmc.api.HeadlessMc;
 
+import java.util.Locale;
+
 public class QuitCommand extends AbstractCommand {
     public QuitCommand(HeadlessMc ctx) {
         super(ctx, "quit", "Quits HeadlessMc.");
@@ -16,7 +18,7 @@ public class QuitCommand extends AbstractCommand {
     @Override
     public boolean matches(String... args) {
         if (args.length > 0) {
-            String lower = args[0].toLowerCase().trim();
+            String lower = args[0].toLowerCase(Locale.ENGLISH).trim();
             return lower.equalsIgnoreCase("quit")
                 || lower.equalsIgnoreCase("exit")
                 || lower.equalsIgnoreCase("stop");

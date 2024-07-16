@@ -1,13 +1,11 @@
 package me.earth.headlessmc.launcher.launch;
 
-import lombok.Builder;
-import lombok.CustomLog;
-import lombok.val;
-import lombok.var;
+import lombok.*;
 import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Features;
 import me.earth.headlessmc.launcher.version.Version;
@@ -18,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Builder
+@Getter
 @CustomLog
 class Command {
     private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";
@@ -29,12 +28,25 @@ class Command {
     private final String natives;
     private final boolean runtime;
     private final boolean lwjgl;
+    private final boolean inMemory;
     private final OS os;
 
     public List<String> build() throws LaunchException, AuthException {
         val config = launcher.getConfig();
-        val java = launcher.getJavaService().findBestVersion(version.getJava());
-        if (java == null) {
+        var java = launcher.getJavaService().findBestVersion(version.getJava());
+        if (inMemory) {
+            Java current = Java.current();
+            if (current.getVersion() != version.getJava()) {
+                log.warning("Running in memory with java version "
+                                + current.getVersion()
+                                + " but minecraft needs "
+                                + version.getJava());
+            } else {
+                log.info("Running with Minecraft in memory in this JVM.");
+            }
+
+            java = current;
+        } else if (java == null) {
             throw new LaunchException("Couldn't find Java version for "
                                           + version.getName()
                                           + ", requires Java "
@@ -69,7 +81,14 @@ class Command {
 
         val adapter = ArgumentAdapterHelper.create(launcher, version, natives);
         result.addAll(adapter.build(os, Features.EMPTY, "jvm"));
+        getActualMainClass(result);
+        result.addAll(adapter.build(os, Features.EMPTY, "game"));
+        result.addAll(Arrays.asList(config.get(LauncherProperties.GAME_ARGS,
+                                               new String[0])));
+        return result;
+    }
 
+    public String getActualMainClass(List<String> result) {
         var mainClass = version.getMainClass();
         if (runtime) {
             result.add("-D" + HmcProperties.MAIN.getName() + "="
@@ -77,12 +96,9 @@ class Command {
             mainClass = RT_MAIN;
         }
 
-        result.add(config.get(LauncherProperties.CUSTOM_MAIN_CLASS, mainClass));
-
-        result.addAll(adapter.build(os, Features.EMPTY, "game"));
-        result.addAll(Arrays.asList(config.get(LauncherProperties.GAME_ARGS,
-                                               new String[0])));
-        return result;
+        mainClass = launcher.getConfig().get(LauncherProperties.CUSTOM_MAIN_CLASS, mainClass);
+        result.add(mainClass);
+        return mainClass;
     }
 
 }

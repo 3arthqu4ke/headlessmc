@@ -154,9 +154,9 @@ allprojects {
 
         publishing {
             publications {
-                "${project.name.toLowerCase()}"(MavenPublication) {
+                "${project.name.toLowerCase(Locale.ENGLISH)}"(MavenPublication) {
                     ((MavenPublication) it).groupId "${project.group}"
-                    ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase()}"
+                    ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase(Locale.ENGLISH)}"
                     ((MavenPublication) it).version "${project.version}${pubSuffix}"
                     // TODO: testFixtures are part of commons artifact?
                     // Exclude shadowJars from publication

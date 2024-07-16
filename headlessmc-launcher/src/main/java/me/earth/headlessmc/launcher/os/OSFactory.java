@@ -33,7 +33,7 @@ public class OSFactory {
     private static OS.Type getType(Config config, String osIn) {
         val type = config.get(LauncherProperties.OS_TYPE);
         if (type != null) {
-            return OS.Type.valueOf(type.toUpperCase());
+            return OS.Type.valueOf(type.toUpperCase(Locale.ENGLISH));
         }
 
         OS.Type result;
