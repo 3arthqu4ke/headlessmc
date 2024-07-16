@@ -6,6 +6,8 @@ import me.earth.headlessmc.api.HeadlessMc;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 public class AbstractCommandTest {
     @Test
     public void testBasicFunctionalities() {
@@ -52,7 +54,7 @@ public class AbstractCommandTest {
         Assertions.assertTrue(command.matches(DummyCommand.NAME));
         Assertions.assertTrue(command.matches(DummyCommand.NAME, "test"));
         Assertions.assertTrue(command.matches(DummyCommand.NAME, "test", "t"));
-        Assertions.assertTrue(command.matches(DummyCommand.NAME.toUpperCase()));
+        Assertions.assertTrue(command.matches(DummyCommand.NAME.toUpperCase(Locale.ENGLISH)));
         Assertions.assertFalse(command.matches("test"));
     }
 

@@ -8,6 +8,7 @@ import org.objectweb.asm.tree.*;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -106,7 +107,7 @@ public class LwjglTransformer implements Transformer {
         if (shouldAddNoArgsCtr
             && !isInterface
             && (cn.superName == null
-            || cn.superName.toLowerCase().contains("lwjgl")
+            || cn.superName.toLowerCase(Locale.ENGLISH).contains("lwjgl")
             || cn.superName.equals(Type.getInternalName(Object.class)))) {
             // Add NoArgs Constructor for the ObjectRedirection
             MethodNode mn = new MethodNode(ACC_PUBLIC, "<init>", "()V",

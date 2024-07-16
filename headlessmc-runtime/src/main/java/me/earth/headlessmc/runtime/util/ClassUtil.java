@@ -2,11 +2,13 @@ package me.earth.headlessmc.runtime.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.Locale;
+
 @UtilityClass
 public class ClassUtil {
     public static Class<?> getPrimitiveClass(String name)
         throws ClassNotFoundException {
-        switch (name.toLowerCase()) {
+        switch (name.toLowerCase(Locale.ENGLISH)) {
             case "boolean":
                 return boolean.class;
             case "byte":

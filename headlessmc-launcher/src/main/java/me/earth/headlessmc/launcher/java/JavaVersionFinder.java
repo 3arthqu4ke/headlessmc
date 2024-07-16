@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 @CustomLog
@@ -27,7 +28,7 @@ public class JavaVersionFinder {
                         stream.forEach(javaVersion -> {
                             Path executable = javaVersion.resolve("bin").resolve("java.exe");
                             String path = executable.toAbsolutePath().toString();
-                            if (path.toLowerCase().endsWith(".exe")) {
+                            if (path.toLowerCase(Locale.ENGLISH).endsWith(".exe")) {
                                 path = path.substring(0, path.length() - 4);
                             }
 

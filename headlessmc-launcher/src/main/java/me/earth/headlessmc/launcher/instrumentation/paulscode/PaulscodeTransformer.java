@@ -10,6 +10,7 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -43,7 +44,7 @@ public class PaulscodeTransformer extends AbstractClassTransformer {
 
     @Override
     public boolean matches(Target target) {
-        String path = target.getPath().toLowerCase();
+        String path = target.getPath().toLowerCase(Locale.ENGLISH);
         return path.contains("paulscode") && path.contains("soundsystem");
     }
 
