@@ -12,6 +12,9 @@ import me.earth.headlessmc.logging.LoggingHandler;
 @UtilityClass
 public class Main {
     public static void main(String[] args) throws Exception {
+        // TODO: detect if we are running in Memory!!!
+        //  Otherwise we read the command line unnecessarily often
+
         val config = ConfigImpl.empty();
         val mainClassName = config.get(HmcProperties.MAIN);
         if (mainClassName == null) {
