@@ -34,12 +34,7 @@ class Command {
     public List<String> build() throws LaunchException, AuthException {
         val config = launcher.getConfig();
         var java = launcher.getJavaService().findBestVersion(version.getJava());
-        if (java == null && !inMemory) {
-            throw new LaunchException("Couldn't find Java version for "
-                                          + version.getName()
-                                          + ", requires Java "
-                                          + version.getJava());
-        } else {
+        if (inMemory) {
             Java current = Java.current();
             if (current.getVersion() != version.getJava()) {
                 log.warning("Running in memory with java version "
@@ -51,6 +46,11 @@ class Command {
             }
 
             java = current;
+        } else if (java == null) {
+            throw new LaunchException("Couldn't find Java version for "
+                                          + version.getName()
+                                          + ", requires Java "
+                                          + version.getJava());
         }
 
         val result = new ArrayList<String>();
