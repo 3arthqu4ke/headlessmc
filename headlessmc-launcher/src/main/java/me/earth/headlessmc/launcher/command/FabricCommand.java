@@ -75,6 +75,9 @@ public class FabricCommand extends AbstractVersionCommand {
         Java java = ctx.getJavaService().findBestVersion(bestVersion);
         if (java == null) {
             java = ctx.getJavaService().findBestVersion(8);
+            if (java == null) {
+                throw new CommandException("No Java version found! Please configure hmc.java.versions.");
+            }
         }
 
         val jvmArgs = CommandUtil.getOption("--jvm", args);

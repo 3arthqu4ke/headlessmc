@@ -28,18 +28,29 @@ class Command {
     private final String natives;
     private final boolean runtime;
     private final boolean lwjgl;
+    private final boolean inMemory;
     private final OS os;
 
     public List<String> build() throws LaunchException, AuthException {
         val config = launcher.getConfig();
         var java = launcher.getJavaService().findBestVersion(version.getJava());
-        if (java == null && !launcher.getConfig().get(LauncherProperties.IN_MEMORY, true)) {
+        if (java == null && !inMemory) {
             throw new LaunchException("Couldn't find Java version for "
                                           + version.getName()
                                           + ", requires Java "
                                           + version.getJava());
         } else {
-            java = Java.current();
+            Java current = Java.current();
+            if (current.getVersion() != version.getJava()) {
+                log.warning("Running in memory with java version "
+                                + current.getVersion()
+                                + " but minecraft needs "
+                                + version.getJava());
+            } else {
+                log.info("Running with Minecraft in memory in this JVM.");
+            }
+
+            java = current;
         }
 
         val result = new ArrayList<String>();

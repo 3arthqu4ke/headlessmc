@@ -63,6 +63,7 @@ public class ProcessFactory {
                              .runtime(options.isRuntime())
                              .version(version)
                              .launcher(launcher)
+                             .inMemory(options.isInMemory())
                              .lwjgl(options.isLwjgl())
                              .build();
         val command = commandBuilder.build();
@@ -73,7 +74,7 @@ public class ProcessFactory {
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
-        if (options.getLauncher().getConfig().get(LauncherProperties.IN_MEMORY, true)) {
+        if (options.isInMemory()) {
             new InMemoryLauncher(files, config, os, options, commandBuilder).launch();
         }
 
