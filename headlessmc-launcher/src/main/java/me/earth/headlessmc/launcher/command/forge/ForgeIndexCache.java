@@ -9,6 +9,7 @@ import me.earth.headlessmc.launcher.util.JsonUtil;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static me.earth.headlessmc.launcher.util.URLs.url;
@@ -31,6 +32,7 @@ public class ForgeIndexCache extends AbstractDownloadService<ForgeVersion> {
             result.add(version);
         }
 
+        result.sort(Comparator.reverseOrder());
         return result;
     }
 
