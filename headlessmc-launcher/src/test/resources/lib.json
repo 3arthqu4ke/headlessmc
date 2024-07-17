@@ -7,7 +7,7 @@
       "url": "_download_url"
     }
   },
-  "name": "test:test:test",
+  "name": "testpackage:test:testversion",
   "rules": [
     {
       "action": "allow"

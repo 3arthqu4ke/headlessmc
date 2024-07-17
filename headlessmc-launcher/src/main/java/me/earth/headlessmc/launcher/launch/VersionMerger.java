@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
+import me.earth.headlessmc.launcher.util.Pair;
 import me.earth.headlessmc.launcher.version.Argument;
 import me.earth.headlessmc.launcher.version.Library;
 import me.earth.headlessmc.launcher.version.Version;
@@ -9,6 +10,7 @@ import me.earth.headlessmc.launcher.version.family.FamilyUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @CustomLog
 class VersionMerger extends DelegatingVersion {
@@ -43,7 +45,7 @@ class VersionMerger extends DelegatingVersion {
 
     @Override
     public List<Library> getLibraries() {
-        return merge(Version::getLibraries);
+        return mergeLibraries();
     }
 
     @Override
@@ -68,11 +70,32 @@ class VersionMerger extends DelegatingVersion {
                 result.addAll(list);
             }
         });
+
         return result;
     }
 
     private <T> T get(Function<Version, T> func) {
         return FamilyUtil.iterateParents(version, () -> null, func);
+    }
+
+    private List<Library> mergeLibraries() {
+        List<Pair<Library, Version>> result = new ArrayList<>();
+        FamilyUtil.iterateTopDown(version, v -> {
+            for (Library library : v.getLibraries()) {
+                // The behaviour seems to be that child versions overwrite
+                // libraries of their parent version with the same package and name.
+                // overwriting.getValue().equals(v) is there because a version itself might
+                // contain libraries with similar packages and names, like this:
+                // io.netty:netty-transport-native-epoll:4.1.97.Final:linux-x86_64
+                // io.netty:netty-transport-native-epoll:4.1.97.Final:linux-aarch_64
+                result.removeIf(overwriting -> !overwriting.getValue().equals(v)
+                    && overwriting.getKey().getPackage().equals(library.getPackage())
+                    && overwriting.getKey().getNameAfterPackage().equals(library.getNameAfterPackage()));
+                result.add(new Pair<>(library, v));
+            }
+        });
+
+        return result.stream().map(Pair::getKey).collect(Collectors.toList());
     }
 
 }

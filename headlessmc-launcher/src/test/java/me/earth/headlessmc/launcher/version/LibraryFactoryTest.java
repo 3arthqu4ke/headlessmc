@@ -18,7 +18,10 @@ public class LibraryFactoryTest
         OS os = new OS("Windows", OS.Type.WINDOWS, "10", false);
         Features feat = Features.EMPTY;
         assertEquals(Rule.Action.ALLOW, libs.get(0).getRule().apply(os, feat));
-        assertEquals("test:test:test", libs.get(0).getName());
+        assertEquals("testpackage:test:testversion", libs.get(0).getName());
+        assertEquals("testpackage", libs.get(0).getPackage());
+        assertEquals("test", libs.get(0).getNameAfterPackage());
+        assertEquals("testversion", libs.get(0).getVersionNumber());
         assertEquals("_download_url", libs.get(0).getUrl(""));
         assertFalse(libs.get(0).isNativeLibrary());
     }
