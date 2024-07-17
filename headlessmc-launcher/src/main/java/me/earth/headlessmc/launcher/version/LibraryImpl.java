@@ -25,6 +25,15 @@ class LibraryImpl implements Library {
 
     @Override
     public String getPath(OS os) {
+        String result = getPathWithDefaultPathSeparator(os);
+        if (File.separatorChar != '/') {
+            result = result.replace("/", File.separator);
+        }
+
+        return result;
+    }
+
+    private String getPathWithDefaultPathSeparator(OS os) {
         if (path != null) {
             return path.replace("${arch}", os.isArch() ? "64" : "32");
         }
