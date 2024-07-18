@@ -3,7 +3,7 @@ name: docker
 on:
   workflow_run:
     workflows: ["Gradle Build"]
-    branches: [master]
+    branches: [main]
     types:
       - completed
 
