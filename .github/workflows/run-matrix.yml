@@ -1,0 +1,93 @@
+name: Run all versions with HMC -lwjgl
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build
+        run: ./gradlew build
+      - name: Delete dev jar
+        run: rm headlessmc-launcher/build/libs/headlessmc-launcher-*-dev.jar
+      - name: Delete javadoc jar
+        run: rm headlessmc-launcher/build/libs/headlessmc-launcher-*-javadoc.jar
+      - name: Delete sources jar
+        run: rm headlessmc-launcher/build/libs/headlessmc-launcher-*-sources.jar
+      - name: Rename launcher jar
+        run: mv headlessmc-launcher/build/libs/headlessmc-launcher-*.jar headlessmc-launcher/build/libs/headlessmc-launcher.jar
+      - name: Copy launcher jar
+        run: cp headlessmc-launcher/build/libs/headlessmc-launcher.jar .
+      - name: Upload Launcher Jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: launcher-jar
+          path: ./headlessmc-launcher.jar
+
+  run:
+    strategy:
+      matrix:
+        version:
+          - { mc: 1.21, type: lexforge, modloader: forge, regex: .*forge.*, java: 21 }
+          - { mc: 1.21, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 21 }
+          - { mc: 1.21, type: fabric, modloader: fabric, regex: .*fabric.*, java: 21 }
+          - { mc: 1.20.6, type: lexforge, modloader: forge, regex: .*forge.*, java: 21 }
+          - { mc: 1.20.6, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 21 }
+          - { mc: 1.20.6, type: fabric, modloader: fabric, regex: .*fabric.*, java: 21 }
+          - { mc: 1.20.4, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.20.4, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 17 }
+          - { mc: 1.20.4, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.20.3, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.20.3, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 17 }
+          - { mc: 1.20.3, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.20.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.20.2, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 17 }
+          - { mc: 1.20.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.20.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.20.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.19.4, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.19.4, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.19.3, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.19.3, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.19.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.19.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.19.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.19.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.19, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.19, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.18.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          - { mc: 1.18.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          - { mc: 1.17.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 16 }
+          - { mc: 1.17.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 16 }
+          - { mc: 1.16.5, type: fabric, modloader: fabric, regex: .*fabric.*, java: 8 }
+          - { mc: 1.16.5, type: lexforge, modloader: forge, regex: .*forge.*, java: 8 }
+          - { mc: 1.12.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 8 }
+          - { mc: 1.8.9, type: lexforge, modloader: forge, regex: .*orge.*, java: 8 }
+          - { mc: 1.7.10, type: lexforge, modloader: forge, regex: .*orge.*, java: 8 }
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Copy launcher jar
+        run: cp launcher-jar/headlessmc-launcher.jar .
+      - name: Run the MC client
+        uses: 3arthqu4ke/mc-runtime-test@2.1.0
+        with:
+          mc: ${{ matrix.version.mc }}
+          modloader: ${{ matrix.version.modloader }}
+          regex: ${{ matrix.version.regex }}
+          java: ${{ matrix.version.java }}
+          mc-runtime-test: ${{ matrix.version.type }}
+          xvfb: false
+          headlessmc-command: -lwjgl --jvm -Djava.awt.headless=true
+          download-hmc: false
