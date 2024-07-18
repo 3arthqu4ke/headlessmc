@@ -37,6 +37,12 @@ public class JavaVersionParserTest {
                 "internal+0-adhoc..src)");
         Assertions.assertEquals(17, version);
 
+        version = parser.parseVersion(
+            "openjdk version \"21\" 2023-09-19\n" +
+                "OpenJDK Runtime Environment (build 21+35-2513)\n" +
+                "OpenJDK 64-Bit Server VM (build 21+35-2513, mixed mode, sharing)");
+        Assertions.assertEquals(21, version);
+
         Assertions.assertThrows(IOException.class,
                                 () -> parser.parseVersion("test"));
     }

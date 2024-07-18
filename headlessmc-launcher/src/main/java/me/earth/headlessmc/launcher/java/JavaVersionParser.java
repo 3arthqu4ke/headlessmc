@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class JavaVersionParser {
 
     private static final Pattern PATTERN = Pattern.compile(
-        "version \"(\\d+)[.-](\\d*)");
+        "version \"(\\d+)[.-]?(\\d*)");
 
     public int parseVersionCommand(String path) throws IOException {
         Process prcs = new ProcessBuilder().command(path, "-version").start();
