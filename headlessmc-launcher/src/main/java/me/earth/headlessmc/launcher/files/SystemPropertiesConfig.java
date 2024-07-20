@@ -16,4 +16,8 @@ public class SystemPropertiesConfig extends AbstractConfig {
         return result == null ? defaultValue.get() : result;
     }
 
+    @Override
+    public <T> T setValue(Property<T> property, Supplier<T> value) {
+        return property.parse(System.setProperty(property.getName(), value.get().toString()));
+    }
 }

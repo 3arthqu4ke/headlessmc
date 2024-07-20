@@ -33,6 +33,7 @@ public class LaunchOptions {
     private final boolean noOut;
     private final boolean noIn;
     private final boolean inMemory;
+    private final String username;
 
     public static class LaunchOptionsBuilder {
         private LaunchOptionsBuilder() {
@@ -40,7 +41,7 @@ public class LaunchOptions {
         }
 
         public LaunchOptionsBuilder parseFlags(
-            Launcher ctx, boolean quit, String... args) {
+                Launcher ctx, boolean quit, String... args) {
             boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args);
             // if offline only allow launching with the lwjgl flag!
             if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
@@ -57,23 +58,24 @@ public class LaunchOptions {
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))
                 .noOut(quit || CommandUtil.hasFlag("-noout", args))
                 .parseJvmArgs(args)
-                .noIn(quit);
+                .noIn(quit)
+                .username(CommandUtil.getOption("-username", args));
         }
 
         public LaunchOptionsBuilder parseJvmArgs(String... args) {
             String jvmArgs = CommandUtil.getOption("--jvm", args);
             if (jvmArgs != null) {
                 this.additionalJvmArgs = new ArrayList<>(
-                    Arrays.asList(CommandUtil.split(jvmArgs)));
+                        Arrays.asList(CommandUtil.split(jvmArgs)));
             }
 
             return this;
         }
 
         private boolean flag(
-            HasConfig ctx, String flg, Property<Boolean> inv, String... args) {
+                HasConfig ctx, String flg, Property<Boolean> inv, String... args) {
             return CommandUtil.hasFlag(flg, args)
-                ^ ctx.getConfig().get(inv, false);
+                    ^ ctx.getConfig().get(inv, false);
         }
     }
 
