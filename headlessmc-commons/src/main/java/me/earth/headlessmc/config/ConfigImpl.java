@@ -34,4 +34,9 @@ public class ConfigImpl implements Config {
         return result == null ? defaultValue.get() : result;
     }
 
+    @Override
+    public <T> T setValue(Property<T> property, Supplier<T> value) {
+        return (T)properties.setProperty(property.getName(), value.get().toString());
+    }
+
 }

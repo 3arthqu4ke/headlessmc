@@ -18,4 +18,9 @@ public interface Config extends HasName, HasId {
         return getValue(property, () -> defaultValue);
     }
 
+    // Implement a setter function for config properties, this allows for overwriting
+    // the values of them from the cli which enables per invocation configuration.
+    <T> T setValue(Property<T> property, Supplier<T> value);
+
+    default <T> T set(Property<T> property, T value) { return setValue(property, () -> value); }
 }
