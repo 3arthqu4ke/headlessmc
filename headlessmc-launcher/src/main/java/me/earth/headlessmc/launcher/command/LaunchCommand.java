@@ -39,7 +39,6 @@ public class LaunchCommand extends AbstractVersionCommand {
         // TODO: is this really necessary?
         args.put("-noout", "Doesn't print Minecrafts output to the console.");
         args.put("-quit", "Quit HeadlessMc after launching the game.");
-        args.put("-username", "Set the username in offline mode");
         args.put("--jvm", "Jvm args to use.");
     }
 

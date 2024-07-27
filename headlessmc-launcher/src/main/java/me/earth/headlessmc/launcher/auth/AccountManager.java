@@ -44,9 +44,13 @@ public class AccountManager implements Iterable<Account> {
         }
 
         if (offlineChecker.isOffline()) {
-            val username = config.get(LauncherProperties.OFFLINE_USERNAME, "Offline");
-            val uuid = config.get(LauncherProperties.OFFLINE_UUID, OFFLINE_UUID);
-            return new Account(username, uuid, "", "", "", "");
+            return new Account(
+                config.get(LauncherProperties.OFFLINE_USERNAME, "Offline"),
+                config.get(LauncherProperties.OFFLINE_UUID, OFFLINE_UUID),
+                config.get(LauncherProperties.OFFLINE_TOKEN, ""),
+                config.get(LauncherProperties.OFFLINE_REFRESH_TOKEN, ""),
+                config.get(LauncherProperties.OFFLINE_XUID, ""),
+                config.get(LauncherProperties.OFFLINE_CLIENT_ID, ""));
         }
 
         log.warning("No valid account found!");

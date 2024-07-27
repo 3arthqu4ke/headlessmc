@@ -4,7 +4,6 @@ import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import lombok.var;
-import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.ResourceExtractor;

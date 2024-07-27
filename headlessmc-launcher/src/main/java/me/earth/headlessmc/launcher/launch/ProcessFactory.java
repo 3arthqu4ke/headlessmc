@@ -19,7 +19,10 @@ import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipFile;
 
 @CustomLog
@@ -37,14 +40,7 @@ public class ProcessFactory {
 
     public Process run(LaunchOptions options, Instrumentation instrumentation)
         throws IOException, LaunchException, AuthException {
-
         val launcher = options.getLauncher();
-
-        if (options.getUsername() != null) {
-            launcher.getConfig().set(LauncherProperties.OFFLINE_USERNAME, options.getUsername());
-            launcher.getConfig().set(LauncherProperties.OFFLINE_UUID, UUID.randomUUID().toString());
-        }
-
         if (launcher.getAccountManager().getLastAccount() == null) {
             launcher.getAccountManager().login(launcher.getConfig());
         }
