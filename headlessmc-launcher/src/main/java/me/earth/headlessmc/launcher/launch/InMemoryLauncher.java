@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.config.HasConfig;
-import me.earth.headlessmc.launcher.Main;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.os.OS;
