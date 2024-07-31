@@ -1,5 +1,6 @@
 package me.earth.headlessmc.runtime.commands;
 
+import lombok.CustomLog;
 import lombok.val;
 import lombok.var;
 import me.earth.headlessmc.api.command.CommandException;
@@ -10,6 +11,7 @@ import me.earth.headlessmc.runtime.util.ClassHelper;
 import java.lang.reflect.Method;
 import java.util.stream.Collectors;
 
+@CustomLog
 public class MethodCommand extends AbstractReflectionCommand {
     public MethodCommand(Runtime ctx) {
         super(ctx, "method", "Invokes a method.");
@@ -41,7 +43,7 @@ public class MethodCommand extends AbstractReflectionCommand {
             Object value = method.invoke(o, arguments);
             ctx.getVm().set(value, target);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 

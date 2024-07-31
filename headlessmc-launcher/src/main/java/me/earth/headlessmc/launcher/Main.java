@@ -4,12 +4,10 @@ import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.HmcProperties;
-import me.earth.headlessmc.launcher.auth.AccountManager;
-import me.earth.headlessmc.launcher.auth.AccountStore;
-import me.earth.headlessmc.launcher.auth.AccountValidator;
-import me.earth.headlessmc.launcher.auth.OfflineChecker;
+import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -45,17 +43,25 @@ public final class Main {
             manually at the end but that prevents multiple LoginFrames at the
             same time.
              */
-            if (throwable == null) {
-                System.exit(0);
-            } else {
-                throwable.printStackTrace();
-                System.exit(-1);
+            try {
+                if (throwable == null) {
+                    System.exit(0);
+                } else {
+                    log.error(throwable);
+                    System.exit(-1);
+                }
+            } catch (Throwable exitThrowable) {
+                // it is possible, if we launch in memory, that forge prevents us from calling System.exit through their SecurityManager
+                log.error("Failed to exit!", throwable);
+                // TODO: exit gracefully, try to call Forge to exit
             }
         }
     }
 
-    private void runHeadlessMc(String... args) throws IOException {
+    private void runHeadlessMc(String... args) throws IOException, AuthException {
         LoggingHandler.apply();
+        AbstractLoginCommand.replaceLogger();
+
         val files = FileManager.mkdir("HeadlessMC");
 
         AutoConfiguration.runAutoConfiguration(files);
@@ -72,13 +78,14 @@ public final class Main {
         val versions = Service.refresh(new VersionService(mcFiles));
         val javas = Service.refresh(new JavaService(configs));
 
-        val validator = new AccountValidator();
         val accountStore = new AccountStore(files, configs);
-        val accounts = new AccountManager(accountStore, validator, new OfflineChecker(configs));
+        val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
+        accounts.load(configs.getConfig());
 
         val launcher = new Launcher(hmc, versions, mcFiles, files,
                                     new ProcessFactory(mcFiles, configs, os), configs,
-                                    javas, accounts, validator);
+                                    javas, accounts);
+
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
         versions.refresh();

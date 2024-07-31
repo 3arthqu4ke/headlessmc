@@ -5,6 +5,7 @@ import lombok.val;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.UsesResources;
+import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Version;
@@ -42,6 +43,7 @@ public class CommandTest implements UsesResources {
     private Command setupCommand() {
         return Command.builder()
                       .classpath(Arrays.asList("test", "test"))
+                      .account(new LaunchAccount("d", "d", "d", "d", "d"))
                       .os(new OS("win", OS.Type.WINDOWS, "11", true))
                       .jvmArgs(Collections.emptyList())
                       .natives("natives_path")

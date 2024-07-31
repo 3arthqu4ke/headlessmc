@@ -5,7 +5,11 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import lombok.var;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +30,7 @@ public class JsonUtil {
      * @throws JsonSyntaxException if something goes wrong.
      */
     public static JsonElement fromFile(File file) throws IOException {
-        return fromInput(new FileInputStream(file));
+        return fromInput(Files.newInputStream(file.toPath()));
     }
 
     public static JsonElement fromInput(InputStream stream) throws IOException {

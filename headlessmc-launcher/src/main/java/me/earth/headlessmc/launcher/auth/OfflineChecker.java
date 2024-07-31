@@ -9,7 +9,6 @@ public class OfflineChecker {
     private final ConfigService configService;
     
     public boolean isOffline() {
-        // TODO: check internet connection
         return configService.getConfig().get(LauncherProperties.OFFLINE, false);
     }
     

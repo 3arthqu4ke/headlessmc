@@ -100,8 +100,7 @@ class AssetsDownloader {
                               jo.get("map_to_resources") != null && jo.get("map_to_resources").getAsBoolean());
                 return; // downloaded successfully, return
             } catch (IOException e) {
-                e.printStackTrace();
-                log.warning(progress + " Failed to download asset " + entry.getKey() + ", retrying... (" + e.getMessage() + ")");
+                log.warn(progress + " Failed to download asset " + entry.getKey() + ", retrying...", e);
                 exception = e;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -109,10 +108,9 @@ class AssetsDownloader {
             }
         }
 
+        // exception is always != null at this point
         log.error("Failed to download asset " + entry.getKey() + " after " + tries + " tries!");
-        if (exception != null) {
-            failed.set(exception);
-        }
+        failed.set(exception);
     }
 
     private void downloadAsset(String progress, String name, String hash, long size, boolean mapToResources) throws IOException {

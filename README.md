@@ -42,12 +42,7 @@ with a `;` seperated list of java versions HeadlessMc can use, like this:
     On Windows Java versions in `Program Files/Java` will already get detected automatically.
 4. Execute `config -refresh` and then `java -refresh`, HeadlessMc should now know which Java versions to use.
 5. HeadlessMc will generally not allow you to start the game without an account.
-Login to your Minecraft account by executing the `login <email>` command.
-For now, Microsoft's 2FA is not supported in headless mode, 
-but you can use the `login -webview` flag to open Microsoft's login UI on machine with a graphic interface
-(You can then copy over the HeadlessMC folder with all login files to your headless machine).
-For login with webview you need JavaFX, which is not included in all Java distributions,
-in that case you need to use the larger `headlessmc-launcher-jfx.jar`.
+Login to your Minecraft account by executing the `login` command and follow the instructions.
 6. You can download Minecraft Vanilla versions with the download command, e.g. `download 1.21`.
 7. After downloading a Vanilla version you can also install modloaders
 with the `forge`, `fabric`, and `neoforge` commands, e.g. `fabric 1.21`.
@@ -98,7 +93,7 @@ Look [here](DEV.md) for more in-depth documentation about the project.
 
 Some cool libraries we use:
 
-*   [OpenAuth by Litarvan](https://github.com/Litarvan/OpenAuth)
+*   [MinecraftAuth by RaphiMC](https://github.com/RaphiMC/MinecraftAuth)
 *   [Deencapsulation by xxDark](https://github.com/xxDark/deencapsulation)
 *   [Forge-CLI by TeamKun](https://github.com/TeamKun/ForgeCLI), which we [customized](https://github.com/3arthqu4ke/ForgeCLI).
 

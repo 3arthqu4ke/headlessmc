@@ -49,6 +49,7 @@ public enum STBIImageRedirection implements Redirection {
         try {
             image = ImageIO.read(new ByteBufferInputStream(buffer));
         } catch (IOException e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
 

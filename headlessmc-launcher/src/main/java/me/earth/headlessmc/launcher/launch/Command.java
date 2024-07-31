@@ -5,6 +5,7 @@ import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Features;
@@ -21,6 +22,7 @@ import java.util.List;
 class Command {
     private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";
 
+    private final LaunchAccount account;
     private final List<String> classpath;
     private final List<String> jvmArgs;
     private final Launcher launcher;
@@ -57,7 +59,6 @@ class Command {
         result.add(java.getExecutable());
         result.addAll(Arrays.asList(config.get(LauncherProperties.JVM_ARGS, new String[0])));
         if (config.get(LauncherProperties.SET_LIBRARY_DIR, true)) {
-            System.out.println(launcher.getMcFiles().getDir("libraries").getAbsolutePath());
             result.add("-DlibraryDirectory=" + launcher.getMcFiles().getDir("libraries").getAbsolutePath());
         }
 
@@ -79,7 +80,7 @@ class Command {
         result.add(String.join("" + File.pathSeparatorChar, classpath)
                        + config.get(LauncherProperties.CLASS_PATH, ""));
 
-        val adapter = ArgumentAdapterHelper.create(launcher, version, natives);
+        val adapter = ArgumentAdapterHelper.create(launcher, version, natives, account);
         result.addAll(adapter.build(os, Features.EMPTY, "jvm"));
         getActualMainClass(result);
         result.addAll(adapter.build(os, Features.EMPTY, "game"));

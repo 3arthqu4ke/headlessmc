@@ -1,13 +1,7 @@
+
 plugins {
     id 'application'
     id 'headlessmc-modules'
-}
-
-repositories {
-    maven {
-        name 'OpenAuthMaven'
-        url 'https://litarvan.github.io/maven'
-    }
 }
 
 def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'

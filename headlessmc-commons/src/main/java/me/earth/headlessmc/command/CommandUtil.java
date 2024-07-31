@@ -93,6 +93,7 @@ public class CommandUtil {
         return prev[s2.length()];
     }
 
+    // TODO: accept with -- and -!
     public static boolean hasFlag(String arg, String... args) {
         return Arrays.stream(args).anyMatch(s -> s.equalsIgnoreCase(arg));
     }

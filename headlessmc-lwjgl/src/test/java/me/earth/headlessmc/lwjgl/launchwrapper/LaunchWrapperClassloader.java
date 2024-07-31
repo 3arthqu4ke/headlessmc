@@ -1,5 +1,7 @@
 package me.earth.headlessmc.lwjgl.launchwrapper;
 
+import lombok.CustomLog;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -7,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+@CustomLog
 public class LaunchWrapperClassloader extends URLClassLoader {
     public LaunchWrapperClassloader() {
         super(setupUrls(), ClassLoader.getSystemClassLoader());
@@ -25,7 +28,7 @@ public class LaunchWrapperClassloader extends URLClassLoader {
                 try {
                     urls.add(new URL(path));
                 } catch (MalformedURLException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
             }
         }

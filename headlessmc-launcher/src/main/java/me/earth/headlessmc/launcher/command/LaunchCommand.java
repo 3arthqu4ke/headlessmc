@@ -8,6 +8,8 @@ import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.auth.LaunchAccount;
+import me.earth.headlessmc.launcher.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
@@ -43,8 +45,7 @@ public class LaunchCommand extends AbstractVersionCommand {
     }
 
     @Override
-    public void execute(Version version, String... args)
-        throws CommandException {
+    public void execute(Version version, String... args) throws CommandException {
         val uuid = UUID.randomUUID();
         ctx.log("Launching version " + version.getName() + ", " + uuid);
         val files = ctx.getFileManager().createRelative(uuid.toString());
@@ -54,6 +55,7 @@ public class LaunchCommand extends AbstractVersionCommand {
         try {
             val process = ctx.getProcessFactory().run(
                 LaunchOptions.builder()
+                             .account(getAccount())
                              .version(version)
                              .launcher(ctx)
                              .files(files)
@@ -72,7 +74,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             }
         } catch (IOException | LaunchException | AuthException e) {
             status = -1;
-            e.printStackTrace();
+            log.error(e);
             ctx.log(String.format(
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
             if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
@@ -82,9 +84,8 @@ public class LaunchCommand extends AbstractVersionCommand {
             status = -1;
             val msg = String.format(
                 "Couldn't launch %s: %s", version.getName(), t.getMessage());
-            log.error(msg);
+            log.error(msg, t);
             ctx.log(msg);
-            t.printStackTrace();
             throw t;
         } finally {
             // for some reason both ShutdownHooks and File.deleteOnExit are
@@ -109,6 +110,25 @@ public class LaunchCommand extends AbstractVersionCommand {
 
     private boolean flag(String flg, Property<Boolean> inv, String... args) {
         return CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(inv, false);
+    }
+
+    protected LaunchAccount getAccount() throws CommandException {
+        try {
+            ValidatedAccount account = ctx.getAccountManager().getPrimaryAccount();
+            if (account == null) {
+                if (ctx.getAccountManager().getOfflineChecker().isOffline()) {
+                    return ctx.getAccountManager().getOfflineAccount(ctx.getConfig());
+                }
+
+                throw new AuthException("You can't play the game without an account! Please use the login command.");
+            } else {
+                account = ctx.getAccountManager().refreshAccount(account);
+                return account.toLaunchAccount();
+            }
+
+        } catch (AuthException e) {
+            throw new CommandException(e.getMessage());
+        }
     }
 
 }

@@ -41,9 +41,6 @@ public class ProcessFactory {
     public Process run(LaunchOptions options, Instrumentation instrumentation)
         throws IOException, LaunchException, AuthException {
         val launcher = options.getLauncher();
-        if (launcher.getAccountManager().getLastAccount() == null) {
-            launcher.getAccountManager().login(launcher.getConfig());
-        }
 
         val version = new VersionMerger(options.getVersion());
         if (version.getArguments() == null) {
@@ -56,6 +53,7 @@ public class ProcessFactory {
         val targets = processLibraries(version, dlls);
         addGameJar(version, targets);
         val commandBuilder = Command.builder()
+                             .account(options.getAccount())
                              .classpath(instrumentation.instrument(targets))
                              .os(os)
                              .jvmArgs(options.getAdditionalJvmArgs())
@@ -66,6 +64,7 @@ public class ProcessFactory {
                              .inMemory(options.isInMemory())
                              .lwjgl(options.isLwjgl())
                              .build();
+
         val command = commandBuilder.build();
         downloadAssets(files, version);
         log.debug(command.toString());
