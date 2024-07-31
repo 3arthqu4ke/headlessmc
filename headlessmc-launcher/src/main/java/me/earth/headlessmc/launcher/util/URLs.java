@@ -25,6 +25,7 @@ public class URLs {
     }
 
     public static HttpURLConnection get(String url) throws IOException {
+        // TODO: switch to Lennie http client?
         val con = (HttpURLConnection) new URL(url).openConnection();
         con.setRequestMethod("GET");
         con.setDoOutput(true);

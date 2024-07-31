@@ -17,7 +17,7 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
     @Override
     default void execute(String... args) throws CommandException {
         if (args.length < 2) {
-            throw new CommandException("Please specify a Version!");
+            throw new CommandException("Please specify an id!");
         }
 
         boolean byId = CommandUtil.hasFlag("-id", args);

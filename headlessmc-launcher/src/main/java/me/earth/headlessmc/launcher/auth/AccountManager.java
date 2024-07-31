@@ -1,138 +1,116 @@
 package me.earth.headlessmc.launcher.auth;
 
-import fr.litarvan.openauth.microsoft.MicrosoftAuthResult;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticationException;
-import fr.litarvan.openauth.microsoft.MicrosoftAuthenticator;
 import lombok.*;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.launcher.LauncherProperties;
+import net.lenni0451.commons.httpclient.HttpClient;
+import net.raphimc.minecraftauth.MinecraftAuth;
+import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
+import net.raphimc.minecraftauth.step.msa.StepCredentialsMsaCode;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-// TODO: when another config is loaded invalidate lastAccount?
+@Getter
 @CustomLog
 @RequiredArgsConstructor
-public class AccountManager implements Iterable<Account> {
+public class AccountManager {
     private static final String OFFLINE_UUID = "22689332a7fd41919600b0fe1135ee34";
-    private final Map<Integer, Account> cache = new ConcurrentHashMap<>();
-    private final AccountStore accountStore;
-    private final AccountValidator validator;
-    @Getter
-    private final OfflineChecker offlineChecker;
-    @Getter
-    private Account lastAccount;
 
-    public Account login(Config config) throws AuthException {
-        log.debug("Attempting to login...");
-        var acc = accountStore.load();
-        if (acc.isPresent() && (acc = refresh(acc.get())).isPresent()) {
-            log.debug("Found account " + acc + " in account store.");
-            validator.validate(acc.get());
-            lastAccount = acc.get();
-            save(acc.get());
-            return acc.get();
+    private final List<ValidatedAccount> accounts = new ArrayList<>();
+    private final AccountValidator accountValidator;
+    private final OfflineChecker offlineChecker;
+    private final AccountStore accountStore;
+
+    @Synchronized
+    public @Nullable ValidatedAccount getPrimaryAccount() {
+        return accounts.isEmpty() ? null : accounts.get(0);
+    }
+
+    @Synchronized
+    public void addAccount(ValidatedAccount account) {
+        removeAccount(account);
+        accounts.add(0, account);
+        save();
+    }
+
+    @Synchronized
+    public void removeAccount(ValidatedAccount account) {
+        accounts.remove(account);
+        accounts.removeIf(s -> Objects.equals(account.getName(), s.getName()));
+        save();
+    }
+
+    @Synchronized
+    public ValidatedAccount refreshAccount(ValidatedAccount account) throws AuthException {
+        try {
+            log.debug("Refreshing account " + account);
+            HttpClient httpClient = MinecraftAuth.createHttpClient();
+            StepFullJavaSession.FullJavaSession refreshedSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.refresh(httpClient, account.getSession());
+            ValidatedAccount refreshedAccount = new ValidatedAccount(refreshedSession, account.getXuid());
+            log.debug("Refreshed account: " + refreshedAccount);
+            removeAccount(account);
+            addAccount(refreshedAccount);
+            return refreshedAccount;
+        } catch (Exception e) {
+            removeAccount(account);
+            throw new AuthException(e.getMessage(), e);
+        }
+    }
+
+    @Synchronized
+    public void load(Config config) throws AuthException {
+        try {
+            List<ValidatedAccount> accounts = accountStore.load();
+            this.accounts.clear();
+            this.accounts.addAll(accounts);
+        } catch (IOException e) {
+            throw new AuthException(e.getMessage());
         }
 
         val email = config.get(LauncherProperties.EMAIL);
         val password = config.get(LauncherProperties.PASSWORD);
         if (email != null && password != null) {
-            return this.login(email, password);
-        }
-
-        if (offlineChecker.isOffline()) {
-            return new Account(
-                config.get(LauncherProperties.OFFLINE_USERNAME, "Offline"),
-                config.get(LauncherProperties.OFFLINE_UUID, OFFLINE_UUID),
-                config.get(LauncherProperties.OFFLINE_TOKEN, ""),
-                config.get(LauncherProperties.OFFLINE_REFRESH_TOKEN, ""),
-                config.get(LauncherProperties.OFFLINE_XUID, ""),
-                config.get(LauncherProperties.OFFLINE_CLIENT_ID, ""));
-        }
-
-        log.warning("No valid account found!");
-        throw new AuthException("You can't play the game without an account!" +
-                                    " Please use the login command.");
-    }
-
-    public Account login(String email, String password) throws AuthException {
-        val hash = (email + password).hashCode();
-        val cachedAccount = cache.get(hash);
-        if (cachedAccount != null) {
-            return cachedAccount;
-        }
-
-        try {
-            val authenticator = new MicrosoftAuthenticator();
-            val result = authenticator.loginWithCredentials(email, password);
-            val account = setAccount(result);
-            cache.put(hash, account);
-            return account;
-        } catch (MicrosoftAuthenticationException e) {
-            throw new AuthException(e.getMessage());
-        }
-    }
-
-    public Account loginWithWebView() throws AuthException {
-        val authenticator = new MicrosoftAuthenticator();
-        try {
-            val result = authenticator.loginWithWebview();
-            if (result == null) {
-                throw new AuthException("Did not login into any account.");
+            log.info("Logging in with Email and password...");
+            try {
+                HttpClient httpClient = MinecraftAuth.createHttpClient();
+                StepFullJavaSession.FullJavaSession session = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
+                    httpClient, new StepCredentialsMsaCode.MsaCredentials(email, password));
+                ValidatedAccount validatedAccount = accountValidator.validate(session);
+                addAccount(validatedAccount);
+            } catch (Exception e) {
+                throw new AuthException(e.getMessage(), e);
             }
+        }
 
-            return setAccount(result);
-        } catch (MicrosoftAuthenticationException e) {
-            throw new AuthException(e.getMessage());
+        ValidatedAccount primary = getPrimaryAccount();
+        if (primary != null) {
+            try {
+                refreshAccount(primary);
+            } catch (AuthException e) {
+                log.error("Failed to refresh account " + primary.getName(), e);
+            }
         }
     }
 
-    public Account setAccount(MicrosoftAuthResult result) throws AuthException {
-        val account = toAccount(result);
-        validator.validate(account);
-        lastAccount = account;
-        save(account);
-        return account;
-    }
-
-    @Override
-    public Iterator<Account> iterator() {
-        return cache.values().iterator();
-    }
-
-    private void save(Account account) {
+    private void save() {
         try {
-            accountStore.save(account);
+            accountStore.save(accounts);
         } catch (IOException e) {
-            log.error("Failed to save account " + account + " : "
-                          + e.getMessage());
+            log.error(e);
         }
     }
 
-    private Optional<Account> refresh(Account account) {
-        log.debug("Refreshing account " + account);
-        val authenticator = new MicrosoftAuthenticator();
-        try {
-            val result = authenticator.loginWithRefreshToken(
-                account.getRefreshToken());
-            log.debug("Refreshed account " + account + "successfully");
-            return Optional.of(toAccount(result));
-        } catch (MicrosoftAuthenticationException e) {
-            log.error("Couldn't refresh: " + account + " : " + e.getMessage());
-            return Optional.empty();
-        }
-    }
-
-    private Account toAccount(MicrosoftAuthResult result) {
-        return new Account(result.getProfile().getName(),
-                           result.getProfile().getId(),
-                           result.getAccessToken(),
-                           result.getRefreshToken(),
-                           result.getXuid(),
-                           result.getClientId());
+    public LaunchAccount getOfflineAccount(Config config) throws AuthException {
+        return new LaunchAccount(
+            config.get(LauncherProperties.OFFLINE_TYPE, "msa"),
+            config.get(LauncherProperties.OFFLINE_USERNAME, "Offline"),
+            config.get(LauncherProperties.OFFLINE_UUID, OFFLINE_UUID),
+            config.get(LauncherProperties.OFFLINE_TOKEN, ""),
+            config.get(LauncherProperties.XUID, ""));
     }
 
 }

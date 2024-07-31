@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.launcher.auth.AccountManager;
-import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -26,6 +25,5 @@ public class Launcher implements HeadlessMc {
     private final ConfigService configService;
     private final JavaService javaService;
     private final AccountManager accountManager;
-    private final AccountValidator validator;
 
 }

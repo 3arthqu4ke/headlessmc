@@ -1,95 +1,96 @@
 package me.earth.headlessmc.launcher.auth;
 
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import lombok.Cleanup;
+import com.google.gson.*;
+import com.google.gson.annotations.SerializedName;
 import lombok.CustomLog;
-import lombok.val;
+import lombok.Data;
+import me.earth.headlessmc.launcher.util.JsonUtil;
 import me.earth.headlessmc.launcher.util.URLs;
+import net.lenni0451.commons.httpclient.HttpClient;
+import net.lenni0451.commons.httpclient.requests.impl.GetRequest;
+import net.raphimc.minecraftauth.MinecraftAuth;
+import net.raphimc.minecraftauth.responsehandler.MinecraftResponseHandler;
+import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Base64;
+import java.util.List;
 
 /**
  * Validates that an account actually owns the game.
  */
 @CustomLog
 public class AccountValidator {
-    private static final URL URL = URLs.url(
-        "https://api.minecraftservices.com/entitlements/mcstore");
+    private static final URL URL = URLs.url("https://api.minecraftservices.com/entitlements/mcstore");
 
-    public boolean isValid(Account account) {
+    public ValidatedAccount validate(StepFullJavaSession.FullJavaSession session) throws AuthException {
+        log.debug("Validating session " + session);
         try {
-            validate(account);
-            return true;
-        } catch (AuthException e) {
-            log.error("Failed to validate account " + account);
-            return false;
-        }
-    }
+            HttpClient httpClient = MinecraftAuth.createHttpClient();
+            GetRequest getRequest = new GetRequest(URL);
+            getRequest.appendHeader("Authorization", "Bearer " + session.getMcProfile().getMcToken().getAccessToken());
+            JsonObject je = httpClient.execute(getRequest, new MinecraftResponseHandler());
+            log.debug(je.toString());
 
-    public void validate(Account account) throws AuthException {
-        log.debug("Validating account " + account);
-        try {
-            val con = (HttpURLConnection) URL.openConnection();
-            con.setRequestMethod("GET");
-            con.setDoOutput(true);
-            con.setRequestProperty("Authorization",
-                                   "Bearer " + account.getToken());
-            con.setConnectTimeout(60_000);
-            con.setReadTimeout(60_000);
-
-            int status = con.getResponseCode();
-            // NonNullReader to prevent NPE? Not sure if that happens
-            @SuppressWarnings("UnusedAssignment") @Cleanup
-            Reader streamReader = NonNullReader.INSTANCE;
-            if (status > 299) {
-                streamReader = new InputStreamReader(con.getErrorStream());
-            } else {
-                streamReader = new InputStreamReader(con.getInputStream());
+            Entitlements entitlements = JsonUtil.GSON.fromJson(je, Entitlements.class);
+            String xuid = null;
+            for (Entitlements.Item item : entitlements.getItems()) {
+                // TODO: is "product_minecraft" really also fine? it also contains the same xuid so it should be?
+                if ("game_minecraft".equals(item.getName()) || "product_minecraft".equals(item.getName())) {
+                    xuid = item.parseXuid();
+                    break;
+                }
             }
 
-            val je = JsonParser.parseReader(streamReader);
-            check(je != null && je.isJsonObject(),
-                  "Couldn't read response: " + je);
+            if (xuid == null) {
+                throw new AuthException("This account does not own Minecraft!");
+            }
 
-            assert je != null;
-            val items = je.getAsJsonObject().get("items");
-            check(items != null && items.isJsonArray(),
-                  "Couldn't read items: " + items);
-
-            assert items != null;
-            val itemArray = items.getAsJsonArray();
-            check(itemArray.size() > 0, "You don't own the game!");
-            log.debug(itemArray.toString());
+            return new ValidatedAccount(session, xuid);
         } catch (IOException | JsonParseException e) {
-            log.error("Failed to validate " + account + " : " + e.getMessage());
-            throw new AuthException(e.getMessage());
+            log.error("Failed to validate " + session.getMcProfile().getName(), e);
+            throw new AuthException("Failed to validate " + session.getMcProfile().getName() + ": " + e.getMessage());
         }
     }
 
-    private void check(boolean condition, String message) throws AuthException {
-        if (!condition) {
-            log.error(message);
-            throw new AuthException(message);
-        }
-    }
+    @Data
+    @VisibleForTesting
+    static class Entitlements {
+        @SerializedName("items")
+        private List<Item> items;
 
-    private static final class NonNullReader extends Reader {
-        public static final NonNullReader INSTANCE = new NonNullReader();
+        @SerializedName("signature")
+        private String signature;
 
-        @Override
-        @SuppressWarnings("NullableProblems")
-        public int read(char[] cbuf, int off, int len) {
-            return -1;
-        }
+        @SerializedName("keyId")
+        private String keyId;
 
-        @Override
-        public void close() {
+        @Data
+        static class Item {
+            @SerializedName("name")
+            private String name;
 
+            @SerializedName("signature")
+            private String signature;
+
+            public String parseXuid() throws AuthException, JsonSyntaxException {
+                // TODO: also verify signature?
+                String[] split = signature.split("\\.");
+                if (split.length != 3) {
+                    throw new AuthException("Invalid JWT " + signature);
+                }
+
+                String payload = new String(Base64.getDecoder().decode(split[1]));
+                JsonElement jsonElement = JsonParser.parseString(payload);
+                String xuid = JsonUtil.getString(jsonElement, "signerId");
+                if (xuid == null) {
+                    throw new AuthException("Failed to find xuid for " + signature);
+                }
+
+                return xuid;
+            }
         }
     }
 

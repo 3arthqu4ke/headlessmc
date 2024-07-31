@@ -1,12 +1,8 @@
 package me.earth.headlessmc.launcher.auth;
 
-import lombok.NoArgsConstructor;
+import lombok.experimental.StandardException;
 
-// TODO: @StandardException
-@NoArgsConstructor
+@StandardException
 public class AuthException extends Exception {
-    public AuthException(String message) {
-        super(message);
-    }
 
 }

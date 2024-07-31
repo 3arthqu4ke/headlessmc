@@ -1,5 +1,6 @@
 package me.earth.headlessmc.runtime.commands;
 
+import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.ParseUtil;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CustomLog
 public class NewCommand extends AbstractReflectionCommand {
     public NewCommand(Runtime ctx) {
         super(ctx, "new", "Creates a new object.");
@@ -81,7 +83,7 @@ public class NewCommand extends AbstractReflectionCommand {
             Object value = ctr.newInstance(arguments);
             ctx.getVm().set(value, target);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 

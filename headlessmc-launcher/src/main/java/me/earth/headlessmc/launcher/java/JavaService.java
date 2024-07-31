@@ -30,6 +30,7 @@ public class JavaService extends Service<Java> {
                 .map(Optional::get)
                 .map(javaHome -> javaHome + "/bin/java")
                 .toArray(String[]::new);
+
         val array = cfg.getConfig().get(LauncherProperties.JAVA, foundJavaHomes);
         val newVersions = new ArrayList<Java>(array.length);
         for (val path : array) {
@@ -54,8 +55,7 @@ public class JavaService extends Service<Java> {
             log.debug("Found Java: " + java);
             return java;
         } catch (IOException e) {
-            log.warning("Couldn't parse Java Version for path " + path);
-            e.printStackTrace();
+            log.warn("Couldn't parse Java Version for path " + path, e);
         }
 
         return null;

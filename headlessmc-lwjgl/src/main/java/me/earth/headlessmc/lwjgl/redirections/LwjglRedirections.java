@@ -51,6 +51,7 @@ public class LwjglRedirections {
                     field.setAccessible(true);
                     field.set(obj, true);
                 } catch (ReflectiveOperationException e) {
+                    //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                 }
 

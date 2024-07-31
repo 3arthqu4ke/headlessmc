@@ -1,5 +1,6 @@
 package me.earth.headlessmc.runtime.commands;
 
+import lombok.CustomLog;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.command.ParseUtil;
@@ -8,6 +9,7 @@ import me.earth.headlessmc.runtime.util.ClassHelper;
 
 import java.lang.reflect.Field;
 
+@CustomLog
 public class FieldCommand extends AbstractReflectionCommand {
     public FieldCommand(Runtime ctx) {
         super(ctx, "field", "Gets/sets a field.");
@@ -45,7 +47,7 @@ public class FieldCommand extends AbstractReflectionCommand {
                 ctx.getVm().set(value, target);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 

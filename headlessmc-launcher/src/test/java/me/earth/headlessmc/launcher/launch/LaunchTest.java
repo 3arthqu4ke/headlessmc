@@ -32,22 +32,22 @@ public class LaunchTest {
 
         launcher.getCommandContext().execute("launch 1.19-launch-test -stay");
 
-        builder = ((MockProcessFactory) launcher.getProcessFactory())
-            .getBuilder();
+        builder = ((MockProcessFactory) launcher.getProcessFactory()).getBuilder();
         assertNotNull(builder);
 
         var command = builder.command();
-        assertEquals(10, command.size());
+        assertEquals(11, command.size());
         assertEquals("java17", command.get(0));
-        assertTrue(command.get(1).startsWith("-Djava.library.path="));
-        assertEquals("-cp", command.get(2));
-        assertEquals(2, command.get(3).split(File.pathSeparator).length);
-        assertEquals("-DSomeSystemProperty=${some_arg}", command.get(4));
-        assertEquals("path.to.MainClass", command.get(5));
-        assertEquals("--username", command.get(6));
-        assertEquals("d", command.get(7));
-        assertEquals("--versionType", command.get(8));
-        assertEquals("release", command.get(9));
+        assertEquals("-Djoml.nounsafe=true", command.get(1));
+        assertTrue(command.get(2).startsWith("-Djava.library.path="));
+        assertEquals("-cp", command.get(3));
+        assertEquals(3, command.get(4).split(File.pathSeparator).length);
+        assertEquals("-DSomeSystemProperty=${some_arg}", command.get(5));
+        assertEquals("path.to.MainClass", command.get(6));
+        assertEquals("--username", command.get(7));
+        assertEquals("Offline", command.get(8));
+        assertEquals("--versionType", command.get(9));
+        assertEquals("release", command.get(10));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class LaunchTest {
             .getBuilder()
             .command();
 
-        assertEquals(14, cmd.size());
+        assertEquals(15, cmd.size());
         assertEquals("java17", cmd.get(0));
         assertEquals("-testVmArg", cmd.get(1));
         assertEquals("-testVmArg withEscapedSpace", cmd.get(2));

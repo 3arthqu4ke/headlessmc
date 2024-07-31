@@ -205,10 +205,12 @@ dependencies {
     api project(':headlessmc-launcher')
     api project(':headlessmc-lwjgl')
     api project(':headlessmc-runtime')
+    api project(':headlessmc-auth')
 }
 
 tasks.register('jacocoRootReport', JacocoReport) {
     description = 'Generates an aggregate report from all subprojects'
+    group = 'verification'
     dependsOn(subprojects.test)
 
     additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
@@ -251,6 +253,11 @@ tasks.withType(JacocoReport) {
                 '**/headlessmc/forge-cli.jar',
             ])
         }))
+    }
+
+    reports {
+        html.enabled true
+        xml.enabled true
     }
 }
 

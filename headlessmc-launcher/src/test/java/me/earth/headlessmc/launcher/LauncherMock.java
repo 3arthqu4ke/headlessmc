@@ -3,10 +3,8 @@ package me.earth.headlessmc.launcher;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.HeadlessMcImpl;
-import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.ConfigImpl;
-import me.earth.headlessmc.launcher.auth.Account;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
@@ -40,20 +38,14 @@ public class LauncherMock {
 
         INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
                                 new MockProcessFactory(mcFiles, configs, os), configs,
-                                javas, accounts, validator);
+                                javas, accounts);
 
         INSTANCE.getConfigService().setConfig(ConfigImpl.empty());
     }
 
     private static final class DummyAccountManager extends AccountManager {
-        public DummyAccountManager(AccountStore accountStore,
-                                   AccountValidator validator) {
-            super(accountStore, validator, new TestOfflineChecker());
-        }
-
-        @Override
-        public Account login(Config config) {
-            return new Account("d", "d", "d", "d", "d", "d");
+        public DummyAccountManager(AccountStore accountStore, AccountValidator validator) {
+            super(validator, new TestOfflineChecker(), accountStore);
         }
     }
 

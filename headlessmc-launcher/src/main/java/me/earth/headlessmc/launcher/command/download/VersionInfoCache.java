@@ -18,8 +18,7 @@ import java.util.List;
 @CustomLog
 class VersionInfoCache implements Collection<VersionInfo> {
     private static final List<VersionInfo> EMPTY = new ArrayList<>(0);
-    private static final URL URL = URLs.url(
-        "https://launchermeta.mojang.com/mc/game/version_manifest.json");
+    private static final URL URL = URLs.url("https://launchermeta.mojang.com/mc/game/version_manifest.json");
     @Delegate
     private List<VersionInfo> infos = EMPTY;
     @Getter
@@ -40,9 +39,8 @@ class VersionInfoCache implements Collection<VersionInfo> {
 
             read(jo.getAsJsonObject());
         } catch (IOException e) {
-            log.error("Couldn't download versions: " + e.getMessage());
+            log.error("Couldn't download versions", e);
             infos = new ArrayList<>(0);
-            e.printStackTrace();
         }
 
         return infos;

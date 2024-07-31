@@ -52,12 +52,11 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> RE_THROW_LAUNCH_EXCEPTIONS = bool("hmc.rethrow.launch.exceptions");
 
     Property<Boolean> OFFLINE = bool("hmc.offline");
+
+    Property<String> OFFLINE_TYPE = string("hmc.offline.type");
     Property<String> OFFLINE_USERNAME = string("hmc.offline.username");
     Property<String> OFFLINE_UUID = string("hmc.offline.uuid");
     Property<String> OFFLINE_TOKEN = string("hmc.offline.token");
-    Property<String> OFFLINE_REFRESH_TOKEN = string("hmc.offline.refresh.token");
-    Property<String> OFFLINE_XUID = string("hmc.offline.xuid");
-    Property<String> OFFLINE_CLIENT_ID = string("hmc.offline.client.id");
 
     // TODO: also check hashes for the libraries?
     Property<Long> ASSETS_DELAY = number("hmc.assets.delay");

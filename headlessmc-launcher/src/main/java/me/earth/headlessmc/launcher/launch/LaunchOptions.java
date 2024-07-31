@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.version.Version;
 
@@ -25,6 +26,7 @@ public class LaunchOptions {
     private final Launcher launcher;
     private final FileManager files;
     private final List<String> additionalJvmArgs;
+    private final LaunchAccount account;
     private final boolean runtime;
     private final boolean lwjgl;
     private final boolean jndi;
@@ -34,6 +36,7 @@ public class LaunchOptions {
     private final boolean noIn;
     private final boolean inMemory;
 
+    @SuppressWarnings("unused")
     public static class LaunchOptionsBuilder {
         private LaunchOptionsBuilder() {
             this.additionalJvmArgs = Collections.emptyList();

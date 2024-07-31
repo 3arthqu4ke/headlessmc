@@ -9,7 +9,7 @@ public class TestOfflineChecker extends OfflineChecker {
 
     @Override
     public boolean isOffline() {
-        return false;
+        return true;
     }
 
 }
