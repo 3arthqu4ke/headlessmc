@@ -2,6 +2,8 @@ package me.earth.headlessmc.logging;
 
 import lombok.val;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,16 +27,26 @@ public class ThreadFormatter extends Formatter {
         appendTimeNumber(sb, dt.getMinute());
         sb.append(':');
         appendTimeNumber(sb, dt.getSecond());
-        return sb.append("] [")
-                 .append(thread)
-                 .append('/')
-                 .append(record.getLevel())
-                 .append("] [")
-                 .append(record.getLoggerName())
-                 .append("]: ")
-                 .append(record.getMessage())
-                 .append('\n')
-                 .toString();
+        sb.append("] [")
+          .append(thread)
+          .append('/')
+          .append(record.getLevel())
+          .append("] [")
+          .append(record.getLoggerName())
+          .append("]: ")
+          .append(record.getMessage())
+          .append(System.lineSeparator());
+
+        if (record.getThrown() != null) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            record.getThrown().printStackTrace(pw);
+            pw.println();
+            pw.close();
+            sb.append(sw);
+        }
+
+        return sb.toString();
     }
 
     private String getThread(long threadId) {

@@ -5,6 +5,8 @@ import lombok.experimental.UtilityClass;
 /**
  * Custom LoggerFactory for {@link lombok.CustomLog}. Created because {@link
  * Class#getSimpleName()} is cooler.
+ *
+ * TODO: is it really though?
  */
 @UtilityClass
 @SuppressWarnings("unused") // see lombok.config
