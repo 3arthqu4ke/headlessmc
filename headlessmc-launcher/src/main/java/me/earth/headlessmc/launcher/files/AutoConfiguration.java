@@ -43,8 +43,7 @@ public class AutoConfiguration {
                     }
                 }
             } catch (IOException e) {
-                log.error(e.getMessage());
-                e.printStackTrace();
+                log.error(e);
             }
         }
     }

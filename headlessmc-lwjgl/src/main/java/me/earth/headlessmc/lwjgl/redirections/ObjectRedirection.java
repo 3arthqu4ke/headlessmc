@@ -43,6 +43,7 @@ public class ObjectRedirection implements Redirection {
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (SecurityException | ReflectiveOperationException e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
             return null;
         }

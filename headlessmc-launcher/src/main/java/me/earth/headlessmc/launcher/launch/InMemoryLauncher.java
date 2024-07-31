@@ -62,7 +62,7 @@ public class InMemoryLauncher {
                 main.setAccessible(true);
                 main.invoke(null, (Object) gameArgs.toArray(new String[0]));
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                log.error(e);
             } catch (Exception e) {
                 throw new LaunchException("Failed to launch game", e);
             }

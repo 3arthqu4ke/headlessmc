@@ -59,8 +59,7 @@ public class ConfigService extends Service<Config> implements HasConfig {
         try {
             configs.add(load(file, id));
         } catch (IOException e) {
-            log.warning("Couldn't read '" + file.getAbsolutePath() + "'");
-            e.printStackTrace();
+            log.warn("Couldn't read '" + file.getAbsolutePath() + "'", e);
         }
     }
 
