@@ -39,6 +39,13 @@ class Command {
         if (inMemory) {
             Java current = Java.current();
             if (current.getVersion() != version.getJava()) {
+                if (launcher.getConfig().get(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA, true)) {
+                    throw new LaunchException("Running in memory with java version "
+                                                  + current.getVersion()
+                                                  + " but minecraft needs "
+                                                  + version.getJava());
+                }
+
                 log.warning("Running in memory with java version "
                                 + current.getVersion()
                                 + " but minecraft needs "
@@ -73,6 +80,10 @@ class Command {
 
         if (lwjgl && config.get(LauncherProperties.JOML_NO_UNSAFE, true)) {
             result.add("-Djoml.nounsafe=true");
+        }
+
+        if (inMemory) {
+            result.add("-D" + LauncherProperties.IN_MEMORY.getName() + "=true");
         }
 
         result.add("-Djava.library.path=" + natives);
