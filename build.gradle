@@ -44,7 +44,9 @@ allprojects {
 
     configurations {
         jarLibs
+        implementation.extendsFrom jarLibs
         jarLibsApi
+        api.extendsFrom jarLibsApi
     }
 
     dependencies {
@@ -58,9 +60,6 @@ allprojects {
 
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
-
-        implementation configurations.jarLibs
-        api configurations.jarLibsApi
     }
 
     test {
@@ -134,12 +133,16 @@ allprojects {
     }
 
     jar {
-        classifier 'dev'
+        archiveClassifier.set('dev')
     }
 
     shadowJar {
         configurations = [project.configurations.jarLibs, project.configurations.jarLibsApi]
-        classifier ''
+        archiveClassifier.set('')
+
+        // when launching older versions in memory we get conflicts between asm versions,
+        // we prevent this by renaming our own asm.
+        relocate 'org.objectweb.asm', 'me.earth.headlessmc.asm'
     }
 
     jar.finalizedBy(shadowJar)
@@ -219,8 +222,7 @@ tasks.register('jacocoRootReport', JacocoReport) {
     executionData.from = files(subprojects.jacocoTestReport.executionData)
 
     reports {
-        html.enabled true
-        xml.enabled true
+        xml.required.set(true)
     }
 }
 
@@ -256,8 +258,7 @@ tasks.withType(JacocoReport) {
     }
 
     reports {
-        html.enabled true
-        xml.enabled true
+        xml.required.set(true)
     }
 }
 

@@ -20,11 +20,11 @@ dependencies {
     jarLibsApi project(':headlessmc-commons')
     jarLibsApi project(':headlessmc-lwjgl')
     jarLibsApi project(':headlessmc-auth')
+    jarLibsApi group: 'com.github.RaphiMC', name: 'MinecraftAuth', version: '64d75d4110630e32e9eeddebdb84aa10179e94a3'
 
     jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.6'
     jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.6'
     jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
-    jarLibsApi group: 'com.github.RaphiMC', name: 'MinecraftAuth', version: '64d75d4110630e32e9eeddebdb84aa10179e94a3'
 
     includeJarInResources ('net.kunmc.lab:forgecli:1.2.0:all') {
         // this is to make it build, jar will still have legacy classes
