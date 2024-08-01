@@ -37,7 +37,7 @@ class Command {
         val config = launcher.getConfig();
         var java = launcher.getJavaService().findBestVersion(version.getJava());
         if (inMemory) {
-            Java current = Java.current();
+            Java current = launcher.getJavaService().getCurrent();
             if (current.getVersion() != version.getJava()) {
                 if (launcher.getConfig().get(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA, true)) {
                     throw new LaunchException("Running in memory with java version "
