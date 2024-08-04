@@ -11,7 +11,7 @@ public interface ModuleFinder {
     Set<ModuleReference> findAll();
 
     static ModuleFinder of(Path... entries) {
-        throw new RuntimeException("Stub");
+        throw new IllegalStateException("Stub");
     }
 
 }

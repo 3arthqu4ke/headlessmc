@@ -6,11 +6,11 @@ package java.lang.module;
 @SuppressWarnings({"unused", "Since15"})
 public class ResolvedModule {
     public ModuleReference reference() {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
     public String name() {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
 }

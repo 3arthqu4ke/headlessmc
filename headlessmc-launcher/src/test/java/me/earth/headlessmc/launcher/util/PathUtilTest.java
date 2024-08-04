@@ -19,7 +19,7 @@ public class PathUtilTest {
     }
 
     @Test
-    public void testStripQuotes_noQuotes() {
+    public void testStripQuotesNoQuotes() {
         String input = "/home/user/file.txt";
         Path expected = Paths.get(input);
         Path result = PathUtil.stripQuotes(input);
@@ -28,7 +28,7 @@ public class PathUtilTest {
     }
 
     @Test
-    public void testStripQuotesAtStartAndEnd_noQuotes() {
+    public void testStripQuotesAtStartAndEndNoQuotes() {
         String input = "/home/user/file.txt";
         String expected = input;
         String result = PathUtil.stripQuotesAtStartAndEnd(input);
@@ -37,7 +37,7 @@ public class PathUtilTest {
     }
 
     @Test
-    public void testStripQuotesAtStartAndEnd_singleQuoteStart() {
+    public void testStripQuotesAtStartAndEndSingleQuoteStart() {
         String input = "\"/home/user/file.txt";
         String expected = input;
         String result = PathUtil.stripQuotesAtStartAndEnd(input);
@@ -46,7 +46,7 @@ public class PathUtilTest {
     }
 
     @Test
-    public void testStripQuotesAtStartAndEnd_singleQuoteEnd() {
+    public void testStripQuotesAtStartAndEndSingleQuoteEnd() {
         String input = "/home/user/file.txt\"";
         String expected = input;
         String result = PathUtil.stripQuotesAtStartAndEnd(input);

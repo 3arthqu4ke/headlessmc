@@ -112,7 +112,7 @@ public class InMemoryLauncher {
             Method launch = bootstrapLauncherClass.getMethod("launch", String[].class);
             launch.invoke(bootstrapLauncher, (Object) gameArgs.toArray(new String[0]));
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

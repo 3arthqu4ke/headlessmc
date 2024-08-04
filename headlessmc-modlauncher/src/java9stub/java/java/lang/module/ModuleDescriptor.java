@@ -5,7 +5,7 @@ package java.lang.module;
  */
 public class ModuleDescriptor {
     public String name() {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
 }

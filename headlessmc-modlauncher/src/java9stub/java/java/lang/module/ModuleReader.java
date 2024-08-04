@@ -11,11 +11,11 @@ import java.util.Optional;
 @SuppressWarnings({"unused", "RedundantThrows"})
 public interface ModuleReader extends Closeable {
     default Optional<ByteBuffer> read(String name) throws IOException {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
     default void release(ByteBuffer bb) {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
 }

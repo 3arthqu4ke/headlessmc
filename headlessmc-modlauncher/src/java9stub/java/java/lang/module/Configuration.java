@@ -10,15 +10,15 @@ import java.util.Set;
 @SuppressWarnings({"unused", "Since15"})
 public class Configuration {
     public Configuration resolve(ModuleFinder before, ModuleFinder after, Collection<String> roots) {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
     public Optional<ResolvedModule> findModule(String name) {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
     public Set<ResolvedModule> modules() {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
 }

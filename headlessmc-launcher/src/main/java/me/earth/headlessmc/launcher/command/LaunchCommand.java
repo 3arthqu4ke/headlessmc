@@ -83,7 +83,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             ctx.log(String.format(
                 "Couldn't launch %s: %s", version.getName(), e.getMessage()));
             if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         } catch (Throwable t) {
             status = -1;

@@ -89,13 +89,13 @@ public class LayeredBootstrapLauncher {
                 }
 
                 if (mainClassClass == null) {
-                    throw new RuntimeException("Failed to find main class " + mainClass);
+                    throw new IllegalStateException("Failed to find main class " + mainClass);
                 }
 
                 Method main = mainClassClass.getMethod("main", String[].class);
                 main.invoke(null, (Object) args);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to launch game", e);
+                throw new IllegalStateException("Failed to launch game", e);
             }
         }
     }

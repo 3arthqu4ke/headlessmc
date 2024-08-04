@@ -12,11 +12,11 @@ public abstract class ModuleReference {
     public abstract ModuleReader open() throws IOException;
 
     public final ModuleDescriptor descriptor() {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
     public final Optional<URI> location() {
-        throw new RuntimeException("stub");
+        throw new IllegalStateException("stub");
     }
 
 }

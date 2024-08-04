@@ -44,7 +44,7 @@ public class ModuleURLClassLoader extends URLClassLoader implements Java9Classlo
             MethodHandles.Lookup hack = (MethodHandles.Lookup) hackfield.get(null);
             LAYER_BIND_TO_LOADER = hack.findSpecial(ModuleLayer.class, "bindToLoader", MethodType.methodType(Void.TYPE, ClassLoader.class), ModuleLayer.class);
         } catch (IllegalAccessException | NoSuchMethodException | NoSuchFieldException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -155,7 +155,7 @@ public class ModuleURLClassLoader extends URLClassLoader implements Java9Classlo
         try {
             LAYER_BIND_TO_LOADER.invokeExact((ModuleLayer) layer, (ClassLoader) classLoader);
         } catch (Throwable throwable) {
-            throw new RuntimeException(throwable);
+            throw new IllegalStateException(throwable);
         }
     }
 
