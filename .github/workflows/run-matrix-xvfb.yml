@@ -88,7 +88,7 @@ jobs:
       - name: Copy launcher jar
         run: cp launcher-jar/headlessmc-launcher.jar .
       - name: Run the MC client
-        uses: 3arthqu4ke/mc-runtime-test@2.1.0
+        uses: 3arthqu4ke/mc-runtime-test@2.2.0
         with:
           mc: ${{ matrix.version.mc }}
           modloader: ${{ matrix.version.modloader }}
