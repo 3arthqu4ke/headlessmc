@@ -56,7 +56,7 @@ jobs:
       - name: Delete javadoc jar
         run: rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-javadoc.jar
       - name: Delete sources jar
-        run: rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-sources.
+        run: rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-sources.jar
 
       - name: Rename launcher jar
         run: mv headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*.jar headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar
