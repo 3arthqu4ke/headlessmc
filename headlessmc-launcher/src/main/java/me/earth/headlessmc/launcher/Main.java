@@ -13,6 +13,9 @@ import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.launcher.version.VersionUtil;
@@ -89,9 +92,13 @@ public final class Main {
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
         accounts.load(configs.getConfig());
 
+        val versionSpecificModManager = new VersionSpecificModManager(files.createRelative("specifics"));
+        versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
+        versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
+
         val launcher = new Launcher(hmc, versions, mcFiles, files,
                                     new ProcessFactory(mcFiles, configs, os), configs,
-                                    javas, accounts);
+                                    javas, accounts, versionSpecificModManager);
 
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);

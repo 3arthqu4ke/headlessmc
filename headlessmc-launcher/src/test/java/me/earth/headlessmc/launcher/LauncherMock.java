@@ -15,6 +15,8 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.MockProcessFactory;
 import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.SimpleLog;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
@@ -41,9 +43,11 @@ public class LauncherMock {
         val store = new DummyAccountStore(fileManager, configs);
         val accounts = new DummyAccountManager(store, new DummyAccountValidator());
 
+        val versionSpecificModManager = new VersionSpecificModManager(fileManager.createRelative("specifics"));
+
         INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
                                 new MockProcessFactory(mcFiles, configs, os), configs,
-                                javas, accounts);
+                                javas, accounts, versionSpecificModManager);
 
         INSTANCE.getConfigService().setConfig(ConfigImpl.empty());
     }
