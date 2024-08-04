@@ -79,6 +79,7 @@ public class LayeredBootstrapLauncher {
 
                 LOGGER.fine("Looking for main class " + mainClass);
                 String mostPromisingModule = moduleNames.stream().filter(mainClass::startsWith).findFirst().orElse(null);
+
                 Class<?> mainClassClass;
                 if (mostPromisingModule == null) {
                     LOGGER.info("Looking for main class " + mainClass + " via findClass");
@@ -93,6 +94,13 @@ public class LayeredBootstrapLauncher {
                 }
 
                 Method main = mainClassClass.getMethod("main", String[].class);
+                try {
+                    main.setAccessible(true);
+                } catch (RuntimeException e) { // earlier versions of bootstraplauncher do not export anything
+                    LOGGER.log(Level.INFO, mainClassClass.getName() + " is inaccessible, deencapsulating (" + e.getMessage() + ")");
+                    Deencapsulation.deencapsulate(mainClassClass);
+                } // TODO: 1.18.2-forge and 1.17.1-forge do not work yet, RenderSystem cannot be found
+
                 main.invoke(null, (Object) args);
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to launch game", e);

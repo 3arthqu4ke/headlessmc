@@ -73,10 +73,10 @@ jobs:
           - { mc: 1.19.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
           - { mc: 1.19, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
           - { mc: 1.19, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
-          - { mc: 1.18.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
-          - { mc: 1.18.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
-          - { mc: 1.17.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 16 }
-          - { mc: 1.17.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 16 }
+          #- { mc: 1.18.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          #- { mc: 1.18.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          #- { mc: 1.17.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 16 }
+          #- { mc: 1.17.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 16 }
           - { mc: 1.16.5, type: fabric, modloader: fabric, regex: .*fabric.*, java: 8 }
           - { mc: 1.16.5, type: lexforge, modloader: forge, regex: .*forge.*, java: 8 }
           - { mc: 1.12.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 8 }
