@@ -4,7 +4,7 @@ plugins {
     id 'headlessmc-modules'
 }
 
-def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'
+def MAIN_CLASS = 'me.earth.headlessmc.wrapper.Main'
 application {
     mainClass = MAIN_CLASS
 }
@@ -23,7 +23,7 @@ def javaFxVersion = '17.0.9'
 version += '-' + javaFxVersion
 
 dependencies {
-    jarLibsApi project(':headlessmc-launcher')
+    runtimeOnly project(':headlessmc-launcher-wrapper')
     jarLibs group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'win'
     jarLibs group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'mac'
     jarLibs group: 'org.openjfx', name: 'javafx-base', version: javaFxVersion, classifier: 'linux'
@@ -48,7 +48,11 @@ dependencies {
 }
 
 shadowJar {
+    dependsOn project(':headlessmc-launcher-wrapper')['shadowJar']
     excludes.remove("module-info.class")
+
+    from project(':headlessmc-launcher-wrapper')['shadowJar']
+
     exclude("META-INF/maven/com.google.code.gson/**")
     exclude("LICENSE")
 }

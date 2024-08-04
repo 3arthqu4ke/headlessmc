@@ -1,0 +1,78 @@
+plugins {
+    id 'application'
+}
+
+def MAIN_CLASS = 'me.earth.headlessmc.wrapper.Main'
+application {
+    mainClass = MAIN_CLASS
+}
+
+run {
+    standardInput = System.in
+}
+
+dependencies {
+    jarLibs project(':headlessmc-modlauncher')
+    jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+}
+
+processResources {
+    into('headlessmc') {
+        from project(':headlessmc-launcher')['shadowJar']
+        rename 'headlessmc-launcher(.*).jar', 'headlessmc-launcher.jar'
+    }
+}
+
+// shadowJar always explodes the contents of jars and cannot distinguish between
+// a dependency and a jar in our resources, this works around that.
+// https://github.com/johnrengelman/shadow/issues/111#issuecomment-317233031
+tasks.register('shadowBugWorkaround', Jar) {
+    dependsOn jar
+    dependsOn project(':headlessmc-launcher')['shadowJar']
+
+    destinationDirectory.set(layout.buildDirectory.dir('shadow-bug-workaround'))
+
+    into ('headlessmc') {
+        from project(':headlessmc-launcher')['shadowJar']
+        rename 'headlessmc-launcher(.*).jar', 'headlessmc-launcher.jar'
+    }
+}
+
+shadowJar {
+    dependsOn shadowBugWorkaround
+    dependsOn project(':headlessmc-modlauncher')['shadowJar']
+
+    from shadowBugWorkaround
+    from layout.buildDirectory.dir('shadow-bug-workaround')
+    from project(':headlessmc-modlauncher')['shadowJar']
+
+    // honestly not exactly sure whats going on here its all a bit fishy
+    // https://github.com/GradleUp/shadow/issues/299#issuecomment-310663737
+    include '*.jar'
+    include 'dev/xdark/*'
+    include 'dev/xdark/**/*'
+    include 'me/earth/headlessmc/wrapper/*'
+    include 'me/earth/headlessmc/wrapper/**/*'
+    include 'me/earth/headlessmc/modlauncher/**'
+    include 'me/earth/headlessmc/modlauncher/**/*'
+    // include "headlessmc/headlessmc-launcher.jar" TODO: idk why this does not work?
+    include '**/headlessmc-launcher*.jar'
+    include 'META-INF/MANIFEST.MF'
+}
+
+tasks.withType(JacocoReport) {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/headlessmc/headlessmc-launcher.jar',
+                    '**/headlessmc/headlessmc-runtime.jar',
+                    '**/headlessmc/headlessmc-lwjgl.jar',
+                    '**/headlessmc/forge-cli.jar',
+            ])
+        }))
+    }
+
+    reports {
+        xml.required.set(true)
+    }
+}

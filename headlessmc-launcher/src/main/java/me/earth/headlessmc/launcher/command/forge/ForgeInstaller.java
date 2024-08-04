@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.command.forge;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.ResourceExtractor;
@@ -84,7 +83,7 @@ public class ForgeInstaller {
 
     protected void downloadInstaller(ForgeVersion version, File file)
         throws IOException {
-        var url = repoFormat.getUrl(baseUrl, version);
+        String url = repoFormat.getUrl(baseUrl, version);
         log.debug("Downloading Installer from " + url);
         try {
             IOUtil.download(url, file.getAbsolutePath());

@@ -31,7 +31,9 @@ public class ConfigImpl implements Config {
         }
 
         T result = property.parse(value);
-        return result == null ? defaultValue.get() : result;
+        return result == null
+            ? defaultValue.get()
+            : result;
     }
 
 }

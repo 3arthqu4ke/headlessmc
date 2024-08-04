@@ -1,6 +1,9 @@
 package me.earth.headlessmc.launcher.launch;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.CustomLog;
+import lombok.Getter;
+import lombok.val;
 import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -35,10 +38,17 @@ class Command {
 
     public List<String> build() throws LaunchException, AuthException {
         val config = launcher.getConfig();
-        var java = launcher.getJavaService().findBestVersion(version.getJava());
+        Java java = launcher.getJavaService().findBestVersion(version.getJava());
         if (inMemory) {
-            Java current = Java.current();
+            Java current = launcher.getJavaService().getCurrent();
             if (current.getVersion() != version.getJava()) {
+                if (launcher.getConfig().get(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA, true)) {
+                    throw new LaunchException("Running in memory with java version "
+                                                  + current.getVersion()
+                                                  + " but minecraft needs "
+                                                  + version.getJava());
+                }
+
                 log.warning("Running in memory with java version "
                                 + current.getVersion()
                                 + " but minecraft needs "
@@ -75,6 +85,10 @@ class Command {
             result.add("-Djoml.nounsafe=true");
         }
 
+        if (inMemory) {
+            result.add("-D" + LauncherProperties.IN_MEMORY.getName() + "=true");
+        }
+
         result.add("-Djava.library.path=" + natives);
         result.add("-cp");
         result.add(String.join("" + File.pathSeparatorChar, classpath)
@@ -90,7 +104,7 @@ class Command {
     }
 
     public String getActualMainClass(List<String> result) {
-        var mainClass = version.getMainClass();
+        String mainClass = version.getMainClass();
         if (runtime) {
             result.add("-D" + HmcProperties.MAIN.getName() + "="
                            + version.getMainClass());

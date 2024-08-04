@@ -70,6 +70,7 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> SET_LIBRARY_DIR = bool("hmc.set.library.dir");
     Property<Boolean> NO_AUTO_CONFIG = bool("hmc.no.auto.config");
 
-    // TODO: system property to set if we are running in memory!
+    Property<Boolean> IN_MEMORY = bool("hmc.in.memory");
+    Property<Boolean> IN_MEMORY_REQUIRE_CORRECT_JAVA = bool("hmc.in.memory.require.correct.java");
 
 }

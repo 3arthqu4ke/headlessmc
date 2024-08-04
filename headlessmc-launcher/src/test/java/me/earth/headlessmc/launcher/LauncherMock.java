@@ -3,11 +3,13 @@ package me.earth.headlessmc.launcher;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.ConfigImpl;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
+import me.earth.headlessmc.launcher.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -15,6 +17,10 @@ import me.earth.headlessmc.launcher.launch.MockProcessFactory;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.SimpleLog;
+import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @UtilityClass
 public class LauncherMock {
@@ -32,9 +38,8 @@ public class LauncherMock {
         val versions = new VersionService(mcFiles);
         val javas = new JavaService(configs);
 
-        val store = new AccountStore(fileManager, configs);
-        val validator = new AccountValidator();
-        val accounts = new DummyAccountManager(store, validator);
+        val store = new DummyAccountStore(fileManager, configs);
+        val accounts = new DummyAccountManager(store, new DummyAccountValidator());
 
         INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
                                 new MockProcessFactory(mcFiles, configs, os), configs,
@@ -46,6 +51,31 @@ public class LauncherMock {
     private static final class DummyAccountManager extends AccountManager {
         public DummyAccountManager(AccountStore accountStore, AccountValidator validator) {
             super(validator, new TestOfflineChecker(), accountStore);
+        }
+    }
+
+    public static final class DummyAccountValidator extends AccountValidator {
+        public static final String DUMMY_XUID = "dummy-xuid";
+
+        @Override
+        public ValidatedAccount validate(StepFullJavaSession.FullJavaSession session) {
+            return new ValidatedAccount(session, DUMMY_XUID);
+        }
+    }
+
+    public static final class DummyAccountStore extends AccountStore {
+        public DummyAccountStore(FileManager fileManager, HasConfig cfg) {
+            super(fileManager, cfg);
+        }
+
+        @Override
+        public List<ValidatedAccount> load() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public void save(List<ValidatedAccount> accounts) {
+            // NOP
         }
     }
 

@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher.version;
 
 import com.google.gson.JsonArray;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.UsesResources;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +11,7 @@ public class ExtractorFactoryTest implements UsesResources {
     @Test
     public void testExtractorFactory() {
         val factory = new ExtractorFactory();
-        var extractor = factory.parse(null);
+        Extractor extractor = factory.parse(null);
         assertEquals(Extractor.NO_EXTRACTION, extractor);
         extractor = factory.parse(new JsonArray());
         assertEquals(Extractor.NO_EXTRACTION, extractor);

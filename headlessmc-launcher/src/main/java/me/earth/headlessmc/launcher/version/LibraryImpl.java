@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.version;
 import lombok.CustomLog;
 import lombok.Data;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.os.OS;
 
 import java.io.File;
@@ -50,7 +49,7 @@ class LibraryImpl implements Library {
             .append("-")
             .append(split[2]);
 
-        var n = natives.get(os.getType().getName());
+        String n = natives.get(os.getType().getName());
         if (n != null && nativeLibrary) {
             sb.append("-")
               .append(n.replace("${arch}", os.isArch() ? "64" : "32"));

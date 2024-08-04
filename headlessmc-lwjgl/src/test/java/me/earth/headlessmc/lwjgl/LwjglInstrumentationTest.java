@@ -2,7 +2,6 @@ package me.earth.headlessmc.lwjgl;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.lwjgl.api.RedirectionApi;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
 import me.earth.headlessmc.lwjgl.redirections.DefaultRedirections;
@@ -15,6 +14,7 @@ import org.lwjgl.Lwjgl;
 import org.lwjgl.LwjglClassLoader;
 import org.lwjgl.LwjglInterface;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 
@@ -73,7 +73,7 @@ public class LwjglInstrumentationTest {
     @SneakyThrows
     public void testLwjglInterface() {
         assertNull(LwjglInterface.factoryMethod("test"));
-        var aMethod = LwjglInterface.class.getMethod("abstractMethod");
+        Method aMethod = LwjglInterface.class.getMethod("abstractMethod");
         assertTrue(Modifier.isAbstract(aMethod.getModifiers()));
 
         val lwjglInterface = load(LwjglInterface.class);
@@ -111,9 +111,9 @@ public class LwjglInstrumentationTest {
         val lwjglClass = load(Lwjgl.class);
         val obj = callFactoryMethod(lwjglClass);
         assertNotNull(obj);
-        var method = lwjglClass.getMethod("returnsByteArray", String.class);
+        Method method = lwjglClass.getMethod("returnsByteArray", String.class);
         method.setAccessible(true);
-        var result = method.invoke(obj, "test");
+        Object result = method.invoke(obj, "test");
         assertNotNull(result);
         assertInstanceOf(byte[].class, result);
         assertArrayEquals(new byte[0], (byte[]) result);
@@ -135,10 +135,10 @@ public class LwjglInstrumentationTest {
 
         // MANAGER.redirect("",  (object, desc, type, args) -> byteBuffer);
         val argument = new Object();
-        var lwjglInstance = ctr.newInstance(argument); // not a String!!!
+        Object lwjglInstance = ctr.newInstance(argument); // not a String!!!
         val field = lwjglClass.getField("string");
         field.setAccessible(true);
-        var value = field.get(lwjglInstance);
+        Object value = field.get(lwjglInstance);
         assertEquals("", value); // DefaultRedirection for String
 
         val called = new boolean[]{false};
@@ -190,7 +190,7 @@ public class LwjglInstrumentationTest {
         assertNull(AbstractLwjglClass.factoryMethod("test"));
         assertTrue(Modifier.isAbstract(
             AbstractLwjglClass.class.getModifiers()));
-        var aMethod = AbstractLwjglClass.class.getMethod("abstractMethod");
+        Method aMethod = AbstractLwjglClass.class.getMethod("abstractMethod");
         assertTrue(Modifier.isAbstract(aMethod.getModifiers()));
 
         val abstractClass = load(AbstractLwjglClass.class);
@@ -216,7 +216,7 @@ public class LwjglInstrumentationTest {
         val returnsAbstractByteBuffer = abstractClass.getMethod(
             "returnsAbstractByteBuffer", String.class);
         returnsAbstractByteBuffer.setAccessible(true);
-        var result = returnsAbstractByteBuffer.invoke(obj, "test");
+        Object result = returnsAbstractByteBuffer.invoke(obj, "test");
         assertNull(result);
 
         val descriptor = DescriptionUtil.getDesc(abstractClass)

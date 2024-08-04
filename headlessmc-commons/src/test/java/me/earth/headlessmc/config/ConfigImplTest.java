@@ -1,10 +1,13 @@
 package me.earth.headlessmc.config;
 
 import lombok.val;
+import me.earth.headlessmc.api.config.Config;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ConfigImplTest {
     @Test
@@ -18,7 +21,7 @@ public class ConfigImplTest {
         Assertions.assertEquals(expectedId, config.getId());
 
         val property = PropertyTypes.string("ConfigImplTest.property");
-        Assertions.assertNull(config.get(property));
+        assertNull(config.get(property));
         Assertions.assertEquals(expectedName,
                                 config.get(property, expectedName));
         Assertions.assertEquals(expectedName,
@@ -39,6 +42,11 @@ public class ConfigImplTest {
                                 config.get(property, expectedValue));
         Assertions.assertEquals(newExpectedValue,
                                 config.getValue(property, () -> expectedValue));
+
+        Config cfg = ConfigImpl.empty();
+        val property2 = PropertyTypes.array("ConfigImplTest.property2", ";");
+        System.setProperty("ConfigImplTest.property2", "");
+        assertNull(cfg.get(property2));
     }
 
 }

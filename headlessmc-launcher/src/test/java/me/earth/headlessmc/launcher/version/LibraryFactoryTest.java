@@ -5,8 +5,7 @@ import me.earth.headlessmc.launcher.UsesResources;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LibraryFactoryTest
     implements UsesResources, ParsesLibraries {
@@ -24,6 +23,15 @@ public class LibraryFactoryTest
         assertEquals("testversion", libs.get(0).getVersionNumber());
         assertEquals("_download_url", libs.get(0).getUrl(""));
         assertFalse(libs.get(0).isNativeLibrary());
+    }
+
+    @Test
+    public void testLibWithNatives() {
+        val libs = parse(getJsonObject("lib_natives.json"));
+        System.out.println(libs);
+        assertEquals(2, libs.size());
+        assertFalse(libs.get(0).isNativeLibrary());
+        assertTrue(libs.get(1).isNativeLibrary());
     }
 
 }

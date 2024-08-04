@@ -2,7 +2,6 @@ package me.earth.headlessmc.lwjgl.launchwrapper;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.lwjgl.LwjglProperties;
 import me.earth.headlessmc.lwjgl.testlaunchwrapper.LaunchWrapperTarget;
 import org.junit.jupiter.api.Assumptions;
@@ -20,7 +19,7 @@ public class LaunchWrapperTest {
     }
 
     private static int parseVersion(String versionIn) {
-        var version = versionIn;
+        String version = versionIn;
         if (version.startsWith("1.")) {
             version = version.substring(2, 3);
         } else {

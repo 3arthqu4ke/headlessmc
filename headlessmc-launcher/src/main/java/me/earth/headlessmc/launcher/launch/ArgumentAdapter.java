@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Argument;
 import me.earth.headlessmc.launcher.version.Features;
@@ -40,7 +39,7 @@ class ArgumentAdapter {
             if (arg.getType().equals(type)
                 && arg.getRule().apply(os, features) == Rule.Action.ALLOW) {
                 val inputs = arg.getInputs();
-                var current = arg.getValue();
+                String current = arg.getValue();
                 for (val input : inputs) {
                     String value = values.get(input);
                     if (value == null) {

@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.version;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
@@ -92,7 +91,7 @@ class RuleFactory {
 
     private Rule ofRules(List<Rule> rules) {
         return (os, features) -> {
-            var result = Rule.Action.UNDECIDED;
+            Rule.Action result = Rule.Action.UNDECIDED;
             for (val rule : rules) {
                 val action = rule.apply(os, features);
                 result = action == Rule.Action.UNDECIDED ? result : action;

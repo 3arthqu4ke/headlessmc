@@ -2,7 +2,6 @@ package me.earth.headlessmc.lwjgl.redirections;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.lwjgl.api.Redirection;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
 import me.earth.headlessmc.lwjgl.util.DescriptionUtil;
@@ -23,7 +22,7 @@ public class ObjectRedirection implements Redirection {
                 type.getClassLoader(), new Class<?>[]{type},
                 new ProxyRedirection(manager, DescriptionUtil.getDesc(type)));
         } else if (type.isArray()) {
-            var dimension = 0;
+            int dimension = 0;
             while (type.isArray()) {
                 dimension++;
                 type = type.getComponentType();

@@ -1,6 +1,5 @@
 package me.earth.headlessmc.lwjgl;
 
-import lombok.var;
 import me.earth.headlessmc.lwjgl.api.Redirection;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
 import me.earth.headlessmc.lwjgl.redirections.CastRedirection;
@@ -36,7 +35,7 @@ public class RedirectionManagerImpl implements RedirectionManager {
     public Object invoke(String desc, Class<?> type, Object obj,
                          Supplier<Redirection> fb, Object... args)
         throws Throwable {
-        var redirection = redirects.get(desc);
+        Redirection redirection = redirects.get(desc);
         if (redirection == null) {
             redirection = fb.get();
         }

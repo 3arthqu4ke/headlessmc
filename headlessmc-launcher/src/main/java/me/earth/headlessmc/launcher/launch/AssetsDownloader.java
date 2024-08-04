@@ -113,7 +113,7 @@ class AssetsDownloader {
         failed.set(exception);
     }
 
-    private void downloadAsset(String progress, String name, String hash, long size, boolean mapToResources) throws IOException {
+    protected void downloadAsset(String progress, String name, String hash, long size, boolean mapToResources) throws IOException {
         val firstTwo = hash.substring(0, 2);
         val to = files.getDir("assets").toPath().resolve("objects").resolve(firstTwo).resolve(hash);
         Path file = getAssetsFile(name, to, hash, size);

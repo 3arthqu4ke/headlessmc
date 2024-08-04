@@ -9,14 +9,15 @@ public class TableTest {
         "text     length\n" +
             "Test     4\n" +
             "Test2    5\n" +
-            "Test3_   6";
+            "Test3_   6\n" +
+            "null     0";
 
     @Test
     public void testTable() {
         String actual = new Table<String>()
             .withColumn("text", s -> s)
-            .withColumn("length", s -> String.valueOf(s.length()))
-            .add("Test", "Test2", "Test3_")
+            .withColumn("length", s -> s == null ? "0" : String.valueOf(s.length()))
+            .add("Test", "Test2", "Test3_", null)
             .build();
 
         assertEquals(EXPECTED, actual);

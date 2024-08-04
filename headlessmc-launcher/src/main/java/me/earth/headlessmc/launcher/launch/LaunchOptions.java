@@ -35,6 +35,8 @@ public class LaunchOptions {
     private final boolean noOut;
     private final boolean noIn;
     private final boolean inMemory;
+    private final boolean forceSimple;
+    private final boolean forceBoot;
 
     @SuppressWarnings("unused")
     public static class LaunchOptionsBuilder {
@@ -59,6 +61,8 @@ public class LaunchOptions {
                 .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, args))
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))
                 .noOut(quit || CommandUtil.hasFlag("-noout", args))
+                .forceSimple(CommandUtil.hasFlag("-forceSimple", args))
+                .forceBoot(CommandUtil.hasFlag("-forceBoot", args))
                 .parseJvmArgs(args)
                 .noIn(quit);
         }

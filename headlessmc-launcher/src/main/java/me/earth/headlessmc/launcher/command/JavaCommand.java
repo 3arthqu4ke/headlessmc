@@ -4,6 +4,7 @@ import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.java.Java;
+import me.earth.headlessmc.util.Table;
 
 public class JavaCommand extends AbstractLauncherCommand {
     public JavaCommand(Launcher launcher) {
@@ -15,14 +16,18 @@ public class JavaCommand extends AbstractLauncherCommand {
     @Override
     public void execute(String... args) {
         if (CommandUtil.hasFlag("-current", args)) {
-            ctx.log(Java.current().toString());
+            Java current = ctx.getJavaService().getCurrent();
+            ctx.log("Current: Java " + current.getVersion() + " at " + current.getPath());
             return;
         }
 
         ctx.getJavaService().refresh();
-        for (Java java : ctx.getJavaService()) {
-            ctx.log(java.toString());
-        }
+        ctx.log(new Table<Java>()
+                    .withColumn("version", java -> String.valueOf(java.getVersion()))
+                    .withColumn("path", Java::getPath)
+                    .withColumn("current", java -> java.equals(ctx.getJavaService().getCurrent()) ? "<------" : "")
+                    .addAll(ctx.getJavaService())
+                    .build());
     }
 
 }

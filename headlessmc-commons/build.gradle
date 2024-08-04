@@ -6,8 +6,10 @@ dependencies {
     api project(':headlessmc-api')
 
     testFixturesCompileOnly project(':headlessmc-api')
-    testFixturesCompileOnly 'org.projectlombok:lombok:1.18.30'
-    testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
-    testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
-    testFixturesRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+
+    testFixturesCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testFixturesAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+    testFixturesRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
 }

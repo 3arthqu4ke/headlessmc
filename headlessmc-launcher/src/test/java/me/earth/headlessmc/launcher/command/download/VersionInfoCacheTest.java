@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher.command.download;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.UsesResources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,7 +18,7 @@ public class VersionInfoCacheTest implements UsesResources {
         Assertions.assertEquals("1.19.1-rc1", vic.getLatestSnapshot());
         Assertions.assertEquals(4, vic.size());
 
-        var info = vic.get(0);
+        VersionInfo info = vic.get(0);
         Assertions.assertEquals(0, info.getId());
         Assertions.assertEquals(vic.getLatestSnapshot(), info.getName());
         Assertions.assertEquals("snapshot", info.getType());

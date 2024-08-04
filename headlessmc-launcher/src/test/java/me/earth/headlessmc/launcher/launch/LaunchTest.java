@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,7 +26,7 @@ public class LaunchTest {
     public void testLaunch() {
         System.setProperty(LauncherProperties.SET_LIBRARY_DIR.getName(), "false");
         setupLauncher();
-        var builder = ((MockProcessFactory) launcher.getProcessFactory())
+        ProcessBuilder builder = ((MockProcessFactory) launcher.getProcessFactory())
             .getBuilder();
         assertNull(builder);
 
@@ -35,7 +35,7 @@ public class LaunchTest {
         builder = ((MockProcessFactory) launcher.getProcessFactory()).getBuilder();
         assertNotNull(builder);
 
-        var command = builder.command();
+        List<String> command = builder.command();
         assertEquals(11, command.size());
         assertEquals("java17", command.get(0));
         assertEquals("-Djoml.nounsafe=true", command.get(1));

@@ -1,0 +1,47 @@
+name: JDK-17-Tests
+
+on:
+  push:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew build
+          
+      - name: List files
+        run: ls
+
+      - name: Publish jars
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./build/libs/headlessmc-*.jar
+          
+      - name: Publish shell script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc
+          
+      - name: Publish bat script
+        uses: actions/upload-artifact@v3
+        with:
+          name: HeadlessMc
+          path: ./headlessmc-scripts/hmc.bat

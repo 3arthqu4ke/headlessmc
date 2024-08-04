@@ -2,9 +2,9 @@ package me.earth.headlessmc.launcher.instrumentation;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.log4j.Patchers;
 import me.earth.headlessmc.launcher.instrumentation.lwjgl.HmcLwjglTransformer;
+import me.earth.headlessmc.launcher.instrumentation.modlauncher.BootstrapLauncherTransformer;
 import me.earth.headlessmc.launcher.instrumentation.paulscode.PaulscodeTransformer;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
 
@@ -16,40 +16,33 @@ public class InstrumentationHelper {
     public static final String LWJGL_JAR = "headlessmc-lwjgl.jar";
 
     public static Instrumentation create(LaunchOptions options) {
-        return create(options.getFiles(), options.isLwjgl(),
-                      options.isRuntime(), options.isJndi(),
-                      options.isLookup(), options.isPaulscode());
-    }
-
-    public static Instrumentation create(FileManager fileManager,
-                                         boolean lwjgl,
-                                         boolean commands,
-                                         boolean jndi,
-                                         boolean lookup,
-                                         boolean paulscode) {
         val transformers = new ArrayList<Transformer>(6);
-        if (lwjgl) {
+        if (options.isLwjgl()) {
             transformers.add(new HmcLwjglTransformer());
-            transformers.add(new ResourceExtractor(fileManager, LWJGL_JAR));
+            transformers.add(new ResourceExtractor(options.getFiles(), LWJGL_JAR));
         }
 
-        if (paulscode) {
+        if (options.isPaulscode()) {
             transformers.add(new PaulscodeTransformer());
         }
 
-        if (jndi) {
+        if (options.isJndi()) {
             transformers.add(Patchers.JNDI);
         }
 
-        if (commands) {
-            transformers.add(new ResourceExtractor(fileManager, RUNTIME_JAR));
+        if (options.isRuntime()) {
+            transformers.add(new ResourceExtractor(options.getFiles(), RUNTIME_JAR));
         }
 
-        if (lookup) {
+        if (options.isLookup()) {
             transformers.add(Patchers.LOOKUP);
         }
 
-        return new Instrumentation(transformers, fileManager.getBase());
+        if (options.isInMemory()) {
+            transformers.add(new BootstrapLauncherTransformer());
+        }
+
+        return new Instrumentation(transformers, options.getFiles().getBase());
     }
 
 }

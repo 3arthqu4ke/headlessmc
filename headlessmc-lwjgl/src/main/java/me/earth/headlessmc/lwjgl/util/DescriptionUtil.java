@@ -2,7 +2,6 @@ package me.earth.headlessmc.lwjgl.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import lombok.var;
 import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
@@ -31,7 +30,7 @@ public class DescriptionUtil {
 
     public static String getDesc(Method method) {
         val desc = new StringBuilder(method.getName()).append("(");
-        for (var parameter : method.getParameterTypes()) {
+        for (Class<?> parameter : method.getParameterTypes()) {
             putDesc(parameter, desc);
         }
 

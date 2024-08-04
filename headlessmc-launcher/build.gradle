@@ -12,7 +12,9 @@ run {
 }
 
 configurations {
-    includeJarInResources
+    includeJarInResources {
+        transitive false
+    }
 }
 
 dependencies {
@@ -20,17 +22,15 @@ dependencies {
     jarLibsApi project(':headlessmc-commons')
     jarLibsApi project(':headlessmc-lwjgl')
     jarLibsApi project(':headlessmc-auth')
-
-    jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.6'
-    jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.6'
-    jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     jarLibsApi group: 'com.github.RaphiMC', name: 'MinecraftAuth', version: '64d75d4110630e32e9eeddebdb84aa10179e94a3'
 
+    jarLibs group: 'org.ow2.asm', name: 'asm', version: '9.7'
+    jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
+    jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+    jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+
     includeJarInResources ('net.kunmc.lab:forgecli:1.2.0:all') {
-        // this is to make it build, jar will still have legacy classes
-        exclude module: 'legacy'
-        exclude module: 'asm'
-        exclude module: 'asm-tree'
+        transitive false
     }
 
     testImplementation(testFixtures(project(':headlessmc-commons')))
@@ -63,19 +63,24 @@ jar {
 // shadowJar always explodes the contents of jars and cannot distinguish between
 // a dependency and a jar in our resources, this works around that.
 // https://github.com/johnrengelman/shadow/issues/111#issuecomment-317233031
+// TODO: FOR SOME REASON this includes the asm of the ForgeCLI, not our ASM?!?!?!?!?!
+//  fixed for now by updating ForgeCLI, but this is REALLY ANNOYING and needs to be fixed ASAP!
 tasks.register('shadowBugWorkaround', Jar) {
     dependsOn jar
     dependsOn project(':headlessmc-runtime')['shadowJar']
     dependsOn project(':headlessmc-lwjgl')['jar']
 
     destinationDirectory.set(layout.buildDirectory.dir('shadow-bug-workaround'))
+    archiveBaseName.set('headlessmc-launcher-shadow-bug')
 
     into ('headlessmc') {
         from configurations.includeJarInResources
         from project(':headlessmc-runtime')['shadowJar']
         from project(':headlessmc-lwjgl')['jar']
 
+        rename 'ForgeCLI(.*).jar', 'forge-cli.jar'
         rename 'forgecli(.*).jar', 'forge-cli.jar'
+
         rename 'headlessmc-lwjgl(.*).jar', 'headlessmc-lwjgl.jar'
         rename 'headlessmc-runtime(.*).jar', 'headlessmc-runtime.jar'
     }
@@ -84,6 +89,12 @@ tasks.register('shadowBugWorkaround', Jar) {
 shadowJar {
     dependsOn shadowBugWorkaround
     from shadowBugWorkaround
+
+    // ignore the forge-cli jar from processResources as it will get expanded
+    // that the runtime and lwjgl jars get expanded isnt problematic
+    processResources.exclude('forgecli*.jar')
+    processResources.exclude('ForgeCLI*.jar')
+    processResources.exclude('forge-cli.jar')
 
     exclude("META-INF/maven/com.google.code.gson/**")
     exclude("META-INF/versions/**")

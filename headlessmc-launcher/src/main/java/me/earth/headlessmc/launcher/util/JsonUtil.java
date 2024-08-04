@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.util;
 import com.google.gson.*;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import lombok.var;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +72,7 @@ public class JsonUtil {
             return null;
         }
 
-        var current = jo.getAsJsonObject();
+        JsonObject current = jo.getAsJsonObject();
         for (int i = 0; i < path.length; i++) {
             val element = current.get(path[i]);
             if (element == null) {

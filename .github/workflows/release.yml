@@ -26,6 +26,13 @@ jobs:
       - name: Delete launcher sources jar
         run: rm headlessmc-launcher/build/libs/headlessmc-launcher-*-sources.jar
 
+      - name: Delete launcher-wrapper dev jar
+        run: rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-dev.jar
+      - name: Delete launcher-wrapper javadoc jar
+        run: rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-javadoc.jar
+      - name: Delete launcher-wrapper sources jar
+        run: rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-sources.jar
+
       - name: Delete lwjgl dev jar
         run: rm headlessmc-lwjgl/build/libs/headlessmc-lwjgl-*-dev.jar
       - name: Delete lwjgl javadoc jar
@@ -46,6 +53,7 @@ jobs:
         with:
           generate_release_notes: true
           files: |
+            ./headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*.jar
             ./headlessmc-launcher/build/libs/headlessmc-launcher-*.jar
             ./headlessmc-lwjgl/build/libs/headlessmc-lwjgl-*.jar
             ./headlessmc-launcher-jfx/build/libs/headlessmc-launcher-jfx-*.jar

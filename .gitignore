@@ -34,3 +34,7 @@ run
 /headlessmc-lwjgl/logs/
 /logs/
 /headlessmc-launcher-*.jar
+/libs/
+/headlessmc-launcher/libs/
+/fabricloader.log
+/.mixin.out/

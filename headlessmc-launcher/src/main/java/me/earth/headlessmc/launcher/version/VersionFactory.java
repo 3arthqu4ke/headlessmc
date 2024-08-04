@@ -1,9 +1,9 @@
 package me.earth.headlessmc.launcher.version;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.io.File;
@@ -25,7 +25,7 @@ class VersionFactory {
         val name = JsonUtil.getString(json, "id");
         val libraries = libraryFactory.parseLibraries(json.get("libraries"));
         val majorVersion = javaParser.parse(json.get("javaVersion"));
-        var argumentElement = json.get("arguments");
+        JsonElement argumentElement = json.get("arguments");
         val type = JsonUtil.getString(json, "type");
         if (argumentElement == null) {
             argumentElement = json.get("minecraftArguments");

@@ -2,13 +2,13 @@ package me.earth.headlessmc.runtime.commands;
 
 import lombok.CustomLog;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.command.ParseUtil;
 import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.util.ClassHelper;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @CustomLog
@@ -50,19 +50,19 @@ public class MethodCommand extends AbstractReflectionCommand {
     private Method getMethod(Class<?> clazz, String... args)
         throws CommandException {
         val helper = ClassHelper.of(clazz);
-        var methods = helper
+        List<Method> methods = helper
             .getMethods()
             .stream()
             .filter(m -> m.getName().equals(args[2]))
             .collect(Collectors.toList());
 
-        if (methods.size() == 0) {
+        if (methods.isEmpty()) {
             throw new CommandException(
                 "Couldn't find a method for name '" + args[2] + "' in class "
                     + helper.getClazz().getName());
         }
 
-        var result = methods.get(0);
+        Method result = methods.get(0);
         if (methods.size() > 1) {
             val filteredByArgs = methods
                 .stream()

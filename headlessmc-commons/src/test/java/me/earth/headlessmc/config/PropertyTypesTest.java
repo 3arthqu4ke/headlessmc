@@ -1,7 +1,7 @@
 package me.earth.headlessmc.config;
 
 import lombok.val;
-import lombok.var;
+import me.earth.headlessmc.api.config.Property;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +43,7 @@ public class PropertyTypesTest {
 
     @Test
     public void testArrayProperty() {
-        var array = PropertyTypes.array("test", ";");
+        Property<String[]> array = PropertyTypes.array("test", ";");
         Assertions.assertNull(array.parse(null));
         Assertions.assertNull(array.parse(""));
 

@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.command.line.Listener;
 
 /**
@@ -57,7 +56,7 @@ public class QuickExitCliHandler {
     }
 
     private static String collectArgs(Launcher launcher, String... args) {
-        var quickExitCli = false;
+        boolean quickExitCli = false;
         val cmd = new StringBuilder();
         for (val arg : args) {
             if (arg == null) {
