@@ -22,9 +22,9 @@ if __name__ == '__main__':
         used_input = False
     if used_input or (len(argv) > 2 and argv[2] == '-f') or input(f"Set version to {version} (y/n)?{linesep}") == 'y':
         base = path.abspath(path.join(path.dirname(__file__), '..'))
-        update(path.join(base, 'headlessmc-scripts', 'hmc'), r"(.*headlessmc-launcher-).*(.jar.*)", version)
-        update(path.join(base, 'headlessmc-scripts', 'hmw'), r"(.*headlessmc-launcher-).*(.jar.*)", version)
-        update(path.join(base, 'headlessmc-scripts', 'hmc.bat'), r"(.*headlessmc-launcher-).*(.jar.*)", version)
+        update(path.join(base, 'headlessmc-scripts', 'hmc'), r"(.*headlessmc-launcher-wrapper-).*(.jar.*)", version)
+        update(path.join(base, 'headlessmc-scripts', 'hmw'), r"(.*headlessmc-launcher-wrapper-).*(.jar.*)", version)
+        update(path.join(base, 'headlessmc-scripts', 'hmc.bat'), r"(.*headlessmc-launcher-wrapper-).*(.jar.*)", version)
         update(path.join(base, 'gradle.properties'), r"(project_version=).*(.*)", version)
         update(path.join(base, 'headlessmc-launcher', 'src', 'main', 'java', 'me', 'earth', 'headlessmc',
                          'launcher', 'Launcher.java'), r"(.*VERSION = \").*(\";.*)", version)
