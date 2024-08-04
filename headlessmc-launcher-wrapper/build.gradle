@@ -59,3 +59,20 @@ shadowJar {
     include '**/headlessmc-launcher*.jar'
     include 'META-INF/MANIFEST.MF'
 }
+
+tasks.withType(JacocoReport) {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/headlessmc/headlessmc-launcher.jar',
+                    '**/headlessmc/headlessmc-runtime.jar',
+                    '**/headlessmc/headlessmc-lwjgl.jar',
+                    '**/headlessmc/forge-cli.jar',
+            ])
+        }))
+    }
+
+    reports {
+        xml.required.set(true)
+    }
+}
