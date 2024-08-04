@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.UsesResources;
 import me.earth.headlessmc.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
@@ -95,7 +94,7 @@ public class JsonUtilTest extends AbstractUtilityTest<JsonUtil>
 
     @Test
     public void testToArray() {
-        var array = JsonUtil.toArray(null);
+        JsonArray array = JsonUtil.toArray(null);
         Assertions.assertEquals(0, array.size());
 
         val actualArray = new JsonArray();

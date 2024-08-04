@@ -1,0 +1,10 @@
+sourceSets {
+    java9stub
+    main {
+        compileClasspath += java9stub.compileClasspath + java9stub.output
+    }
+}
+
+dependencies {
+    jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+}

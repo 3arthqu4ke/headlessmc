@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ class LibraryFactory {
                         return Rule.Action.DISALLOW;
                     };
 
-                    var nativeExtractor = extractor;
+                    Extractor nativeExtractor = extractor;
                     // if there was no extraction rule specified.
                     if (!extractor.isExtracting()) {
                         nativeExtractor = new ExtractorImpl();

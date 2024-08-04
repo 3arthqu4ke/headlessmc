@@ -1,14 +1,11 @@
 package me.earth.headlessmc.command;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import me.earth.headlessmc.MockedHeadlessMc;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.security.Permission;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class QuitCommandTest {
     private final QuitCommand command =
@@ -24,31 +21,6 @@ public class QuitCommandTest {
 
         assertFalse(command.matches("not quit"));
         assertFalse(command.matches());
-    }
-
-    @Test
-    @Disabled("Disabled for now until I can verify it works everywhere")
-    public void testExecute() {
-        try {
-            System.setSecurityManager(new SecurityManager() {
-                @Override
-                public void checkPermission(Permission perm) {
-                    // NOP
-                }
-
-                @Override
-                public void checkExit(int status) {
-                    super.checkExit(status);
-                    throw new ExitException(status);
-                }
-            });
-
-            val ex = assertThrows(ExitException.class,
-                                  () -> command.execute("quit"));
-            assertEquals(0, ex.code);
-        } finally {
-            System.setSecurityManager(null);
-        }
     }
 
     @RequiredArgsConstructor

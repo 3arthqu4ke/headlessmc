@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.version.family;
 
 import lombok.val;
-import lombok.var;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +70,7 @@ public class FamilyUtilTest {
         val family = setupFamily();
         val index = new int[]{0};
         val defaultResult = new Object();
-        var result = FamilyUtil.iterateParents(
+        Object result = FamilyUtil.iterateParents(
             family[2],
             () -> defaultResult,
             c -> {
@@ -94,7 +93,7 @@ public class FamilyUtilTest {
     @Test
     public void testGetFamily() {
         val array = setupFamily();
-        var family = FamilyUtil.getFamily(array[2]);
+        Family<HasParentImpl> family = FamilyUtil.getFamily(array[2]);
         Assertions.assertFalse(family.isCircular());
         Assertions.assertEquals(3, family.getMembers().size());
         for (int i = 0; i < 3; i++) {

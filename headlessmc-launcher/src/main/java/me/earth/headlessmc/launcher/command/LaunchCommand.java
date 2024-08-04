@@ -61,8 +61,13 @@ public class LaunchCommand extends AbstractVersionCommand {
                              .files(files)
                              .parseFlags(ctx, quit, args)
                              .build());
-            if (quit) {
+            if (process == null) {
+                ctx.log("InMemory main thread ended.");
+            }
+
+            if (quit || process == null) {
                 System.exit(0);
+                return;
             }
 
             try {

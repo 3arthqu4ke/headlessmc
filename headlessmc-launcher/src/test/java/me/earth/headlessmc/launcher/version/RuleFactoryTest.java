@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.version;
 
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.UsesResources;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Assertions;
@@ -28,7 +27,7 @@ public class RuleFactoryTest implements UsesResources {
     public void testRuleWithFeature() {
         val element = getJsonElement("rule_feature.json");
         val rule = new RuleFactory().parse(element);
-        var features = Features.EMPTY;
+        Features features = Features.EMPTY;
         val os = new OS("osx", OS.Type.OSX, "1.0.0", false);
         Assertions.assertEquals(Rule.Action.ALLOW, rule.apply(os, features));
 

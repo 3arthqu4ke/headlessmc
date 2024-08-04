@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher.os;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -58,7 +57,7 @@ public class OSFactory {
     }
 
     private static boolean isArch(Config config, OS.Type type) {
-        var arch = config.get(LauncherProperties.OS_ARCH);
+        Boolean arch = config.get(LauncherProperties.OS_ARCH);
         if (arch == null) {
             if (type == OS.Type.WINDOWS) {
                 String p_arch = System.getenv("PROCESSOR_ARCHITECTURE");
@@ -80,7 +79,7 @@ public class OSFactory {
     private static String getGeneric(Config config,
                                      Property<String> property,
                                      String systemProp) {
-        var result = config.get(property);
+        String result = config.get(property);
         if (result == null) {
             result = System.getProperty(systemProp);
         }

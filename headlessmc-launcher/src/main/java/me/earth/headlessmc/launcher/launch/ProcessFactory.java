@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
@@ -16,6 +15,7 @@ import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Features;
 import me.earth.headlessmc.launcher.version.Rule;
 import me.earth.headlessmc.launcher.version.Version;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,13 +32,13 @@ public class ProcessFactory {
     private final HasConfig config;
     private final OS os;
 
-    public Process run(LaunchOptions options)
+    public @Nullable Process run(LaunchOptions options)
         throws LaunchException, AuthException, IOException {
         val instrumentation = InstrumentationHelper.create(options);
         return run(options, instrumentation);
     }
 
-    public Process run(LaunchOptions options, Instrumentation instrumentation)
+    public @Nullable Process run(LaunchOptions options, Instrumentation instrumentation)
         throws IOException, LaunchException, AuthException {
         val launcher = options.getLauncher();
 
@@ -74,7 +74,8 @@ public class ProcessFactory {
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
         if (options.isInMemory()) {
-            new InMemoryLauncher(files, config, os, options, commandBuilder).launch();
+            new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()).launch();
+            return null;
         }
 
         return this.run(new ProcessBuilder()
@@ -93,7 +94,7 @@ public class ProcessFactory {
 
     private void addGameJar(Version version, List<Target> targets)
         throws IOException {
-        var gameJar = new File(version.getFolder(), version.getName() + ".jar");
+        File gameJar = new File(version.getFolder(), version.getName() + ".jar");
         log.debug("GameJar: " + gameJar.getAbsolutePath());
         if (!gameJar.exists() || !checkZipIntact(gameJar) && gameJar.delete()) {
             log.info("Downloading " + version.getName() + " from "
@@ -139,7 +140,7 @@ public class ProcessFactory {
 
     protected boolean checkZipIntact(File file) {
         val name = file.getName();
-        var result = true;
+        boolean result = true;
         if (name.endsWith(".jar") || name.endsWith(".zip")) {
             try {
                 val zipFile = new ZipFile(file);

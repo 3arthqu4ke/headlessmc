@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.command.CommandUtil;
 import me.earth.headlessmc.launcher.version.Version;
 
@@ -30,7 +29,7 @@ public class VersionTypeFilter<T> {
     }
 
     public Collection<T> apply(Collection<T> collection, String... args) {
-        var r = collection;
+        Collection<T> r = collection;
         r = filter("-release", r, t -> !"release".equalsIgnoreCase(t), args);
         r = filter("-snapshot", r, t -> !"snapshot".equalsIgnoreCase(t), args);
         r = filter("-other", r, t -> "snapshot".equalsIgnoreCase(t)

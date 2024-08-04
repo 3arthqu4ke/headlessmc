@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.version;
 
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ public class LibraryImplTest {
         val _64 = new OS("windows", OS.Type.WINDOWS, "11", true);
         val _32 = new OS("windows", OS.Type.WINDOWS, "11", false);
 
-        var lib = new LibraryImpl(
+        LibraryImpl lib = new LibraryImpl(
             natives, Extractor.NO_EXTRACTION, "test:test:test",
             Rule.ALLOW, "baseUrl", "url", "path", true);
         Assertions.assertEquals("path", lib.getPath(_64));

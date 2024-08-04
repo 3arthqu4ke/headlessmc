@@ -1,6 +1,9 @@
 package me.earth.headlessmc.launcher.instrumentation;
 
-import lombok.*;
+import lombok.Cleanup;
+import lombok.CustomLog;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import me.earth.headlessmc.launcher.util.IOUtil;
 
 import java.io.File;
@@ -18,7 +21,7 @@ public class Instrumentation {
     private final File base;
 
     public List<String> instrument(List<Target> targetsIn) throws IOException {
-        var targets = targetsIn;
+        List<Target> targets = targetsIn;
         if (transformers.isEmpty()) {
             return targets.stream()
                           .map(Target::getPath)
@@ -75,7 +78,7 @@ public class Instrumentation {
             val next = e.nextElement();
             @Cleanup
             val is = jar.getInputStream(next);
-            var stream = new EntryStream(is, targets, next);
+            EntryStream stream = new EntryStream(is, targets, next);
 
             for (Transformer transformer : transformers) {
                 val stream2 = transformer.transform(stream);

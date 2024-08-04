@@ -1,7 +1,7 @@
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
@@ -15,10 +15,19 @@ allprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'com.github.johnrengelman.shadow'
-    apply plugin: 'io.franzbecker.gradle-lombok'
+
+    // no lombok for that project, cause its doing naughty things with stubing java.lang classes
+    if (project != project(':headlessmc-modlauncher')) {
+        // Consider switching to https://github.com/freefair/gradle-plugins/tree/main/lombok-plugin looks more maintained?
+        apply plugin: 'io.franzbecker.gradle-lombok'
+        lombok {
+            version '1.18.34'
+        }
+    }
 
     group 'me.earth.headlessmc'
     version rootProject.project_version
+
 
     repositories {
         mavenCentral()
@@ -52,14 +61,17 @@ allprojects {
     dependencies {
         compileOnly 'org.jetbrains:annotations:24.1.0'
 
-        compileOnly 'org.projectlombok:lombok:1.18.30'
-        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+        // no lombok for modlauncher cause we do bad hacks there in the java9 stub.
+        if (project != project(':headlessmc-modlauncher')) {
+            compileOnly 'org.projectlombok:lombok:1.18.34'
+            annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
-        testCompileOnly 'org.projectlombok:lombok:1.18.30'
-        testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+            testCompileOnly 'org.projectlombok:lombok:1.18.34'
+            testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+        }
 
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.3'
     }
 
     test {
@@ -82,18 +94,14 @@ allprojects {
     }
 
     java {
-        // because we are using lomboks var
-        if (!JavaVersion.current().isJava9Compatible()) {
-            withSourcesJar()
-            withJavadocJar()
-        }
+        withSourcesJar()
+        withJavadocJar()
     }
 
     // TODO: even though we are doing all of this Intellij
     //  still complains about bytecode not matching the source...
     if (sourceSets.main.java.srcDirs.stream().anyMatch { it.exists()}
-            // var keyword causes issues in DelombokTask with newer jdks
-        && !JavaVersion.current().isJava9Compatible()) {
+        && project != project(':headlessmc-modlauncher')) {
         tasks.register('delombok', DelombokTask) {
             dependsOn compileJava
             ext.outputDir = file(buildDir.toPath().resolve('delombok'))
@@ -109,26 +117,29 @@ allprojects {
                              '-d', ext.outputDir)
                 }
             }
+
+            javadoc {
+                dependsOn delombok
+                source = delombok.outputDir
+            }
+
+            sourcesJar {
+                dependsOn delombok
+                from delombok.outputDir
+                // I tried every single exclude/include pattern but I could not get any to work
+                exclude (fileTreeElement -> {
+                    return !((FileTreeElement) fileTreeElement)
+                            .getFile()
+                            .toPath()
+                            .toAbsolutePath()
+                            .startsWith(delombok.outputDir.toPath().toAbsolutePath())
+                })
+            }
         }
 
         javadoc {
-            dependsOn delombok
-            source = delombok.outputDir
             options.addStringOption('Xdoclint:none', '-quiet')
             options.linkSource true
-        }
-
-        sourcesJar {
-            dependsOn delombok
-            from delombok.outputDir
-            // I tried every single exclude/include pattern but I could not get any to work
-            exclude (fileTreeElement -> {
-                return !((FileTreeElement) fileTreeElement)
-                    .getFile()
-                    .toPath()
-                    .toAbsolutePath()
-                    .startsWith(delombok.outputDir.toPath().toAbsolutePath())
-            })
         }
     }
 
@@ -139,65 +150,57 @@ allprojects {
     shadowJar {
         configurations = [project.configurations.jarLibs, project.configurations.jarLibsApi]
         archiveClassifier.set('')
-
-        // when launching older versions in memory we get conflicts between asm versions,
-        // we prevent this by renaming our own asm.
-        relocate 'org.objectweb.asm', 'me.earth.headlessmc.asm'
     }
 
     jar.finalizedBy(shadowJar)
 
     // since we are not creating javadoc and sources on java 9+ skip
-    if (!JavaVersion.current().isJava9Compatible()) {
-        def pubSuffix = System.getenv('IS_MAVEN_PUB') != null
-                ? ''
-                : System.getenv('GITHUB_RUN_NUMBER') != null && System.getenv('GITHUB_SHA') != null
-                ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
-                : '-local'
+    def pubSuffix = System.getenv('IS_MAVEN_PUB') != null
+            ? ''
+            : System.getenv('GITHUB_RUN_NUMBER') != null && System.getenv('GITHUB_SHA') != null
+            ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
+            : '-local'
 
-        publishing {
-            publications {
-                "${project.name.toLowerCase(Locale.ENGLISH)}"(MavenPublication) {
-                    ((MavenPublication) it).groupId "${project.group}"
-                    ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase(Locale.ENGLISH)}"
-                    ((MavenPublication) it).version "${project.version}${pubSuffix}"
-                    // TODO: testFixtures are part of commons artifact?
-                    // Exclude shadowJars from publication
-                    components.withType(AdhocComponentWithVariants).forEach { c ->
-                        c.withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
-                            skip()
-                        }
-                    }
-
-                    from components.java
-                }
-            }
-
-            repositories {
-                // mavenLocal()
-                if (System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL') != null) {
-                    maven {
-                        name = 'GithubPagesMaven'
-                        url = System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL')
-                        credentials {
-                            username = System.getenv('GITHUB_USER')
-                            password = System.getenv('GITHUB_TOKEN')
-                        }
-                    }
-                } else {
-                    maven {
-                        name = 'BuildDirMaven'
-                        url = rootProject.layout.buildDirectory.dir('maven')
+    publishing {
+        publications {
+            "${project.name.toLowerCase(Locale.ENGLISH)}"(MavenPublication) {
+                ((MavenPublication) it).groupId "${project.group}"
+                ((MavenPublication) it).artifactId "${project.archivesBaseName.toLowerCase(Locale.ENGLISH)}"
+                ((MavenPublication) it).version "${project.version}${pubSuffix}"
+                // TODO: testFixtures are part of commons artifact?
+                // Exclude shadowJars from publication
+                components.withType(AdhocComponentWithVariants).forEach { c ->
+                    c.withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+                        skip()
                     }
                 }
+
+                from components.java
             }
         }
 
-        publish {
-            dependsOn(build)
+        repositories {
+            // mavenLocal()
+            if (System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL') != null) {
+                maven {
+                    name = 'GithubPagesMaven'
+                    url = System.getenv('DEPLOY_TO_GITHUB_PACKAGES_URL')
+                    credentials {
+                        username = System.getenv('GITHUB_USER')
+                        password = System.getenv('GITHUB_TOKEN')
+                    }
+                }
+            } else {
+                maven {
+                    name = 'BuildDirMaven'
+                    url = rootProject.layout.buildDirectory.dir('maven')
+                }
+            }
         }
-    } else {
-        project.logger.warn('Cannot publish on Java 9+ as we are not generating JavaDocs!')
+    }
+
+    publish {
+        dependsOn(build)
     }
 }
 

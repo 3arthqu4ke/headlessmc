@@ -52,7 +52,10 @@ public final class Main {
                 }
             } catch (Throwable exitThrowable) {
                 // it is possible, if we launch in memory, that forge prevents us from calling System.exit through their SecurityManager
-                log.error("Failed to exit!", throwable);
+                if (throwable != null && exitThrowable.getClass() == throwable.getClass()) { // we have logged FMLSecurityManager$ExitTrappedException before
+                    log.error("Failed to exit!", exitThrowable);
+                }
+
                 // TODO: exit gracefully, try to call Forge to exit
             }
         }
@@ -61,6 +64,10 @@ public final class Main {
     private void runHeadlessMc(String... args) throws IOException, AuthException {
         LoggingHandler.apply();
         AbstractLoginCommand.replaceLogger();
+
+        if (Main.class.getClassLoader() == ClassLoader.getSystemClassLoader()) {
+            log.warn("You are not running from headlessmc-launcher-wrapper. Some things will not work properly!");
+        }
 
         val files = FileManager.mkdir("HeadlessMC");
 

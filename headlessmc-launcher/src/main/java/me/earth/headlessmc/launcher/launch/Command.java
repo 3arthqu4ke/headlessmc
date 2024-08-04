@@ -1,6 +1,9 @@
 package me.earth.headlessmc.launcher.launch;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.CustomLog;
+import lombok.Getter;
+import lombok.val;
 import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -35,7 +38,7 @@ class Command {
 
     public List<String> build() throws LaunchException, AuthException {
         val config = launcher.getConfig();
-        var java = launcher.getJavaService().findBestVersion(version.getJava());
+        Java java = launcher.getJavaService().findBestVersion(version.getJava());
         if (inMemory) {
             Java current = launcher.getJavaService().getCurrent();
             if (current.getVersion() != version.getJava()) {
@@ -101,7 +104,7 @@ class Command {
     }
 
     public String getActualMainClass(List<String> result) {
-        var mainClass = version.getMainClass();
+        String mainClass = version.getMainClass();
         if (runtime) {
             result.add("-D" + HmcProperties.MAIN.getName() + "="
                            + version.getMainClass());

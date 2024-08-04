@@ -2,10 +2,11 @@ package me.earth.headlessmc.launcher.version;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.launcher.UsesResources;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class ArgumentFactoryTest implements UsesResources {
     @Test
@@ -16,7 +17,7 @@ public class ArgumentFactoryTest implements UsesResources {
         Assertions.assertNull(factory.parse(null, f -> format[0] = f));
         Assertions.assertFalse(format[0]);
 
-        var args = factory.parse(getJsonElement("arguments_old.json"),
+        List<Argument> args = factory.parse(getJsonElement("arguments_old.json"),
                                  f -> format[0] = f);
         Assertions.assertFalse(format[0]);
         Assertions.assertEquals(4, args.size());

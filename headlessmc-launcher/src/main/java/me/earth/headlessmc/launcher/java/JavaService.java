@@ -2,16 +2,15 @@ package me.earth.headlessmc.launcher.java;
 
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.Service;
+import me.earth.headlessmc.launcher.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.InvalidPathException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -25,9 +24,9 @@ public class JavaService extends Service<Java> {
 
     @Override
     protected Set<Java> update() {
-        val array = cfg.getConfig().get(LauncherProperties.JAVA, new String[0]);
-        val newVersions = new LinkedHashSet<Java>((int) (array.length * 1.5));
-        for (val path : array) {
+        String[] array = cfg.getConfig().get(LauncherProperties.JAVA, new String[0]);
+        Set<Java> newVersions = new LinkedHashSet<Java>((int) (array.length * 1.5));
+        for (String path : array) {
             Java java = scanJava(path);
             if (java != null) {
                 newVersions.add(java);
@@ -35,9 +34,13 @@ public class JavaService extends Service<Java> {
         }
 
         if (System.getenv("JAVA_HOME") != null) {
-            Java java = scanJava(Paths.get(System.getenv("JAVA_HOME")).resolve("bin").resolve("java").toAbsolutePath().toString());
-            if (java != null) {
-                newVersions.add(java);
+            try {
+                Java java = scanJava(PathUtil.stripQuotes(System.getenv("JAVA_HOME")).resolve("bin").resolve("java").toAbsolutePath().toString());
+                if (java != null) {
+                    newVersions.add(java);
+                }
+            } catch (InvalidPathException e) {
+                log.error(e);
             }
         }
 
@@ -52,8 +55,8 @@ public class JavaService extends Service<Java> {
         }
 
         try {
-            val majorVersion = parser.parseVersionCommand(path);
-            val java = new Java(path.replace("\\", "/"), majorVersion);
+            int majorVersion = parser.parseVersionCommand(path);
+            Java java = new Java(path.replace("\\", "/"), majorVersion);
             log.debug("Found Java: " + java);
             return java;
         } catch (IOException e) {
@@ -98,7 +101,7 @@ public class JavaService extends Service<Java> {
 
     public Java getCurrent() {
         if (current == null) {
-            String executable = System.getProperty("java.home", "current").replace("\\", "/").concat("/bin/java");
+            String executable = PathUtil.stripQuotesAtStartAndEnd(System.getProperty("java.home", "current")).replace("\"", "").concat("/bin/java");
             String version = System.getProperty("java.version");
             if (version == null) {
                 if ("current".equals(executable)) {
@@ -116,7 +119,7 @@ public class JavaService extends Service<Java> {
 
     @VisibleForTesting
     int parseSystemProperty(String versionIn) {
-        var version = versionIn;
+        String version = versionIn;
         if (version.startsWith("1.")) {
             version = version.substring(2, 3);
         } else {

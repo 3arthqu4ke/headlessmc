@@ -2,7 +2,6 @@ package me.earth.headlessmc.runtime.commands;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import lombok.var;
 import me.earth.headlessmc.runtime.RuntimeTest;
 import me.earth.headlessmc.runtime.TestClass;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ public class NewCommandTest implements RuntimeTest {
 
         ctx.execute("new 0 1");
         assertInstanceOf(TestClass.class, vm.get(1));
-        var testClass = ((TestClass<?>) vm.get(1));
+        TestClass<?> testClass = ((TestClass<?>) vm.get(1));
         assertEquals(TestClass.NOARGS_CTR, testClass.ctr);
 
         ctx.execute("string test 2");
