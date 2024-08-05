@@ -6,6 +6,7 @@ import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.config.Config;
+import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.command.CommandContextImpl;
 import me.earth.headlessmc.config.ConfigImpl;
 
@@ -16,6 +17,7 @@ public class MockedHeadlessMc implements HeadlessMc {
     public static final MockedHeadlessMc INSTANCE = new MockedHeadlessMc();
     private CommandContext commandContext = new CommandContextImpl(this);
     private MockedExitManager exitManager = new MockedExitManager();
+    private InAndOutProvider inAndOutProvider = new InAndOutProvider();
     private Config config = ConfigImpl.empty();
     private boolean hidingPasswords = false;
     private boolean waitingForInput = false;

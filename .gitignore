@@ -25,6 +25,8 @@ run
 /HeadlessMC/
 /headlessmc-launcher/HeadlessMC/
 /headlessmc-launcher-jfx/HeadlessMC/
+/headlessmc-launcher-wrapper/HeadlessMC/
+/headlessmc-test/HeadlessMC/
 
 # Created by some launcher tests
 /headlessmc-launcher/test/

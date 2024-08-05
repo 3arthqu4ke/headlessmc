@@ -4,7 +4,12 @@ import me.earth.headlessmc.api.command.HasCommandContext;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 
-public interface HeadlessMc extends HasCommandContext, LogsMessages,
-                                    HasConfig, PasswordAware, QuickExitCli {
+public interface HeadlessMc extends HasCommandContext, LogsMessages, HasConfig, PasswordAware, QuickExitCli {
     ExitManager getExitManager();
+
+    @Override
+    default void log(String message) {
+        getInAndOutProvider().getOut().get().println(message);
+    }
+
 }

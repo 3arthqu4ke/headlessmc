@@ -4,7 +4,10 @@ import lombok.Cleanup;
 import lombok.CustomLog;
 import me.earth.headlessmc.api.QuickExitCli;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOError;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 @CustomLog
 enum BufferedListener implements Listener {
@@ -14,8 +17,7 @@ enum BufferedListener implements Listener {
     public void listen(QuickExitCli context) {
         try {
             @Cleanup
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                new FileInputStream(FileDescriptor.in)));
+            BufferedReader in = new BufferedReader(new InputStreamReader(context.getInAndOutProvider().getIn().get()));
 
             String line;
             while ((line = in.readLine()) != null) {

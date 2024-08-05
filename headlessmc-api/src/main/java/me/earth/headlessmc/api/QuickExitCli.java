@@ -1,6 +1,7 @@
 package me.earth.headlessmc.api;
 
 import me.earth.headlessmc.api.command.HasCommandContext;
+import me.earth.headlessmc.api.process.InAndOutProvider;
 
 /**
  * HeadlessMc can be started in two modes. Either we permanently listen for
@@ -11,6 +12,8 @@ import me.earth.headlessmc.api.command.HasCommandContext;
  */
 // TODO: it's quickly getting hard to oversee where we are waiting for input!
 public interface QuickExitCli extends HasCommandContext {
+    InAndOutProvider getInAndOutProvider();
+
     boolean isQuickExitCli();
 
     void setQuickExitCli(boolean quickExitCli);
