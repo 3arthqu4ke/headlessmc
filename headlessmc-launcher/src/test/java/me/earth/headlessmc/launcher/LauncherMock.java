@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.ConfigImpl;
@@ -16,7 +17,6 @@ import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.MockProcessFactory;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
-import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.SimpleLog;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
@@ -33,7 +33,7 @@ public class LauncherMock {
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
         val in = new CommandLineImpl();
-        val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in);
+        val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in, new ExitManager());
 
         val os = new OS("windows", OS.Type.WINDOWS, "11", true);
         val mcFiles = base.createRelative("mcFiles");

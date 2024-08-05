@@ -66,7 +66,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             }
 
             if (quit || process == null) {
-                System.exit(0);
+                ctx.getExitManager().exit(0);
                 return;
             }
 
@@ -108,7 +108,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             }
 
             if (!CommandUtil.hasFlag("-stay", args)) {
-                System.exit(status);
+                ctx.getExitManager().exit(status);
             }
         }
     }

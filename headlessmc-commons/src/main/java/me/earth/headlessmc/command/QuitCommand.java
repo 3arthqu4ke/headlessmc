@@ -12,7 +12,7 @@ public class QuitCommand extends AbstractCommand {
     @Override
     public void execute(String... args) {
         ctx.log("Bye!");
-        System.exit(0);
+        ctx.getExitManager().exit(0);
     }
 
     @Override

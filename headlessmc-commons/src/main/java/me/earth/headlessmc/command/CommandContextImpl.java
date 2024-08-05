@@ -42,7 +42,7 @@ public class CommandContextImpl implements CommandContext {
         } catch (CommandException commandException) {
             log.log(commandException.getMessage());
             if (log.getConfig().get(HmcProperties.EXIT_ON_FAILED_COMMAND, false)) {
-                System.exit(-1);
+                log.getExitManager().exit(-1);
             }
         }
     }
@@ -72,7 +72,7 @@ public class CommandContextImpl implements CommandContext {
         }
 
         if (log.getConfig().get(HmcProperties.EXIT_ON_FAILED_COMMAND, false)) {
-            System.exit(-1);
+            log.getExitManager().exit(-1);
         }
     }
 

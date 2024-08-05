@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.command.line.CommandLineImpl;
 import me.earth.headlessmc.config.HmcProperties;
@@ -14,7 +15,6 @@ import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
-import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
@@ -29,12 +29,14 @@ import java.io.IOException;
 @UtilityClass
 public final class Main {
     public static void main(String[] args) {
+        ExitManager exitManager = new ExitManager();
         Throwable throwable = null;
         try {
-            runHeadlessMc(args);
+            runHeadlessMc(exitManager, args);
         } catch (Throwable t) {
             throwable = t;
         } finally {
+            exitManager.onMainThreadEnd(throwable);
             /*
             These "System.exit()" calls are here because of the LoginCommands
             -webview option. It seems that after closing the JFrame there is
@@ -48,10 +50,10 @@ public final class Main {
              */
             try {
                 if (throwable == null) {
-                    System.exit(0);
+                    exitManager.exit(0);
                 } else {
                     log.error(throwable);
-                    System.exit(-1);
+                    exitManager.exit(-1);
                 }
             } catch (Throwable exitThrowable) {
                 // it is possible, if we launch in memory, that forge prevents us from calling System.exit through their SecurityManager
@@ -64,7 +66,7 @@ public final class Main {
         }
     }
 
-    private void runHeadlessMc(String... args) throws IOException, AuthException {
+    private void runHeadlessMc(ExitManager exitManager, String... args) throws IOException, AuthException {
         LoggingHandler.apply();
         AbstractLoginCommand.replaceLogger();
 
@@ -81,7 +83,7 @@ public final class Main {
             configs.getConfig().get(HmcProperties.LOGLEVEL, "INFO"));
 
         val in = new CommandLineImpl();
-        val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in);
+        val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in, exitManager);
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);

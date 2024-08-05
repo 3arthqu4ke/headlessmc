@@ -1,11 +1,9 @@
 package me.earth.headlessmc.command;
 
-import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.MockedHeadlessMc;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QuitCommandTest {
     private final QuitCommand command =
@@ -23,9 +21,13 @@ public class QuitCommandTest {
         assertFalse(command.matches());
     }
 
-    @RequiredArgsConstructor
-    public static final class ExitException extends RuntimeException {
-        private final int code;
+    @Test
+    public void testExecute() {
+        MockedHeadlessMc.INSTANCE.getExitManager().setExitCode(null);
+        assertNull(MockedHeadlessMc.INSTANCE.getExitManager().getExitCode());
+        command.execute("quit");
+        assertEquals(0, MockedHeadlessMc.INSTANCE.getExitManager().getExitCode());
+        MockedHeadlessMc.INSTANCE.getExitManager().setExitCode(null);
     }
 
 }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Delegate;
+import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.LogsMessages;
 import me.earth.headlessmc.api.PasswordAware;
@@ -18,6 +19,8 @@ public class HeadlessMcImpl implements HeadlessMc {
     private final HasConfig configHolder;
     @Delegate
     private final PasswordAware passwordAware;
+    @Getter
+    private final ExitManager exitManager;
     @Getter
     @Setter
     private CommandContext commandContext;
