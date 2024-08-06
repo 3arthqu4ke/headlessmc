@@ -104,6 +104,6 @@ tasks.withType(Test).configureEach {
     jacoco {
         // our classloader potentially includes no ProtectionDomains?
         includeNoLocationClasses true
+        jacoco.excludes = ['jdk.internal.*']
     }
 }
-
