@@ -45,7 +45,6 @@ public class BootstrapLauncherTransformer extends AbstractClassTransformer {
         for (MethodNode mn: cn.methods) {
             for (AbstractInsnNode insn : mn.instructions) {
                 if (insn instanceof MethodInsnNode) {
-                    //noinspection PatternVariableCanBeUsed
                     MethodInsnNode bootCall = (MethodInsnNode) insn;
                     if ("java/lang/ModuleLayer".equals(bootCall.owner)
                         && "boot".equals(bootCall.name)

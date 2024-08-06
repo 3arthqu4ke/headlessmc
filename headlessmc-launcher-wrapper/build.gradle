@@ -113,3 +113,7 @@ tasks.withType(Test).configureEach {
         jacoco.excludes = ['jdk.internal.*']
     }
 }
+
+test {
+    maxHeapSize = '2048m'
+}

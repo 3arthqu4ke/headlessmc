@@ -18,12 +18,16 @@ public class LaunchTest {
     public static void build(Java java, Launcher launcher, TestInputStream is) {
         String vanilla = java.getVersion() <= 8 ? "1.12.2" : (java.getVersion() <= 17 ? "1.20.4" : "1.21");
         String modlauncher = java.getVersion() <= 8 ? "forge" : "fabric";
+        boolean inMemory = Boolean.parseBoolean(System.getProperty("integrationTestRunInMemory", "false"));
+        String inMemoryFlag = inMemory ? "-inmemory" : "";
 
         is.add("help");
 
         is.add("versions");
 
         is.add("download " + vanilla);
+
+        is.add("n");
 
         is.add("versions");
 
@@ -40,6 +44,8 @@ public class LaunchTest {
         is.add("abort");
 
         is.add(modlauncher + " " + vanilla);
+
+        is.add("n");
 
         is.add("multi \"json " + vanilla + "\" versions");
 
@@ -77,8 +83,7 @@ public class LaunchTest {
             });
 
             timeOutThread.start();
-            String inMemory = Boolean.parseBoolean(System.getProperty("integrationTestRunInMemory", "false")) ? "-inmemory" : "";
-            ps.println("launch " + version.get().getId() + " -id -lwjgl " + inMemory);
+            ps.println("launch " + version.get().getId() + " -id -lwjgl " + inMemoryFlag);
         });
 
         is.add(ps -> returnedFromLaunching.set(true));

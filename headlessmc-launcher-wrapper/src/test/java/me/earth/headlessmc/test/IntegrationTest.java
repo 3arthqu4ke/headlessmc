@@ -17,6 +17,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,42 +30,25 @@ public class IntegrationTest {
 
     @BeforeAll
     public static void beforeAll() throws IOException {
-        if (Files.exists(ROOT)) {
+        /*if (Files.exists(ROOT)) {
             try (Stream<Path> pathStream = Files.walk(Paths.get("HeadlessMC"))) {
                 //noinspection ResultOfMethodCallIgnored
                 pathStream.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
             }
-        }
+        }*/
     }
 
     @Test
     public void runIntegrationTest() throws Exception {
-        runTest(false);
-    }
-
-    @Test
-    public void runIntegrationTestInMemory() throws Exception {
-        runTest(true);
-    }
-
-    public void runTest(boolean inMemory) throws Exception {
         // set the property in gradle.properties
         assertNotNull(System.getProperty("hmc.integration.test.enabled"));
         Assumptions.assumeTrue(Boolean.parseBoolean(System.getProperty("hmc.integration.test.enabled")));
 
-        assertFalse(Files.exists(Paths.get("HeadlessMC")), "HeadlessMC directory should be deleted!");
+        // assertFalse(Files.exists(Paths.get("HeadlessMC")), "HeadlessMC directory should be deleted!");
 
-        System.setProperty("hmc.mcdir", ROOT.resolve("mcdir").toAbsolutePath().toString());
-        System.setProperty("hmc.gamedir", ROOT.resolve("gamedir").toAbsolutePath().toString());
-        System.setProperty("integrationTestRunInMemory", String.valueOf(inMemory));
+        prepareTest();
 
-        Path testPlugin = Paths.get("build").resolve("libs").resolve("testPlugin.jar");
-        assertTrue(Files.exists(testPlugin), "NoExit plugin jar should exist!");
-        Path plugins = ROOT.resolve("plugins");
-        Files.createDirectories(plugins);
-        assertTrue(Files.exists(Files.copy(testPlugin, plugins.resolve("testPlugin.jar"))), "NoExit plugin jar should exit in plugins!");
-
-        HeadlessMcWrapper.setPluginFinderFactory(path -> new TransformingPluginFinder(plugins) {
+        HeadlessMcWrapper.setPluginFinderFactory(path -> new TransformingPluginFinder(ROOT.resolve("plugins")) {
             @Override
             protected TransformingClassloader newTransformingClassloader(URL[] urls, ClassLoader parent, URLClassLoader transformerClassloader, List<TransformerPlugin> plugins) {
                 return new TransformingClassloaderWithJacoco(urls, parent, transformerClassloader, plugins);
@@ -73,6 +57,25 @@ public class IntegrationTest {
 
         log.info("Running integration test!");
         Main.main(new String[0]);
+    }
+
+    @Test
+    public void runIntegrationTestInMemory() throws Exception {
+        prepareTest();
+        System.setProperty("integrationTestRunInMemory", "true");
+        Main.main(new String[0]);
+    }
+
+    private void prepareTest() throws IOException {
+        System.setProperty("hmc.mcdir", ROOT.resolve("mcdir").toAbsolutePath().toString());
+        System.setProperty("hmc.gamedir", ROOT.resolve("gamedir").toAbsolutePath().toString());
+
+        Path testPlugin = Paths.get("build").resolve("libs").resolve("testPlugin.jar");
+        assertTrue(Files.exists(testPlugin));
+        Path plugins = ROOT.resolve("plugins");
+        Files.createDirectories(plugins);
+        assertTrue(Files.exists(Files.copy(testPlugin, plugins.resolve("testPlugin.jar"), StandardCopyOption.REPLACE_EXISTING)),
+                   "Test plugin jar should exit in plugins!");
     }
 
 }

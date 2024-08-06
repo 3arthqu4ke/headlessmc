@@ -41,3 +41,4 @@ run
 /fabricloader.log
 /.mixin.out/
 /headlessmc-runtime/HeadlessMC/
+/headlessmc-launcher-wrapper/logs/
