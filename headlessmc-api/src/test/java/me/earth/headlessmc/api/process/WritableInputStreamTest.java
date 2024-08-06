@@ -2,7 +2,9 @@ package me.earth.headlessmc.api.process;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -56,4 +58,15 @@ public class WritableInputStreamTest {
 
         assertEquals(-1, writableInputStream.read());
     }
+
+    @Test
+    public void testBufferedReader() throws IOException {
+        WritableInputStream writableInputStream = new WritableInputStream();
+        writableInputStream.getPrintStream().println("test");
+        writableInputStream.getPrintStream().println("line");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(writableInputStream));
+        assertEquals("test", reader.readLine());
+        assertEquals("line", reader.readLine());
+    }
+
 }

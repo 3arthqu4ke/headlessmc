@@ -5,6 +5,7 @@ import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.util.ResourceUtil;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.logging.Logger;
 import java.util.logging.*;
 
@@ -35,6 +36,10 @@ public class LoggingHandler extends StreamHandler {
             // add the Handler manually
             Logger.getLogger("").addHandler(new LoggingHandler());
         }
+
+        FileHandler handler = new FileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log").toAbsolutePath().toString());
+        handler.setFormatter(new ThreadFormatter());
+        Logger.getLogger("").addHandler(handler);
 
         String property = System.getProperty(HmcProperties.LOGLEVEL.getName());
         if (property == null || !LogLevelUtil.trySetLevel(property)) {
