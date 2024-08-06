@@ -88,6 +88,7 @@ public final class Main {
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
+        val gameDir = FileManager.mkdir(configs.getConfig().get(LauncherProperties.GAME_DIR, mcFiles.getPath()));
         val versions = Service.refresh(new VersionService(mcFiles));
         val javas = Service.refresh(new JavaService(configs));
 
@@ -99,7 +100,7 @@ public final class Main {
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
 
-        val launcher = new Launcher(hmc, versions, mcFiles, files,
+        val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
                                     new ProcessFactory(mcFiles, configs, os), configs,
                                     javas, accounts, versionSpecificModManager, new PluginManager());
 

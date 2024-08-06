@@ -40,3 +40,4 @@ run
 /headlessmc-launcher/libs/
 /fabricloader.log
 /.mixin.out/
+/headlessmc-runtime/HeadlessMC/

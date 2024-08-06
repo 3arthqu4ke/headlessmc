@@ -2,6 +2,7 @@ package me.earth.headlessmc.testplugin;
 
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.command.FabricCommand;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.version.Version;
 
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LaunchTest {
     public static void build(Java java, Launcher launcher, TestInputStream is) {
-        String vanilla = java.getVersion() <= 8 ? "1.12.2" : (java.getVersion() <= 17 ? "1.20.6" : "1.21");
+        String vanilla = java.getVersion() <= 8 ? "1.12.2" : (java.getVersion() <= 17 ? "1.20.4" : "1.21");
         String modlauncher = java.getVersion() <= 8 ? "forge" : "fabric";
 
         is.add("help");
@@ -23,6 +24,8 @@ public class LaunchTest {
         is.add("versions");
 
         is.add("download " + vanilla);
+
+        is.add("versions");
 
         is.add("login");
 
@@ -53,7 +56,8 @@ public class LaunchTest {
         is.add(ps -> {
             System.out.println(launcher.getVersionService().stream().map(HasName::getName).collect(Collectors.toList()));
             Optional<Version> version = launcher.getVersionService().stream().filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher)).findFirst();
-            assertTrue(version.isPresent());
+            assertTrue(version.isPresent(), "Failed to find a version with name containing " + modlauncher + " in "
+                + launcher.getVersionService().stream().map(HasName::getName).collect(Collectors.toList()));
             ps.println("specifics " + version.get().getId() + " mc-runtime-test -id");
         });
 
@@ -72,7 +76,9 @@ public class LaunchTest {
                 }
             });
 
-            ps.println("launch " + version.get().getId() + " -id -lwjgl");
+            timeOutThread.start();
+            String inMemory = Boolean.parseBoolean(System.getProperty("integrationTestRunInMemory", "false")) ? "-inmemory" : "";
+            ps.println("launch " + version.get().getId() + " -id -lwjgl " + inMemory);
         });
 
         is.add(ps -> returnedFromLaunching.set(true));

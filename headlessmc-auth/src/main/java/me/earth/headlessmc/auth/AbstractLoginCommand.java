@@ -196,8 +196,12 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
                 } catch (InterruptedException e) {
                     ctx.log("Login process cancelled successfully.");
                 } catch (Exception e) {
-                    ctx.log("Failed to login with device code: " + e.getMessage());
-                    log.info(e);
+                    if (e.getCause() instanceof InterruptedException) {
+                        ctx.log("Login process cancelled successfully.");
+                    } else {
+                        ctx.log("Failed to login with device code: " + e.getMessage());
+                        log.info(e);
+                    }
                 } finally {
                     synchronized (threads) {
                         threads.remove(this);

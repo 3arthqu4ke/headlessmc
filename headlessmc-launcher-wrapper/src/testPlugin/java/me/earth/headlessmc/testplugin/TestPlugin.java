@@ -2,8 +2,10 @@ package me.earth.headlessmc.testplugin;
 
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.plugin.HeadlessMcPlugin;
+import org.junit.jupiter.api.AssertionFailureBuilder;
+import org.junit.platform.commons.util.ExceptionUtils;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPlugin implements HeadlessMcPlugin {
     @Override
@@ -18,7 +20,12 @@ public class TestPlugin implements HeadlessMcPlugin {
 
     @Override
     public void init(Launcher launcher) {
-        launcher.getExitManager().setExitManager(i -> System.out.println("Test plugin active, exited with code " + i));
+        launcher.getExitManager().setExitManager(i -> assertEquals(0, i, "Exit code should be 0!"));
+        launcher.getExitManager().setMainThreadEndHook(throwable -> {
+            if (throwable != null) {
+                ExceptionUtils.throwAsUncheckedException(throwable); // TODO: this is caught and added as suppressed?
+            }
+        });
         // TransformerPlugin will not let us load this class
         assertThrows(ClassNotFoundException.class, () -> Class.forName("me.earth.headlessmc.testplugin.DummyClassThatCantBeLoaded"));
         // ReadablePrintStream out = new ReadablePrintStream();

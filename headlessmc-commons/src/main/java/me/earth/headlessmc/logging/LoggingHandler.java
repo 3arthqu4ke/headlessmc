@@ -5,6 +5,8 @@ import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.util.ResourceUtil;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 import java.util.logging.*;
@@ -37,7 +39,9 @@ public class LoggingHandler extends StreamHandler {
             Logger.getLogger("").addHandler(new LoggingHandler());
         }
 
-        FileHandler handler = new FileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log").toAbsolutePath().toString());
+        Path root = Paths.get("HeadlessMC");
+        Files.createDirectories(root);
+        FileHandler handler = new FileHandler(root.resolve("headlessmc.log").toString());
         handler.setFormatter(new ThreadFormatter());
         Logger.getLogger("").addHandler(handler);
 

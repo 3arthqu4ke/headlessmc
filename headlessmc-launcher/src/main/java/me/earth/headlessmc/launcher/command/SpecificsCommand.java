@@ -43,7 +43,7 @@ public class SpecificsCommand extends AbstractVersionCommand {
 
         try {
             ctx.getVersionSpecificModManager().download(version, repository);
-            ctx.getVersionSpecificModManager().install(version, repository, ctx.getMcFiles().getDir("mods").toPath());
+            ctx.getVersionSpecificModManager().install(version, repository, ctx.getGameDir().getDir("mods").toPath());
             ctx.getVersionSpecificModManager().deleteSpecificsOfOtherVersions(version, repository, ctx.getMcFiles().getDir("mods").toPath());
         } catch (IOException e) {
             log.debug("Failed to install " + repository.getName() + " for version " + version.getName(), e);

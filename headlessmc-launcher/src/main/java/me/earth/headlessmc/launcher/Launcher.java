@@ -22,6 +22,7 @@ public class Launcher implements HeadlessMc {
     private final HeadlessMc headlessMc;
     private final VersionService versionService;
     private final FileManager mcFiles;
+    private final FileManager gameDir;
     private final FileManager fileManager;
     private final ProcessFactory processFactory;
     private final ConfigService configService;

@@ -46,7 +46,7 @@ public class LauncherMock {
 
         val versionSpecificModManager = new VersionSpecificModManager(fileManager.createRelative("specifics"));
 
-        INSTANCE = new Launcher(hmc, versions, mcFiles, fileManager,
+        INSTANCE = new Launcher(hmc, versions, mcFiles, mcFiles, fileManager,
                                 new MockProcessFactory(mcFiles, configs, os), configs,
                                 javas, accounts, versionSpecificModManager, new PluginManager());
 

@@ -39,6 +39,15 @@ public class IntegrationTest {
 
     @Test
     public void runIntegrationTest() throws Exception {
+        runTest(false);
+    }
+
+    @Test
+    public void runIntegrationTestInMemory() throws Exception {
+        runTest(true);
+    }
+
+    public void runTest(boolean inMemory) throws Exception {
         // set the property in gradle.properties
         assertNotNull(System.getProperty("hmc.integration.test.enabled"));
         Assumptions.assumeTrue(Boolean.parseBoolean(System.getProperty("hmc.integration.test.enabled")));
@@ -47,6 +56,7 @@ public class IntegrationTest {
 
         System.setProperty("hmc.mcdir", ROOT.resolve("mcdir").toAbsolutePath().toString());
         System.setProperty("hmc.gamedir", ROOT.resolve("gamedir").toAbsolutePath().toString());
+        System.setProperty("integrationTestRunInMemory", String.valueOf(inMemory));
 
         Path testPlugin = Paths.get("build").resolve("libs").resolve("testPlugin.jar");
         assertTrue(Files.exists(testPlugin), "NoExit plugin jar should exist!");

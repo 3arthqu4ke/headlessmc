@@ -93,7 +93,6 @@ tasks.withType(JacocoReport) {
     }
 }
 
-
 tasks.register('testPluginJar', Jar) {
     from sourceSets.testPlugin.output
     archiveBaseName.set('testPlugin')
