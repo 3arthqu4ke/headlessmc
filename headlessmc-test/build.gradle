@@ -8,6 +8,10 @@ dependencies {
 
     testPluginImplementation project(':headlessmc-launcher')
     testPluginImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+
+    testImplementation 'org.jacoco:org.jacoco.agent:0.8.12'
+    testImplementation 'org.jacoco:org.jacoco.agent:0.8.12:runtime'
+    testImplementation 'org.jacoco:org.jacoco.core:0.8.12'
 }
 
 tasks.register('testPluginJar', Jar) {
@@ -20,4 +24,7 @@ tasks.withType(Test).configureEach {
     dependsOn testPluginJar
     project.logger.info("Enabling integration test: ${hmc_integration_test_enabled}")
     systemProperties["hmc.integration.test.enabled"] = "${hmc_integration_test_enabled}"
+    testLogging {
+        showStandardStreams = true
+    }
 }

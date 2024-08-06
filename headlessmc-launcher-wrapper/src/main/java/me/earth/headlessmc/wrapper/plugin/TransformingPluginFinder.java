@@ -28,7 +28,11 @@ public class TransformingPluginFinder extends PluginFinder {
         List<URL> classpath = find(pluginsDirectory);
         classpath.add(launcherJar.toUri().toURL());
         System.out.println(classpath);
-        return new TransformingClassloader(classpath.toArray(new URL[0]), getClass().getClassLoader(), transformerClassloader, plugins);
+        return newTransformingClassloader(classpath.toArray(new URL[0]), getClass().getClassLoader(), transformerClassloader, plugins);
+    }
+
+    protected TransformingClassloader newTransformingClassloader(URL[] urls, ClassLoader parent, URLClassLoader transformerClassloader, List<TransformerPlugin> plugins) {
+        return new TransformingClassloader(urls, parent, transformerClassloader, plugins);
     }
 
 }

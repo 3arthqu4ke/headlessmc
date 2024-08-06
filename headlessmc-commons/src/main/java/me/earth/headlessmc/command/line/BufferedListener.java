@@ -19,8 +19,10 @@ enum BufferedListener implements Listener {
             @Cleanup
             BufferedReader in = new BufferedReader(new InputStreamReader(context.getInAndOutProvider().getIn().get()));
 
+            System.out.println(context.getInAndOutProvider().getIn().get());
             String line;
             while ((line = in.readLine()) != null) {
+                System.out.println("Read line "+ line);
                 context.getCommandContext().execute(line);
                 if (context.isQuickExitCli()) {
                     if (!context.isWaitingForInput()) {

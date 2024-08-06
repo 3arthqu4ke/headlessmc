@@ -24,7 +24,7 @@ public class Main {
             copy(Objects.requireNonNull(is, "Failed to find resource headlessmc/headlessmc-launcher.jar"), fos);
         }
 
-        TransformingPluginFinder pluginFinder = new TransformingPluginFinder(root.resolve("transformers"));
+        TransformingPluginFinder pluginFinder = HeadlessMcWrapper.getPluginFinderFactory().apply(root.resolve("transformers"));
         try (TransformingClassloader classloader = pluginFinder.build(jarPath, root.resolve("plugins"))) {
             HeadlessMcWrapper.setClassLoader(classloader);
             Thread.currentThread().setContextClassLoader(classloader);
