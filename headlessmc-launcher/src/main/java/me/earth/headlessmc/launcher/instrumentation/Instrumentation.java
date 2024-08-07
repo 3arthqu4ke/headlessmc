@@ -82,8 +82,8 @@ public class Instrumentation {
 
             for (Transformer transformer : transformers) {
                 val stream2 = transformer.transform(stream);
-                if (stream2 != stream) {
-                    stream.close();
+                if (stream2.getStream() != stream.getStream()) {
+                    stream.getStream().close();
                 }
 
                 stream = stream2;
@@ -91,7 +91,7 @@ public class Instrumentation {
 
             if (!stream.isSkipped()) {
                 jos.putNextEntry(new JarEntry(next.getName()));
-                IOUtil.copy(stream, jos);
+                IOUtil.copy(stream.getStream(), jos);
                 jos.flush();
                 jos.closeEntry();
             }

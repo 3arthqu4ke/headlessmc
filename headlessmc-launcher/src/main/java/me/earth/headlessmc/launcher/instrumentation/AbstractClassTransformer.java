@@ -17,7 +17,7 @@ public abstract class AbstractClassTransformer extends AbstractTransformer {
     public EntryStream transform(EntryStream stream) throws IOException {
         if (matches(stream)) {
             log.debug("Reading " + stream.getEntry().getName());
-            ClassReader reader = new ClassReader(stream);
+            ClassReader reader = new ClassReader(stream.getStream());
             ClassNode node = new ClassNode();
             reader.accept(node, 0); // TODO: do we want parserOptions?
             this.transform(node);
