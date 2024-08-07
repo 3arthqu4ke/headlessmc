@@ -42,3 +42,4 @@ run
 /.mixin.out/
 /headlessmc-runtime/HeadlessMC/
 /headlessmc-launcher-wrapper/logs/
+/headlessmc-logging/HeadlessMC/

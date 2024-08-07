@@ -22,12 +22,10 @@ public class TransformingPluginFinder extends PluginFinder {
         List<TransformerPlugin> plugins = new ArrayList<>();
         ServiceLoader.load(TransformerPlugin.class, transformerClassloader).forEach(plugins::add);
         ServiceLoader.load(TransformerPlugin.class).forEach(plugins::add);
-        System.out.println(plugins);
         Collections.sort(plugins);
 
         List<URL> classpath = find(pluginsDirectory);
         classpath.add(launcherJar.toUri().toURL());
-        System.out.println(classpath);
         return newTransformingClassloader(classpath.toArray(new URL[0]), getClass().getClassLoader(), transformerClassloader, plugins);
     }
 

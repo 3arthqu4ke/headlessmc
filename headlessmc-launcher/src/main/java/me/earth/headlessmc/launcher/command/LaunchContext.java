@@ -27,6 +27,7 @@ public class LaunchContext extends CommandContextImpl {
         add(new DownloadCommand(ctx));
         add(new SpecificsCommand(ctx));
         add(new OfflineCommand(ctx));
+        add(new PluginsCommand(ctx));
         add(new MultiCommand(ctx));
     }
 

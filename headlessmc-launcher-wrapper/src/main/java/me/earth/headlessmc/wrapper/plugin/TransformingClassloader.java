@@ -37,7 +37,6 @@ public class TransformingClassloader extends URLClassLoader {
             byte[] classBytes = toByteArray(is);
             classBytes = instrument(name, classBytes);
             Path savePath = Paths.get("build").resolve("transformation").resolve(path);
-            //System.out.println(savePath.toAbsolutePath());
             Files.createDirectories(savePath.getParent().toAbsolutePath());
             try (OutputStream fos = Files.newOutputStream(savePath.toAbsolutePath())) {
                 fos.write(classBytes);

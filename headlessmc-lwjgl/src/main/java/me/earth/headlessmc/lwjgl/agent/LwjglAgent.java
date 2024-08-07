@@ -1,5 +1,6 @@
 package me.earth.headlessmc.lwjgl.agent;
 
+import lombok.Generated;
 import me.earth.headlessmc.lwjgl.api.Transformer;
 import me.earth.headlessmc.lwjgl.transformer.AsmUtil;
 import me.earth.headlessmc.lwjgl.transformer.LwjglTransformer;
@@ -14,6 +15,7 @@ import java.security.ProtectionDomain;
 /**
  * A JavaAgent calling the {@link LwjglTransformer}.
  */
+@Generated // exclude from Jacoco TestCoverage, we cannot get coverage for a javaagent
 public class LwjglAgent implements ClassFileTransformer {
     private final Transformer transformer = new LwjglTransformer();
 

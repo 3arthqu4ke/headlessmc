@@ -23,6 +23,8 @@ public class LaunchTest {
 
         is.add("help");
 
+        is.add("plugins");
+
         is.add("versions");
 
         is.add("download 1.12.2");
@@ -74,7 +76,6 @@ public class LaunchTest {
         is.add("offline true");
 
         is.add(ps -> {
-            System.out.println(launcher.getVersionService().stream().map(HasName::getName).collect(Collectors.toList()));
             Optional<Version> version = launcher
                 .getVersionService()
                 .stream()
@@ -118,7 +119,7 @@ public class LaunchTest {
         is.add(PrintStream::flush);
 
         is.add(ps -> returnedFromLaunching.set(true));
-        is.add(ps -> System.setSecurityManager(null));
+        is.add(ps -> ExitTrap.remove());
     }
 
 }

@@ -20,6 +20,7 @@ import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.version.VersionService;
+import me.earth.headlessmc.logging.LoggingService;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 
 import java.util.ArrayList;
@@ -34,7 +35,8 @@ public class LauncherMock {
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
         val in = new CommandLineImpl();
-        val hmc = new HeadlessMcImpl(configs, in, new ExitManager(), new InAndOutProvider());
+        LoggingService loggingService = new LoggingService();
+        val hmc = new HeadlessMcImpl(configs, in, new ExitManager(), loggingService, new InAndOutProvider());
 
         val os = new OS("windows", OS.Type.WINDOWS, "11", true);
         val mcFiles = base.createRelative("mcFiles");

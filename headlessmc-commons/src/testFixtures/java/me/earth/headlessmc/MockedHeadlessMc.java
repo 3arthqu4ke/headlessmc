@@ -9,6 +9,7 @@ import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.command.CommandContextImpl;
 import me.earth.headlessmc.config.ConfigImpl;
+import me.earth.headlessmc.logging.LoggingService;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ public class MockedHeadlessMc implements HeadlessMc {
     private CommandContext commandContext = new CommandContextImpl(this);
     private MockedExitManager exitManager = new MockedExitManager();
     private InAndOutProvider inAndOutProvider = new InAndOutProvider();
+    private LoggingService loggingService = new LoggingService();
     private Config config = ConfigImpl.empty();
     private boolean hidingPasswords = false;
     private boolean waitingForInput = false;

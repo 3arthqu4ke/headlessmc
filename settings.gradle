@@ -1,7 +1,9 @@
 rootProject.name = 'headlessmc'
 include 'headlessmc-api'
+include 'headlessmc-logging'
 include 'headlessmc-modlauncher'
 include 'headlessmc-commons'
+
 include 'headlessmc-auth'
 include 'headlessmc-runtime'
 include 'headlessmc-lwjgl'

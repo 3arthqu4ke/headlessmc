@@ -1,12 +1,11 @@
 package me.earth.headlessmc.launcher.plugin;
 
 import me.earth.headlessmc.api.HasName;
+import me.earth.headlessmc.api.command.HasDescription;
 import me.earth.headlessmc.launcher.Launcher;
 import org.jetbrains.annotations.NotNull;
 
-public interface HeadlessMcPlugin extends HasName, Comparable<HeadlessMcPlugin> {
-    String getName();
-
+public interface HeadlessMcPlugin extends HasName, HasDescription, Comparable<HeadlessMcPlugin> {
     int getPriority();
 
     void init(Launcher launcher);

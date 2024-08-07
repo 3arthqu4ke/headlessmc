@@ -54,4 +54,9 @@ public class TestPlugin implements HeadlessMcPlugin {
         LaunchTest.build(launcher.getJavaService().getCurrent(), launcher, in);
     }
 
+    @Override
+    public String getDescription() {
+        return "A test plugin.";
+    }
+
 }

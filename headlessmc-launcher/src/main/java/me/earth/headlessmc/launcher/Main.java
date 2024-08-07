@@ -8,7 +8,6 @@ import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.command.line.CommandLineImpl;
-import me.earth.headlessmc.config.HmcProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.*;
@@ -21,8 +20,7 @@ import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.launcher.version.VersionUtil;
-import me.earth.headlessmc.logging.LogLevelUtil;
-import me.earth.headlessmc.logging.LoggingHandler;
+import me.earth.headlessmc.logging.LoggingService;
 
 import java.io.IOException;
 
@@ -67,8 +65,9 @@ public final class Main {
         }
     }
 
-    private void runHeadlessMc(ExitManager exitManager, String... args) throws IOException, AuthException {
-        LoggingHandler.apply();
+    private void runHeadlessMc(ExitManager exitManager, String... args) throws AuthException {
+        LoggingService loggingService = new LoggingService();
+        loggingService.init();
         AbstractLoginCommand.replaceLogger();
 
         if (Main.class.getClassLoader() == ClassLoader.getSystemClassLoader()) {
@@ -80,11 +79,8 @@ public final class Main {
         AutoConfiguration.runAutoConfiguration(files);
 
         val configs = Service.refresh(new ConfigService(files));
-        LogLevelUtil.trySetLevel(
-            configs.getConfig().get(HmcProperties.LOGLEVEL, "INFO"));
-
         val in = new CommandLineImpl();
-        val hmc = new HeadlessMcImpl(configs, in, exitManager, new InAndOutProvider());
+        val hmc = new HeadlessMcImpl(configs, in, exitManager, loggingService, new InAndOutProvider());
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);

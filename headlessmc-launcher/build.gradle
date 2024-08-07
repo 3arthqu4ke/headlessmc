@@ -19,6 +19,7 @@ configurations {
 
 dependencies {
     jarLibsApi project(':headlessmc-api')
+    jarLibsApi project(':headlessmc-logging')
     jarLibsApi project(':headlessmc-commons')
     jarLibsApi project(':headlessmc-lwjgl')
     jarLibsApi project(':headlessmc-auth')

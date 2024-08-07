@@ -10,8 +10,8 @@ import java.util.function.Supplier;
 @Getter
 @Setter
 public class InAndOutProvider {
-    private Supplier<PrintStream> out = new Lazy<>(() -> new PrintStream(new FileOutputStream(FileDescriptor.out)), null);
-    private Supplier<PrintStream> err = new Lazy<>(() -> new PrintStream(new FileOutputStream(FileDescriptor.err)), null);
+    private Supplier<PrintStream> out = new Lazy<>(() -> new PrintStream(new FileOutputStream(FileDescriptor.out), true), null);
+    private Supplier<PrintStream> err = new Lazy<>(() -> new PrintStream(new FileOutputStream(FileDescriptor.err), true), null);
     private Supplier<InputStream> in = new Lazy<>(() -> new FileInputStream(FileDescriptor.in), null);
 
 }

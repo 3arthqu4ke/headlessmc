@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.security.Permission;
 
 @CustomLog
+@SuppressWarnings({"removal", "RedundantSuppression"})
 public class ExitTrap {
     @Getter
     @RequiredArgsConstructor
@@ -31,6 +32,10 @@ public class ExitTrap {
         };
 
         System.setSecurityManager(securityManager);
+    }
+
+    public static void remove() {
+        System.setSecurityManager(null);
     }
 
 }

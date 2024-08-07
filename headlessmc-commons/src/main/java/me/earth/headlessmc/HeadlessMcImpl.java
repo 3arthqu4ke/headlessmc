@@ -10,6 +10,7 @@ import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.process.InAndOutProvider;
+import me.earth.headlessmc.logging.LoggingService;
 
 @RequiredArgsConstructor
 public class HeadlessMcImpl implements HeadlessMc {
@@ -19,6 +20,8 @@ public class HeadlessMcImpl implements HeadlessMc {
     private final PasswordAware passwordAware;
     @Getter
     private final ExitManager exitManager;
+    @Getter
+    private final LoggingService loggingService;
     @Getter
     private final InAndOutProvider inAndOutProvider;
     @Getter

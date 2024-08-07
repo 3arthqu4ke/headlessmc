@@ -202,6 +202,16 @@ allprojects {
     publish {
         dependsOn(build)
     }
+
+    tasks.withType(Test).tap {
+        configureEach {
+            jacoco {
+                // our classloader potentially includes no ProtectionDomains?
+                includeNoLocationClasses true
+                jacoco.excludes = ['jdk.internal.*', 'me.earth.headlessmc.lwjgl.agent.*']
+            }
+        }
+    }
 }
 
 dependencies {
@@ -257,6 +267,7 @@ tasks.withType(JacocoReport) {
                 '**/headlessmc/headlessmc-runtime.jar',
                 '**/headlessmc/headlessmc-lwjgl.jar',
                 '**/headlessmc/forge-cli.jar',
+                'me/earth/headlessmc/lwjgl/agent/**',
             ])
         }))
     }

@@ -2,6 +2,8 @@ package me.earth.headlessmc.logging;
 
 import lombok.experimental.UtilityClass;
 
+import java.util.logging.Level;
+
 /**
  * Custom LoggerFactory for {@link lombok.CustomLog}. Created because {@link
  * Class#getSimpleName()} is cooler.
@@ -16,7 +18,9 @@ public class LoggerFactory {
     }
 
     public static Logger getLogger(String name) {
-        return new Logger(java.util.logging.Logger.getLogger(name));
+        Logger logger = new Logger(java.util.logging.Logger.getLogger(name));
+        logger.setLevel(Level.ALL); // level is handled via handler
+        return logger;
     }
 
 }

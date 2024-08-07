@@ -28,7 +28,6 @@ public class LibraryFactoryTest
     @Test
     public void testLibWithNatives() {
         val libs = parse(getJsonObject("lib_natives.json"));
-        System.out.println(libs);
         assertEquals(2, libs.size());
         assertFalse(libs.get(0).isNativeLibrary());
         assertTrue(libs.get(1).isNativeLibrary());

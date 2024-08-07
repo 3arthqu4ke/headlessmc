@@ -5,7 +5,6 @@ import lombok.experimental.Delegate;
 
 import java.util.logging.Level;
 
-// TODO: move in separate module!
 @RequiredArgsConstructor
 public class Logger {
     @Delegate
