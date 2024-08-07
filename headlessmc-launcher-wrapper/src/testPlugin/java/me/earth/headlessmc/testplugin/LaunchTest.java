@@ -101,7 +101,7 @@ public class LaunchTest {
                         System.exit(-1);
                     }
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new IllegalStateException(e);
                 }
             });
 

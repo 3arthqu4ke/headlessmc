@@ -68,10 +68,10 @@ public class LoggingServiceTest {
     public void testSetLevel() {
         assertTrue(loggingService.setLevel("INFO"));
         Logger rootLogger = Logger.getLogger("");
-        assertEquals(Level.INFO, Arrays.stream(rootLogger.getHandlers()).filter(h -> h instanceof HmcStreamHandler).findFirst().get().getLevel());
+        assertEquals(INFO, Arrays.stream(rootLogger.getHandlers()).filter(h -> h instanceof HmcStreamHandler).findFirst().get().getLevel());
 
         assertTrue(loggingService.setLevel("DEBUG"));
-        assertEquals(Level.FINE, Arrays.stream(rootLogger.getHandlers()).filter(h -> h instanceof HmcStreamHandler).findFirst().get().getLevel());
+        assertEquals(FINE, Arrays.stream(rootLogger.getHandlers()).filter(h -> h instanceof HmcStreamHandler).findFirst().get().getLevel());
 
         assertTrue(loggingService.setLevel("ERROR"));
         assertEquals(SEVERE, Arrays.stream(rootLogger.getHandlers()).filter(h -> h instanceof HmcStreamHandler).findFirst().get().getLevel());
@@ -109,7 +109,7 @@ public class LoggingServiceTest {
     public void testLogOutput() {
         Logger logger = Logger.getLogger(LoggingServiceTest.class.getName());
         loggingService.setLevel(ALL);
-        logger.log(Level.INFO, "Test Message", new Exception("Stacktrace"));
+        logger.log(INFO, "Test Message", new Exception("Stacktrace"));
 
         String loggedOutput = outContent.toString();
         assertTrue(loggedOutput.contains("Test Message"));
@@ -126,8 +126,8 @@ public class LoggingServiceTest {
         assertTrue(loggedOutput.contains(FileAlreadyExistsException.class.getName()));
 
         me.earth.headlessmc.logging.Logger hmcLogger = new me.earth.headlessmc.logging.Logger(logger);
-        loggingService.setLevel(Level.FINE);
-        logger.setLevel(Level.FINE);
+        loggingService.setLevel(FINE);
+        logger.setLevel(FINE);
         hmcLogger.debug("message1", new Exception("Stacktrace1"));
         hmcLogger.info(new Exception("Stacktrace2"));
         hmcLogger.error(new Exception("Stacktrace3"));
@@ -168,7 +168,7 @@ public class LoggingServiceTest {
     @Test
     public void testFormatter() {
         ThreadFormatter formatter = new ThreadFormatter();
-        LogRecord record = new LogRecord(Level.INFO, "This is a formatted message");
+        LogRecord record = new LogRecord(INFO, "This is a formatted message");
         record.setThreadID((int) Thread.currentThread().getId());
         record.setLoggerName("TestLogger");
 

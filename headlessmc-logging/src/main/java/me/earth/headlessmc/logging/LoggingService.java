@@ -71,9 +71,9 @@ public class LoggingService {
 
         try {
             if (fileHandler) {
-                setFileHandlerLogLevel(Level.parse(level));
+                setFileHandlerLogLevel(parse(level));
             } else {
-                setLevel(Level.parse(level));
+                setLevel(parse(level));
             }
 
             return true;
@@ -92,20 +92,20 @@ public class LoggingService {
     }
 
     public void addLoggingHandler() {
-        java.util.logging.Logger.getLogger("").addHandler(new HmcStreamHandler(streamFactory.get()));
+        Logger.getLogger("").addHandler(new HmcStreamHandler(streamFactory.get()));
     }
 
     public void addFileHandler(Path path) {
         try {
             Files.createDirectories(path.getParent());
-            java.util.logging.Logger.getLogger("").addHandler(new HmcFileHandler(path));
+            Logger.getLogger("").addHandler(new HmcFileHandler(path));
         } catch (IOException e) {
             log.error("Failed to create directories for path " + path, e);
         }
     }
 
     private Handler[] getRootHandlers() {
-        return java.util.logging.Logger.getLogger("").getHandlers();
+        return Logger.getLogger("").getHandlers();
     }
 
     public @Unmodifiable Iterable<Level> getLevels() {
