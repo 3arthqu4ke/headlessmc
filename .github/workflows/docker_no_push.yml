@@ -25,5 +25,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
-          path: ./headlessmc-scripts/hmc.bat
+          path: /headlessmc-scripts/hmc.bat
           
