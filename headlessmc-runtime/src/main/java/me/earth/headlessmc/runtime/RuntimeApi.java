@@ -24,7 +24,7 @@ public class RuntimeApi {
     public static Runtime init(Config config, Thread mT, CommandLineManager input) {
         LoggingService loggingService = new LoggingService();
         loggingService.init();
-        val hmc = new HeadlessMcImpl(() -> config, input, new ExitManager(), loggingService, new InAndOutProvider());
+        val hmc = new HeadlessMcImpl(() -> config, input, new ExitManager(), loggingService);
         val vm = new VM(config.get(RuntimeProperties.VM_SIZE, 128L).intValue());
         runtime = new Runtime(hmc, vm, mT);
         runtime.getCommandLineManager().setCommandContext(new RuntimeContext(runtime));

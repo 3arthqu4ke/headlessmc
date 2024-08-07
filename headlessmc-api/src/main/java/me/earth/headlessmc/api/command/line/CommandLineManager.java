@@ -1,5 +1,6 @@
 package me.earth.headlessmc.api.command.line;
 
+import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
 import me.earth.headlessmc.api.HeadlessMc;
@@ -15,6 +16,7 @@ import java.util.function.Supplier;
 
 @Getter
 @Setter
+@CustomLog
 public class CommandLineManager implements PasswordAware, QuickExitCli, HasCommandContext, CommandLine {
     private final InAndOutProvider inAndOutProvider = new InAndOutProvider();
     private volatile Supplier<CommandLine> commandLineProvider = new DefaultCommandLineProvider(inAndOutProvider);
@@ -40,7 +42,7 @@ public class CommandLineManager implements PasswordAware, QuickExitCli, HasComma
 
         @Override
         public void execute(String command) {
-
+            log.warn("Did you forge to set the CommandContext? EmptyCommandContext: " + command);
         }
 
         @NotNull

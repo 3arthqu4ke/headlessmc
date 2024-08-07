@@ -6,7 +6,6 @@ import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.line.CommandLineManager;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
@@ -79,7 +78,7 @@ public final class Main {
         AutoConfiguration.runAutoConfiguration(files);
 
         val configs = Service.refresh(new ConfigService(files));
-        val hmc = new HeadlessMcImpl(configs, new CommandLineManager(), exitManager, loggingService, new InAndOutProvider());
+        val hmc = new HeadlessMcImpl(configs, new CommandLineManager(), exitManager, loggingService);
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
@@ -102,7 +101,7 @@ public final class Main {
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
         versions.refresh();
-        hmc.setCommandContext(new LaunchContext(launcher));
+        hmc.getCommandLineManager().setCommandContext(new LaunchContext(launcher));
 
         launcher.getPluginManager().init(launcher);
         if (!QuickExitCliHandler.checkQuickExit(launcher, args)) {

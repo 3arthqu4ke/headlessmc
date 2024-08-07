@@ -38,7 +38,7 @@ public class LoggingService {
         clearOtherHandlers();
         addLoggingHandler();
         addFileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log"));
-        setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "SEVERE"), false);
+        setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "WARNING"), false);
         setLevelFromString(System.getProperty(LoggingProperties.FILE_LOG_LEVEL, "DEBUG"), true);
     }
 
