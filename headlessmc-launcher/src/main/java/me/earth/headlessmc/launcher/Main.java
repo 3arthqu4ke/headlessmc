@@ -7,6 +7,8 @@ import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.line.CommandLineManager;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
+import me.earth.headlessmc.jline.JLineCommandLine;
+import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.*;
@@ -102,6 +104,9 @@ public final class Main {
         deleteOldFiles(launcher);
         versions.refresh();
         hmc.getCommandLineManager().setCommandContext(new LaunchContext(launcher));
+        if (hmc.getConfig().get(JLineProperties.ENABLED, true)) {
+            hmc.getCommandLineManager().setCommandLineProvider(JLineCommandLine::new);
+        }
 
         launcher.getPluginManager().init(launcher);
         if (!QuickExitCliHandler.checkQuickExit(launcher, args)) {
