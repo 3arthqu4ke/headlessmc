@@ -6,15 +6,12 @@ import me.earth.headlessmc.wrapper.plugin.TransformerPlugin;
 public class TestTransformerPlugin implements TransformerPlugin {
     @Override
     public Transformer getTransformer() {
-        return new Transformer() {
-            @Override
-            public byte[] transform(String className, byte[] bytes) {
-                if (className.endsWith("DummyClassThatCantBeLoaded")) {
-                    throw new IllegalStateException("DummyClassThatCantBeLoaded cant be loaded!");
-                }
-
-                return bytes;
+        return (className, bytes) -> {
+            if (className.endsWith("DummyClassThatCantBeLoaded")) {
+                throw new IllegalStateException("DummyClassThatCantBeLoaded cant be loaded!");
             }
+
+            return bytes;
         };
     }
 

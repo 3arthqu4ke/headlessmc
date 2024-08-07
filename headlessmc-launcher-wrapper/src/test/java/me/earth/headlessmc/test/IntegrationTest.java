@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,11 +17,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Log
 public class IntegrationTest {
@@ -60,7 +58,10 @@ public class IntegrationTest {
     }
 
     @Test
-    public void runIntegrationTestInMemory() throws Exception {
+    public void runIntegrationTestInMemory() throws Exception {// set the property in gradle.properties
+        assertNotNull(System.getProperty("hmc.integration.test.enabled"));
+        Assumptions.assumeTrue(Boolean.parseBoolean(System.getProperty("hmc.integration.test.enabled")));
+
         prepareTest();
         System.setProperty("integrationTestRunInMemory", "true");
         Main.main(new String[0]);

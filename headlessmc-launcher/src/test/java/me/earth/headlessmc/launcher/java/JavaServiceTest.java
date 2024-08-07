@@ -15,6 +15,7 @@ public class JavaServiceTest {
     public void testFindBestVersion() {
         javaService.clear();
         assertNull(javaService.findBestVersion(17));
+        assertNull(javaService.findBestVersion(null));
 
         javaService.add(new Java("8", 8));
         javaService.add(new Java("17", 17));
@@ -27,6 +28,8 @@ public class JavaServiceTest {
         assertEquals(8, Objects.requireNonNull(javaService.findBestVersion(7)).getVersion());
         assertEquals(17, Objects.requireNonNull(javaService.findBestVersion(9)).getVersion());
         assertEquals(21, Objects.requireNonNull(javaService.findBestVersion(19)).getVersion());
+
+        assertEquals(8, Objects.requireNonNull(javaService.findBestVersion(null)).getVersion());
 
         assertNull(javaService.findBestVersion(23));
     }
