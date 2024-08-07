@@ -32,16 +32,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
-          path: ./build/libs/headlessmc-*.jar
+          path: /build/libs/headlessmc-*.jar
           
       - name: Publish shell script
         uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
-          path: ./headlessmc-scripts/hmc
+          path: /headlessmc-scripts/hmc
           
       - name: Publish bat script
         uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
-          path: ./headlessmc-scripts/hmc.bat
+          path: /headlessmc-scripts/hmc.bat
