@@ -2,7 +2,7 @@ package me.earth.headlessmc.launcher.version;
 
 import lombok.experimental.UtilityClass;
 import me.earth.headlessmc.api.HasName;
-import me.earth.headlessmc.util.Table;
+import me.earth.headlessmc.api.util.Table;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

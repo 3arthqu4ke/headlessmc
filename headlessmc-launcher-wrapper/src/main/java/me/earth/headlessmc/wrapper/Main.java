@@ -1,11 +1,12 @@
 package me.earth.headlessmc.wrapper;
 
+import me.earth.headlessmc.wrapper.plugin.TransformingClassloader;
+import me.earth.headlessmc.wrapper.plugin.TransformingPluginFinder;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,13 +24,12 @@ public class Main {
             copy(Objects.requireNonNull(is, "Failed to find resource headlessmc/headlessmc-launcher.jar"), fos);
         }
 
-        try (URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { jarPath.toUri().toURL() })) {
-            // TODO: plugin system, core "mods" directory, first URLClassLoader loads jars in that directory,
-            //  second URLClassLoader then uses the Transformers loaded from there and loads HeadlessMC + plugins in plugins directory
-            HeadlessMcWrapper.setClassLoader(urlClassLoader);
-            Thread.currentThread().setContextClassLoader(urlClassLoader);
+        TransformingPluginFinder pluginFinder = HeadlessMcWrapper.getPluginFinderFactory().apply(root.resolve("transformers"));
+        try (TransformingClassloader classloader = pluginFinder.build(jarPath, root.resolve("plugins"))) {
+            HeadlessMcWrapper.setClassLoader(classloader);
+            Thread.currentThread().setContextClassLoader(classloader);
 
-            Class<?> mainClass = Class.forName("me.earth.headlessmc.launcher.Main", true, urlClassLoader);
+            Class<?> mainClass = Class.forName("me.earth.headlessmc.launcher.Main", true, classloader);
             Method main = mainClass.getMethod("main", String[].class);
             main.invoke(null, (Object) args);
         }

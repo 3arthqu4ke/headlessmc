@@ -4,7 +4,7 @@ import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.config.Property;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
@@ -66,7 +66,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             }
 
             if (quit || process == null) {
-                System.exit(0);
+                ctx.getExitManager().exit(0);
                 return;
             }
 
@@ -108,7 +108,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             }
 
             if (!CommandUtil.hasFlag("-stay", args)) {
-                System.exit(status);
+                ctx.getExitManager().exit(status);
             }
         }
     }

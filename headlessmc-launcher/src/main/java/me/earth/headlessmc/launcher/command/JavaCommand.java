@@ -1,10 +1,10 @@
 package me.earth.headlessmc.launcher.command;
 
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.java.Java;
-import me.earth.headlessmc.util.Table;
+import me.earth.headlessmc.api.util.Table;
 
 public class JavaCommand extends AbstractLauncherCommand {
     public JavaCommand(Launcher launcher) {

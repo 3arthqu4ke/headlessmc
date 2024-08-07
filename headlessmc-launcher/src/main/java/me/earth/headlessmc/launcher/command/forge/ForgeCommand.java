@@ -3,12 +3,12 @@ package me.earth.headlessmc.launcher.command.forge;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractVersionCommand;
 import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.version.Version;
-import me.earth.headlessmc.util.Table;
+import me.earth.headlessmc.api.util.Table;
 
 import java.io.IOException;
 import java.util.UUID;

@@ -7,7 +7,7 @@ import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
-import me.earth.headlessmc.util.Table;
+import me.earth.headlessmc.api.util.Table;
 
 import java.util.ArrayList;
 import java.util.List;

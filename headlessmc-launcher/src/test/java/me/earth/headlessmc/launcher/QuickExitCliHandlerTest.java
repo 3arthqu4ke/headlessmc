@@ -2,7 +2,7 @@ package me.earth.headlessmc.launcher;
 
 import lombok.val;
 import me.earth.headlessmc.api.QuickExitCli;
-import me.earth.headlessmc.command.line.Listener;
+import me.earth.headlessmc.api.command.line.Listener;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOError;

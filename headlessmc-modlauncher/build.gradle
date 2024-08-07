@@ -6,5 +6,6 @@ sourceSets {
 }
 
 dependencies {
-    jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+    implementation group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+    // implementation project(':headlessmc-logging') TODO: add logging for wrapper and modlauncher?
 }

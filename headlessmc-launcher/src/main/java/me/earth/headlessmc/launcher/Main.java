@@ -3,25 +3,24 @@ package me.earth.headlessmc.launcher;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.api.HeadlessMcImpl;
+import me.earth.headlessmc.api.exit.ExitManager;
+import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
-import me.earth.headlessmc.command.line.CommandLineImpl;
-import me.earth.headlessmc.config.HmcProperties;
+import me.earth.headlessmc.api.command.line.CommandLineImpl;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
+import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
-import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.launcher.version.VersionUtil;
-import me.earth.headlessmc.logging.LogLevelUtil;
-import me.earth.headlessmc.logging.LoggingHandler;
-import me.earth.headlessmc.logging.SimpleLog;
+import me.earth.headlessmc.logging.LoggingService;
 
 import java.io.IOException;
 
@@ -29,12 +28,14 @@ import java.io.IOException;
 @UtilityClass
 public final class Main {
     public static void main(String[] args) {
+        ExitManager exitManager = new ExitManager();
         Throwable throwable = null;
         try {
-            runHeadlessMc(args);
+            runHeadlessMc(exitManager, args);
         } catch (Throwable t) {
             throwable = t;
         } finally {
+            exitManager.onMainThreadEnd(throwable);
             /*
             These "System.exit()" calls are here because of the LoginCommands
             -webview option. It seems that after closing the JFrame there is
@@ -48,10 +49,10 @@ public final class Main {
              */
             try {
                 if (throwable == null) {
-                    System.exit(0);
+                    exitManager.exit(0);
                 } else {
                     log.error(throwable);
-                    System.exit(-1);
+                    exitManager.exit(-1);
                 }
             } catch (Throwable exitThrowable) {
                 // it is possible, if we launch in memory, that forge prevents us from calling System.exit through their SecurityManager
@@ -64,8 +65,9 @@ public final class Main {
         }
     }
 
-    private void runHeadlessMc(String... args) throws IOException, AuthException {
-        LoggingHandler.apply();
+    private void runHeadlessMc(ExitManager exitManager, String... args) throws AuthException {
+        LoggingService loggingService = new LoggingService();
+        loggingService.init();
         AbstractLoginCommand.replaceLogger();
 
         if (Main.class.getClassLoader() == ClassLoader.getSystemClassLoader()) {
@@ -77,14 +79,12 @@ public final class Main {
         AutoConfiguration.runAutoConfiguration(files);
 
         val configs = Service.refresh(new ConfigService(files));
-        LogLevelUtil.trySetLevel(
-            configs.getConfig().get(HmcProperties.LOGLEVEL, "INFO"));
-
         val in = new CommandLineImpl();
-        val hmc = new HeadlessMcImpl(new SimpleLog(), configs, in);
+        val hmc = new HeadlessMcImpl(configs, in, exitManager, loggingService, new InAndOutProvider());
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
+        val gameDir = FileManager.mkdir(configs.getConfig().get(LauncherProperties.GAME_DIR, mcFiles.getPath()));
         val versions = Service.refresh(new VersionService(mcFiles));
         val javas = Service.refresh(new JavaService(configs));
 
@@ -96,15 +96,16 @@ public final class Main {
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
 
-        val launcher = new Launcher(hmc, versions, mcFiles, files,
+        val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
                                     new ProcessFactory(mcFiles, configs, os), configs,
-                                    javas, accounts, versionSpecificModManager);
+                                    javas, accounts, versionSpecificModManager, new PluginManager());
 
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
         versions.refresh();
         hmc.setCommandContext(new LaunchContext(launcher));
 
+        launcher.getPluginManager().init(launcher);
         if (!QuickExitCliHandler.checkQuickExit(launcher, in, args)) {
             log.info(String.format("Detected: %s", os));
             log.info(String.format("Minecraft Dir: %s", mcFiles.getBase()));

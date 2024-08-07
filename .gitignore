@@ -25,6 +25,8 @@ run
 /HeadlessMC/
 /headlessmc-launcher/HeadlessMC/
 /headlessmc-launcher-jfx/HeadlessMC/
+/headlessmc-launcher-wrapper/HeadlessMC/
+/headlessmc-test/HeadlessMC/
 
 # Created by some launcher tests
 /headlessmc-launcher/test/
@@ -38,3 +40,6 @@ run
 /headlessmc-launcher/libs/
 /fabricloader.log
 /.mixin.out/
+/headlessmc-runtime/HeadlessMC/
+/headlessmc-launcher-wrapper/logs/
+/headlessmc-logging/HeadlessMC/

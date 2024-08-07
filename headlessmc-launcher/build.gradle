@@ -19,7 +19,7 @@ configurations {
 
 dependencies {
     jarLibsApi project(':headlessmc-api')
-    jarLibsApi project(':headlessmc-commons')
+    jarLibsApi project(':headlessmc-logging')
     jarLibsApi project(':headlessmc-lwjgl')
     jarLibsApi project(':headlessmc-auth')
     jarLibsApi group: 'com.github.RaphiMC', name: 'MinecraftAuth', version: '64d75d4110630e32e9eeddebdb84aa10179e94a3'
@@ -33,9 +33,9 @@ dependencies {
         transitive false
     }
 
-    testImplementation(testFixtures(project(':headlessmc-commons')))
-    testImplementation 'org.apache.logging.log4j:log4j-api:2.22.0'
-    testImplementation 'org.apache.logging.log4j:log4j-core:2.22.0'
+    testImplementation(testFixtures(project(':headlessmc-api')))
+    testImplementation 'org.apache.logging.log4j:log4j-api:2.23.1'
+    testImplementation 'org.apache.logging.log4j:log4j-core:2.23.1'
 }
 
 processResources {

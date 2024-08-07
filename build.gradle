@@ -202,16 +202,28 @@ allprojects {
     publish {
         dependsOn(build)
     }
+
+    tasks.withType(Test).tap {
+        configureEach {
+            jacoco {
+                // our classloader potentially includes no ProtectionDomains?
+                includeNoLocationClasses true
+                jacoco.excludes = ['jdk.internal.*', 'me.earth.headlessmc.lwjgl.agent.*']
+            }
+        }
+    }
 }
 
 dependencies {
     // create maven publication that contains all modules
     api project(':headlessmc-api')
-    api project(':headlessmc-commons')
+    api project(':headlessmc-auth')
+    api project(':headlessmc-logging')
     api project(':headlessmc-launcher')
+    api project(':headlessmc-launcher-wrapper')
+    api project(':headlessmc-modlauncher')
     api project(':headlessmc-lwjgl')
     api project(':headlessmc-runtime')
-    api project(':headlessmc-auth')
 }
 
 tasks.register('jacocoRootReport', JacocoReport) {
@@ -257,6 +269,7 @@ tasks.withType(JacocoReport) {
                 '**/headlessmc/headlessmc-runtime.jar',
                 '**/headlessmc/headlessmc-lwjgl.jar',
                 '**/headlessmc/forge-cli.jar',
+                'me/earth/headlessmc/lwjgl/agent/**',
             ])
         }))
     }

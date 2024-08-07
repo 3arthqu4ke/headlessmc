@@ -1,6 +1,6 @@
 package me.earth.headlessmc.lwjgl.transformer;
 
-import me.earth.headlessmc.util.AbstractUtilityTest;
+import me.earth.headlessmc.api.util.AbstractUtilityTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Type;

@@ -3,8 +3,8 @@ package me.earth.headlessmc.launcher.command;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.CommandUtil;
-import me.earth.headlessmc.command.ParseUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.files.FileUtil;
@@ -117,8 +117,7 @@ public class FabricCommand extends AbstractVersionCommand {
         }
     }
 
-    protected List<String> getCommand(Version version, Java java, File jar,
-                                      List<String> jvm) {
+    protected List<String> getCommand(Version version, Java java, File jar, List<String> jvm) {
         val command = new ArrayList<String>();
         command.add(java.getExecutable());
         command.addAll(jvm);
@@ -128,6 +127,8 @@ public class FabricCommand extends AbstractVersionCommand {
         command.add("-noprofile");
         command.add("-mcversion");
         command.add(version.getName());
+        command.add("-dir");
+        command.add(ctx.getMcFiles().getBase().toPath().toAbsolutePath().toString());
         return command;
     }
 

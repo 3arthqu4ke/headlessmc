@@ -9,7 +9,7 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.util.IOUtil;
-import me.earth.headlessmc.util.ResourceUtil;
+import me.earth.headlessmc.api.util.ResourceUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

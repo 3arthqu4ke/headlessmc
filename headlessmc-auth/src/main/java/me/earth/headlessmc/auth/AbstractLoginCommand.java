@@ -3,8 +3,8 @@ package me.earth.headlessmc.auth;
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.AbstractCommand;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandUtil;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
 import net.raphimc.minecraftauth.step.AbstractStep;
@@ -196,8 +196,12 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
                 } catch (InterruptedException e) {
                     ctx.log("Login process cancelled successfully.");
                 } catch (Exception e) {
-                    ctx.log("Failed to login with device code: " + e.getMessage());
-                    log.info(e);
+                    if (e.getCause() instanceof InterruptedException) {
+                        ctx.log("Login process cancelled successfully.");
+                    } else {
+                        ctx.log("Failed to login with device code: " + e.getMessage());
+                        log.info(e);
+                    }
                 } finally {
                     synchronized (threads) {
                         threads.remove(this);

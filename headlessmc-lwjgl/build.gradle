@@ -46,11 +46,11 @@ dependencies {
     jarLibsApi group: 'org.ow2.asm', name: 'asm', version: '9.7'
     jarLibsApi group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
 
-    testImplementation(testFixtures(project(':headlessmc-commons')))
+    testImplementation(testFixtures(project(':headlessmc-api')))
     // Only for the LaunchWrapperTest, which is skipped on Java > 8
     if (JavaVersion.current() <= JavaVersion.VERSION_1_8) {
-        testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.22.0'
-        testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.22.0'
+        testRuntimeOnly 'org.apache.logging.log4j:log4j-api:2.23.1'
+        testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.23.1'
     }
 }
 

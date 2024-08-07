@@ -1,6 +1,6 @@
 package me.earth.headlessmc.runtime.commands;
 
-import me.earth.headlessmc.command.AbstractCommand;
+import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.runtime.Runtime;
 
 public abstract class AbstractRuntimeCommand extends AbstractCommand {

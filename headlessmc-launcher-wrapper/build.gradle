@@ -2,6 +2,10 @@ plugins {
     id 'application'
 }
 
+sourceSets {
+    testPlugin
+}
+
 def MAIN_CLASS = 'me.earth.headlessmc.wrapper.Main'
 application {
     mainClass = MAIN_CLASS
@@ -14,6 +18,13 @@ run {
 dependencies {
     jarLibs project(':headlessmc-modlauncher')
     jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+    // jarLibs project(':headlessmc-logging') TODO: add logging for wrapper and modlauncher?!
+
+    testPluginCompileOnly project(':headlessmc-launcher')
+    testPluginImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
+
+    testPluginCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testPluginAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
 processResources {
@@ -55,6 +66,8 @@ shadowJar {
     include 'me/earth/headlessmc/wrapper/**/*'
     include 'me/earth/headlessmc/modlauncher/**'
     include 'me/earth/headlessmc/modlauncher/**/*'
+    include 'me/earth/headlessmc/logging/**'
+    include 'me/earth/headlessmc/logging/**/*'
     // include "headlessmc/headlessmc-launcher.jar" TODO: idk why this does not work?
     include '**/headlessmc-launcher*.jar'
     include 'META-INF/MANIFEST.MF'
@@ -68,11 +81,44 @@ tasks.withType(JacocoReport) {
                     '**/headlessmc/headlessmc-runtime.jar',
                     '**/headlessmc/headlessmc-lwjgl.jar',
                     '**/headlessmc/forge-cli.jar',
+                    'me/earth/headlessmc/lwjgl/agent/**'
             ])
         }))
     }
 
+    additionalClassDirs(project(':headlessmc-launcher').layout.buildDirectory.dir('classes/java/main').get().asFile)
+    additionalClassDirs(project(':headlessmc-auth').layout.buildDirectory.dir('classes/java/main').get().asFile)
+    additionalClassDirs(project(':headlessmc-api').layout.buildDirectory.dir('classes/java/main').get().asFile)
+    additionalClassDirs(project(':headlessmc-lwjgl').layout.buildDirectory.dir('classes/java/main').get().asFile)
+    additionalClassDirs(project(':headlessmc-modlauncher').layout.buildDirectory.dir('classes/java/main').get().asFile)
+    additionalClassDirs(project(':headlessmc-runtime').layout.buildDirectory.dir('classes/java/main').get().asFile)
+
     reports {
         xml.required.set(true)
     }
+}
+
+tasks.register('testPluginJar', Jar) {
+    from sourceSets.testPlugin.output
+    archiveBaseName.set('testPlugin')
+    archiveVersion.set('')
+}
+
+tasks.withType(Test).configureEach {
+    dependsOn testPluginJar
+    project.logger.info("Enabling integration test: ${hmc_integration_test_enabled}")
+    systemProperties["hmc.integration.test.enabled"] = "${hmc_integration_test_enabled}"
+    testLogging {
+        showStandardStreams = true
+    }
+
+    jacoco {
+        // our classloader potentially includes no ProtectionDomains?
+        includeNoLocationClasses true
+        jacoco.excludes = ['jdk.internal.*', 'me.earth.headlessmc.lwjgl.agent.*']
+    }
+}
+
+test {
+    maxHeapSize = '2048m'
 }

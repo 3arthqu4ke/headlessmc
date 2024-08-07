@@ -1,10 +1,10 @@
 package me.earth.headlessmc.launcher;
 
 import me.earth.headlessmc.api.config.Property;
-import me.earth.headlessmc.config.HmcProperties;
+import me.earth.headlessmc.api.config.HmcProperties;
 import me.earth.headlessmc.launcher.files.ConfigService;
 
-import static me.earth.headlessmc.config.PropertyTypes.*;
+import static me.earth.headlessmc.api.config.PropertyTypes.*;
 
 /**
  * Properties used by the launcher. These can be set as SystemProperties or in

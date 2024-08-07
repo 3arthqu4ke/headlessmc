@@ -1,12 +1,8 @@
 package me.earth.headlessmc.runtime.commands;
 
 import lombok.SneakyThrows;
-import me.earth.headlessmc.logging.LogLevelUtil;
-import me.earth.headlessmc.logging.LoggingHandler;
 import me.earth.headlessmc.runtime.RuntimeTest;
 import org.junit.jupiter.api.Test;
-
-import java.util.logging.Level;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,8 +12,6 @@ public class IfCommandTest implements RuntimeTest {
     @Test
     @SneakyThrows
     public void testIfCommand() {
-        LoggingHandler.apply();
-        LogLevelUtil.setLevel(Level.ALL);
         command.ctx.getVm().set(null, 0);
         assertNull(command.ctx.getVm().get(0));
 

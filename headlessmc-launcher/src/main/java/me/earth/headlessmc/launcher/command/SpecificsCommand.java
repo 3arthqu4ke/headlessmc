@@ -6,7 +6,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.version.Version;
-import me.earth.headlessmc.util.Table;
+import me.earth.headlessmc.api.util.Table;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class SpecificsCommand extends AbstractVersionCommand {
 
         try {
             ctx.getVersionSpecificModManager().download(version, repository);
-            ctx.getVersionSpecificModManager().install(version, repository, ctx.getMcFiles().getDir("mods").toPath());
+            ctx.getVersionSpecificModManager().install(version, repository, ctx.getGameDir().getDir("mods").toPath());
             ctx.getVersionSpecificModManager().deleteSpecificsOfOtherVersions(version, repository, ctx.getMcFiles().getDir("mods").toPath());
         } catch (IOException e) {
             log.debug("Failed to install " + repository.getName() + " for version " + version.getName(), e);

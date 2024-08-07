@@ -9,8 +9,8 @@ import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
+import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
-import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.version.VersionService;
 
 @Getter
@@ -22,11 +22,13 @@ public class Launcher implements HeadlessMc {
     private final HeadlessMc headlessMc;
     private final VersionService versionService;
     private final FileManager mcFiles;
+    private final FileManager gameDir;
     private final FileManager fileManager;
     private final ProcessFactory processFactory;
     private final ConfigService configService;
     private final JavaService javaService;
     private final AccountManager accountManager;
     private final VersionSpecificModManager versionSpecificModManager;
+    private final PluginManager pluginManager;
 
 }

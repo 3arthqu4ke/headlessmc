@@ -4,7 +4,7 @@ import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;

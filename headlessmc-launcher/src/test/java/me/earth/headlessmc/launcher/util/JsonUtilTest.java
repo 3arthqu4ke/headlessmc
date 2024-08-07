@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import lombok.val;
 import me.earth.headlessmc.launcher.UsesResources;
-import me.earth.headlessmc.util.AbstractUtilityTest;
+import me.earth.headlessmc.api.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

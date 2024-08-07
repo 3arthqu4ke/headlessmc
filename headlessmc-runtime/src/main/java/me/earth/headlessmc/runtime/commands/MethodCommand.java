@@ -3,7 +3,7 @@ package me.earth.headlessmc.runtime.commands;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.ParseUtil;
+import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.util.ClassHelper;
 
