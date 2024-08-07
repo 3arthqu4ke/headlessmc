@@ -29,19 +29,19 @@ jobs:
         run: ls
 
       - name: Publish jars
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
           path: ./build/libs/headlessmc-*.jar
           
       - name: Publish shell script
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
           path: ./headlessmc-scripts/hmc
           
       - name: Publish bat script
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc
           path: ./headlessmc-scripts/hmc.bat
