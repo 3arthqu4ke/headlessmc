@@ -11,27 +11,27 @@ public class PasswordCommandTest {
     @Test
     @SneakyThrows
     public void passwordCommandTest() {
-        val hmc = MockedHeadlessMc.INSTANCE;
+        val clm = MockedHeadlessMc.INSTANCE.getCommandLineManager();
 
-        hmc.setHidingPasswordsSupported(true);
-        assertTrue(hmc.isHidingPasswordsSupported());
+        clm.setHidingPasswordsSupported(true);
+        assertTrue(clm.isHidingPasswordsSupported());
 
-        val command = new PasswordCommand(hmc);
+        val command = new PasswordCommand(MockedHeadlessMc.INSTANCE);
 
-        hmc.setHidingPasswords(false);
-        assertFalse(hmc.isHidingPasswords());
+        clm.setHidingPasswords(false);
+        assertFalse(clm.isHidingPasswords());
 
         command.execute("password");
-        assertTrue(hmc.isHidingPasswords());
+        assertTrue(clm.isHidingPasswords());
         command.execute("password");
-        assertFalse(hmc.isHidingPasswords());
+        assertFalse(clm.isHidingPasswords());
 
-        hmc.setHidingPasswordsSupported(false);
-        assertFalse(hmc.isHidingPasswordsSupported());
+        clm.setHidingPasswordsSupported(false);
+        assertFalse(clm.isHidingPasswordsSupported());
         assertThrows(CommandException.class, () -> command.execute("password"));
 
-        hmc.setHidingPasswordsSupported(true);
-        assertTrue(hmc.isHidingPasswordsSupported());
+        clm.setHidingPasswordsSupported(true);
+        assertTrue(clm.isHidingPasswordsSupported());
     }
 
 }

@@ -1,6 +1,9 @@
 package me.earth.headlessmc.runtime.commands;
 
 import me.earth.headlessmc.api.command.*;
+import me.earth.headlessmc.api.command.impl.HelpCommand;
+import me.earth.headlessmc.api.command.impl.MemoryCommand;
+import me.earth.headlessmc.api.command.impl.MultiCommand;
 import me.earth.headlessmc.runtime.Runtime;
 
 // TODO: array command?

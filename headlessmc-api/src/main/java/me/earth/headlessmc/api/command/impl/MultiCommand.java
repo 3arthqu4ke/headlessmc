@@ -1,6 +1,8 @@
-package me.earth.headlessmc.api.command;
+package me.earth.headlessmc.api.command.impl;
 
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandException;
 
 public class MultiCommand extends AbstractCommand {
     public MultiCommand(HeadlessMc ctx) {
@@ -11,7 +13,7 @@ public class MultiCommand extends AbstractCommand {
     @Override
     public void execute(String... args) throws CommandException {
         for (int i = 1; i < args.length; i++) {
-            ctx.getCommandContext().execute(args[i]);
+            ctx.getCommandLineManager().getCommandContext().execute(args[i]);
         }
     }
 

@@ -5,6 +5,7 @@ import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.line.CommandLineManager;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
 import net.raphimc.minecraftauth.step.AbstractStep;
@@ -61,18 +62,19 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
     }
 
     protected void loginWithCredentials(String... args) {
+        CommandLineManager clm = ctx.getCommandLineManager();
         String helpMessage = "Enter your password or type 'abort' to cancel the login process."
-            + (ctx.isHidingPasswordsSupported()
+            + (clm.isHidingPasswordsSupported()
                 ? ""
                 : " (Your password will be visible when you type!)");
         ctx.log(helpMessage);
 
         String email = args[1];
-        boolean passwordsHiddenBefore = ctx.isHidingPasswords();
-        ctx.setHidingPasswords(true);
-        ctx.setWaitingForInput(true);
-        ctx.setCommandContext(
-            new LoginContext(ctx, ctx.getCommandContext(), helpMessage) {
+        boolean passwordsHiddenBefore = clm.isHidingPasswords();
+        clm.setHidingPasswords(true);
+        clm.setWaitingForInput(true);
+        clm.setCommandContext(
+            new LoginContext(ctx, clm.getCommandContext(), helpMessage) {
                 @Override
                 protected void onCommand(String password) {
                     try {
@@ -80,10 +82,10 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
                     } finally {
                         returnToPreviousContext();
                         if (!passwordsHiddenBefore) {
-                            ctx.setHidingPasswords(false);
+                            clm.setHidingPasswords(false);
                         }
 
-                        ctx.setWaitingForInput(false);
+                        clm.setWaitingForInput(false);
                     }
                 }
             });

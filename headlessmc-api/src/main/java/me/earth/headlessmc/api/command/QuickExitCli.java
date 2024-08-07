@@ -1,6 +1,5 @@
-package me.earth.headlessmc.api;
+package me.earth.headlessmc.api.command;
 
-import me.earth.headlessmc.api.command.HasCommandContext;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 
 /**

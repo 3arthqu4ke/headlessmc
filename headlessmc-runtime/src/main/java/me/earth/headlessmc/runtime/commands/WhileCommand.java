@@ -36,7 +36,7 @@ public class WhileCommand extends AbstractRuntimeCommand {
                 Object obj = ctx.getVm().get(address);
                 if (obj instanceof Boolean && (Boolean) obj) {
                     log.debug("Executing " + args[2]);
-                    ctx.getCommandContext().execute(args[2]);
+                    ctx.getCommandLineManager().getCommandContext().execute(args[2]);
                 } else {
                     break;
                 }

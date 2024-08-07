@@ -2,6 +2,7 @@ package me.earth.headlessmc.api.command;
 
 import lombok.val;
 import me.earth.headlessmc.api.MockedHeadlessMc;
+import me.earth.headlessmc.api.command.impl.HelpCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -12,7 +13,7 @@ public class HelpCommandTest {
     public void testHelpCommand() {
         val command = new HelpCommand(MockedHeadlessMc.INSTANCE);
         val ctx = new CommandContextImpl(MockedHeadlessMc.INSTANCE);
-        MockedHeadlessMc.INSTANCE.setCommandContext(ctx);
+        MockedHeadlessMc.INSTANCE.getCommandLineManager().setCommandContext(ctx);
 
         assertDoesNotThrow(() -> command.execute("help"));
         ctx.add(command);

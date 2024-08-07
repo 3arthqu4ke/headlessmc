@@ -1,6 +1,7 @@
-package me.earth.headlessmc.api.command;
+package me.earth.headlessmc.api.command.impl;
 
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.AbstractCommand;
 
 import java.util.Locale;
 

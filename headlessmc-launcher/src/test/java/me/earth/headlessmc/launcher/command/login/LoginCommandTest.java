@@ -21,9 +21,9 @@ public class LoginCommandTest {
         assertTrue(launcher.getAccountManager().getAccounts().isEmpty());
 
         try {
-            launcher.setCommandContext(new LaunchContext(launcher));
+            launcher.getCommandLineManager().setCommandContext(new LaunchContext(launcher));
             boolean ran = false;
-            for (Command command : launcher.getCommandContext()) {
+            for (Command command : launcher.getCommandLineManager().getCommandContext()) {
                 if (command instanceof LoginCommand) {
                     LoginCommand loginCommand = (LoginCommand) command;
                     StepFullJavaSession.FullJavaSession session = new StepFullJavaSession.FullJavaSession(new StepMCProfile.MCProfile(UUID.randomUUID(), "", "", null), null);

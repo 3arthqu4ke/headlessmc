@@ -14,7 +14,7 @@ public class NewCommandTest implements RuntimeTest {
     @Test
     @SneakyThrows
     public void testNewCommand() {
-        val ctx = command.ctx.getCommandContext();
+        val ctx = command.ctx.getCommandLineManager().getCommandContext();
         val vm = command.ctx.getVm();
 
         ctx.execute("class " + TestClass.class.getName() + " 0");

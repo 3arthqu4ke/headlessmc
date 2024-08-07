@@ -1,7 +1,9 @@
-package me.earth.headlessmc.api.command;
+package me.earth.headlessmc.api.command.impl;
 
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandException;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

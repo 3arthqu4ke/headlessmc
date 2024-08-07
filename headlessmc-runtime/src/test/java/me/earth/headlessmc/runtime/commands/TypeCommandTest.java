@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TypeCommandTest implements RuntimeTest {
     private final Runtime runtime = getRuntime();
-    private final CommandContext ctx = runtime.getCommandContext();
+    private final CommandContext ctx = runtime.getCommandLineManager().getCommandContext();
     private final TypeCommand cmd = TypeCommand.ofType(runtime, "test", s -> s);
 
     @Test

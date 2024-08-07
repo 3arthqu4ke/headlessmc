@@ -28,7 +28,7 @@ public class SupplierCommand extends AbstractRuntimeCommand {
         Supplier<?> supplier = () -> {
             try {
                 if (!args[1].isEmpty()) {
-                    ctx.getCommandContext().execute(args[1]);
+                    ctx.getCommandLineManager().getCommandContext().execute(args[1]);
                 }
                 return ctx.getVm().get(to);
             } catch (SegmentationFault e) {

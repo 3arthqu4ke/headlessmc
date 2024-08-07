@@ -1,7 +1,11 @@
-package me.earth.headlessmc.api.command;
+package me.earth.headlessmc.api.command.impl;
 
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.Command;
+import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.HasDescription;
 import me.earth.headlessmc.api.util.Table;
 
 import java.util.Map;
@@ -47,13 +51,13 @@ public class HelpCommand extends AbstractCommand {
                     .withColumn("command", HasName::getName)
                     .withColumn("description", HasDescription::getDescription)
                     .withColumn("args", this::argsToString)
-                    .addAll(ctx.getCommandContext())
+                    .addAll(ctx.getCommandLineManager().getCommandContext())
                     .build());
         }
     }
 
     private Command findCommand(String name) {
-        for (Command cmd : ctx.getCommandContext()) {
+        for (Command cmd : ctx.getCommandLineManager().getCommandContext()) {
             if (name.equalsIgnoreCase(cmd.getName())) {
                 return cmd;
             }

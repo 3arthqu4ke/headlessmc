@@ -1,8 +1,8 @@
 package me.earth.headlessmc.launcher;
 
 import lombok.val;
-import me.earth.headlessmc.api.QuickExitCli;
-import me.earth.headlessmc.api.command.line.Listener;
+import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOError;
@@ -15,51 +15,52 @@ public class QuickExitCliHandlerTest {
     @Test
     public void testQuickExitCliHandler() {
         val launcher = LauncherMock.INSTANCE;
-        val in = new MockListener();
+        val in = new MockCommandLine();
+        launcher.getCommandLineManager().setCommandLineProvider(() -> in);
 
-        assertFalse(checkQuickExit(launcher, in, ""));
-        assertFalse(checkQuickExit(launcher, in, "test"));
-        assertFalse(checkQuickExit(launcher, in, "test", "test"));
-        assertFalse(checkQuickExit(launcher, in, "--command"));
-        assertFalse(checkQuickExit(launcher, in, "--command", ""));
-        assertFalse(checkQuickExit(launcher, in, "--command", "cli"));
+        assertFalse(checkQuickExit(launcher, ""));
+        assertFalse(checkQuickExit(launcher, "test"));
+        assertFalse(checkQuickExit(launcher, "test", "test"));
+        assertFalse(checkQuickExit(launcher, "--command"));
+        assertFalse(checkQuickExit(launcher, "--command", ""));
+        assertFalse(checkQuickExit(launcher, "--command", "cli"));
 
-        assertTrue(checkQuickExit(launcher, in, "--version"));
+        assertTrue(checkQuickExit(launcher, "--version"));
         assertFalse(in.called);
-        assertFalse(launcher.isQuickExitCli());
+        assertFalse(launcher.getCommandLineManager().isQuickExitCli());
 
         val ctx = new MockedCommandContext();
         val waitForInput = "waitForInput";
         ctx.setCallback(str -> {
             if (str.equals(waitForInput)) {
-                launcher.setWaitingForInput(true);
+                launcher.getCommandLineManager().setWaitingForInput(true);
             }
         });
-        launcher.setCommandContext(ctx);
+        launcher.getCommandLineManager().setCommandContext(ctx);
 
-        assertTrue(checkQuickExit(launcher, in, "--command", "test"));
-        assertTrue(launcher.isQuickExitCli());
+        assertTrue(checkQuickExit(launcher, "--command", "test"));
+        assertTrue(launcher.getCommandLineManager().isQuickExitCli());
         assertEquals("test", ctx.checkAndReset());
-        launcher.setQuickExitCli(false);
+        launcher.getCommandLineManager().setQuickExitCli(false);
         assertFalse(in.called);
 
-        assertTrue(checkQuickExit(launcher, in, "--command", "waitForInput"));
-        assertTrue(launcher.isQuickExitCli());
+        assertTrue(checkQuickExit(launcher, "--command", "waitForInput"));
+        assertTrue(launcher.getCommandLineManager().isQuickExitCli());
         assertEquals("waitForInput", ctx.checkAndReset());
-        assertTrue(launcher.isWaitingForInput());
+        assertTrue(launcher.getCommandLineManager().isWaitingForInput());
         assertTrue(in.called);
     }
 
-    private static final class MockListener implements Listener {
+    private static final class MockCommandLine implements CommandLine {
         public boolean called;
 
         @Override
-        public void listen(QuickExitCli context) throws IOError {
+        public void listen(HeadlessMc hmc) throws IOError {
             called = true;
         }
 
         @Override
-        public void listenAsync(QuickExitCli context, ThreadFactory factory) {
+        public void listenAsync(HeadlessMc hmc, ThreadFactory factory) {
             called = true;
         }
     }

@@ -1,4 +1,4 @@
-package me.earth.headlessmc.api;
+package me.earth.headlessmc.api.command;
 
 public interface PasswordAware {
     boolean isHidingPasswords();

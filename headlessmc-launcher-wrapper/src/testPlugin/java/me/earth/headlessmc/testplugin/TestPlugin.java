@@ -49,7 +49,7 @@ public class TestPlugin implements HeadlessMcPlugin {
         // launcher.getInAndOutProvider().setOut(() -> out);
         // launcher.getInAndOutProvider().setErr(() -> out);
         TestInputStream in = new TestInputStream();
-        launcher.getInAndOutProvider().setIn(() -> in);
+        launcher.getCommandLineManager().getInAndOutProvider().setIn(() -> in);
 
         LaunchTest.build(launcher.getJavaService().getCurrent(), launcher, in);
     }

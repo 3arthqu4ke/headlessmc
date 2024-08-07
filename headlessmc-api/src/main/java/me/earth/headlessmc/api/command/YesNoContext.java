@@ -2,6 +2,7 @@ package me.earth.headlessmc.api.command;
 
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.HeadlessMc;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -12,14 +13,14 @@ public class YesNoContext implements CommandContext {
     private final HeadlessMc ctx;
 
     public static void goBackAfter(HeadlessMc ctx, YesNoCallback callback) {
-        ctx.setWaitingForInput(true);
-        CommandContext current = ctx.getCommandContext();
-        ctx.setCommandContext(new YesNoContext(result -> {
+        ctx.getCommandLineManager().setWaitingForInput(true);
+        CommandContext current = ctx.getCommandLineManager().getCommandContext();
+        ctx.getCommandLineManager().setCommandContext(new YesNoContext(result -> {
             try {
-                ctx.setWaitingForInput(false);
+                ctx.getCommandLineManager().setWaitingForInput(false);
                 callback.accept(result);
             } finally {
-                ctx.setCommandContext(current);
+                ctx.getCommandLineManager().setCommandContext(current);
             }
         }, ctx));
     }
@@ -40,7 +41,7 @@ public class YesNoContext implements CommandContext {
     }
 
     @Override
-    public Iterator<Command> iterator() {
+    public @NotNull Iterator<Command> iterator() {
         return Collections.emptyIterator();
     }
 
