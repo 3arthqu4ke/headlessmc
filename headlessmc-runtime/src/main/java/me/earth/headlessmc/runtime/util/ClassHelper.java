@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.LogsMessages;
-import me.earth.headlessmc.util.ReflectionUtil;
-import me.earth.headlessmc.util.Table;
+import me.earth.headlessmc.api.util.ReflectionUtil;
+import me.earth.headlessmc.api.util.Table;
 
 import java.lang.reflect.*;
 import java.util.Arrays;

@@ -3,7 +3,7 @@ package me.earth.headlessmc.launcher;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.command.line.Listener;
+import me.earth.headlessmc.api.command.line.Listener;
 
 /**
  * @see me.earth.headlessmc.api.QuickExitCli

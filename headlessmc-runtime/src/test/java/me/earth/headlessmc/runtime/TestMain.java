@@ -3,7 +3,7 @@ package me.earth.headlessmc.runtime;
 import lombok.CustomLog;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import me.earth.headlessmc.config.HmcProperties;
+import me.earth.headlessmc.api.config.HmcProperties;
 
 /**
  * Run the HeadlessMc runtime without a Minecraft instance.

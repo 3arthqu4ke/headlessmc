@@ -4,7 +4,7 @@ import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.config.Property;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;

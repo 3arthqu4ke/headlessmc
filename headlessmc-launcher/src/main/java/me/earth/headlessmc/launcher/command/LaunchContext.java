@@ -1,6 +1,6 @@
 package me.earth.headlessmc.launcher.command;
 
-import me.earth.headlessmc.command.*;
+import me.earth.headlessmc.api.command.*;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.download.DownloadCommand;
 import me.earth.headlessmc.launcher.command.forge.ForgeCommand;

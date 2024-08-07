@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.IOUtil;
-import me.earth.headlessmc.util.ResourceUtil;
+import me.earth.headlessmc.api.util.ResourceUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;

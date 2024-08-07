@@ -108,6 +108,7 @@ public class LoggingServiceTest {
     @Test
     public void testLogOutput() {
         Logger logger = Logger.getLogger(LoggingServiceTest.class.getName());
+        loggingService.setLevel(ALL);
         logger.log(Level.INFO, "Test Message", new Exception("Stacktrace"));
 
         String loggedOutput = outContent.toString();

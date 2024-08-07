@@ -3,7 +3,7 @@ package me.earth.headlessmc.runtime;
 import lombok.Getter;
 import lombok.Setter;
 import me.earth.headlessmc.api.PasswordAware;
-import me.earth.headlessmc.config.ConfigImpl;
+import me.earth.headlessmc.api.config.ConfigImpl;
 
 public interface RuntimeTest {
     default Runtime getRuntime() {

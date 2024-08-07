@@ -3,7 +3,7 @@ package me.earth.headlessmc.runtime;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.PasswordAware;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.exit.ExitManager;

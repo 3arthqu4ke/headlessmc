@@ -1,7 +1,7 @@
 package me.earth.headlessmc.launcher.os;
 
 import me.earth.headlessmc.api.config.Config;
-import me.earth.headlessmc.config.ConfigImpl;
+import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import org.junit.jupiter.api.Test;
 

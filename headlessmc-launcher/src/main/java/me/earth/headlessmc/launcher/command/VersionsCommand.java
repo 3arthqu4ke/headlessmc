@@ -1,7 +1,7 @@
 package me.earth.headlessmc.launcher.command;
 
 import lombok.val;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.version.VersionUtil;
 

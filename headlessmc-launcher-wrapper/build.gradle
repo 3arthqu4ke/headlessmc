@@ -88,7 +88,6 @@ tasks.withType(JacocoReport) {
 
     additionalClassDirs(project(':headlessmc-launcher').layout.buildDirectory.dir('classes/java/main').get().asFile)
     additionalClassDirs(project(':headlessmc-auth').layout.buildDirectory.dir('classes/java/main').get().asFile)
-    additionalClassDirs(project(':headlessmc-commons').layout.buildDirectory.dir('classes/java/main').get().asFile)
     additionalClassDirs(project(':headlessmc-api').layout.buildDirectory.dir('classes/java/main').get().asFile)
     additionalClassDirs(project(':headlessmc-lwjgl').layout.buildDirectory.dir('classes/java/main').get().asFile)
     additionalClassDirs(project(':headlessmc-modlauncher').layout.buildDirectory.dir('classes/java/main').get().asFile)

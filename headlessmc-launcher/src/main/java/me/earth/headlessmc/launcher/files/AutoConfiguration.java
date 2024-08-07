@@ -2,7 +2,7 @@ package me.earth.headlessmc.launcher.files;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.config.Config;
-import me.earth.headlessmc.config.ConfigImpl;
+import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.java.JavaService;

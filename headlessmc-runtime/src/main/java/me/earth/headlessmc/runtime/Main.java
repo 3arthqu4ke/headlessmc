@@ -3,9 +3,9 @@ package me.earth.headlessmc.runtime;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.command.line.CommandLineImpl;
-import me.earth.headlessmc.config.ConfigImpl;
-import me.earth.headlessmc.config.HmcProperties;
+import me.earth.headlessmc.api.command.line.CommandLineImpl;
+import me.earth.headlessmc.api.config.ConfigImpl;
+import me.earth.headlessmc.api.config.HmcProperties;
 
 @CustomLog
 @UtilityClass

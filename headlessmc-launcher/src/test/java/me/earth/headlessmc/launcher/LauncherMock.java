@@ -2,12 +2,12 @@ package me.earth.headlessmc.launcher;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.HeadlessMcImpl;
+import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.process.InAndOutProvider;
-import me.earth.headlessmc.command.line.CommandLineImpl;
-import me.earth.headlessmc.config.ConfigImpl;
+import me.earth.headlessmc.api.command.line.CommandLineImpl;
+import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;

@@ -1,8 +1,8 @@
 package me.earth.headlessmc.runtime.commands;
 
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.CommandUtil;
-import me.earth.headlessmc.command.ParseUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.util.ClassHelper;
 

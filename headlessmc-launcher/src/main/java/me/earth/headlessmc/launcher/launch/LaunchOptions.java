@@ -5,7 +5,7 @@ import lombok.CustomLog;
 import lombok.Data;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.config.Property;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.files.FileManager;

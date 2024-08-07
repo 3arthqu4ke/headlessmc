@@ -3,7 +3,7 @@ package me.earth.headlessmc.launcher.command;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.command.CommandUtil;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 import me.earth.headlessmc.launcher.version.Version;

@@ -1,6 +1,6 @@
 package me.earth.headlessmc.launcher.java;
 
-import me.earth.headlessmc.config.ConfigImpl;
+import me.earth.headlessmc.api.config.ConfigImpl;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;

@@ -1,6 +1,6 @@
 package me.earth.headlessmc.launcher.util;
 
-import me.earth.headlessmc.util.AbstractUtilityTest;
+import me.earth.headlessmc.api.util.AbstractUtilityTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

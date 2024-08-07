@@ -1,6 +1,6 @@
 package me.earth.headlessmc.launcher.command;
 
-import me.earth.headlessmc.command.AbstractCommand;
+import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.launcher.Launcher;
 
 public abstract class AbstractLauncherCommand extends AbstractCommand {

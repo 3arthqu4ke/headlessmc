@@ -2,7 +2,7 @@ package me.earth.headlessmc.auth;
 
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandContext;
-import me.earth.headlessmc.command.CommandContextImpl;
+import me.earth.headlessmc.api.command.CommandContextImpl;
 
 import java.util.Locale;
 
