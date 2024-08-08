@@ -12,7 +12,9 @@ public interface CommandContext extends Iterable<Command> {
         String[] args = CommandUtil.split(parsedLine);
         List<Completion> result = new ArrayList<>();
         for (Command command : this) {
-            command.getCompletions(line, result, args);
+            if (args.length == 1 || command.matches(args)) {
+                command.getCompletions(line, result, args);
+            }
         }
 
         return result;

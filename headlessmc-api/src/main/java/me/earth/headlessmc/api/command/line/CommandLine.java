@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.*;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOError;
 import java.util.Collections;
@@ -29,6 +30,7 @@ public class CommandLine implements PasswordAware, QuickExitCli, HasCommandConte
      */
     private volatile CommandContext commandContext = EmptyCommandContext.INSTANCE;
     private volatile Consumer<String> commandLineReader = line -> getCommandContext().execute(line);
+    private volatile @Nullable CommandLineListener commandLineListener;
 
     private volatile boolean quickExitCli;
     private volatile boolean waitingForInput;
@@ -41,7 +43,13 @@ public class CommandLine implements PasswordAware, QuickExitCli, HasCommandConte
 
     @Override
     public void listen(HeadlessMc hmc) throws IOError {
-        commandLineProvider.get().listen(hmc);
+        if (this.commandLineListener != null) {
+            log.warn("Listen called, but a CommandLineListener already exists!");
+        }
+
+        CommandLineListener commandLineListener = commandLineProvider.get();
+        this.commandLineListener = commandLineListener;
+        commandLineListener.listen(hmc);
     }
 
     private static final class EmptyCommandContext implements CommandContext {

@@ -1,6 +1,8 @@
 package me.earth.headlessmc.jline;
 
 import lombok.CustomLog;
+import lombok.Getter;
+import lombok.Setter;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.command.line.CommandLineListener;
@@ -15,8 +17,14 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.IOError;
 import java.io.IOException;
 
+@Getter
 @CustomLog
 public class JLineCommandLineListener implements CommandLineListener {
+    @Setter
+    private volatile String readPrefix;
+    private volatile LineReader lineReader;
+    private volatile Terminal terminal;
+
     @Override
     public void listen(HeadlessMc hmc) throws IOError {
         long nanos = System.nanoTime();
@@ -53,7 +61,10 @@ public class JLineCommandLineListener implements CommandLineListener {
             }
 
             reader.unsetOpt(LineReader.Option.INSERT_TAB);
-            String readPrefix = hmc.getConfig().get(JLineProperties.READ_PREFIX, null);
+            this.readPrefix = hmc.getConfig().get(JLineProperties.READ_PREFIX, null);
+            this.terminal = terminal;
+            this.lineReader = reader;
+
             nanos = System.nanoTime() - nanos;
             log.info("JLine terminal took " + (nanos / 1_000_000.0) + "ms to get ready.");
             String line;
