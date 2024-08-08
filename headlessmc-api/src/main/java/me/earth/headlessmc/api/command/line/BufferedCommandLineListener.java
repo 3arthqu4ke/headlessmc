@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 @CustomLog
-public class BufferedCommandLine implements CommandLine {
+public class BufferedCommandLineListener implements CommandLineListener {
     @Override
     public void listen(HeadlessMc hmc) throws IOError {
-        CommandLineManager ctx = hmc.getCommandLineManager();
+        CommandLine ctx = hmc.getCommandLine();
         try (BufferedReader in = new BufferedReader(new InputStreamReader(ctx.getInAndOutProvider().getIn().get()))) {
             String line;
             while ((line = in.readLine()) != null) {

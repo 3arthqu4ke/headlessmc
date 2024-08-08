@@ -9,18 +9,18 @@ import java.util.function.Supplier;
 
 @CustomLog
 @RequiredArgsConstructor
-public class DefaultCommandLineProvider implements Supplier<CommandLine> {
+public class DefaultCommandLineProvider implements Supplier<CommandLineListener> {
     private final InAndOutProvider inAndOutProvider;
 
     @Override
-    public CommandLine get() {
+    public CommandLineListener get() {
         return hmc -> {
             Console console = inAndOutProvider.getConsole().get();
             if (console == null) {
                 log.warn("Your terminal cannot hide passwords!");
-                new BufferedCommandLine().listen(hmc);
+                new BufferedCommandLineListener().listen(hmc);
             } else {
-                new ConsoleCommandLine(console).listen(hmc);
+                new ConsoleCommandLineListener(console).listen(hmc);
             }
         };
     }

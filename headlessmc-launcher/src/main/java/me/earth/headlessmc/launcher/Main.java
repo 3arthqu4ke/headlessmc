@@ -4,10 +4,10 @@ import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
-import me.earth.headlessmc.api.command.line.CommandLineManager;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
-import me.earth.headlessmc.jline.JLineCommandLine;
+import me.earth.headlessmc.jline.JLineCommandLineListener;
 import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
@@ -80,7 +80,7 @@ public final class Main {
         AutoConfiguration.runAutoConfiguration(files);
 
         val configs = Service.refresh(new ConfigService(files));
-        val hmc = new HeadlessMcImpl(configs, new CommandLineManager(), exitManager, loggingService);
+        val hmc = new HeadlessMcImpl(configs, new CommandLine(), exitManager, loggingService);
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
@@ -105,11 +105,11 @@ public final class Main {
         versions.refresh();
 
         LaunchContext launchContext = new LaunchContext(launcher);
-        hmc.getCommandLineManager().setCommandContext(launchContext);
-        hmc.getCommandLineManager().setBaseContext(launchContext);
+        hmc.getCommandLine().setCommandContext(launchContext);
+        hmc.getCommandLine().setBaseContext(launchContext);
 
         if (hmc.getConfig().get(JLineProperties.ENABLED, true)) {
-            hmc.getCommandLineManager().setCommandLineProvider(JLineCommandLine::new);
+            hmc.getCommandLine().setCommandLineProvider(JLineCommandLineListener::new);
         }
 
         launcher.getPluginManager().init(launcher);
@@ -117,7 +117,7 @@ public final class Main {
             log.info(String.format("Detected: %s", os));
             log.info(String.format("Minecraft Dir: %s", mcFiles.getBase()));
             hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
-            hmc.getCommandLineManager().listen(hmc);
+            hmc.getCommandLine().listen(hmc);
         }
     }
 

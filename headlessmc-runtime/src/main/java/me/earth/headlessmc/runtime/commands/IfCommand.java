@@ -25,10 +25,10 @@ public class IfCommand extends AbstractRuntimeCommand {
             Object obj = ctx.getVm().get(address);
             if (obj instanceof Boolean && (Boolean) obj) {
                 log.debug("Executing if: " + args[2]);
-                ctx.getCommandLineManager().getCommandContext().execute(args[2]);
+                ctx.getCommandLine().getCommandContext().execute(args[2]);
             } else if (args.length > 3) {
                 log.debug("Executing else: " + args[3]);
-                ctx.getCommandLineManager().getCommandContext().execute(args[3]);
+                ctx.getCommandLine().getCommandContext().execute(args[3]);
             }
         }
     }

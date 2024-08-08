@@ -19,7 +19,7 @@ public class MultiCommandTest {
         ctx.add(command2);
         ctx.add(command3);
         ctx.add(new MultiCommand(MockedHeadlessMc.INSTANCE));
-        MockedHeadlessMc.INSTANCE.getCommandLineManager().setCommandContext(ctx);
+        MockedHeadlessMc.INSTANCE.getCommandLine().setCommandContext(ctx);
 
         ctx.execute("multi test1");
         assertTrue(command1.value);

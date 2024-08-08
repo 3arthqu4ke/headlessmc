@@ -5,7 +5,7 @@ import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.api.command.line.CommandLineManager;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
 import net.raphimc.minecraftauth.step.AbstractStep;
@@ -62,7 +62,7 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
     }
 
     protected void loginWithCredentials(String... args) {
-        CommandLineManager clm = ctx.getCommandLineManager();
+        CommandLine clm = ctx.getCommandLine();
         String helpMessage = "Enter your password or type 'abort' to cancel the login process."
             + (clm.isHidingPasswordsSupported()
                 ? ""

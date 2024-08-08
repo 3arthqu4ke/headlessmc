@@ -11,12 +11,12 @@ public class PasswordContextTest {
     public void testPasswordContext() {
         val launcher = LauncherMock.INSTANCE;
         val ctx = new LaunchContext(launcher);
-        launcher.getCommandLineManager().setCommandContext(ctx);
-        launcher.getCommandLineManager().setHidingPasswords(false);
-        launcher.getCommandLineManager().setWaitingForInput(false);
-        Assertions.assertFalse(launcher.getCommandLineManager().isWaitingForInput());
-        Assertions.assertEquals(ctx, launcher.getCommandLineManager().getCommandContext());
-        Assertions.assertFalse(launcher.getCommandLineManager().isHidingPasswords());
+        launcher.getCommandLine().setCommandContext(ctx);
+        launcher.getCommandLine().setHidingPasswords(false);
+        launcher.getCommandLine().setWaitingForInput(false);
+        Assertions.assertFalse(launcher.getCommandLine().isWaitingForInput());
+        Assertions.assertEquals(ctx, launcher.getCommandLine().getCommandContext());
+        Assertions.assertFalse(launcher.getCommandLine().isHidingPasswords());
 
         /*launcher.getCommandLineManager().getCommandContext().execute("login test");
         Assertions.assertInstanceOf(PasswordContext.class,

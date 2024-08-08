@@ -13,7 +13,7 @@ public class MultiCommand extends AbstractCommand {
     @Override
     public void execute(String... args) throws CommandException {
         for (int i = 1; i < args.length; i++) {
-            ctx.getCommandLineManager().getCommandContext().execute(args[i]);
+            ctx.getCommandLine().getCommandContext().execute(args[i]);
         }
     }
 

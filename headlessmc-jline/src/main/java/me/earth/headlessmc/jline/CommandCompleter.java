@@ -18,7 +18,7 @@ public class CommandCompleter implements Completer {
     @Override
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
         String parsedLine = line.line().toLowerCase(Locale.ENGLISH);
-        for (Command command : hmc.getCommandLineManager().getCommandContext()) {
+        for (Command command : hmc.getCommandLine().getCommandContext()) {
             if (command.getName().toLowerCase(Locale.ENGLISH).startsWith(parsedLine)) {
                 candidates.add(new Candidate(command.getName()));
             }

@@ -24,7 +24,7 @@ public class FieldCommandTest implements RuntimeTest {
         assertEquals(100L, testClass.field_with_100);
         assertEquals(100L, command.ctx.getVm().get(1));
 
-        command.ctx.getCommandLineManager().getCommandContext().execute("long 200 2");
+        command.ctx.getCommandLine().getCommandContext().execute("long 200 2");
         assertEquals(200L, command.ctx.getVm().get(2));
 
         command.execute("field", "0", "field_with_100", "2", "-set");

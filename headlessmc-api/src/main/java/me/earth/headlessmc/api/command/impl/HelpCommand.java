@@ -51,13 +51,13 @@ public class HelpCommand extends AbstractCommand {
                     .withColumn("command", HasName::getName)
                     .withColumn("description", HasDescription::getDescription)
                     .withColumn("args", this::argsToString)
-                    .addAll(ctx.getCommandLineManager().getCommandContext())
+                    .addAll(ctx.getCommandLine().getCommandContext())
                     .build());
         }
     }
 
     private Command findCommand(String name) {
-        for (Command cmd : ctx.getCommandLineManager().getCommandContext()) {
+        for (Command cmd : ctx.getCommandLine().getCommandContext()) {
             if (name.equalsIgnoreCase(cmd.getName())) {
                 return cmd;
             }

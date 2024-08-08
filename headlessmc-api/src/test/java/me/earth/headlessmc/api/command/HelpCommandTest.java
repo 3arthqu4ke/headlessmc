@@ -13,7 +13,7 @@ public class HelpCommandTest {
     public void testHelpCommand() {
         val command = new HelpCommand(MockedHeadlessMc.INSTANCE);
         val ctx = new CommandContextImpl(MockedHeadlessMc.INSTANCE);
-        MockedHeadlessMc.INSTANCE.getCommandLineManager().setCommandContext(ctx);
+        MockedHeadlessMc.INSTANCE.getCommandLine().setCommandContext(ctx);
 
         assertDoesNotThrow(() -> command.execute("help"));
         ctx.add(command);

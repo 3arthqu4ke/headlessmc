@@ -12,13 +12,13 @@ public class YesNoContextTest {
         HeadlessMc hmc = MockedHeadlessMc.INSTANCE;
         Boolean[] value = new Boolean[1];
         YesNoContext ctx = new YesNoContext(result -> value[0] = result, hmc);
-        hmc.getCommandLineManager().setCommandContext(ctx);
-        assertFalse(hmc.getCommandLineManager().isWaitingForInput());
-        assertEquals(ctx, hmc.getCommandLineManager().getCommandContext());
+        hmc.getCommandLine().setCommandContext(ctx);
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
+        assertEquals(ctx, hmc.getCommandLine().getCommandContext());
 
         ctx.execute("t");
-        assertFalse(hmc.getCommandLineManager().isWaitingForInput());
-        assertEquals(ctx, hmc.getCommandLineManager().getCommandContext());
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
+        assertEquals(ctx, hmc.getCommandLine().getCommandContext());
         assertNull(value[0]);
 
         ctx.execute("y");
@@ -26,15 +26,15 @@ public class YesNoContextTest {
         ctx.execute("n");
         assertFalse(value[0]);
 
-        assertFalse(hmc.getCommandLineManager().isWaitingForInput());
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
         YesNoContext.goBackAfter(hmc, result -> value[0] = result);
-        assertTrue(hmc.getCommandLineManager().isWaitingForInput());
-        assertNotEquals(ctx, hmc.getCommandLineManager().getCommandContext());
+        assertTrue(hmc.getCommandLine().isWaitingForInput());
+        assertNotEquals(ctx, hmc.getCommandLine().getCommandContext());
 
-        hmc.getCommandLineManager().getCommandContext().execute("y");
-        assertFalse(hmc.getCommandLineManager().isWaitingForInput());
+        hmc.getCommandLine().getCommandContext().execute("y");
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
         assertTrue(value[0]);
-        assertEquals(ctx, hmc.getCommandLineManager().getCommandContext());
+        assertEquals(ctx, hmc.getCommandLine().getCommandContext());
     }
 
     @Test

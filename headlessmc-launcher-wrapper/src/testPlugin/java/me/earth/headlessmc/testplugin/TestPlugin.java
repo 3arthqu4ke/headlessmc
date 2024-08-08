@@ -1,10 +1,8 @@
 package me.earth.headlessmc.testplugin;
 
 import lombok.CustomLog;
-import me.earth.headlessmc.api.process.ReadablePrintStream;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.plugin.HeadlessMcPlugin;
-import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.platform.commons.util.ExceptionUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,7 +47,7 @@ public class TestPlugin implements HeadlessMcPlugin {
         // launcher.getInAndOutProvider().setOut(() -> out);
         // launcher.getInAndOutProvider().setErr(() -> out);
         TestInputStream in = new TestInputStream();
-        launcher.getCommandLineManager().getInAndOutProvider().setIn(() -> in);
+        launcher.getCommandLine().getInAndOutProvider().setIn(() -> in);
 
         LaunchTest.build(launcher.getJavaService().getCurrent(), launcher, in);
     }

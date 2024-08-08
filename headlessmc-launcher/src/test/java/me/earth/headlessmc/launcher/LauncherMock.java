@@ -3,11 +3,10 @@ package me.earth.headlessmc.launcher;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
-import me.earth.headlessmc.api.command.line.CommandLineManager;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
@@ -34,7 +33,7 @@ public class LauncherMock {
         val base = new FileManager("build");
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
-        val in = new CommandLineManager();
+        val in = new CommandLine();
         LoggingService loggingService = new LoggingService();
         val hmc = new HeadlessMcImpl(configs, in, new ExitManager(), loggingService);
 

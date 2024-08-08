@@ -2,6 +2,7 @@ package me.earth.headlessmc.jline;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.line.CommandLineListener;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import org.jline.reader.EndOfFileException;
@@ -15,16 +16,17 @@ import java.io.IOError;
 import java.io.IOException;
 
 @CustomLog
-public class JLineCommandLine implements CommandLine {
+public class JLineCommandLineListener implements CommandLineListener {
     @Override
     public void listen(HeadlessMc hmc) throws IOError {
         if (hmc.getConfig().get(JLineProperties.PREVENT_DEPRECATION_WARNING, true)) {
             System.setProperty("org.jline.terminal.disableDeprecatedProviderWarning", "true");
         }
 
+        CommandLine commandLine = hmc.getCommandLine();
         boolean dumb = hmc.getConfig().get(JLineProperties.DUMB, false) || System.getProperty("java.class.path").contains("idea_rt.jar");
         String providers = dumb ? "dumb" : hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
-        InAndOutProvider io = hmc.getCommandLineManager().getInAndOutProvider();
+        InAndOutProvider io = commandLine.getInAndOutProvider();
         //try (Terminal terminal = TerminalBuilder.builder().streams(io.getIn().get(), io.getOut().get()).providers(providers).type(dumb ? Terminal.TYPE_DUMB : null).build()) {
         //io.setIn(() -> System.in);
         //io.setOut(() -> System.out);
@@ -57,7 +59,7 @@ public class JLineCommandLine implements CommandLine {
             String line;
             while (true) {
                 try {
-                    line = reader.readLine(readPrefix);
+                    line =  reader.readLine(readPrefix);
                 } catch (EndOfFileException ignored) {
                     // Continue reading after EOT
                     continue;
@@ -68,9 +70,9 @@ public class JLineCommandLine implements CommandLine {
                 }
 
                 line = line.trim();
-                hmc.getCommandLineManager().getCommandLineReader().accept(line);
-                if (hmc.getCommandLineManager().isQuickExitCli()) {
-                    if (!hmc.getCommandLineManager().isWaitingForInput()) {
+                commandLine.getCommandLineReader().accept(line);
+                if (commandLine.isQuickExitCli()) {
+                    if (!commandLine.isWaitingForInput()) {
                         break;
                     }
 

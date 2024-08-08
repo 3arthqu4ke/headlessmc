@@ -21,7 +21,7 @@ public class RunnableCommand extends AbstractRuntimeCommand {
         int addr = ParseUtil.parseI(args[1]);
         Runnable runnable = () -> {
             for (int i = 2; i < args.length; i++) {
-                ctx.getCommandLineManager().getCommandContext().execute(args[i]);
+                ctx.getCommandLine().getCommandContext().execute(args[i]);
             }
         };
 

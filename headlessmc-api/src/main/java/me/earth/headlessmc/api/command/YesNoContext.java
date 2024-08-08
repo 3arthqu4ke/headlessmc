@@ -13,14 +13,14 @@ public class YesNoContext implements CommandContext {
     private final HeadlessMc ctx;
 
     public static void goBackAfter(HeadlessMc ctx, YesNoCallback callback) {
-        ctx.getCommandLineManager().setWaitingForInput(true);
-        CommandContext current = ctx.getCommandLineManager().getCommandContext();
-        ctx.getCommandLineManager().setCommandContext(new YesNoContext(result -> {
+        ctx.getCommandLine().setWaitingForInput(true);
+        CommandContext current = ctx.getCommandLine().getCommandContext();
+        ctx.getCommandLine().setCommandContext(new YesNoContext(result -> {
             try {
-                ctx.getCommandLineManager().setWaitingForInput(false);
+                ctx.getCommandLine().setWaitingForInput(false);
                 callback.accept(result);
             } finally {
-                ctx.getCommandLineManager().setCommandContext(current);
+                ctx.getCommandLine().setCommandContext(current);
             }
         }, ctx));
     }

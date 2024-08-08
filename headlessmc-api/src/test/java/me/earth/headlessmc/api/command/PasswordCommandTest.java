@@ -11,7 +11,7 @@ public class PasswordCommandTest {
     @Test
     @SneakyThrows
     public void passwordCommandTest() {
-        val clm = MockedHeadlessMc.INSTANCE.getCommandLineManager();
+        val clm = MockedHeadlessMc.INSTANCE.getCommandLine();
 
         clm.setHidingPasswordsSupported(true);
         assertTrue(clm.isHidingPasswordsSupported());
