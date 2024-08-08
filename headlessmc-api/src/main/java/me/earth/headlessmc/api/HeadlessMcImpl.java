@@ -13,7 +13,7 @@ public class HeadlessMcImpl implements HeadlessMc {
     @Delegate
     private final HasConfig configHolder;
     @Getter
-    private final CommandLine commandLineManager;
+    private final CommandLine commandLine;
     @Getter
     private final ExitManager exitManager;
     @Getter

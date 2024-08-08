@@ -2,8 +2,8 @@ package me.earth.headlessmc.jline;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.api.command.line.CommandLineListener;
 import me.earth.headlessmc.api.command.line.CommandLine;
+import me.earth.headlessmc.api.command.line.CommandLineListener;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -59,7 +59,7 @@ public class JLineCommandLineListener implements CommandLineListener {
             String line;
             while (true) {
                 try {
-                    line =  reader.readLine(readPrefix);
+                    line = commandLine.isHidingPasswords() ? reader.readLine(readPrefix, '*') :  reader.readLine(readPrefix);
                 } catch (EndOfFileException ignored) {
                     // Continue reading after EOT
                     continue;
