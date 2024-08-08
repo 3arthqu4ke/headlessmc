@@ -99,10 +99,8 @@ public final class Main {
         val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
                                     new ProcessFactory(mcFiles, configs, os), configs,
                                     javas, accounts, versionSpecificModManager, new PluginManager());
-
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
-        versions.refresh();
 
         LaunchContext launchContext = new LaunchContext(launcher);
         hmc.getCommandLine().setCommandContext(launchContext);

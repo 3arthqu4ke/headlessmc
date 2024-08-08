@@ -86,12 +86,14 @@ public class AccountManager {
             }
         }
 
-        ValidatedAccount primary = getPrimaryAccount();
-        if (primary != null) {
-            try {
-                refreshAccount(primary);
-            } catch (AuthException e) {
-                log.error("Failed to refresh account " + primary.getName(), e);
+        if (config.get(LauncherProperties.REFRESH_ON_LAUNCH, false)) {
+            ValidatedAccount primary = getPrimaryAccount();
+            if (primary != null) {
+                try {
+                    refreshAccount(primary);
+                } catch (AuthException e) {
+                    log.error("Failed to refresh account " + primary.getName(), e);
+                }
             }
         }
     }

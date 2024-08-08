@@ -73,4 +73,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> IN_MEMORY = bool("hmc.in.memory");
     Property<Boolean> IN_MEMORY_REQUIRE_CORRECT_JAVA = bool("hmc.in.memory.require.correct.java");
 
+    Property<Boolean> REFRESH_ON_LAUNCH = bool("hmc.account.refresh.on.launch");
+
 }

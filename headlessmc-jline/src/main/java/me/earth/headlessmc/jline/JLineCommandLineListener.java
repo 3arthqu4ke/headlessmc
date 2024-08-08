@@ -19,6 +19,7 @@ import java.io.IOException;
 public class JLineCommandLineListener implements CommandLineListener {
     @Override
     public void listen(HeadlessMc hmc) throws IOError {
+        long nanos = System.nanoTime();
         if (hmc.getConfig().get(JLineProperties.PREVENT_DEPRECATION_WARNING, true)) {
             System.setProperty("org.jline.terminal.disableDeprecatedProviderWarning", "true");
         }
@@ -30,6 +31,7 @@ public class JLineCommandLineListener implements CommandLineListener {
 
         String providers = hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
         InAndOutProvider io = commandLine.getInAndOutProvider();
+        // terribly complicated TerminalBuilder because on Windows JLine cannot be trusted to find the correct provider?
         try (Terminal terminal = TerminalBuilder.builder()
                                                 .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,
                                                          hmc.getConfig().get(JLineProperties.JLINE_OUT, false) ? io.getOut().get() : null)
@@ -52,6 +54,8 @@ public class JLineCommandLineListener implements CommandLineListener {
 
             reader.unsetOpt(LineReader.Option.INSERT_TAB);
             String readPrefix = hmc.getConfig().get(JLineProperties.READ_PREFIX, null);
+            nanos = System.nanoTime() - nanos;
+            log.info("JLine terminal took " + (nanos / 1_000_000.0) + "ms to get ready.");
             String line;
             while (true) {
                 try {
