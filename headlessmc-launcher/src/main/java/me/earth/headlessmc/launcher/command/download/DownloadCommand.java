@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.Completion;
 import me.earth.headlessmc.api.command.YesNoContext;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
@@ -15,6 +16,7 @@ import me.earth.headlessmc.api.util.Table;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 
 @CustomLog
@@ -99,6 +101,15 @@ public class DownloadCommand extends AbstractLauncherCommand
     @Override
     public Iterable<VersionInfo> getIterable() {
         return cache;
+    }
+
+    @Override
+    public void getCompletions(String line, List<Completion> completions, String... args) {
+        if (args.length == 2 && !cache.isCached()) {
+            cache.cache(false);
+        }
+
+        FindByCommand.super.getCompletions(line, completions, args);
     }
 
 }
