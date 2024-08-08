@@ -21,5 +21,6 @@ public interface JLineProperties {
     Property<Boolean> JNA = PropertyTypes.bool("hmc.jline.jna");
     Property<Boolean> JNI = PropertyTypes.bool("hmc.jline.jni");
     Property<Boolean> EXEC = PropertyTypes.bool("hmc.jline.exec");
+    Property<Boolean> SYSTEM = PropertyTypes.bool("hmc.jline.system");
 
 }

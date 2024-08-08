@@ -17,7 +17,7 @@ public class CommandCompleter implements Completer {
     @Override
     public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
         for (Completion completion : hmc.getCommandLine().getCommandContext().getCompletions(line.line())) {
-            candidates.add(new Candidate(completion.getValue(), completion.getValue(), null, completion.getDescription(), null, null, true, 0));
+            candidates.add(new Candidate(completion.getValue(), completion.getValue(), null, completion.getDescription(), null, null, true));
         }
     }
 

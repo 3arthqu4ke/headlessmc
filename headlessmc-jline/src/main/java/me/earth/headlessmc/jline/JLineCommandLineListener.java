@@ -40,19 +40,7 @@ public class JLineCommandLineListener implements CommandLineListener {
         String providers = hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
         InAndOutProvider io = commandLine.getInAndOutProvider();
         // terribly complicated TerminalBuilder because on Windows JLine cannot be trusted to find the correct provider?
-        try (Terminal terminal = TerminalBuilder.builder()
-                                                .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,
-                                                         hmc.getConfig().get(JLineProperties.JLINE_OUT, false) ? io.getOut().get() : null)
-                                                .exec(hmc.getConfig().get(JLineProperties.EXEC, false))
-                                                .jna(hmc.getConfig().get(JLineProperties.JNI, false))
-                                                .ffm(hmc.getConfig().get(JLineProperties.FFM, false))
-                                                .jansi(hmc.getConfig().get(JLineProperties.JANSI, false))
-                                                .jna(hmc.getConfig().get(JLineProperties.JNA, true))
-                                                .dumb(dumb)
-                                                .providers("jna")
-                                                .providers(providers)
-                                                .type(hmc.getConfig().get(JLineProperties.TYPE, null))
-                                                .build()) {
+        try (Terminal terminal = buildTerminal(hmc, dumb, providers, io)) {
             log.info("JLine Terminal type: " + terminal.getType() + ", name: " + terminal.getName() + " (" + terminal + ")");
             LineReader reader = LineReaderBuilder.builder().appName("HeadlessMC").terminal(terminal).completer(new CommandCompleter(hmc)).build();
             reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
@@ -94,6 +82,29 @@ public class JLineCommandLineListener implements CommandLineListener {
             // TODO: on UserInterruptException kill Mc process?
             throw new IOError(e);
         }
+    }
+
+    private Terminal buildTerminal(HeadlessMc hmc, boolean dumb, String providers, InAndOutProvider io) throws IOException {
+        TerminalBuilder terminalBuilder = TerminalBuilder
+            .builder()
+            .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,
+                     hmc.getConfig().get(JLineProperties.JLINE_OUT, false) ? io.getOut().get() : null)
+            .exec(hmc.getConfig().get(JLineProperties.EXEC, false))
+            .jna(hmc.getConfig().get(JLineProperties.JNI, false))
+            .jansi(hmc.getConfig().get(JLineProperties.JANSI, false))
+            .jna(hmc.getConfig().get(JLineProperties.JNA, true))
+            .system(hmc.getConfig().get(JLineProperties.SYSTEM, true))
+            .dumb(dumb)
+            .type(hmc.getConfig().get(JLineProperties.TYPE, null));
+
+        try {
+            terminalBuilder.ffm(hmc.getConfig().get(JLineProperties.FFM, false));
+            terminalBuilder.providers(providers);
+        } catch (NoSuchMethodError ignored) { // e.g. 1.12.2 ships an older version of JLine which does not have this
+            log.debug("Running an older version of JLine, FFM and/or providers not supported.");
+        }
+
+        return terminalBuilder.build();
     }
 
 }
