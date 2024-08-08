@@ -214,6 +214,11 @@ allprojects {
     }
 }
 
+javadoc {
+    source subprojects.collect { it.sourceSets.main.allJava }
+    classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+}
+
 dependencies {
     // create maven publication that contains all modules
     api project(':headlessmc-api')

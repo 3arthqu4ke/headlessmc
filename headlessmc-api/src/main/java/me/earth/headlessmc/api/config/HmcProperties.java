@@ -16,7 +16,7 @@ public interface HmcProperties {
     Property<String> MAIN = string("hmc.main_method");
 
     /**
-     * If runtime is started with Java > 8 and the Minecraft main class needs to
+     * If runtime is started with Java 9+ and the Minecraft main class needs to
      * get deencapsulated first before it can get called.
      */
     Property<Boolean> DEENCAPSULATE = bool("hmc.deencapsulate");

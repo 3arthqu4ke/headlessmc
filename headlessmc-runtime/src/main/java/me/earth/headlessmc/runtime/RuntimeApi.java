@@ -4,11 +4,9 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
-import me.earth.headlessmc.api.command.PasswordAware;
 import me.earth.headlessmc.api.command.line.CommandLineManager;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.logging.LoggingService;
 import me.earth.headlessmc.runtime.commands.RuntimeContext;
 
@@ -27,7 +25,11 @@ public class RuntimeApi {
         val hmc = new HeadlessMcImpl(() -> config, input, new ExitManager(), loggingService);
         val vm = new VM(config.get(RuntimeProperties.VM_SIZE, 128L).intValue());
         runtime = new Runtime(hmc, vm, mT);
-        runtime.getCommandLineManager().setCommandContext(new RuntimeContext(runtime));
+
+        RuntimeContext context = new RuntimeContext(runtime);
+        runtime.getCommandLineManager().setCommandContext(context);
+        runtime.getCommandLineManager().setBaseContext(context);
+
         return runtime;
     }
 

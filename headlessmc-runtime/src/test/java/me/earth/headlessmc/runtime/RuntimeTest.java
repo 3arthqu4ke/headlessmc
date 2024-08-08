@@ -5,6 +5,7 @@ import me.earth.headlessmc.api.config.ConfigImpl;
 
 public interface RuntimeTest {
     default Runtime getRuntime() {
+        System.setProperty(RuntimeProperties.ENABLE_REFLECTION.getName(), "true");
         return RuntimeApi.init(ConfigImpl.empty(), new CommandLineManager());
     }
 

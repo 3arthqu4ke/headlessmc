@@ -103,7 +103,11 @@ public final class Main {
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
         versions.refresh();
-        hmc.getCommandLineManager().setCommandContext(new LaunchContext(launcher));
+
+        LaunchContext launchContext = new LaunchContext(launcher);
+        hmc.getCommandLineManager().setCommandContext(launchContext);
+        hmc.getCommandLineManager().setBaseContext(launchContext);
+
         if (hmc.getConfig().get(JLineProperties.ENABLED, true)) {
             hmc.getCommandLineManager().setCommandLineProvider(JLineCommandLine::new);
         }

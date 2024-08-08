@@ -20,6 +20,13 @@ import java.util.function.Supplier;
 public class CommandLineManager implements PasswordAware, QuickExitCli, HasCommandContext, CommandLine {
     private final InAndOutProvider inAndOutProvider = new InAndOutProvider();
     private volatile Supplier<CommandLine> commandLineProvider = new DefaultCommandLineProvider(inAndOutProvider);
+    /**
+     * The initial CommandContext, so that we do not lose it...
+     */
+    private volatile CommandContext baseContext = EmptyCommandContext.INSTANCE;
+    /**
+     * The currently active CommandContext which executes commands written on the CommandLine managed by this CommandLineManager.
+     */
     private volatile CommandContext commandContext = EmptyCommandContext.INSTANCE;
     private volatile Consumer<String> commandLineReader = line -> getCommandContext().execute(line);
 

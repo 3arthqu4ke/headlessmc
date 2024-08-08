@@ -80,7 +80,7 @@ public class FamilyUtil {
 
     /**
      * Calls {@link FamilyUtil#iterateParents(HasParent, Supplier, Function)}
-     * for the defaultResult <tt>() -> null</tt>.
+     * for the defaultResult {@code () -> null}.
      */
     public static <T extends HasParent<T>, S> S iterateParents(
         T child,

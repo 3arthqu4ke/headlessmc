@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * which cpw's bootstraplauncher would usually leave in the boot layer.
  * @see <a href="https://github.com/McModLauncher/bootstraplauncher">https://github.com/McModLauncher/bootstraplauncher</a>
  */
-@SuppressWarnings({"unused", "Since15"}) // called via Reflection from me.earth.headlessmc.launcher.launch.InMemoryLauncher
+@SuppressWarnings({"unused", "Since15", "RedundantSuppression"}) // called via Reflection from me.earth.headlessmc.launcher.launch.InMemoryLauncher
 public class LayeredBootstrapLauncher {
     private static final Logger LOGGER = Logger.getLogger(LayeredBootstrapLauncher.class.getSimpleName());
 
