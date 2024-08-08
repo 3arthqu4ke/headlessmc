@@ -300,3 +300,5 @@ allprojects {
         }
     }
 }
+
+generateMetadataFileForHeadlessmcPublication.mustRunAfter(copyJars)
