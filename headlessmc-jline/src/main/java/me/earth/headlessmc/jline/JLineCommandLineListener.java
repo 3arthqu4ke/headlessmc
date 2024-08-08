@@ -24,27 +24,24 @@ public class JLineCommandLineListener implements CommandLineListener {
         }
 
         CommandLine commandLine = hmc.getCommandLine();
-        boolean dumb = hmc.getConfig().get(JLineProperties.DUMB, false) || System.getProperty("java.class.path").contains("idea_rt.jar");
-        String providers = dumb ? "dumb" : hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
+        boolean dumb = hmc.getConfig().get(JLineProperties.DUMB, false)
+            || System.console() == null && hmc.getConfig().get(JLineProperties.DUMB_WHEN_NO_CONSOLE, true)
+            || System.getProperty("java.class.path").contains("idea_rt.jar");
+
+        String providers = hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
         InAndOutProvider io = commandLine.getInAndOutProvider();
-        //try (Terminal terminal = TerminalBuilder.builder().streams(io.getIn().get(), io.getOut().get()).providers(providers).type(dumb ? Terminal.TYPE_DUMB : null).build()) {
-        //io.setIn(() -> System.in);
-        //io.setOut(() -> System.out);
         try (Terminal terminal = TerminalBuilder.builder()
-                                                //.streams(hmc.getConfig().get(JLineProperties.JLINE_IN, true) ? io.getIn().get() : null,
-                                                //         hmc.getConfig().get(JLineProperties.JLINE_OUT, true) ? io.getOut().get() : null)
-                                                /*.jni(providers.contains("jni"))
-                                                .jna(providers.contains("jna"))
-                                                .jansi(providers.contains("jansi"))
-                                                .ffm(providers.contains("ffm"))
-                                                .exec(providers.contains("exec"))*/
+                                                .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,
+                                                         hmc.getConfig().get(JLineProperties.JLINE_OUT, false) ? io.getOut().get() : null)
+                                                .exec(hmc.getConfig().get(JLineProperties.EXEC, false))
+                                                .jna(hmc.getConfig().get(JLineProperties.JNI, false))
                                                 .ffm(hmc.getConfig().get(JLineProperties.FFM, false))
-                                                .jansi(false)
-                                                .jna(true)
-                                                //.dumb(dumb)
+                                                .jansi(hmc.getConfig().get(JLineProperties.JANSI, false))
+                                                .jna(hmc.getConfig().get(JLineProperties.JNA, true))
+                                                .dumb(dumb)
                                                 .providers("jna")
-                                                //.providers(providers)
-                                                //.type(dumb ? Terminal.TYPE_DUMB : null)
+                                                .providers(providers)
+                                                .type(hmc.getConfig().get(JLineProperties.TYPE, null))
                                                 .build()) {
             log.info("JLine Terminal type: " + terminal.getType() + ", name: " + terminal.getName() + " (" + terminal + ")");
             LineReader reader = LineReaderBuilder.builder().appName("HeadlessMC").terminal(terminal).completer(new CommandCompleter(hmc)).build();
@@ -54,12 +51,11 @@ public class JLineCommandLineListener implements CommandLineListener {
             }
 
             reader.unsetOpt(LineReader.Option.INSERT_TAB);
-
             String readPrefix = hmc.getConfig().get(JLineProperties.READ_PREFIX, null);
             String line;
             while (true) {
                 try {
-                    line = commandLine.isHidingPasswords() ? reader.readLine(readPrefix, '*') :  reader.readLine(readPrefix);
+                    line = commandLine.isHidingPasswords() ? reader.readLine(readPrefix, '*') : reader.readLine(readPrefix);
                 } catch (EndOfFileException ignored) {
                     // Continue reading after EOT
                     continue;
