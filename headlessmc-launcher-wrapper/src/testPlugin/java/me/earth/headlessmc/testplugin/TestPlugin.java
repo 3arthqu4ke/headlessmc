@@ -1,6 +1,7 @@
 package me.earth.headlessmc.testplugin;
 
 import lombok.CustomLog;
+import me.earth.headlessmc.api.command.line.DefaultCommandLineProvider;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.plugin.HeadlessMcPlugin;
 import org.junit.platform.commons.util.ExceptionUtils;
@@ -48,6 +49,7 @@ public class TestPlugin implements HeadlessMcPlugin {
         // launcher.getInAndOutProvider().setErr(() -> out);
         TestInputStream in = new TestInputStream();
         launcher.getCommandLine().getInAndOutProvider().setIn(() -> in);
+        launcher.getCommandLine().setCommandLineProvider(new DefaultCommandLineProvider(launcher.getCommandLine().getInAndOutProvider()));
 
         LaunchTest.build(launcher.getJavaService().getCurrent(), launcher, in);
     }
