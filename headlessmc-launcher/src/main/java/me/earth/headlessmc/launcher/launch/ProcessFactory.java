@@ -67,7 +67,9 @@ public class ProcessFactory {
 
         val command = commandBuilder.build();
         downloadAssets(files, version);
-        log.debug(command.toString());
+
+        debugCommand(command);
+
         val dir = new File(launcher.getConfig().get(
             LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
@@ -166,6 +168,19 @@ public class ProcessFactory {
 
     protected void download(String from, String to) throws IOException {
         IOUtil.download(from, to);
+    }
+
+    private void debugCommand(List<String> command) {
+        StringBuilder commandDebugBuilder = new StringBuilder();
+        if (!command.isEmpty()) {
+            commandDebugBuilder.append("\"").append(command.get(0)).append("\" "); // escape java path
+        }
+
+        for (int i = 1; i < command.size(); i++) {
+            commandDebugBuilder.append(command.get(i)).append((i == command.size() - 1) ? "" : " ");
+        }
+
+        log.debug(commandDebugBuilder.toString());
     }
 
 }

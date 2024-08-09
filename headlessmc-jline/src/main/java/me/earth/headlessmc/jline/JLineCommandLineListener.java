@@ -27,39 +27,22 @@ public class JLineCommandLineListener implements CommandLineListener {
 
     @Override
     public void listen(HeadlessMc hmc) throws IOError {
-        long nanos = System.nanoTime();
-        if (hmc.getConfig().get(JLineProperties.PREVENT_DEPRECATION_WARNING, true)) {
-            System.setProperty("org.jline.terminal.disableDeprecatedProviderWarning", "true");
-        }
-
         CommandLine commandLine = hmc.getCommandLine();
-        boolean dumb = !hmc.getConfig().get(JLineProperties.FORCE_NOT_DUMB, false)
-                && (hmc.getConfig().get(JLineProperties.DUMB, false)
-                    || System.console() == null && hmc.getConfig().get(JLineProperties.DUMB_WHEN_NO_CONSOLE, true)
-                    || System.getProperty("java.class.path").contains("idea_rt.jar"));
-
-        String providers = hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
-        InAndOutProvider io = commandLine.getInAndOutProvider();
-        // terribly complicated TerminalBuilder because on Windows JLine cannot be trusted to find the correct provider?
-        try (Terminal terminal = buildTerminal(hmc, dumb, providers, io).build()) {
-            log.info("JLine Terminal type: " + terminal.getType() + ", name: " + terminal.getName() + " (" + terminal + ")");
-            LineReader reader = LineReaderBuilder.builder().appName("HeadlessMC").terminal(terminal).completer(new CommandCompleter(hmc)).build();
-            reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
-            if (!hmc.getConfig().get(JLineProperties.BRACKETED_PASTE, true)) {
-                reader.unsetOpt(LineReader.Option.BRACKETED_PASTE);
-            }
-
-            reader.unsetOpt(LineReader.Option.INSERT_TAB);
-            this.readPrefix = hmc.getConfig().get(JLineProperties.READ_PREFIX, null);
-            this.terminal = terminal;
-            this.lineReader = reader;
-
+        long nanos = System.nanoTime();
+        try {
+            open(hmc);
             nanos = System.nanoTime() - nanos;
             log.info("JLine terminal took " + (nanos / 1_000_000.0) + "ms to get ready.");
+
             String line;
             while (true) {
+                LineReader currentLineReader = lineReader;
+                if (currentLineReader == null) {
+                    break;
+                }
+
                 try {
-                    line = commandLine.isHidingPasswords() ? reader.readLine(readPrefix, '*') : reader.readLine(readPrefix);
+                    line = commandLine.isHidingPasswords() ? currentLineReader.readLine(readPrefix, '*') : currentLineReader.readLine(readPrefix);
                 } catch (EndOfFileException ignored) {
                     // Continue reading after EOT
                     continue;
@@ -82,10 +65,56 @@ public class JLineCommandLineListener implements CommandLineListener {
         } catch (UserInterruptException | IOException e) {
             // TODO: on UserInterruptException kill Mc process?
             throw new IOError(e);
+        } finally {
+            try {
+                close();
+            } catch (IOException e) {
+                log.error("Failed to close Terminal", e);
+            }
         }
     }
 
-    protected TerminalBuilder buildTerminal(HeadlessMc hmc, boolean dumb, String providers, InAndOutProvider io) throws IOException {
+    public synchronized void open(HeadlessMc hmc) throws IOException {
+        if (hmc.getConfig().get(JLineProperties.PREVENT_DEPRECATION_WARNING, true)) {
+            System.setProperty("org.jline.terminal.disableDeprecatedProviderWarning", "true");
+        }
+
+        CommandLine commandLine = hmc.getCommandLine();
+        boolean dumb = !hmc.getConfig().get(JLineProperties.FORCE_NOT_DUMB, false)
+            && (hmc.getConfig().get(JLineProperties.DUMB, false)
+            || System.console() == null && hmc.getConfig().get(JLineProperties.DUMB_WHEN_NO_CONSOLE, true)
+            || System.getProperty("java.class.path").contains("idea_rt.jar"));
+
+        String providers = hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
+        InAndOutProvider io = commandLine.getInAndOutProvider();
+
+        Terminal currentTerminal = buildTerminal(hmc, dumb, providers, io).build();
+        log.info("JLine Terminal type: " + currentTerminal.getType() + ", name: " + currentTerminal.getName() + " (" + currentTerminal + ")");
+        LineReader reader = LineReaderBuilder.builder().appName("HeadlessMC").terminal(currentTerminal).completer(new CommandCompleter(hmc)).build();
+        reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
+        if (!hmc.getConfig().get(JLineProperties.BRACKETED_PASTE, true)) {
+            reader.unsetOpt(LineReader.Option.BRACKETED_PASTE);
+        }
+
+        reader.unsetOpt(LineReader.Option.INSERT_TAB);
+        this.readPrefix = hmc.getConfig().get(JLineProperties.READ_PREFIX, null);
+        this.terminal = currentTerminal;
+        this.lineReader = reader;
+    }
+
+    public synchronized void close() throws IOException {
+        Terminal currentTerminal = terminal;
+        if (currentTerminal != null) {
+            log.debug("Closing Terminal!");
+            currentTerminal.close();
+        }
+
+        terminal = null;
+        lineReader = null;
+    }
+
+    protected TerminalBuilder buildTerminal(HeadlessMc hmc, boolean dumb, String providers, InAndOutProvider io) {
+        // terribly complicated TerminalBuilder because on Windows JLine cannot be trusted to find the correct provider?
         TerminalBuilder terminalBuilder = TerminalBuilder
                 .builder()
                 .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,

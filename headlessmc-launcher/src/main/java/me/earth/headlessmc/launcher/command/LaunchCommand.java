@@ -3,8 +3,10 @@ package me.earth.headlessmc.launcher.command;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.line.CommandLineListener;
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.jline.JLineCommandLineListener;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
@@ -52,7 +54,13 @@ public class LaunchCommand extends AbstractVersionCommand {
 
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
         int status = 0;
+        CommandLineListener commandLineListener = ctx.getCommandLine().getCommandLineListener();
         try {
+            if (commandLineListener instanceof JLineCommandLineListener) {
+                // the JLine command line listener causes some problems with subprocesses that inherit IO
+                ((JLineCommandLineListener) commandLineListener).close();
+            }
+
             val process = ctx.getProcessFactory().run(
                 LaunchOptions.builder()
                              .account(getAccount())
@@ -109,6 +117,15 @@ public class LaunchCommand extends AbstractVersionCommand {
 
             if (!CommandUtil.hasFlag("-stay", args)) {
                 ctx.getExitManager().exit(status);
+            }
+
+            if (commandLineListener instanceof JLineCommandLineListener) {
+                // make JLine run again
+                try {
+                    ((JLineCommandLineListener) commandLineListener).open(ctx);
+                } catch (IOException e) {
+                    log.error("Failed to get JLineCommandLineListener running again", e);
+                }
             }
         }
     }
