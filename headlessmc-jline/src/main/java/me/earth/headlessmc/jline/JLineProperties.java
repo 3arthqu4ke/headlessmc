@@ -11,6 +11,7 @@ public interface JLineProperties {
     Property<String> TYPE = PropertyTypes.string("hmc.jline.type");
 
     Property<Boolean> DUMB = PropertyTypes.bool("hmc.jline.dumb");
+    Property<Boolean> FORCE_NOT_DUMB = PropertyTypes.bool("hmc.jline.force.not.dumb");
     Property<Boolean> DUMB_WHEN_NO_CONSOLE = PropertyTypes.bool("hmc.jline.dumb.when.no.console");
     Property<Boolean> PREVENT_DEPRECATION_WARNING = PropertyTypes.bool("hmc.jline.no.deprecation.warning");
     Property<Boolean> BRACKETED_PASTE = PropertyTypes.bool("hmc.jline.bracketed.paste");

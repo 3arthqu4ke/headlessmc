@@ -14,6 +14,8 @@ public interface CommandContext extends Iterable<Command> {
         for (Command command : this) {
             if (args.length == 1 || command.matches(args)) {
                 command.getCompletions(line, result, args);
+            } else if (args.length == 0) {
+                result.add(new Completion(command.getName(), command.getDescription()));
             }
         }
 

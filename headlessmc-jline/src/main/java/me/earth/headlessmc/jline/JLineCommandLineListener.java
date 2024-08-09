@@ -33,14 +33,15 @@ public class JLineCommandLineListener implements CommandLineListener {
         }
 
         CommandLine commandLine = hmc.getCommandLine();
-        boolean dumb = hmc.getConfig().get(JLineProperties.DUMB, false)
-            || System.console() == null && hmc.getConfig().get(JLineProperties.DUMB_WHEN_NO_CONSOLE, true)
-            || System.getProperty("java.class.path").contains("idea_rt.jar");
+        boolean dumb = !hmc.getConfig().get(JLineProperties.FORCE_NOT_DUMB, false)
+                && (hmc.getConfig().get(JLineProperties.DUMB, false)
+                    || System.console() == null && hmc.getConfig().get(JLineProperties.DUMB_WHEN_NO_CONSOLE, true)
+                    || System.getProperty("java.class.path").contains("idea_rt.jar"));
 
         String providers = hmc.getConfig().get(JLineProperties.PROVIDERS, "jni");
         InAndOutProvider io = commandLine.getInAndOutProvider();
         // terribly complicated TerminalBuilder because on Windows JLine cannot be trusted to find the correct provider?
-        try (Terminal terminal = buildTerminal(hmc, dumb, providers, io)) {
+        try (Terminal terminal = buildTerminal(hmc, dumb, providers, io).build()) {
             log.info("JLine Terminal type: " + terminal.getType() + ", name: " + terminal.getName() + " (" + terminal + ")");
             LineReader reader = LineReaderBuilder.builder().appName("HeadlessMC").terminal(terminal).completer(new CommandCompleter(hmc)).build();
             reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
@@ -84,19 +85,18 @@ public class JLineCommandLineListener implements CommandLineListener {
         }
     }
 
-    private Terminal buildTerminal(HeadlessMc hmc, boolean dumb, String providers, InAndOutProvider io) throws IOException {
+    protected TerminalBuilder buildTerminal(HeadlessMc hmc, boolean dumb, String providers, InAndOutProvider io) throws IOException {
         TerminalBuilder terminalBuilder = TerminalBuilder
-            .builder()
-            .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,
-                     hmc.getConfig().get(JLineProperties.JLINE_OUT, false) ? io.getOut().get() : null)
-            .exec(hmc.getConfig().get(JLineProperties.EXEC, false))
-            .jna(hmc.getConfig().get(JLineProperties.JNI, false))
-            .jansi(hmc.getConfig().get(JLineProperties.JANSI, false))
-            .jna(hmc.getConfig().get(JLineProperties.JNA, true))
-            .system(hmc.getConfig().get(JLineProperties.SYSTEM, true))
-            .dumb(dumb)
-            .type(hmc.getConfig().get(JLineProperties.TYPE, null));
-
+                .builder()
+                .streams(hmc.getConfig().get(JLineProperties.JLINE_IN, false) ? io.getIn().get() : null,
+                        hmc.getConfig().get(JLineProperties.JLINE_OUT, false) ? io.getOut().get() : null)
+                .exec(hmc.getConfig().get(JLineProperties.EXEC, false))
+                .jna(hmc.getConfig().get(JLineProperties.JNI, true))
+                .jansi(hmc.getConfig().get(JLineProperties.JANSI, false))
+                .jna(hmc.getConfig().get(JLineProperties.JNA, true))
+                .system(hmc.getConfig().get(JLineProperties.SYSTEM, true))
+                .dumb(dumb)
+                .type(hmc.getConfig().get(JLineProperties.TYPE, null));
         try {
             terminalBuilder.ffm(hmc.getConfig().get(JLineProperties.FFM, false));
             terminalBuilder.providers(providers);
@@ -104,7 +104,7 @@ public class JLineCommandLineListener implements CommandLineListener {
             log.debug("Running an older version of JLine, FFM and/or providers not supported.");
         }
 
-        return terminalBuilder.build();
+        return terminalBuilder;
     }
 
 }
