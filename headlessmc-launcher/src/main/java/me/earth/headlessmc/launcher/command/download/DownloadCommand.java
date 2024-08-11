@@ -71,7 +71,7 @@ public class DownloadCommand extends AbstractLauncherCommand
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         /*
             !!!
 
@@ -95,7 +95,7 @@ public class DownloadCommand extends AbstractLauncherCommand
                         .withColumn("type", VersionInfo::getType)
                         .build());
         } else {
-            FindByCommand.super.execute(args);
+            FindByCommand.super.execute(line, args);
         }
     }
 

@@ -46,7 +46,7 @@ public class MultiCommandTest {
         }
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             this.value = true;
         }
     }
@@ -59,7 +59,7 @@ public class MultiCommandTest {
         }
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             this.value = args[1];
         }
     }

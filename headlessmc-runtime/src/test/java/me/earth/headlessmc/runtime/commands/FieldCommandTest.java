@@ -18,21 +18,21 @@ public class FieldCommandTest implements RuntimeTest {
         val testClass = new TestClass<>();
         command.ctx.getVm().set(testClass, 0);
 
-        command.execute("field", "0", "FIRST_CTR", "1");
+        command.execute("", "field", "0", "FIRST_CTR", "1");
         assertEquals(TestClass.FIRST_CTR, command.ctx.getVm().get(1));
 
-        command.execute("field", "0", "field_with_100", "1");
+        command.execute("", "field", "0", "field_with_100", "1");
         assertEquals(100L, testClass.field_with_100);
         assertEquals(100L, command.ctx.getVm().get(1));
 
         command.ctx.getCommandLine().getCommandContext().execute("long 200 2");
         assertEquals(200L, command.ctx.getVm().get(2));
 
-        command.execute("field", "0", "field_with_100", "2", "-set");
+        command.execute("", "field", "0", "field_with_100", "2", "-set");
         assertEquals(200L, testClass.field_with_100);
         assertEquals(100L, command.ctx.getVm().get(1));
 
-        command.execute("field", "0", "field_with_100", "1");
+        command.execute("", "field", "0", "field_with_100", "1");
         assertEquals(200L, testClass.field_with_100);
         assertEquals(200L, command.ctx.getVm().get(1));
     }

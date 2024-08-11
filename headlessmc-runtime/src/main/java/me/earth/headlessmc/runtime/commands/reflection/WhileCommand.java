@@ -16,7 +16,7 @@ public class WhileCommand extends AbstractRuntimeCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 2) {
             ctx.log("Please specify an address and a command to run!");
         } else if (args.length < 3) {

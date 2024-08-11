@@ -19,16 +19,16 @@ public class SupplierCommandTest implements RuntimeTest {
     @SuppressWarnings("unchecked")
     public void testSupplierCommand() {
         assertThrows(CommandException.class,
-                     () -> command.execute("supplier"));
+                     () -> command.execute("", "supplier"));
         assertThrows(CommandException.class,
-                     () -> command.execute("supplier", "boolean true 1"));
+                     () -> command.execute("", "supplier", "boolean true 1"));
         assertThrows(CommandException.class,
-                     () -> command.execute("supplier", "boolean true 1", "1"));
+                     () -> command.execute("", "supplier", "boolean true 1", "1"));
 
         command.ctx.getVm().set(null, 1);
         assertNull(command.ctx.getVm().get(1));
 
-        command.execute("supplier", "boolean true 1", "1", "1");
+        command.execute("", "supplier", "boolean true 1", "1", "1");
         assertInstanceOf(Supplier.class, command.ctx.getVm().get(1));
         val supplier = (Supplier<Boolean>) command.ctx.getVm().get(1);
         assertTrue(supplier.get());

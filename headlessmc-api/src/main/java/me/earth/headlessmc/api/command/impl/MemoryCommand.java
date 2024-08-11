@@ -20,7 +20,7 @@ public class MemoryCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         val total = (Runtime.getRuntime().totalMemory() / 1024L / 1024L);
         val free = (Runtime.getRuntime().freeMemory() / 1024L / 1024L);
         val max = (Runtime.getRuntime().maxMemory() / 1024L / 1024L);

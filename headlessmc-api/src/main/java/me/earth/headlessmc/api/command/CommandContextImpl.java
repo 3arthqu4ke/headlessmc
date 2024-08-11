@@ -19,8 +19,8 @@ public class CommandContextImpl implements CommandContext {
         val args = CommandUtil.split(message);
         boolean notFound = true;
         for (val cmd : this) {
-            if (cmd.matches(args)) {
-                executeCommand(cmd, args);
+            if (cmd.matches(message, args)) {
+                executeCommand(cmd, message, args);
                 notFound = false;
                 break;
             }
@@ -31,9 +31,9 @@ public class CommandContextImpl implements CommandContext {
         }
     }
 
-    protected void executeCommand(Command cmd, String... args) {
+    protected void executeCommand(Command cmd, String message, String... args) {
         try {
-            cmd.execute(args);
+            cmd.execute(message, args);
         } catch (CommandException commandException) {
             log.log(commandException.getMessage());
             if (log.getConfig().get(HmcProperties.EXIT_ON_FAILED_COMMAND, false)) {

@@ -17,13 +17,13 @@ public class PopCommandTest implements RuntimeTest {
         command.ctx.getVm().set(true, 0);
         assertTrue((Boolean) command.ctx.getVm().get(0));
         assertNull(command.ctx.getVm().get(1));
-        assertThrows(CommandException.class, () -> command.execute("pop"));
+        assertThrows(CommandException.class, () -> command.execute("", "pop"));
 
-        command.execute("pop", "0", "1");
+        command.execute("", "pop", "0", "1");
         assertNull(command.ctx.getVm().get(0));
         assertTrue((Boolean) command.ctx.getVm().get(1));
 
-        command.execute("pop", "1");
+        command.execute("", "pop", "1");
         assertNull(command.ctx.getVm().get(0));
         assertNull(command.ctx.getVm().get(1));
     }

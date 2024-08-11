@@ -30,7 +30,7 @@ public class WhileCommandTest implements RuntimeTest {
         assertTrue((Boolean) command.ctx.getVm().get(1));
         assertEquals(0, value.get());
         assertNull(command.ctx.getVm().get(2));
-        command.execute("while", "1", "method 0 get 2");
+        command.execute("", "while", "1", "method 0 get 2");
         assertSame(value, command.ctx.getVm().get(2));
         assertEquals(5, value.get());
         assertInstanceOf(Boolean.class, command.ctx.getVm().get(1));

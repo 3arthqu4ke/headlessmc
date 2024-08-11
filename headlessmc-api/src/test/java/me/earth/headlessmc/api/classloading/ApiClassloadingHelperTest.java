@@ -47,15 +47,15 @@ public class ApiClassloadingHelperTest {
             assertEquals("testdesc", completions.get(0).getValue());
 
             Command command = cc.iterator().next();
-            assertTrue(command.matches("test"));
-            assertFalse(command.matches("notTest"));
+            assertTrue(command.matches("test", "test"));
+            assertFalse(command.matches("notTest", "notTest"));
             assertEquals("testname", command.getName());
             assertEquals("testarg", command.getArgs().iterator().next());
             assertEquals("0", command.getArgDescription("dummy"));
             assertEquals("testargdesc", command.getArgDescription("testarg"));
             assertInstanceOf(ArrayList.class, command.getArgs2Descriptions());
             assertEquals("testdesc", command.getDescription());
-            command.execute("arg1");
+            command.execute("arg1", "arg1");
             assertNull(commandArgs);
 
             Method checkAssertions = classLoadingHelperTest.getMethod("checkAssertions");
@@ -118,12 +118,12 @@ public class ApiClassloadingHelperTest {
                 List<Command> commands = new ArrayList<>();
                 commands.add(new Command() {
                     @Override
-                    public void execute(String... args) {
+                    public void execute(String line, String... args) {
                         commandArgs = args;
                     }
 
                     @Override
-                    public boolean matches(String... args) {
+                    public boolean matches(String line, String... args) {
                         return args[0].equals("test");
                     }
 

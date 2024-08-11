@@ -21,14 +21,14 @@ public class PasswordCommandTest {
         clm.setHidingPasswords(false);
         assertFalse(clm.isHidingPasswords());
 
-        command.execute("password");
+        command.execute("password", "password");
         assertTrue(clm.isHidingPasswords());
-        command.execute("password");
+        command.execute("password", "password");
         assertFalse(clm.isHidingPasswords());
 
         clm.setHidingPasswordsSupported(false);
         assertFalse(clm.isHidingPasswordsSupported());
-        assertThrows(CommandException.class, () -> command.execute("password"));
+        assertThrows(CommandException.class, () -> command.execute("password", "password"));
 
         clm.setHidingPasswordsSupported(true);
         assertTrue(clm.isHidingPasswordsSupported());

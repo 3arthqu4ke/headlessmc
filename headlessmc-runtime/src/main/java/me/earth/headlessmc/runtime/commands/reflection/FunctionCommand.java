@@ -17,7 +17,7 @@ public class FunctionCommand extends AbstractRuntimeCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 5) {
             throw new CommandException(
                 "Please specify a command/address/from/to!");

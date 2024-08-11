@@ -76,17 +76,17 @@ public class CommandContextTest {
         private boolean used;
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             setUsed(true);
         }
 
         @Override
-        public boolean matches(String... args) {
+        public boolean matches(String line, String... args) {
             return new AbstractCommand(HMC, name, "") {
                 @Override
-                public void execute(String... args) {
+                public void execute(String line, String... args) {
                 }
-            }.matches(args);
+            }.matches(line, args);
         }
 
         @Override

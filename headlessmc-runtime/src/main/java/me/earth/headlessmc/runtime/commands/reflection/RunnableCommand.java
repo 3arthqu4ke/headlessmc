@@ -13,7 +13,7 @@ public class RunnableCommand extends AbstractRuntimeCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 3) {
             throw new CommandException("Please specify a command/address!");
         }

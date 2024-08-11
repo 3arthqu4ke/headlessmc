@@ -22,9 +22,9 @@ public class FunctionCommandTest implements RuntimeTest {
             assertNull(command.ctx.getVm().get(i));
         }
 
-        command.execute("function",
-                        "if 0 \"boolean true 1\" \"boolean false 1\"",
-                        "2", "0", "3");
+        command.execute("",
+            "function",
+            "if 0 \"boolean true 1\" \"boolean false 1\"", "2", "0", "3");
 
         assertInstanceOf(Function.class, command.ctx.getVm().get(2));
         val function = (Function<Boolean, ?>) command.ctx.getVm().get(2);

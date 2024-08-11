@@ -45,7 +45,7 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
     protected abstract void onSuccessfulLogin(StepFullJavaSession.FullJavaSession session);
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (CommandUtil.hasFlag("-webview", args)) {
             loginWithWebview(args);
             return;

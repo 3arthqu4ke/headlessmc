@@ -18,7 +18,7 @@ public class HelpCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length > 1) {
             Command cmd = findCommand(args[1]);
             if (cmd != null) {

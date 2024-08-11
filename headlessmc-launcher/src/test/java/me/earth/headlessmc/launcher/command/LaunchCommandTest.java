@@ -10,7 +10,7 @@ public class LaunchCommandTest {
     @Test
     public void testLaunchCommand() {
         LaunchCommand command = new LaunchCommand(LauncherMock.INSTANCE);
-        assertThrows(CommandException.class, () -> command.execute("launch"));
+        assertThrows(CommandException.class, () -> command.execute("launch", "launch"));
         // More extensive testing is done in the launch.LaunchTest
     }
 

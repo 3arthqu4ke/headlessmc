@@ -16,16 +16,16 @@ public class ClassCommandTest implements RuntimeTest {
     @SneakyThrows
     public void testClassCommand() {
         assertThrows(CommandException.class,
-                     () -> command.execute("class"));
+                     () -> command.execute("class", "class"));
         assertThrows(CommandException.class,
-                     () -> command.execute("class", "test"));
+                     () -> command.execute("class test", "class", "test"));
 
         command.ctx.getVm().set(null, 0);
         assertNull(command.ctx.getVm().get(0));
-        command.execute("class", TestClass.class.getName(), "0");
+        command.execute("", "class", TestClass.class.getName(), "0");
         assertEquals(TestClass.class, command.ctx.getVm().get(0));
 
-        command.execute("class", "int", "0", "-primitive");
+        command.execute("", "class", "int", "0", "-primitive");
         assertEquals(int.class, command.ctx.getVm().get(0));
     }
 

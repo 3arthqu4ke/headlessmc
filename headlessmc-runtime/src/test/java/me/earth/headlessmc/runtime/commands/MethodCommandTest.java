@@ -23,7 +23,7 @@ public class MethodCommandTest implements RuntimeTest {
         command.ctx.getVm().set(called, 0);
         command.ctx.getVm().set(true, 1);
 
-        command.execute("method", "0", "set", "1", "1");
+        command.execute("", "method", "0", "set", "1", "1");
         assertTrue(called.get());
         assertNull(command.ctx.getVm().get(1));
 
@@ -32,16 +32,16 @@ public class MethodCommandTest implements RuntimeTest {
         testClass.value = null;
         command.ctx.getVm().set(testClass, 0);
         command.ctx.getVm().set(null, 1);
-        assertThrows(CommandException.class, () -> command.execute(
+        assertThrows(CommandException.class, () -> command.execute("",
             "method", "0", "methodWithSameName", "1", "1"));
         assertNull(command.ctx.getVm().get(1));
 
-        command.execute("method", "0", "methodWithSameName", "", "1", "1");
+        command.execute("", "method", "0", "methodWithSameName", "", "1", "1");
         assertEquals(TestClass.METHOD_WO_ARGS, command.ctx.getVm().get(1));
         assertNull(testClass.parameter);
 
-        command.execute("method", "0", "methodWithSameName",
-                        "java.lang.String", "2", "1");
+        command.execute("", "method", "0",
+                          "methodWithSameName", "java.lang.String", "2", "1");
         assertEquals(command.ctx.getVm().get(1), testClass.parameter);
         assertEquals(TestClass.METHOD_W_ARGS, command.ctx.getVm().get(2));
     }

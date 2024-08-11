@@ -18,8 +18,8 @@ public class TypeCommandTest implements RuntimeTest {
     @Test
     @SneakyThrows
     public void testTypeCommand() {
-        assertThrows(CommandException.class, () -> cmd.execute("test"));
-        assertThrows(CommandException.class, () -> cmd.execute("test", "test"));
+        assertThrows(CommandException.class, () -> cmd.execute("", "test"));
+        assertThrows(CommandException.class, () -> cmd.execute("", "test", "test"));
 
         runtime.getVm().set(false, 0);
         assertFalse((Boolean) runtime.getVm().get(0));

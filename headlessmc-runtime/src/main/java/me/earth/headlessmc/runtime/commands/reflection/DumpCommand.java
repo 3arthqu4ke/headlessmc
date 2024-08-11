@@ -14,7 +14,7 @@ public class DumpCommand extends AbstractRuntimeCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 2) {
             throw new CommandException("Please specify an address!");
         }

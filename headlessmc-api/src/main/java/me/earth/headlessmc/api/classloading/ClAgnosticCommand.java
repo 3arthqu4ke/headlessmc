@@ -19,13 +19,13 @@ public class ClAgnosticCommand implements Command {
     private final Object delegate;
 
     @Override
-    public void execute(String... args) throws CommandException {
-        ReflectionUtil.invoke("execute", delegate, null, new Class<?>[]{String[].class}, (Object) args);
+    public void execute(String line, String... args) throws CommandException {
+        ReflectionUtil.invoke("execute", delegate, null, new Class<?>[]{ String.class, String[].class}, line, args);
     }
 
     @Override
-    public boolean matches(String... args) {
-        return ReflectionUtil.invoke("matches", delegate, false, new Class<?>[]{String[].class}, (Object) args);
+    public boolean matches(String line, String... args) {
+        return ReflectionUtil.invoke("matches", delegate, false, new Class<?>[]{String.class, String[].class}, line, args);
     }
 
     @Override

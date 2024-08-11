@@ -17,19 +17,19 @@ public class FindByCommandTest {
     @Test
     public void testFailures() {
         TestFindByCommand command = new TestFindByCommand();
-        assertThrows(CommandException.class, () -> command.execute("test"));
-        assertThrows(CommandException.class, () -> command.execute("test", "1", "-id", "-regex"));
-        assertThrows(CommandException.class, () -> command.execute("test", "4", "-id"));
-        assertThrows(CommandException.class, () -> command.execute("test", "[a-z", "-regex"));
+        assertThrows(CommandException.class, () -> command.execute("test", "test"));
+        assertThrows(CommandException.class, () -> command.execute("test 1 -id -regex", "test", "1", "-id", "-regex"));
+        assertThrows(CommandException.class, () -> command.execute("test 4 -id", "test", "4", "-id"));
+        assertThrows(CommandException.class, () -> command.execute("test [a-z -regex", "test", "[a-z", "-regex"));
     }
 
     @Test
     @SneakyThrows
     public void testFindById() {
         TestFindByCommand command = new TestFindByCommand();
-        command.execute("test", "1", "-id");
+        command.execute("test 1 -id", "test", "1", "-id");
         assertEquals("Object1", command.obj.getName());
-        command.execute("test", "2", "-id");
+        command.execute("test 2 -id", "test", "2", "-id");
         assertEquals("Object2", command.obj.getName());
     }
 
@@ -37,9 +37,9 @@ public class FindByCommandTest {
     @SneakyThrows
     public void testFindByName() {
         TestFindByCommand command = new TestFindByCommand();
-        command.execute("test", "Object1");
+        command.execute("test Object1", "test", "Object1");
         assertEquals("Object1", command.obj.getName());
-        command.execute("test", "Object3");
+        command.execute("test Object3", "test", "Object3");
         assertEquals("Object3", command.obj.getName());
     }
 
@@ -47,9 +47,9 @@ public class FindByCommandTest {
     @SneakyThrows
     public void testFindByRegex() {
         TestFindByCommand command = new TestFindByCommand();
-        command.execute("test", "Object1", "-regex");
+        command.execute("test Object1 -regex", "test", "Object1", "-regex");
         assertEquals("Object1", command.obj.getName());
-        command.execute("test", "Object.*", "-regex");
+        command.execute("test Object.* -regex", "test", "Object.*", "-regex");
         assertEquals("Object3", command.obj.getName());
     }
 

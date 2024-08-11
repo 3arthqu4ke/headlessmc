@@ -14,7 +14,7 @@ public abstract class AbstractVMCommand extends AbstractRuntimeCommand {
         throws CommandException;
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 3) {
             throw new CommandException("Specify an owner and name!");
         }

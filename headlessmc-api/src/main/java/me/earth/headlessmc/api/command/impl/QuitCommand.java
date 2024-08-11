@@ -11,13 +11,13 @@ public class QuitCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(String... args) {
+    public void execute(String line, String... args) {
         ctx.log("Bye!");
         ctx.getExitManager().exit(0);
     }
 
     @Override
-    public boolean matches(String... args) {
+    public boolean matches(String line, String... args) {
         if (args.length > 0) {
             String lower = args[0].toLowerCase(Locale.ENGLISH).trim();
             return lower.equalsIgnoreCase("quit")

@@ -12,7 +12,7 @@ public class VersionsCommand extends AbstractLauncherCommand {
     }
 
     @Override
-    public void execute(String... args) {
+    public void execute(String line, String... args) {
         if (CommandUtil.hasFlag("-refresh", args)) {
             ctx.getVersionService().refresh();
         }

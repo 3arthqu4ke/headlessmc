@@ -12,14 +12,14 @@ public class RuntimeQuitCommand extends QuitCommand {
     }
 
     @Override
-    public void execute(String... args) {
+    public void execute(String line, String... args) {
         if (CommandUtil.hasFlag("-y", args)) {
-            super.execute(args);
+            super.execute(line, args);
         } else {
             ctx.log("Minecraft won't save properly. Quit anyways (Y/N)?");
             YesNoContext.goBackAfter(ctx, result -> {
                 if (result) {
-                    super.execute(args);
+                    super.execute(line, args);
                 }
             });
         }

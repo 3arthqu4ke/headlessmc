@@ -11,7 +11,7 @@ public class MemoryCommandTest {
     @Test
     public void testMemoryCommand() {
         val command = new MemoryCommand(MockedHeadlessMc.INSTANCE);
-        assertDoesNotThrow(() -> command.execute("memory"));
+        assertDoesNotThrow(() -> command.execute("memory", "memory"));
     }
 
 }

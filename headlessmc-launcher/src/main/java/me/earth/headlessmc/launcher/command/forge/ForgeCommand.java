@@ -30,7 +30,7 @@ public class ForgeCommand extends AbstractVersionCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         boolean refresh = CommandUtil.hasFlag("-refresh", args);
         if (cache.isEmpty() || refresh) {
             cache.refresh();
@@ -39,7 +39,7 @@ public class ForgeCommand extends AbstractVersionCommand {
         if (args.length < 2 || args.length == 2 && refresh) {
             logTable(cache);
         } else {
-            super.execute(args);
+            super.execute(line, args);
         }
     }
 
