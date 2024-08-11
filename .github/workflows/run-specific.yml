@@ -64,17 +64,14 @@ jobs:
         run: cp headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar .
 
       - name: Run the MC client
-        uses: Wandalen/wretry.action@v3.5.0
+        uses: 3arthqu4ke/mc-runtime-test@2.2.0
         with:
-          action: 3arthqu4ke/mc-runtime-test@2.2.0
-          attempt_limit: 3
-          with: |
-            mc: ${{ github.event.inputs.mc }}
-            modloader: ${{ github.event.inputs.modloader }}
-            regex: ${{ github.event.inputs.regex }}
-            java: ${{ github.event.inputs.java }}
-            java-distribution: ${{ github.event.inputs.java-distribution }}
-            mc-runtime-test: ${{ github.event.inputs.mc-runtime-test }}
-            xvfb: ${{ github.event.inputs.xvfb }}
-            headlessmc-command: ${{ github.event.inputs.headlessmc-command }}
-            download-hmc: false
+          mc: ${{ github.event.inputs.mc }}
+          modloader: ${{ github.event.inputs.modloader }}
+          regex: ${{ github.event.inputs.regex }}
+          java: ${{ github.event.inputs.java }}
+          java-distribution: ${{ github.event.inputs.java-distribution }}
+          mc-runtime-test: ${{ github.event.inputs.mc-runtime-test }}
+          xvfb: ${{ github.event.inputs.xvfb }}
+          headlessmc-command: ${{ github.event.inputs.headlessmc-command }}
+          download-hmc: false

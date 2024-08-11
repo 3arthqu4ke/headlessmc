@@ -88,16 +88,13 @@ jobs:
       - name: Copy launcher jar
         run: cp launcher-jar/headlessmc-launcher.jar .
       - name: Run the MC client
-        uses: Wandalen/wretry.action@v3.5.0
+        uses: 3arthqu4ke/mc-runtime-test@2.2.0
         with:
-          action: 3arthqu4ke/mc-runtime-test@2.2.0
-          attempt_limit: 3
-          with: |
-            mc: ${{ matrix.version.mc }}
-            modloader: ${{ matrix.version.modloader }}
-            regex: ${{ matrix.version.regex }}
-            java: ${{ matrix.version.java }}
-            mc-runtime-test: ${{ matrix.version.type }}
-            xvfb: false
-            headlessmc-command: -lwjgl --jvm -Djava.awt.headless=true
-            download-hmc: false
+          mc: ${{ matrix.version.mc }}
+          modloader: ${{ matrix.version.modloader }}
+          regex: ${{ matrix.version.regex }}
+          java: ${{ matrix.version.java }}
+          mc-runtime-test: ${{ matrix.version.type }}
+          xvfb: false
+          headlessmc-command: -lwjgl --jvm -Djava.awt.headless=true
+          download-hmc: false
