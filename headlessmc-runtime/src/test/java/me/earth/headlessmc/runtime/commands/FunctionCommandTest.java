@@ -3,6 +3,7 @@ package me.earth.headlessmc.runtime.commands;
 import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.runtime.RuntimeTest;
+import me.earth.headlessmc.runtime.commands.reflection.FunctionCommand;
 import org.junit.jupiter.api.Test;
 
 import java.util.function.Function;

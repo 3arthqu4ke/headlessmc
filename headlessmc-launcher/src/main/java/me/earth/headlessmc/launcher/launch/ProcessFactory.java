@@ -52,9 +52,31 @@ public class ProcessFactory {
         val dlls = options.getFiles().createRelative("extracted");
         val targets = processLibraries(version, dlls);
         addGameJar(version, targets);
+        List<String> classpath = instrumentation.instrument(targets);
+        if (options.isRuntime()) {
+            String runtimeJar = null;
+            for (String path : classpath) {
+                if (path.endsWith(InstrumentationHelper.RUNTIME_JAR)) {
+                    runtimeJar = path;
+                    classpath.remove(path);
+                    break;
+                }
+            }
+
+            if (runtimeJar == null) {
+                throw new IllegalStateException("Failed to find RuntimeJar in classpath " + classpath);
+            }
+            // add RuntimeJar as the first jar on the classpath
+            // this makes java look it up for libraries first
+            // really important because forge provides an incompatible version of JLine.
+            // TODO: this works, but is it really something we want to trust?
+            //  bring over the VersionAgnosticJLineCommandLineReader from hmc-specifics?
+            classpath.add(0, runtimeJar);
+        }
+
         val commandBuilder = Command.builder()
                              .account(options.getAccount())
-                             .classpath(instrumentation.instrument(targets))
+                             .classpath(classpath)
                              .os(os)
                              .jvmArgs(options.getAdditionalJvmArgs())
                              .natives(dlls.getBase().getAbsolutePath())

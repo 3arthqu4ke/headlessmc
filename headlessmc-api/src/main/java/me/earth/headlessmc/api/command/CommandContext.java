@@ -1,21 +1,21 @@
 package me.earth.headlessmc.api.command;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
 
 public interface CommandContext extends Iterable<Command> {
     void execute(String command);
 
-    default List<Completion> getCompletions(String line) {
+    default List<Map.Entry<String, @Nullable String>> getCompletions(String line) {
         String parsedLine = line.toLowerCase(Locale.ENGLISH);
         String[] args = CommandUtil.split(parsedLine);
-        List<Completion> result = new ArrayList<>();
+        List<Map.Entry<String, @Nullable String>> result = new ArrayList<>();
         for (Command command : this) {
             if (args.length == 1 || command.matches(args)) {
                 command.getCompletions(line, result, args);
             } else if (args.length == 0) {
-                result.add(new Completion(command.getName(), command.getDescription()));
+                result.add(new AbstractMap.SimpleEntry<>(command.getName(), command.getDescription()));
             }
         }
 

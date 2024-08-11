@@ -34,10 +34,10 @@ public class JLineCommandListenerTest {
         commandLine.setWaitingForInput(false);
         System.setIn(wis);
         AtomicReference<String> readLine = new AtomicReference<>();
-        commandLine.setCommandLineReader(line -> {
+        commandLine.setCommandConsumer(line -> {
             readLine.set(line);
             try {
-                ((JLineCommandLineListener) Objects.requireNonNull(commandLine.getCommandLineListener())).getTerminal().close();
+                ((JLineCommandLineReader) Objects.requireNonNull(commandLine.getCommandLineReader())).getTerminal().close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -49,7 +49,7 @@ public class JLineCommandListenerTest {
         System.setProperty(JLineProperties.JNI.getName(), "false");
         System.setProperty(JLineProperties.JLINE_IN.getName(), "true");
         System.setProperty(JLineProperties.JLINE_OUT.getName(), "true");
-        commandLine.setCommandLineProvider(JLineCommandLineListener::new);
+        commandLine.setCommandLineProvider(JLineCommandLineReader::new);
 
         TerminalBuilder.setTerminalOverride(new DumbTerminal(
                 new DumbTerminalProvider(), SystemStream.Output, "dumb", "dumb",
@@ -61,7 +61,7 @@ public class JLineCommandListenerTest {
         hmc.getLoggingService().init();
         hmc.getLoggingService().setLevel(Level.FINE);
         wis.getPrintStream().println("test");
-        commandLine.listen(hmc);
+        commandLine.read(hmc);
         assertEquals("test", readLine.get());
     }
 

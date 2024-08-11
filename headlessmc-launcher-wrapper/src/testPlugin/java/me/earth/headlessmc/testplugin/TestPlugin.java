@@ -3,10 +3,12 @@ package me.earth.headlessmc.testplugin;
 import lombok.CustomLog;
 import me.earth.headlessmc.api.command.line.DefaultCommandLineProvider;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.plugin.HeadlessMcPlugin;
 import org.junit.platform.commons.util.ExceptionUtils;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @CustomLog
 public class TestPlugin implements HeadlessMcPlugin {
@@ -51,6 +53,7 @@ public class TestPlugin implements HeadlessMcPlugin {
         launcher.getCommandLine().getInAndOutProvider().setIn(() -> in);
         launcher.getCommandLine().setCommandLineProvider(new DefaultCommandLineProvider(launcher.getCommandLine().getInAndOutProvider()));
 
+        System.setProperty(LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS.getName(), "true");
         LaunchTest.build(launcher.getJavaService().getCurrent(), launcher, in);
     }
 

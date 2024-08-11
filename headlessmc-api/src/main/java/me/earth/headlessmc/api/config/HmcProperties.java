@@ -1,6 +1,7 @@
 package me.earth.headlessmc.api.config;
 
 import me.earth.headlessmc.logging.Logger;
+import me.earth.headlessmc.logging.LoggingProperties;
 
 import static me.earth.headlessmc.api.config.PropertyTypes.bool;
 import static me.earth.headlessmc.api.config.PropertyTypes.string;
@@ -30,5 +31,10 @@ public interface HmcProperties {
      * Quits on a failed command. For more strictness in CI/CD pipelines.
      */
     Property<Boolean> EXIT_ON_FAILED_COMMAND = bool("hmc.exit.on.failed.command");
+
+    /**
+     * @see LoggingProperties#FILE_HANDLER_ENABLED
+     */
+    Property<Boolean> FILE_HANDLER_ENABLED = bool(LoggingProperties.FILE_HANDLER_ENABLED);
 
 }

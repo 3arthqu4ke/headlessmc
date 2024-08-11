@@ -33,7 +33,7 @@ import static java.util.logging.Level.*;
 public class LoggingService {
     private static final Iterable<Level> LEVELS = unmodifiableList(asList(OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL));
     private Supplier<PrintStream> streamFactory = () -> new PrintStream(new FileOutputStream(FileDescriptor.out), true);
-    private boolean fileHandler = true;
+    private boolean fileHandler = Boolean.parseBoolean(System.getProperty(LoggingProperties.FILE_HANDLER_ENABLED, "true"));
 
     public void init() {
         clearOtherHandlers();

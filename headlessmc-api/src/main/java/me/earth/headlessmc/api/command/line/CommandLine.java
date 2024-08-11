@@ -10,17 +10,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOError;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+/**
+ * Everything related to reading commands from the command line.
+ */
 @Getter
 @Setter
 @CustomLog
-public class CommandLine implements PasswordAware, QuickExitCli, HasCommandContext, CommandLineListener {
+public class CommandLine implements PasswordAware, QuickExitCli, HasCommandContext, CommandLineReader {
     private final InAndOutProvider inAndOutProvider = new InAndOutProvider();
-    private volatile Supplier<CommandLineListener> commandLineProvider = new DefaultCommandLineProvider(inAndOutProvider);
+    /**
+     * Provides the {@link CommandLineReader}.
+     */
+    private volatile Supplier<CommandLineReader> commandLineProvider = new DefaultCommandLineProvider(inAndOutProvider);
     /**
      * The initial CommandContext, so that we do not lose it...
      */
@@ -29,27 +37,70 @@ public class CommandLine implements PasswordAware, QuickExitCli, HasCommandConte
      * The currently active CommandContext which executes commands written on the CommandLine managed by this CommandLineManager.
      */
     private volatile CommandContext commandContext = EmptyCommandContext.INSTANCE;
-    private volatile Consumer<String> commandLineReader = line -> getCommandContext().execute(line);
-    private volatile @Nullable CommandLineListener commandLineListener;
+    /**
+     * Accesses the raw line read from the command line.
+     * Is generally only meant for testing, should by default always call execute on {@link #getCommandContext()}.
+     */
+    private volatile Consumer<String> commandConsumer = line -> getCommandContext().execute(line);
+    /**
+     * The current {@link CommandLineReader} for reading the command line.
+     * Might be {@code null}.
+     */
+    private volatile @Nullable CommandLineReader commandLineReader;
 
     private volatile boolean quickExitCli;
     private volatile boolean waitingForInput;
     private volatile boolean hidingPasswords;
     private volatile boolean hidingPasswordsSupported;
+    private volatile boolean listening;
 
+    /**
+     * Constructs a new CommandLine.
+     */
     public CommandLine() {
         setHidingPasswordsSupported(inAndOutProvider.getConsole().get() != null);
     }
 
     @Override
-    public void listen(HeadlessMc hmc) throws IOError {
-        if (this.commandLineListener != null) {
+    public void read(HeadlessMc hmc) throws IOError {
+        if (this.commandLineReader != null) {
             log.warn("Listen called, but a CommandLineListener already exists!");
         }
 
-        CommandLineListener commandLineListener = commandLineProvider.get();
-        this.commandLineListener = commandLineListener;
-        commandLineListener.listen(hmc);
+        CommandLineReader commandLineReader = commandLineProvider.get();
+        this.commandLineReader = commandLineReader;
+        listening = true;
+        commandLineReader.read(hmc);
+    }
+
+    @Override
+    public void readAsync(HeadlessMc hmc, ThreadFactory factory) {
+        if (this.commandLineReader != null) {
+            log.warn("Listen called, but a CommandLineListener already exists!");
+        }
+
+        CommandLineReader commandLineReader = commandLineProvider.get();
+        this.commandLineReader = commandLineReader;
+        listening = true;
+        commandLineReader.readAsync(hmc, factory);
+    }
+
+    @Override
+    public void open(HeadlessMc hmc) throws IOException {
+        CommandLineReader commandLineReader = getCommandLineReader();
+        if (commandLineReader != null) {
+            commandLineReader.read(hmc);
+            listening = true;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        CommandLineReader commandLineReader = getCommandLineReader();
+        if (commandLineReader != null) {
+            listening = false;
+            commandLineReader.close();
+        }
     }
 
     private static final class EmptyCommandContext implements CommandContext {

@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.runtime.RuntimeTest;
 import me.earth.headlessmc.runtime.TestClass;
+import me.earth.headlessmc.runtime.commands.reflection.ClassCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

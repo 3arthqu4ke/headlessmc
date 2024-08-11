@@ -2,7 +2,7 @@ package me.earth.headlessmc.launcher;
 
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.api.command.line.CommandLineListener;
+import me.earth.headlessmc.api.command.line.CommandLineReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOError;
@@ -15,7 +15,7 @@ public class QuickExitCliHandlerTest {
     @Test
     public void testQuickExitCliHandler() {
         val launcher = LauncherMock.INSTANCE;
-        val in = new MockCommandLineListener();
+        val in = new MockCommandLineReader();
         launcher.getCommandLine().setCommandLineProvider(() -> in);
 
         assertFalse(checkQuickExit(launcher, ""));
@@ -51,16 +51,16 @@ public class QuickExitCliHandlerTest {
         assertTrue(in.called);
     }
 
-    private static final class MockCommandLineListener implements CommandLineListener {
+    private static final class MockCommandLineReader implements CommandLineReader {
         public boolean called;
 
         @Override
-        public void listen(HeadlessMc hmc) throws IOError {
+        public void read(HeadlessMc hmc) throws IOError {
             called = true;
         }
 
         @Override
-        public void listenAsync(HeadlessMc hmc, ThreadFactory factory) {
+        public void readAsync(HeadlessMc hmc, ThreadFactory factory) {
             called = true;
         }
     }

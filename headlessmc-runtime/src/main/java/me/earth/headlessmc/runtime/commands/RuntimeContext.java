@@ -1,46 +1,65 @@
 package me.earth.headlessmc.runtime.commands;
 
-import me.earth.headlessmc.api.command.*;
+import lombok.val;
+import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.HeadlessMcApi;
+import me.earth.headlessmc.api.command.CommandContextImpl;
+import me.earth.headlessmc.api.command.ParseUtil;
+import me.earth.headlessmc.api.command.PasswordCommand;
 import me.earth.headlessmc.api.command.impl.HelpCommand;
 import me.earth.headlessmc.api.command.impl.MemoryCommand;
 import me.earth.headlessmc.api.command.impl.MultiCommand;
-import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.RuntimeProperties;
+import me.earth.headlessmc.runtime.commands.reflection.*;
+import me.earth.headlessmc.runtime.reflection.RuntimeReflection;
+import me.earth.headlessmc.runtime.reflection.VM;
 
-// TODO: array command?
-@SuppressWarnings({"unchecked", "RedundantSuppression"}) // delegate
 public class RuntimeContext extends CommandContextImpl {
-    public RuntimeContext(Runtime ctx) {
-        super(ctx);
-        if (ctx.getConfig().get(RuntimeProperties.ENABLE_REFLECTION, false)) {
-            add(new ClassCommand(ctx));
-            add(new FieldCommand(ctx));
-            add(new MethodCommand(ctx));
-            add(new DumpCommand(ctx));
-            add(TypeCommand.ofType(ctx, "string", s -> s));
-            add(TypeCommand.ofType(ctx, "char", s -> s.charAt(0)));
-            add(TypeCommand.ofType(ctx, "boolean", Boolean::parseBoolean));
-            add(TypeCommand.ofType(ctx, "byte", ParseUtil::parseB));
-            add(TypeCommand.ofType(ctx, "short", ParseUtil::parseS));
-            add(TypeCommand.ofType(ctx, "int", ParseUtil::parseI));
-            add(TypeCommand.ofType(ctx, "long", ParseUtil::parseL));
-            add(TypeCommand.ofType(ctx, "float", ParseUtil::parseF));
-            add(TypeCommand.ofType(ctx, "double", ParseUtil::parseD));
-            add(new NewCommand(ctx));
-            add(new PopCommand(ctx));
-            add(new CopyCommand(ctx));
-            add(new RunnableCommand(ctx));
-            add(new FunctionCommand(ctx));
-            add(new SupplierCommand(ctx));
-            add(new IfCommand(ctx));
-            add(new WhileCommand(ctx));
-        }
+    public RuntimeContext(HeadlessMc ctx) {
+        this(ctx, Thread.currentThread());
+    }
 
+    public RuntimeContext(HeadlessMc ctx, Thread thread) {
+        super(ctx);
+        initializeReflection(ctx, thread);
         add(new HelpCommand(ctx));
         add(new RuntimeQuitCommand(ctx));
         add(new MemoryCommand(ctx));
         add(new PasswordCommand(ctx));
         add(new MultiCommand(ctx));
+    }
+
+    protected void initializeReflection(HeadlessMc ctx, Thread thread) {
+        if (ctx.getConfig().get(RuntimeProperties.ENABLE_REFLECTION, false)) {
+            val vm = new VM(ctx.getConfig().get(RuntimeProperties.VM_SIZE, 128L).intValue());
+            RuntimeReflection refContext = new RuntimeReflection(ctx, thread, vm);
+            setAsInstance(refContext);
+            add(new ClassCommand(refContext));
+            add(new FieldCommand(refContext));
+            add(new MethodCommand(refContext));
+            add(new DumpCommand(refContext));
+            add(TypeCommand.ofType(refContext, "string", s -> s));
+            add(TypeCommand.ofType(refContext, "char", s -> s.charAt(0)));
+            add(TypeCommand.ofType(refContext, "boolean", Boolean::parseBoolean));
+            add(TypeCommand.ofType(refContext, "byte", ParseUtil::parseB));
+            add(TypeCommand.ofType(refContext, "short", ParseUtil::parseS));
+            add(TypeCommand.ofType(refContext, "int", ParseUtil::parseI));
+            add(TypeCommand.ofType(refContext, "long", ParseUtil::parseL));
+            add(TypeCommand.ofType(refContext, "float", ParseUtil::parseF));
+            add(TypeCommand.ofType(refContext, "double", ParseUtil::parseD));
+            add(new NewCommand(refContext));
+            add(new PopCommand(refContext));
+            add(new CopyCommand(refContext));
+            add(new RunnableCommand(refContext));
+            add(new FunctionCommand(refContext));
+            add(new SupplierCommand(refContext));
+            add(new IfCommand(refContext));
+            add(new WhileCommand(refContext));
+        }
+    }
+
+    protected void setAsInstance(RuntimeReflection reflection) {
+        HeadlessMcApi.setInstance(reflection);
     }
 
 }

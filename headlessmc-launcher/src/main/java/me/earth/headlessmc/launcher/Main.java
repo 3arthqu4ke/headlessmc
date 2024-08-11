@@ -7,7 +7,7 @@ import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
-import me.earth.headlessmc.jline.JLineCommandLineListener;
+import me.earth.headlessmc.jline.JLineCommandLineReader;
 import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
@@ -107,7 +107,7 @@ public final class Main {
         hmc.getCommandLine().setBaseContext(launchContext);
 
         if (hmc.getConfig().get(JLineProperties.ENABLED, true)) {
-            hmc.getCommandLine().setCommandLineProvider(JLineCommandLineListener::new);
+            hmc.getCommandLine().setCommandLineProvider(JLineCommandLineReader::new);
         }
 
         launcher.getPluginManager().init(launcher);
@@ -115,7 +115,7 @@ public final class Main {
             log.info(String.format("Detected: %s", os));
             log.info(String.format("Minecraft Dir: %s", mcFiles.getBase()));
             hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
-            hmc.getCommandLine().listen(hmc);
+            hmc.getCommandLine().read(hmc);
         }
     }
 

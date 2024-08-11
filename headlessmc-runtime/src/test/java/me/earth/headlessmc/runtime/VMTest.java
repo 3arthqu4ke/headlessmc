@@ -1,6 +1,8 @@
 package me.earth.headlessmc.runtime;
 
 import lombok.SneakyThrows;
+import me.earth.headlessmc.runtime.reflection.SegmentationFault;
+import me.earth.headlessmc.runtime.reflection.VM;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

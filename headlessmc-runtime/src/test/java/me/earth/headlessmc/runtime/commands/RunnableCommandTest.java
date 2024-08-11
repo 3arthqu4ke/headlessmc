@@ -3,6 +3,7 @@ package me.earth.headlessmc.runtime.commands;
 import lombok.SneakyThrows;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.runtime.RuntimeTest;
+import me.earth.headlessmc.runtime.commands.reflection.RunnableCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

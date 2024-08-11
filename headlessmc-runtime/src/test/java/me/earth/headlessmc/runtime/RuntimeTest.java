@@ -1,12 +1,14 @@
 package me.earth.headlessmc.runtime;
 
-import me.earth.headlessmc.api.command.line.CommandLine;
+import me.earth.headlessmc.api.HeadlessMcApi;
 import me.earth.headlessmc.api.config.ConfigImpl;
+import me.earth.headlessmc.runtime.reflection.RuntimeReflection;
 
 public interface RuntimeTest {
-    default Runtime getRuntime() {
+    default RuntimeReflection getRuntime() {
         System.setProperty(RuntimeProperties.ENABLE_REFLECTION.getName(), "true");
-        return RuntimeApi.init(ConfigImpl.empty(), new CommandLine());
+        new RuntimeInitializer().init(ConfigImpl.empty());
+        return (RuntimeReflection) HeadlessMcApi.getInstance();
     }
 
 }

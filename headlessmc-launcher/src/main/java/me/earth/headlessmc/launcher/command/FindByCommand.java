@@ -2,10 +2,16 @@ package me.earth.headlessmc.launcher.command;
 
 import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
-import me.earth.headlessmc.api.command.*;
+import me.earth.headlessmc.api.command.Command;
+import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.HasDescription;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -46,13 +52,13 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
     }
 
     @Override
-    default void getCompletions(String line, List<Completion> completions, String... args) {
+    default void getCompletions(String line, List<Map.Entry<String, @Nullable String>> completions, String... args) {
         Command.super.getCompletions(line, completions, args);
         if (args.length == 2) {
             String arg = args[1].toLowerCase(Locale.ENGLISH);
             for (T t : getIterable()) {
                 if (t.getName().toLowerCase(Locale.ENGLISH).startsWith(arg)) {
-                    completions.add(new Completion(t.getName(), t instanceof HasDescription ? ((HasDescription) t).getDescription() : null));
+                    completions.add(new AbstractMap.SimpleEntry<>(t.getName(), t instanceof HasDescription ? ((HasDescription) t).getDescription() : null));
                 }
             }
         }

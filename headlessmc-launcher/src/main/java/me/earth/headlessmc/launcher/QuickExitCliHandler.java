@@ -4,7 +4,7 @@ import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.command.QuickExitCli;
-import me.earth.headlessmc.api.command.line.CommandLineListener;
+import me.earth.headlessmc.api.command.line.CommandLineReader;
 import me.earth.headlessmc.api.command.line.CommandLine;
 
 /**
@@ -22,7 +22,7 @@ public class QuickExitCliHandler {
      * CommandLine#setQuickExitCli(boolean)} will be set to
      * {@code true}. If a command needs more input it can set
      * {@link CommandLine#setWaitingForInput(boolean)} to {@code true} which will
-     * cause this method call the given {@link CommandLineListener}. An exception are the
+     * cause this method call the given {@link CommandLineReader}. An exception are the
      * args "--version", "-version" or "version". These will also return
      * {@code true} and print {@link Launcher#VERSION}.
      *
@@ -44,10 +44,10 @@ public class QuickExitCliHandler {
 
             CommandLine clm = launcher.getCommandLine();
             clm.setQuickExitCli(true);
-            clm.getCommandLineReader().accept(cmd);
+            clm.getCommandConsumer().accept(cmd);
             if (clm.isWaitingForInput()) {
                 log.debug("Waiting for more input...");
-                clm.listen(launcher);
+                clm.read(launcher);
             }
 
             log.debug("Exiting QuickExitCli");

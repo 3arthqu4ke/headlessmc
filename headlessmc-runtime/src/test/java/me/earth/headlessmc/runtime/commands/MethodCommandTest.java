@@ -5,6 +5,7 @@ import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.runtime.RuntimeTest;
 import me.earth.headlessmc.runtime.TestClass;
+import me.earth.headlessmc.runtime.commands.reflection.MethodCommand;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;

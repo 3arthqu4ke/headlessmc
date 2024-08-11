@@ -3,10 +3,8 @@ package me.earth.headlessmc.launcher.command;
 import lombok.CustomLog;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.api.command.line.CommandLineListener;
-import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.jline.JLineCommandLineListener;
+import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
@@ -54,13 +52,9 @@ public class LaunchCommand extends AbstractVersionCommand {
 
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
         int status = 0;
-        CommandLineListener commandLineListener = ctx.getCommandLine().getCommandLineListener();
+        ClassLoader contextClassloader = Thread.currentThread().getContextClassLoader();
         try {
-            if (commandLineListener instanceof JLineCommandLineListener) {
-                // the JLine command line listener causes some problems with subprocesses that inherit IO
-                ((JLineCommandLineListener) commandLineListener).close();
-            }
-
+            ctx.getCommandLine().close();
             val process = ctx.getProcessFactory().run(
                 LaunchOptions.builder()
                              .account(getAccount())
@@ -71,6 +65,7 @@ public class LaunchCommand extends AbstractVersionCommand {
                              .build());
             if (process == null) {
                 ctx.log("InMemory main thread ended.");
+                Thread.currentThread().setContextClassLoader(contextClassloader);
             }
 
             if (quit || process == null) {
@@ -81,6 +76,9 @@ public class LaunchCommand extends AbstractVersionCommand {
             try {
                 status = process.waitFor();
                 ctx.log("Minecraft exited with code: " + status);
+                if (status != 0 && ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
+                    throw new IllegalStateException("Minecraft exited with code " + status);
+                }
             } catch (InterruptedException ie) {
                 ctx.log("Launcher has been interrupted...");
                 Thread.currentThread().interrupt();
@@ -101,6 +99,7 @@ public class LaunchCommand extends AbstractVersionCommand {
             ctx.log(msg);
             throw t;
         } finally {
+            Thread.currentThread().setContextClassLoader(contextClassloader);
             // for some reason both ShutdownHooks and File.deleteOnExit are
             // not really working, that's why we Main.deleteOldFiles, too.
             if (!CommandUtil.hasFlag("-keep", args)
@@ -118,15 +117,12 @@ public class LaunchCommand extends AbstractVersionCommand {
             if (!CommandUtil.hasFlag("-stay", args)) {
                 ctx.getExitManager().exit(status);
             }
+        }
 
-            if (commandLineListener instanceof JLineCommandLineListener) {
-                // make JLine run again
-                try {
-                    ((JLineCommandLineListener) commandLineListener).open(ctx);
-                } catch (IOException e) {
-                    log.error("Failed to get JLineCommandLineListener running again", e);
-                }
-            }
+        try {
+            ctx.getCommandLine().open(ctx);
+        } catch (IOException ioException) {
+            throw new IllegalStateException("Failed to reopen HeadlessMc CommandLineReader", ioException);
         }
     }
 

@@ -5,6 +5,7 @@ import dev.xdark.deencapsulation.Deencapsulation;
 import java.io.IOException;
 import java.lang.module.Configuration;
 import java.lang.module.ModuleFinder;
+import java.lang.module.ModuleReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -13,6 +14,7 @@ import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * cpw's BootstrapLauncher turns a classpath environment into a modularized one.
@@ -131,7 +133,8 @@ public class LayeredBootstrapLauncher {
             // so we verify first which jars actually contain modules
             ModuleFinder finder = ModuleFinder.of(path);
             try {
-                finder.findAll(); // will throw an exception if it cant find a module
+                Set<ModuleReference> references = finder.findAll(); // will throw an exception if it cant find a module
+                LOGGER.warning("Path " + path + " exposes modules " + references.stream().map(ref -> ref.descriptor().name()).collect(Collectors.joining(",")));
                 validPaths.add(path);
             } catch (Exception e) {
                 LOGGER.log(Level.INFO, "Failed to find module for path " + path, e);

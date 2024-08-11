@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(':headlessmc-api')
-    implementation 'org.jline:jline:3.26.3'
+    api project(':headlessmc-api')
+    api 'org.jline:jline:3.26.3'
     implementation 'net.java.dev.jna:jna:5.14.0'
 }

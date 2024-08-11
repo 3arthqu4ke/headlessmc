@@ -3,6 +3,7 @@ package me.earth.headlessmc.api;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
+import me.earth.headlessmc.api.classloading.Deencapsulator;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
@@ -10,6 +11,8 @@ import me.earth.headlessmc.logging.LoggingService;
 
 @RequiredArgsConstructor
 public class HeadlessMcImpl implements HeadlessMc {
+    @Getter
+    private final Deencapsulator deencapsulator = new Deencapsulator();
     @Delegate
     private final HasConfig configHolder;
     @Getter
