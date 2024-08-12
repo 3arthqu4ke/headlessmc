@@ -47,8 +47,9 @@ public class LaunchCommand extends AbstractVersionCommand {
 
     @Override
     public void execute(Version version, String... args) throws CommandException {
+        boolean prepare = CommandUtil.hasFlag("-prepare", args);
         val uuid = UUID.randomUUID();
-        ctx.log("Launching version " + version.getName() + ", " + uuid);
+        ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
         ctx.getLoggingService().setLevel(Level.INFO);
         val files = ctx.getFileManager().createRelative(uuid.toString());
 
@@ -56,7 +57,10 @@ public class LaunchCommand extends AbstractVersionCommand {
         int status = 0;
         ClassLoader contextClassloader = Thread.currentThread().getContextClassLoader();
         try {
-            ctx.getCommandLine().close();
+            if (!prepare) {
+                ctx.getCommandLine().close();
+            }
+
             val process = ctx.getProcessFactory().run(
                 LaunchOptions.builder()
                              .account(getAccount())
@@ -64,7 +68,12 @@ public class LaunchCommand extends AbstractVersionCommand {
                              .launcher(ctx)
                              .files(files)
                              .parseFlags(ctx, quit, args)
+                             .prepare(prepare)
                              .build());
+            if (prepare) {
+                return;
+            }
+
             if (process == null) {
                 ctx.log("InMemory main thread ended.");
                 Thread.currentThread().setContextClassLoader(contextClassloader);
@@ -116,15 +125,17 @@ public class LaunchCommand extends AbstractVersionCommand {
                 }
             }
 
-            if (!CommandUtil.hasFlag("-stay", args)) {
+            if (!prepare && !CommandUtil.hasFlag("-stay", args)) {
                 ctx.getExitManager().exit(status);
             }
         }
 
-        try {
-            ctx.getCommandLine().open(ctx);
-        } catch (IOException ioException) {
-            throw new IllegalStateException("Failed to reopen HeadlessMc CommandLineReader", ioException);
+        if (!prepare) {
+            try {
+                ctx.getCommandLine().open(ctx);
+            } catch (IOException ioException) {
+                throw new IllegalStateException("Failed to reopen HeadlessMc CommandLineReader", ioException);
+            }
         }
     }
 

@@ -37,6 +37,7 @@ public class LaunchOptions {
     private final boolean inMemory;
     private final boolean forceSimple;
     private final boolean forceBoot;
+    private final boolean prepare;
 
     @SuppressWarnings("unused")
     public static class LaunchOptionsBuilder {

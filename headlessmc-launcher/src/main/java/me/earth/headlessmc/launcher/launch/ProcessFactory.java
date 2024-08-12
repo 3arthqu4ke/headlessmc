@@ -97,6 +97,10 @@ public class ProcessFactory {
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
+        if (options.isPrepare()) {
+            return null;
+        }
+
         if (options.isInMemory()) {
             new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()).launch();
             return null;
