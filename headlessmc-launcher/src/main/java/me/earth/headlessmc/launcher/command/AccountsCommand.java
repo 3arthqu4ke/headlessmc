@@ -19,13 +19,13 @@ public class AccountsCommand extends AbstractLauncherCommand implements FindByCo
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 2) {
             logTable();
             return;
         }
 
-        FindByCommand.super.execute(args);
+        FindByCommand.super.execute(line, args);
     }
 
     @Override

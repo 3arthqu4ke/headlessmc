@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import me.earth.headlessmc.api.MockedHeadlessMc;
+import me.earth.headlessmc.api.command.impl.MultiCommand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ public class CommandContextTest {
         ctx.add(TestCommands.COMMAND_1);
         ctx.add(TestCommands.COMMAND_2);
         ctx.add(new MultiCommand(HMC));
-        HMC.setCommandContext(ctx);
+        HMC.getCommandLine().setCommandContext(ctx);
         TestCommands.COMMAND_1.setUsed(false);
         TestCommands.COMMAND_2.setUsed(false);
         Assertions.assertEquals(3, ctx.commands.size());
@@ -75,17 +76,17 @@ public class CommandContextTest {
         private boolean used;
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             setUsed(true);
         }
 
         @Override
-        public boolean matches(String... args) {
+        public boolean matches(String line, String... args) {
             return new AbstractCommand(HMC, name, "") {
                 @Override
-                public void execute(String... args) {
+                public void execute(String line, String... args) {
                 }
-            }.matches(args);
+            }.matches(line, args);
         }
 
         @Override

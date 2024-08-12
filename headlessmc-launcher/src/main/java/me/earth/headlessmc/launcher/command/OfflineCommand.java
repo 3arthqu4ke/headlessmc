@@ -9,7 +9,7 @@ public class OfflineCommand extends AbstractLauncherCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         boolean value = !ctx.getAccountManager().getOfflineChecker().isOffline();
         if (args.length > 1) {
             value = Boolean.parseBoolean(args[1]);

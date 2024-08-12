@@ -1,15 +1,21 @@
 package me.earth.headlessmc.api.util;
 
+import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
+import me.earth.headlessmc.api.classloading.Deencapsulator;
 
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
  * Utility for Reflection.
  */
+@CustomLog
 @UtilityClass
 public class ReflectionUtil {
+    private static final Deencapsulator DEENCAPSULATOR = new Deencapsulator();
+
     /**
      * Iterates over the super classes of the given class.
      *
@@ -46,6 +52,19 @@ public class ReflectionUtil {
         }
 
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T invoke(String method, Object instance, T def, Class<?>[] parameterTypes, Object... args) {
+        try {
+            DEENCAPSULATOR.deencapsulate(instance.getClass());
+            Method execute = instance.getClass().getMethod(method, parameterTypes);
+            execute.setAccessible(true);
+            return (T) execute.invoke(instance, args);
+        } catch (ReflectiveOperationException e) {
+            log.error("Failed to call " + method + " on " + instance, e);
+            return def;
+        }
     }
 
 }

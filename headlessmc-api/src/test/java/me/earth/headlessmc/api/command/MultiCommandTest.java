@@ -3,6 +3,7 @@ package me.earth.headlessmc.api.command;
 import lombok.val;
 import me.earth.headlessmc.api.MockedHeadlessMc;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.command.impl.MultiCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +19,7 @@ public class MultiCommandTest {
         ctx.add(command2);
         ctx.add(command3);
         ctx.add(new MultiCommand(MockedHeadlessMc.INSTANCE));
-        MockedHeadlessMc.INSTANCE.setCommandContext(ctx);
+        MockedHeadlessMc.INSTANCE.getCommandLine().setCommandContext(ctx);
 
         ctx.execute("multi test1");
         assertTrue(command1.value);
@@ -45,7 +46,7 @@ public class MultiCommandTest {
         }
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             this.value = true;
         }
     }
@@ -58,7 +59,7 @@ public class MultiCommandTest {
         }
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             this.value = args[1];
         }
     }

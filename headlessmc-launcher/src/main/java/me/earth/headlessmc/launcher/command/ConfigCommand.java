@@ -16,7 +16,7 @@ public class ConfigCommand extends AbstractLauncherCommand
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (CommandUtil.hasFlag("-refresh", args)) {
             ctx.getConfigService().refresh();
         }
@@ -28,7 +28,7 @@ public class ConfigCommand extends AbstractLauncherCommand
                         .addAll(ctx.getConfigService())
                         .build());
         } else if (!(args.length > 1 && args[1].equalsIgnoreCase("-refresh"))) {
-            FindByCommand.super.execute(args);
+            FindByCommand.super.execute(line, args);
         }
     }
 

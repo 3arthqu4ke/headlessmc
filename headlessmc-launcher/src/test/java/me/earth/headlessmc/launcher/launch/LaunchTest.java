@@ -30,7 +30,7 @@ public class LaunchTest {
             .getBuilder();
         assertNull(builder);
 
-        launcher.getCommandContext().execute("launch 1.19-launch-test -stay");
+        launcher.getCommandLine().getCommandContext().execute("launch 1.19-launch-test -stay");
 
         builder = ((MockProcessFactory) launcher.getProcessFactory()).getBuilder();
         assertNotNull(builder);
@@ -54,7 +54,7 @@ public class LaunchTest {
     public void testWithVmArgs() {
         System.setProperty(LauncherProperties.SET_LIBRARY_DIR.getName(), "false");
         setupLauncher();
-        launcher.getCommandContext().execute(
+        launcher.getCommandLine().getCommandContext().execute(
             // TODO: all this escaping is kinda ehh
             //   maybe allow multiple --jvm flags?
             "launch 1.19-launch-test -stay --jvm \"-testVmArg -testVmArg\\\\" +
@@ -88,7 +88,7 @@ public class LaunchTest {
         launcher.getJavaService().clear();
         launcher.getJavaService().add(new Java("java17", 17));
         launcher.getJavaService().add(new Java("java8", 8));
-        launcher.setCommandContext(new LaunchContext(launcher));
+        launcher.getCommandLine().setCommandContext(new LaunchContext(launcher));
     }
 
     @SneakyThrows

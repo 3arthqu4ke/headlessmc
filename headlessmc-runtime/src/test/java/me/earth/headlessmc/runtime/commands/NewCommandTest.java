@@ -4,6 +4,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.runtime.RuntimeTest;
 import me.earth.headlessmc.runtime.TestClass;
+import me.earth.headlessmc.runtime.commands.reflection.NewCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +15,7 @@ public class NewCommandTest implements RuntimeTest {
     @Test
     @SneakyThrows
     public void testNewCommand() {
-        val ctx = command.ctx.getCommandContext();
+        val ctx = command.ctx.getCommandLine().getCommandContext();
         val vm = command.ctx.getVm();
 
         ctx.execute("class " + TestClass.class.getName() + " 0");

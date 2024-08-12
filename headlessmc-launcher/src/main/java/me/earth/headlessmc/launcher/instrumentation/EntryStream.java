@@ -3,7 +3,6 @@ package me.earth.headlessmc.launcher.instrumentation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.Delegate;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -13,8 +12,7 @@ import java.util.jar.JarEntry;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class EntryStream extends InputStream {
-    @Delegate
+public class EntryStream {
     private final InputStream stream;
     private final List<Target> targets;
     private final JarEntry entry;

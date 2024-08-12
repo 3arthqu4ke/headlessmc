@@ -24,8 +24,9 @@ public class JavaService extends Service<Java> {
 
     @Override
     protected Set<Java> update() {
+        long nanos = System.nanoTime();
         String[] array = cfg.getConfig().get(LauncherProperties.JAVA, new String[0]);
-        Set<Java> newVersions = new LinkedHashSet<Java>((int) (array.length * 1.5));
+        Set<Java> newVersions = new LinkedHashSet<>((int) (array.length * 1.5));
         for (String path : array) {
             Java java = scanJava(path);
             if (java != null) {
@@ -45,6 +46,8 @@ public class JavaService extends Service<Java> {
         }
 
         newVersions.add(getCurrent());
+        nanos = System.nanoTime() - nanos;
+        log.info("Java refresh took " + (nanos / 1_000_000.0) + "ms.");
         return newVersions;
     }
 

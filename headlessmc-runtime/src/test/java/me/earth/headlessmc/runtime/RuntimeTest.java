@@ -1,24 +1,14 @@
 package me.earth.headlessmc.runtime;
 
-import lombok.Getter;
-import lombok.Setter;
-import me.earth.headlessmc.api.PasswordAware;
+import me.earth.headlessmc.api.HeadlessMcApi;
 import me.earth.headlessmc.api.config.ConfigImpl;
+import me.earth.headlessmc.runtime.reflection.RuntimeReflection;
 
 public interface RuntimeTest {
-    default Runtime getRuntime() {
-        return RuntimeApi.init(ConfigImpl.empty(), new PasswordAwareImpl());
-    }
-
-    final class PasswordAwareImpl implements PasswordAware {
-        @Getter
-        @Setter
-        private boolean hidingPasswords;
-
-        @Override
-        public boolean isHidingPasswordsSupported() {
-            return true;
-        }
+    default RuntimeReflection getRuntime() {
+        System.setProperty(RuntimeProperties.ENABLE_REFLECTION.getName(), "true");
+        new RuntimeInitializer().init(ConfigImpl.empty());
+        return (RuntimeReflection) HeadlessMcApi.getInstance();
     }
 
 }

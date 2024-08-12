@@ -5,7 +5,13 @@ import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.HasDescription;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.AbstractMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -15,7 +21,7 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
     Iterable<T> getIterable();
 
     @Override
-    default void execute(String... args) throws CommandException {
+    default void execute(String line, String... args) throws CommandException {
         if (args.length < 2) {
             throw new CommandException("Please specify an id!");
         }
@@ -42,6 +48,19 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
             this.execute(t, args);
         } catch (PatternSyntaxException e) {
             throw new CommandException("Failed to parse regex " + args[1], e);
+        }
+    }
+
+    @Override
+    default void getCompletions(String line, List<Map.Entry<String, @Nullable String>> completions, String... args) {
+        Command.super.getCompletions(line, completions, args);
+        if (args.length == 2) {
+            String arg = args[1].toLowerCase(Locale.ENGLISH);
+            for (T t : getIterable()) {
+                if (t.getName().toLowerCase(Locale.ENGLISH).startsWith(arg)) {
+                    completions.add(new AbstractMap.SimpleEntry<>(t.getName(), t instanceof HasDescription ? ((HasDescription) t).getDescription() : null));
+                }
+            }
         }
     }
 

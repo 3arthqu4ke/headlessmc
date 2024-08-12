@@ -1,6 +1,33 @@
+apply plugin: 'headlessmc-modules'
+
 dependencies {
     jarLibsApi project(':headlessmc-api')
     jarLibsApi project(':headlessmc-logging')
 
     jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+    jarLibs project(':headlessmc-jline')
+}
+
+module {
+    name = 'headlessmc.runtime'
+    access = ACC_OPEN
+
+    // I do not think we actually need to export anything
+    // Rather, we just cannot export jline or com/sun packages
+    exports 'me/earth/headlessmc/api'
+    exports 'me/earth/headlessmc/api/classloading'
+    exports 'me/earth/headlessmc/api/command'
+    exports 'me/earth/headlessmc/api/command/line'
+    exports 'me/earth/headlessmc/api/command/impl'
+    exports 'me/earth/headlessmc/api/util'
+    exports 'me/earth/headlessmc/api/exit'
+    exports 'me/earth/headlessmc/runtime'
+    exports 'me/earth/headlessmc/runtime/commands'
+
+    requires 'java.logging'
+}
+
+shadowJar {
+    from genModuleInfo
+    excludes.remove("module-info.class")
 }

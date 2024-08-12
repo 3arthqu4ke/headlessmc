@@ -18,7 +18,7 @@ public class SpecificsCommand extends AbstractVersionCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (args.length < 2) {
             ctx.log(new Table<VersionSpecificModRepository>()
                         .withColumn("name", VersionSpecificModRepository::getName)
@@ -29,7 +29,7 @@ public class SpecificsCommand extends AbstractVersionCommand {
             return;
         }
 
-        super.execute(args);
+        super.execute(line, args);
     }
 
     @Override

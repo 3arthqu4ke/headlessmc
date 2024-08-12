@@ -52,9 +52,31 @@ public class ProcessFactory {
         val dlls = options.getFiles().createRelative("extracted");
         val targets = processLibraries(version, dlls);
         addGameJar(version, targets);
+        List<String> classpath = instrumentation.instrument(targets);
+        if (options.isRuntime()) {
+            String runtimeJar = null;
+            for (String path : classpath) {
+                if (path.endsWith(InstrumentationHelper.RUNTIME_JAR)) {
+                    runtimeJar = path;
+                    classpath.remove(path);
+                    break;
+                }
+            }
+
+            if (runtimeJar == null) {
+                throw new IllegalStateException("Failed to find RuntimeJar in classpath " + classpath);
+            }
+            // add RuntimeJar as the first jar on the classpath
+            // this makes java look it up for libraries first
+            // really important because forge provides an incompatible version of JLine.
+            // TODO: this works, but is it really something we want to trust?
+            //  bring over the VersionAgnosticJLineCommandLineReader from hmc-specifics?
+            classpath.add(0, runtimeJar);
+        }
+
         val commandBuilder = Command.builder()
                              .account(options.getAccount())
-                             .classpath(instrumentation.instrument(targets))
+                             .classpath(classpath)
                              .os(os)
                              .jvmArgs(options.getAdditionalJvmArgs())
                              .natives(dlls.getBase().getAbsolutePath())
@@ -67,7 +89,9 @@ public class ProcessFactory {
 
         val command = commandBuilder.build();
         downloadAssets(files, version);
-        log.debug(command.toString());
+
+        debugCommand(command);
+
         val dir = new File(launcher.getConfig().get(
             LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
@@ -166,6 +190,19 @@ public class ProcessFactory {
 
     protected void download(String from, String to) throws IOException {
         IOUtil.download(from, to);
+    }
+
+    private void debugCommand(List<String> command) {
+        StringBuilder commandDebugBuilder = new StringBuilder();
+        if (!command.isEmpty()) {
+            commandDebugBuilder.append("\"").append(command.get(0)).append("\" "); // escape java path
+        }
+
+        for (int i = 1; i < command.size(); i++) {
+            commandDebugBuilder.append(command.get(i)).append((i == command.size() - 1) ? "" : " ");
+        }
+
+        log.debug(commandDebugBuilder.toString());
     }
 
 }

@@ -18,8 +18,8 @@ public class LoginCommand extends AbstractLoginCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
-        super.execute(args);
+    public void execute(String line, String... args) throws CommandException {
+        super.execute(line, args);
     }
 
     @Override

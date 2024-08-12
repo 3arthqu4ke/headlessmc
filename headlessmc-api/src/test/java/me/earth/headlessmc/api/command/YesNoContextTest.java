@@ -12,13 +12,13 @@ public class YesNoContextTest {
         HeadlessMc hmc = MockedHeadlessMc.INSTANCE;
         Boolean[] value = new Boolean[1];
         YesNoContext ctx = new YesNoContext(result -> value[0] = result, hmc);
-        hmc.setCommandContext(ctx);
-        assertFalse(hmc.isWaitingForInput());
-        assertEquals(ctx, hmc.getCommandContext());
+        hmc.getCommandLine().setCommandContext(ctx);
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
+        assertEquals(ctx, hmc.getCommandLine().getCommandContext());
 
         ctx.execute("t");
-        assertFalse(hmc.isWaitingForInput());
-        assertEquals(ctx, hmc.getCommandContext());
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
+        assertEquals(ctx, hmc.getCommandLine().getCommandContext());
         assertNull(value[0]);
 
         ctx.execute("y");
@@ -26,15 +26,15 @@ public class YesNoContextTest {
         ctx.execute("n");
         assertFalse(value[0]);
 
-        assertFalse(hmc.isWaitingForInput());
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
         YesNoContext.goBackAfter(hmc, result -> value[0] = result);
-        assertTrue(hmc.isWaitingForInput());
-        assertNotEquals(ctx, hmc.getCommandContext());
+        assertTrue(hmc.getCommandLine().isWaitingForInput());
+        assertNotEquals(ctx, hmc.getCommandLine().getCommandContext());
 
-        hmc.getCommandContext().execute("y");
-        assertFalse(hmc.isWaitingForInput());
+        hmc.getCommandLine().getCommandContext().execute("y");
+        assertFalse(hmc.getCommandLine().isWaitingForInput());
         assertTrue(value[0]);
-        assertEquals(ctx, hmc.getCommandContext());
+        assertEquals(ctx, hmc.getCommandLine().getCommandContext());
     }
 
     @Test

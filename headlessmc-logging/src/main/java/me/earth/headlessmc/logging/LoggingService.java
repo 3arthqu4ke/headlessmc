@@ -33,12 +33,16 @@ import static java.util.logging.Level.*;
 public class LoggingService {
     private static final Iterable<Level> LEVELS = unmodifiableList(asList(OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL));
     private Supplier<PrintStream> streamFactory = () -> new PrintStream(new FileOutputStream(FileDescriptor.out), true);
+    private boolean fileHandler = Boolean.parseBoolean(System.getProperty(LoggingProperties.FILE_HANDLER_ENABLED, "true"));
 
     public void init() {
         clearOtherHandlers();
         addLoggingHandler();
-        addFileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log"));
-        setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "SEVERE"), false);
+        if (fileHandler) {
+            addFileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log"));
+        }
+
+        setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "WARNING"), false);
         setLevelFromString(System.getProperty(LoggingProperties.FILE_LOG_LEVEL, "DEBUG"), true);
     }
 

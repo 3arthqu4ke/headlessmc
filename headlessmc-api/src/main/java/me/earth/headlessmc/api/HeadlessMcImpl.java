@@ -2,34 +2,24 @@ package me.earth.headlessmc.api;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.Delegate;
-import me.earth.headlessmc.api.command.CommandContext;
+import me.earth.headlessmc.api.classloading.Deencapsulator;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.logging.LoggingService;
 
 @RequiredArgsConstructor
 public class HeadlessMcImpl implements HeadlessMc {
+    @Getter
+    private final Deencapsulator deencapsulator = new Deencapsulator();
     @Delegate
     private final HasConfig configHolder;
-    @Delegate
-    private final PasswordAware passwordAware;
+    @Getter
+    private final CommandLine commandLine;
     @Getter
     private final ExitManager exitManager;
     @Getter
     private final LoggingService loggingService;
-    @Getter
-    private final InAndOutProvider inAndOutProvider;
-    @Getter
-    @Setter
-    private CommandContext commandContext;
-    @Getter
-    @Setter
-    private boolean waitingForInput;
-    @Getter
-    @Setter
-    private boolean quickExitCli;
 
 }

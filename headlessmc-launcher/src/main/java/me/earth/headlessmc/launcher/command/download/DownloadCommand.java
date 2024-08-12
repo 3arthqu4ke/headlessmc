@@ -11,11 +11,14 @@ import me.earth.headlessmc.launcher.command.FindByCommand;
 import me.earth.headlessmc.launcher.command.VersionTypeFilter;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.api.util.Table;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @CustomLog
 public class DownloadCommand extends AbstractLauncherCommand
@@ -68,7 +71,7 @@ public class DownloadCommand extends AbstractLauncherCommand
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         /*
             !!!
 
@@ -92,13 +95,22 @@ public class DownloadCommand extends AbstractLauncherCommand
                         .withColumn("type", VersionInfo::getType)
                         .build());
         } else {
-            FindByCommand.super.execute(args);
+            FindByCommand.super.execute(line, args);
         }
     }
 
     @Override
     public Iterable<VersionInfo> getIterable() {
         return cache;
+    }
+
+    @Override
+    public void getCompletions(String line, List<Map.Entry<String, @Nullable String>> completions, String... args) {
+        if (args.length == 2 && !cache.isCached()) {
+            cache.cache(false);
+        }
+
+        FindByCommand.super.getCompletions(line, completions, args);
     }
 
 }

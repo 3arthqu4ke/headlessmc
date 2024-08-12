@@ -3,22 +3,23 @@ package me.earth.headlessmc.runtime.commands;
 import lombok.SneakyThrows;
 import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.runtime.Runtime;
 import me.earth.headlessmc.runtime.RuntimeTest;
+import me.earth.headlessmc.runtime.commands.reflection.TypeCommand;
+import me.earth.headlessmc.runtime.reflection.RuntimeReflection;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TypeCommandTest implements RuntimeTest {
-    private final Runtime runtime = getRuntime();
-    private final CommandContext ctx = runtime.getCommandContext();
+    private final RuntimeReflection runtime = getRuntime();
+    private final CommandContext ctx = runtime.getCommandLine().getCommandContext();
     private final TypeCommand cmd = TypeCommand.ofType(runtime, "test", s -> s);
 
     @Test
     @SneakyThrows
     public void testTypeCommand() {
-        assertThrows(CommandException.class, () -> cmd.execute("test"));
-        assertThrows(CommandException.class, () -> cmd.execute("test", "test"));
+        assertThrows(CommandException.class, () -> cmd.execute("", "test"));
+        assertThrows(CommandException.class, () -> cmd.execute("", "test", "test"));
 
         runtime.getVm().set(false, 0);
         assertFalse((Boolean) runtime.getVm().get(0));

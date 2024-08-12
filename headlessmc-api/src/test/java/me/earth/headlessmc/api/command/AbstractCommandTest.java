@@ -51,11 +51,11 @@ public class AbstractCommandTest {
     @Test
     public void testMatches() {
         val command = DummyCommand.create();
-        Assertions.assertTrue(command.matches(DummyCommand.NAME));
-        Assertions.assertTrue(command.matches(DummyCommand.NAME, "test"));
-        Assertions.assertTrue(command.matches(DummyCommand.NAME, "test", "t"));
-        Assertions.assertTrue(command.matches(DummyCommand.NAME.toUpperCase(Locale.ENGLISH)));
-        Assertions.assertFalse(command.matches("test"));
+        Assertions.assertTrue(command.matches(DummyCommand.NAME, DummyCommand.NAME));
+        Assertions.assertTrue(command.matches(DummyCommand.NAME, DummyCommand.NAME, "test"));
+        Assertions.assertTrue(command.matches(DummyCommand.NAME, DummyCommand.NAME, "test", "t"));
+        Assertions.assertTrue(command.matches(DummyCommand.NAME, DummyCommand.NAME.toUpperCase(Locale.ENGLISH)));
+        Assertions.assertFalse(command.matches(DummyCommand.NAME, "test"));
     }
 
     private static final class DummyCommand extends AbstractCommand {
@@ -75,7 +75,7 @@ public class AbstractCommandTest {
         }
 
         @Override
-        public void execute(String... args) {
+        public void execute(String line, String... args) {
             // dummy
         }
     }

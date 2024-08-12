@@ -25,6 +25,7 @@ public final class VersionService extends Service<Version> {
 
     @Override
     protected Collection<Version> update() {
+        long nanos = System.nanoTime();
         val versionFolders = files.getDir("versions").listFiles();
         if (versionFolders == null) {
             log.warning("No Minecraft Version folder found!");
@@ -52,6 +53,8 @@ public final class VersionService extends Service<Version> {
         }
 
         resolver.resolveParentVersions(versions);
+        nanos = System.nanoTime() - nanos;
+        log.info("Version refresh took " + (nanos / 1_000_000.0) + "ms.");
         return versions.values();
     }
 

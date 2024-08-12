@@ -19,7 +19,7 @@ public class JsonCommand extends AbstractVersionCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         if (CommandUtil.hasFlag("-file", args) && args.length > 1) {
             try {
                 log(JsonUtil.fromFile(new File(args[1])));
@@ -28,7 +28,7 @@ public class JsonCommand extends AbstractVersionCommand {
                                                + ": " + e.getMessage());
             }
         } else {
-            super.execute(args);
+            super.execute(line, args);
         }
     }
 

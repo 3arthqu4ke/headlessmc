@@ -3,9 +3,9 @@ package me.earth.headlessmc.launcher.instrumentation;
 import lombok.Cleanup;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import me.earth.headlessmc.api.util.ResourceUtil;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.IOUtil;
-import me.earth.headlessmc.api.util.ResourceUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,6 +34,10 @@ public class ResourceExtractor extends AbstractTransformer {
         val os = new FileOutputStream(file);
         IOUtil.copy(is, os);
         return file;
+    }
+
+    public File getFile() {
+        return fileManager.get(false, false, resourceName);
     }
 
 }

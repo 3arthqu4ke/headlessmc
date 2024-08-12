@@ -4,10 +4,11 @@ import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
-import me.earth.headlessmc.api.command.line.CommandLineImpl;
+import me.earth.headlessmc.jline.JLineCommandLineReader;
+import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.*;
@@ -79,8 +80,7 @@ public final class Main {
         AutoConfiguration.runAutoConfiguration(files);
 
         val configs = Service.refresh(new ConfigService(files));
-        val in = new CommandLineImpl();
-        val hmc = new HeadlessMcImpl(configs, in, exitManager, loggingService, new InAndOutProvider());
+        val hmc = new HeadlessMcImpl(configs, new CommandLine(), exitManager, loggingService);
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
@@ -99,18 +99,23 @@ public final class Main {
         val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
                                     new ProcessFactory(mcFiles, configs, os), configs,
                                     javas, accounts, versionSpecificModManager, new PluginManager());
-
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
-        versions.refresh();
-        hmc.setCommandContext(new LaunchContext(launcher));
+
+        LaunchContext launchContext = new LaunchContext(launcher);
+        hmc.getCommandLine().setCommandContext(launchContext);
+        hmc.getCommandLine().setBaseContext(launchContext);
+
+        if (hmc.getConfig().get(JLineProperties.ENABLED, true)) {
+            hmc.getCommandLine().setCommandLineProvider(JLineCommandLineReader::new);
+        }
 
         launcher.getPluginManager().init(launcher);
-        if (!QuickExitCliHandler.checkQuickExit(launcher, in, args)) {
+        if (!QuickExitCliHandler.checkQuickExit(launcher, args)) {
             log.info(String.format("Detected: %s", os));
             log.info(String.format("Minecraft Dir: %s", mcFiles.getBase()));
             hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
-            in.listen(hmc);
+            hmc.getCommandLine().read(hmc);
         }
     }
 

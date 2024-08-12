@@ -84,4 +84,8 @@ tasks.register('testAgent', Test) {
     }
 }
 
+shadowJar {
+    excludes.remove("module-info.class")
+}
+
 test.finalizedBy(testAgent)

@@ -37,6 +37,10 @@ public class InMemoryLauncher {
             throw new LaunchException("Both -forceSimple and -forceBoot specified!");
         }
 
+        boolean java9 = java.getVersion() > 8
+            && !options.isForceSimple()
+            && ("cpw.mods.bootstraplauncher.BootstrapLauncher".equals(version.getMainClass()) || options.isForceBoot());
+
         String mainClass = command.getActualMainClass(new ArrayList<>());
         URL[] classpathUrls = new URL[command.getClasspath().size()];
         for (int i = 0; i < command.getClasspath().size(); i++) {
@@ -48,20 +52,15 @@ public class InMemoryLauncher {
         List<String> gameArgs = new ArrayList<>();
         boolean hasPassedMainClass = false;
         for (String arg : actualCommand) {
-            if (arg.startsWith("-D")) {
-                // TODO: not very good, split at first!
-                String[] split = arg.split("-D|=");
-                if (split.length > 2) {
-                    log.info("SystemProperty: " + split[1] + " : " + split[2]);
-                    if ("java.library.path".equals(split[1])) {
-                        for (String library : split[2].split(File.pathSeparator)) {
-                            addLibraryPath(PathUtil.stripQuotes(library));
-                        }
-                    } else {
-                        System.setProperty(split[1], split[2]);
+            if (SystemPropertyHelper.isSystemProperty(arg)) {
+                String[] nameValue = SystemPropertyHelper.splitSystemProperty(arg);
+                log.info("SystemProperty: " + nameValue[0] + " : " + nameValue[1]);
+                if ("java.library.path".equals(nameValue[0])) {
+                    for (String library : nameValue[1].split(File.pathSeparator)) {
+                        addLibraryPath(PathUtil.stripQuotes(library));
                     }
                 } else {
-                    System.setProperty(split[1], "");
+                    System.setProperty(nameValue[0], nameValue[1]);
                 }
             }
 
@@ -77,9 +76,7 @@ public class InMemoryLauncher {
         System.setProperty("legacyClassPath", String.join(File.pathSeparator, command.getClasspath()));
         System.setProperty("java.class.path", String.join(File.pathSeparator, command.getClasspath()));
 
-        if (java.getVersion() > 8
-            && !options.isForceSimple()
-            && ("cpw.mods.bootstraplauncher.BootstrapLauncher".equals(version.getMainClass()) || options.isForceBoot())) {
+        if (java9) {
             log.info("Launching with Java-9 in-memory launcher");
             java9Launch(classpathUrls, mainClass, gameArgs);
         } else {

@@ -13,7 +13,7 @@ public class PluginsCommand extends AbstractLauncherCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
+    public void execute(String line, String... args) throws CommandException {
         // TODO: list TransformerPlugins
         ctx.log(new Table<HeadlessMcPlugin>()
             .withColumn("name", HasName::getName)

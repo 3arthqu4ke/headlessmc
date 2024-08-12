@@ -25,6 +25,8 @@ class VersionInfoCache implements Collection<VersionInfo> {
     private String latestSnapshot = "unknown";
     @Getter
     private String latestRelease = "unknown";
+    @Getter
+    private boolean cached = false;
 
     public List<VersionInfo> cache(boolean force) {
         if (infos != EMPTY && !force) {
@@ -41,6 +43,8 @@ class VersionInfoCache implements Collection<VersionInfo> {
         } catch (IOException e) {
             log.error("Couldn't download versions", e);
             infos = new ArrayList<>(0);
+        } finally {
+            cached = true;
         }
 
         return infos;

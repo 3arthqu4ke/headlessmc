@@ -34,8 +34,8 @@ public class LoginContext extends CommandContextImpl {
     }
 
     protected void returnToPreviousContext() {
-        log.setCommandContext(commandContext);
-        log.setWaitingForInput(false);
+        log.getCommandLine().setCommandContext(commandContext);
+        log.getCommandLine().setWaitingForInput(false);
     }
 
 }

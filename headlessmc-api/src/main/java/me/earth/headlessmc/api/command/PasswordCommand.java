@@ -8,13 +8,13 @@ public class PasswordCommand extends AbstractCommand {
     }
 
     @Override
-    public void execute(String... args) throws CommandException {
-        if (!ctx.isHidingPasswordsSupported()) {
+    public void execute(String line, String... args) throws CommandException {
+        if (!ctx.getCommandLine().isHidingPasswordsSupported()) {
             throw new CommandException("Hiding inputs is not supported.");
         }
 
-        ctx.setHidingPasswords(!ctx.isHidingPasswords());
-        ctx.log((ctx.isHidingPasswords() ? "En" : "Dis")
+        ctx.getCommandLine().setHidingPasswords(!ctx.getCommandLine().isHidingPasswords());
+        ctx.log((ctx.getCommandLine().isHidingPasswords() ? "En" : "Dis")
                     + "abled password mode.");
     }
 

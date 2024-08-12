@@ -3,10 +3,12 @@ package me.earth.headlessmc.launcher;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.api.command.line.Listener;
+import me.earth.headlessmc.api.command.QuickExitCli;
+import me.earth.headlessmc.api.command.line.CommandLineReader;
+import me.earth.headlessmc.api.command.line.CommandLine;
 
 /**
- * @see me.earth.headlessmc.api.QuickExitCli
+ * @see QuickExitCli
  */
 @CustomLog
 @UtilityClass
@@ -17,20 +19,18 @@ public class QuickExitCliHandler {
      * the command is empty or "cli" {@code false} will be returned. Otherwise
      * {@code true} will be returned, the given {@link Launcher}s command
      * context will be run on the given command and {@link
-     * Launcher#setQuickExitCli(boolean)} will be set to
+     * CommandLine#setQuickExitCli(boolean)} will be set to
      * {@code true}. If a command needs more input it can set
-     * {@link Launcher#setWaitingForInput(boolean)} to {@code true} which will
-     * cause this method call the given {@link Listener}. An exception are the
+     * {@link CommandLine#setWaitingForInput(boolean)} to {@code true} which will
+     * cause this method call the given {@link CommandLineReader}. An exception are the
      * args "--version", "-version" or "version". These will also return
      * {@code true} and print {@link Launcher#VERSION}.
      *
      * @param launcher the launcher.
-     * @param in       the Listener to call when a command waits for input.
      * @param args     the arguments to check.
      * @return {@code true} if the launcher shouldn't listen to more commands.
      */
-    public static boolean checkQuickExit(Launcher launcher, Listener in,
-                                         String... args) {
+    public static boolean checkQuickExit(Launcher launcher, String... args) {
         val cmd = collectArgs(launcher, args);
         if (cmd != null) {
             if (cmd.isEmpty() || "cli".equalsIgnoreCase(cmd)) {
@@ -42,11 +42,12 @@ public class QuickExitCliHandler {
                 return true;
             }
 
-            launcher.setQuickExitCli(true);
-            launcher.getCommandContext().execute(cmd);
-            if (launcher.isWaitingForInput()) {
+            CommandLine clm = launcher.getCommandLine();
+            clm.setQuickExitCli(true);
+            clm.getCommandConsumer().accept(cmd);
+            if (clm.isWaitingForInput()) {
                 log.debug("Waiting for more input...");
-                in.listen(launcher);
+                clm.read(launcher);
             }
 
             log.debug("Exiting QuickExitCli");
@@ -81,9 +82,7 @@ public class QuickExitCliHandler {
     }
 
     private static boolean isVersion(String string) {
-        return string.equalsIgnoreCase("--version")
-            || string.equalsIgnoreCase("-version")
-            || string.equalsIgnoreCase("version");
+        return string.equalsIgnoreCase("--version") || string.equalsIgnoreCase("-version") || string.equalsIgnoreCase("version");
     }
 
 }

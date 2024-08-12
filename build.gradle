@@ -37,6 +37,11 @@ allprojects {
         }
 
         maven {
+            name = "ossrh" // for MinecraftAuth SNAPSHOTS, TODO: PLEASE RELEASE ON MAVENCENTRAL!
+            url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        }
+
+        maven {
             name 'JitPackMaven'
             url 'https://jitpack.io'
         }
@@ -214,6 +219,11 @@ allprojects {
     }
 }
 
+javadoc {
+    source subprojects.collect { it.sourceSets.main.allJava }
+    classpath = files(subprojects.collect { it.sourceSets.main.compileClasspath })
+}
+
 dependencies {
     // create maven publication that contains all modules
     api project(':headlessmc-api')
@@ -295,3 +305,5 @@ allprojects {
         }
     }
 }
+
+generateMetadataFileForHeadlessmcPublication.mustRunAfter(copyJars)

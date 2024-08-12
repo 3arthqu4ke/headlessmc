@@ -8,6 +8,7 @@ import me.earth.headlessmc.launcher.version.Version;
 import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -111,7 +112,7 @@ public class LaunchTest {
                 ExitTrap.trapExit();
             }
 
-            ps.println("launch " + version.get().getId() + " -id -lwjgl -stay " + inMemoryFlag);
+            ps.println("launch " + version.get().getId() + " -id -commands -lwjgl -stay " + inMemoryFlag);
         });
 
         // for some reason test might hang here?

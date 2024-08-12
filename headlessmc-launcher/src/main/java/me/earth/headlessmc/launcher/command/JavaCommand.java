@@ -14,7 +14,7 @@ public class JavaCommand extends AbstractLauncherCommand {
     }
 
     @Override
-    public void execute(String... args) {
+    public void execute(String line, String... args) {
         if (CommandUtil.hasFlag("-current", args)) {
             Java current = ctx.getJavaService().getCurrent();
             ctx.log("Current: Java " + current.getVersion() + " at " + current.getPath());

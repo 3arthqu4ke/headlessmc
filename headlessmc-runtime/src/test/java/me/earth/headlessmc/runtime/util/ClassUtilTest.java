@@ -1,6 +1,7 @@
 package me.earth.headlessmc.runtime.util;
 
 import lombok.SneakyThrows;
+import me.earth.headlessmc.runtime.reflection.ClassUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

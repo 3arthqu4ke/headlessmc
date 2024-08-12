@@ -11,22 +11,22 @@ public class PasswordContextTest {
     public void testPasswordContext() {
         val launcher = LauncherMock.INSTANCE;
         val ctx = new LaunchContext(launcher);
-        launcher.setCommandContext(ctx);
-        launcher.setHidingPasswords(false);
-        launcher.setWaitingForInput(false);
-        Assertions.assertFalse(launcher.isWaitingForInput());
-        Assertions.assertEquals(ctx, launcher.getCommandContext());
-        Assertions.assertFalse(launcher.isHidingPasswords());
+        launcher.getCommandLine().setCommandContext(ctx);
+        launcher.getCommandLine().setHidingPasswords(false);
+        launcher.getCommandLine().setWaitingForInput(false);
+        Assertions.assertFalse(launcher.getCommandLine().isWaitingForInput());
+        Assertions.assertEquals(ctx, launcher.getCommandLine().getCommandContext());
+        Assertions.assertFalse(launcher.getCommandLine().isHidingPasswords());
 
-        /*launcher.getCommandContext().execute("login test");
+        /*launcher.getCommandLineManager().getCommandContext().execute("login test");
         Assertions.assertInstanceOf(PasswordContext.class,
-                                    launcher.getCommandContext());
+                                    launcher.getCommandLineManager().getCommandContext());
         Assertions.assertTrue(launcher.isHidingPasswords());
         Assertions.assertTrue(launcher.isWaitingForInput());
 
-        launcher.getCommandContext().execute("abort");
+        launcher.getCommandLineManager().getCommandContext().execute("abort");
         Assertions.assertFalse(launcher.isHidingPasswords());
-        Assertions.assertEquals(ctx, launcher.getCommandContext());
+        Assertions.assertEquals(ctx, launcher.getCommandLineManager().getCommandContext());
         Assertions.assertFalse(launcher.isWaitingForInput());*/
     }
 

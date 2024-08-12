@@ -3,7 +3,7 @@ package me.earth.headlessmc.runtime;
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import me.earth.headlessmc.api.command.line.CommandLineImpl;
+import me.earth.headlessmc.api.classloading.Deencapsulator;
 import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.api.config.HmcProperties;
 
@@ -22,11 +22,10 @@ public class Main {
                     + "' was null, can't call mainClass!");
         }
 
-        val in = new CommandLineImpl();
-        val runtime = RuntimeApi.init(config, in);
-        log.info("Initializing Runtime...");
-        in.listenAsync(runtime);
+        RuntimeInitializer initializer = new RuntimeInitializer();
+        initializer.init(config);
 
+        log.info("HeadlessMc Runtime initialized.");
         log.info("Getting MainClass: " + mainClassName);
         val mainClass = Class.forName(config.get(HmcProperties.MAIN));
         if (config.get(HmcProperties.DEENCAPSULATE, false)) {

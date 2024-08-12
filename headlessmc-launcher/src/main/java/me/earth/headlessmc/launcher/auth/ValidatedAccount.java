@@ -17,7 +17,7 @@ public class ValidatedAccount implements HasName {
     }
 
     public LaunchAccount toLaunchAccount() {
-        return new LaunchAccount(session.getMcProfile().getMcToken().getTokenType(),
+        return new LaunchAccount("msa",
                                  session.getMcProfile().getName(),
                                  session.getMcProfile().getId().toString(),
                                  session.getMcProfile().getMcToken().getAccessToken(),

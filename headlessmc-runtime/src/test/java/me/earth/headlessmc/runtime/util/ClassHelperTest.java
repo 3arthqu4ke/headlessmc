@@ -1,6 +1,7 @@
 package me.earth.headlessmc.runtime.util;
 
 import me.earth.headlessmc.api.LogsMessages;
+import me.earth.headlessmc.runtime.reflection.ClassHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

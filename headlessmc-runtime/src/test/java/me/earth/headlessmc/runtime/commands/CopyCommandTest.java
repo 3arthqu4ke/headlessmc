@@ -3,6 +3,7 @@ package me.earth.headlessmc.runtime.commands;
 import lombok.SneakyThrows;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.runtime.RuntimeTest;
+import me.earth.headlessmc.runtime.commands.reflection.CopyCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,15 +15,15 @@ public class CopyCommandTest implements RuntimeTest {
     @SneakyThrows
     public void testCopyCommand() {
         assertThrows(CommandException.class,
-                     () -> command.execute("copy"));
+                     () -> command.execute("copy", "copy"));
         assertThrows(CommandException.class,
-                     () -> command.execute("copy", "nothing"));
+                     () -> command.execute("copy nothing", "copy", "nothing"));
 
         command.ctx.getVm().set(1, 0);
         assertEquals(1, command.ctx.getVm().get(0));
         assertNull(command.ctx.getVm().get(1));
 
-        command.execute("copy", "0", "1");
+        command.execute("copy 0 1", "copy", "0", "1");
         assertEquals(1, command.ctx.getVm().get(0));
         assertEquals(1, command.ctx.getVm().get(1));
     }
