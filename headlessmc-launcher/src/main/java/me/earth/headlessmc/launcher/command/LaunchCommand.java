@@ -17,6 +17,7 @@ import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS;
 
@@ -48,6 +49,7 @@ public class LaunchCommand extends AbstractVersionCommand {
     public void execute(Version version, String... args) throws CommandException {
         val uuid = UUID.randomUUID();
         ctx.log("Launching version " + version.getName() + ", " + uuid);
+        ctx.getLoggingService().setLevel(Level.INFO);
         val files = ctx.getFileManager().createRelative(uuid.toString());
 
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
