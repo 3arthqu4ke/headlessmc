@@ -8,7 +8,9 @@ import java.util.regex.Pattern;
 
 @FunctionalInterface
 public interface Argument {
-    Pattern INPUT = Pattern.compile("(\\$\\{[^}]*})");
+    // NO ON ANDROID WE HAVE TO ESCAPE THE LAST CURLY BRACE!
+    @SuppressWarnings("RegExpRedundantEscape")
+    Pattern INPUT = Pattern.compile("(\\$\\{[^}]*\\})");
 
     String getValue();
 
