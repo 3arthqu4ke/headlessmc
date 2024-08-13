@@ -18,6 +18,7 @@ public class PluginsCommand extends AbstractLauncherCommand {
         ctx.log(new Table<HeadlessMcPlugin>()
             .withColumn("name", HasName::getName)
             .withColumn("description", HasDescription::getDescription)
+            .addAll(ctx.getPluginManager().getPlugins())
             .build());
     }
 
