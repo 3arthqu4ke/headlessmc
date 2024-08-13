@@ -106,40 +106,40 @@ allprojects {
     // TODO: even though we are doing all of this Intellij
     //  still complains about bytecode not matching the source...
     if (sourceSets.main.java.srcDirs.stream().anyMatch { it.exists()}
-        && project != project(':headlessmc-modlauncher')) {
+            && project != project(':headlessmc-modlauncher')) {
         tasks.register('delombok', DelombokTask) {
             dependsOn compileJava
-            ext.outputDir = file(buildDir.toPath().resolve('delombok'))
+            ext.outputDir = file(layout.buildDirectory.dir('delombok'))
             outputs.dir(ext.outputDir)
             sourceSets.main.java.srcDirs.each {
                 if (it.exists()) {
                     inputs.dir(it)
                     args(it, '-f', 'suppressWarnings:skip',
-                             '-f', 'generated:skip',
-                             '-f', 'danceAroundIdeChecks:skip',
-                             '-f', 'generateDelombokComment:skip',
-                             '-f', 'javaLangAsFQN:skip',
-                             '-d', ext.outputDir)
+                            '-f', 'generated:skip',
+                            '-f', 'danceAroundIdeChecks:skip',
+                            '-f', 'generateDelombokComment:skip',
+                            '-f', 'javaLangAsFQN:skip',
+                            '-d', ext.outputDir)
                 }
             }
+        }
 
-            javadoc {
-                dependsOn delombok
-                source = delombok.outputDir
-            }
+        javadoc {
+            dependsOn delombok
+            source = delombok.outputDir
+        }
 
-            sourcesJar {
-                dependsOn delombok
-                from delombok.outputDir
-                // I tried every single exclude/include pattern but I could not get any to work
-                exclude (fileTreeElement -> {
-                    return !((FileTreeElement) fileTreeElement)
-                            .getFile()
-                            .toPath()
-                            .toAbsolutePath()
-                            .startsWith(delombok.outputDir.toPath().toAbsolutePath())
-                })
-            }
+        sourcesJar {
+            dependsOn delombok
+            from delombok.outputDir
+            // I tried every single exclude/include pattern but I could not get any to work
+            exclude (fileTreeElement -> {
+                return !((FileTreeElement) fileTreeElement)
+                        .getFile()
+                        .toPath()
+                        .toAbsolutePath()
+                        .startsWith(delombok.outputDir.toPath().toAbsolutePath())
+            })
         }
 
         javadoc {
