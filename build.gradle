@@ -1,7 +1,7 @@
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '8.3.0'
     id 'io.franzbecker.gradle-lombok' version '5.0.0'
 }
 
@@ -14,7 +14,7 @@ allprojects {
     apply plugin: 'jacoco'
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'com.gradleup.shadow'
 
     // no lombok for that project, cause its doing naughty things with stubing java.lang classes
     if (project != project(':headlessmc-modlauncher')) {
