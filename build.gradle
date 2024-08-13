@@ -228,6 +228,7 @@ dependencies {
     // create maven publication that contains all modules
     api project(':headlessmc-api')
     api project(':headlessmc-auth')
+    api project(':headlessmc-jline')
     api project(':headlessmc-logging')
     api project(':headlessmc-launcher')
     api project(':headlessmc-launcher-wrapper')
