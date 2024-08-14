@@ -3,12 +3,18 @@ package me.earth.headlessmc.logging.handlers;
 import me.earth.headlessmc.logging.ThreadFormatter;
 
 import java.io.PrintStream;
+import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;
 
 public class HmcStreamHandler extends StreamHandler implements HmcHandler {
+    @Deprecated
     public HmcStreamHandler(PrintStream printStream) {
-        super(printStream, new ThreadFormatter());
+        this(printStream, new ThreadFormatter());
+    }
+
+    public HmcStreamHandler(PrintStream printStream, Formatter formatter) {
+        super(printStream, formatter);
     }
 
     @Override

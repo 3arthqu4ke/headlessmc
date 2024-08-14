@@ -16,7 +16,7 @@ import me.earth.headlessmc.launcher.version.VersionService;
 @Getter
 @RequiredArgsConstructor
 public class Launcher implements HeadlessMc {
-    public static final String VERSION = "2.0.0";
+    public static final String VERSION = "2.1.0-SNAPSHOT";
 
     @Delegate
     private final HeadlessMc headlessMc;

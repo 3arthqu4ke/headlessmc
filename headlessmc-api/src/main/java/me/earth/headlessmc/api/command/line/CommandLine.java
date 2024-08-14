@@ -24,11 +24,12 @@ import java.util.function.Supplier;
 @Setter
 @CustomLog
 public class CommandLine implements PasswordAware, QuickExitCli, HasCommandContext, CommandLineReader {
-    private final InAndOutProvider inAndOutProvider = new InAndOutProvider();
+    private final InAndOutProvider inAndOutProvider;
+    private final PasswordAware passwordContext;
     /**
      * Provides the {@link CommandLineReader}.
      */
-    private volatile Supplier<CommandLineReader> commandLineProvider = new DefaultCommandLineProvider(inAndOutProvider);
+    private volatile Supplier<CommandLineReader> commandLineProvider;
     /**
      * The initial CommandContext, so that we do not lose it...
      */
@@ -50,14 +51,23 @@ public class CommandLine implements PasswordAware, QuickExitCli, HasCommandConte
 
     private volatile boolean quickExitCli;
     private volatile boolean waitingForInput;
-    private volatile boolean hidingPasswords;
-    private volatile boolean hidingPasswordsSupported;
     private volatile boolean listening;
 
     /**
      * Constructs a new CommandLine.
      */
     public CommandLine() {
+        this(new InAndOutProvider(), new PasswordAwareImpl());
+    }
+
+    /**
+     * Constructs a new CommandLine for the given arguments.
+     * @param inAndOutProvider the InAndOutProvider providing the Streams this CommandLine will listen on.
+     */
+    public CommandLine(InAndOutProvider inAndOutProvider, PasswordAware passwordContext) {
+        this.inAndOutProvider = inAndOutProvider;
+        this.passwordContext = passwordContext;
+        this.commandLineProvider = new DefaultCommandLineProvider(inAndOutProvider);
         setHidingPasswordsSupported(inAndOutProvider.getConsole().get() != null);
     }
 
@@ -101,6 +111,37 @@ public class CommandLine implements PasswordAware, QuickExitCli, HasCommandConte
             listening = false;
             commandLineReader.close();
         }
+    }
+
+    /**
+     * Sets both {@link #baseContext} and {@link #commandContext} to the given context.
+     * NOT Thread-Safe.
+     *
+     * @param context the new base- and command context.
+     */
+    public void setAllContexts(CommandContext context) {
+        setBaseContext(context);
+        setCommandContext(context);
+    }
+
+    @Override
+    public boolean isHidingPasswords() {
+        return passwordContext.isHidingPasswords();
+    }
+
+    @Override
+    public void setHidingPasswords(boolean hidingPasswords) {
+        passwordContext.setHidingPasswords(hidingPasswords);
+    }
+
+    @Override
+    public boolean isHidingPasswordsSupported() {
+        return passwordContext.isHidingPasswordsSupported();
+    }
+
+    @Override
+    public void setHidingPasswordsSupported(boolean hidingPasswordsSupported) {
+        passwordContext.setHidingPasswordsSupported(hidingPasswordsSupported);
     }
 
     private static final class EmptyCommandContext implements CommandContext {
