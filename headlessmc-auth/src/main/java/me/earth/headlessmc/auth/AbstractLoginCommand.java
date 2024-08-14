@@ -63,13 +63,18 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
 
     protected void loginWithCredentials(String... args) {
         CommandLine clm = ctx.getCommandLine();
+        String email = args[1];
+        if (args.length > 2) {
+            login(email, args[2], args);
+            return;
+        }
+
         String helpMessage = "Enter your password or type 'abort' to cancel the login process."
             + (clm.isHidingPasswordsSupported()
                 ? ""
                 : " (Your password will be visible when you type!)");
         ctx.log(helpMessage);
 
-        String email = args[1];
         boolean passwordsHiddenBefore = clm.isHidingPasswords();
         clm.setHidingPasswords(true);
         clm.setWaitingForInput(true);
