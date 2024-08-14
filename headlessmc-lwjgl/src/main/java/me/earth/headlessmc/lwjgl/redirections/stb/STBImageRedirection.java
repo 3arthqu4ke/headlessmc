@@ -1,4 +1,4 @@
-package me.earth.headlessmc.lwjgl.redirections;
+package me.earth.headlessmc.lwjgl.redirections.stb;
 
 import me.earth.headlessmc.lwjgl.api.Redirection;
 import me.earth.headlessmc.lwjgl.util.ByteBufferInputStream;
@@ -9,16 +9,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public enum STBIImageRedirection implements Redirection {
+public enum STBImageRedirection implements Redirection {
     INSTANCE;
 
-    public static final String DESC =
-        "Lorg/lwjgl/stb/STBImage;stbi_load_from_memory(" +
-            "Ljava/nio/ByteBuffer;Ljava/nio/IntBuffer;" +
-            "Ljava/nio/IntBuffer;Ljava/nio/IntBuffer;" +
-            "I)Ljava/nio/ByteBuffer;";
-    private static final BufferedImage DUMMY =
-        new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    private static final BufferedImage DUMMY = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
 
     @Override
     public Object invoke(Object obj, String desc, Class<?> type, Object... args)

@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.java.Java;
@@ -23,11 +24,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 // TOP 10 worst ideas #9 this
+@Getter
 @CustomLog
 @RequiredArgsConstructor
 public class InMemoryLauncher {
     private final LaunchOptions options;
-    private final Command command;
+    private final JavaLaunchCommandBuilder command;
     private final Version version;
     private final Java java;
 
@@ -85,7 +87,7 @@ public class InMemoryLauncher {
         }
     }
 
-    private void simpleLaunch(URL[] classpathUrls, String mainClass, List<String> gameArgs) throws IOException, LaunchException {
+    protected void simpleLaunch(URL[] classpathUrls, String mainClass, List<String> gameArgs) throws IOException, LaunchException {
         try (URLClassLoader urlClassLoader = new URLClassLoader(classpathUrls)) {
             try {
                 Thread.currentThread().setContextClassLoader(urlClassLoader);
@@ -101,7 +103,7 @@ public class InMemoryLauncher {
         }
     }
 
-    private void java9Launch(URL[] classpathUrls, String mainClass, List<String> gameArgs) {
+    protected void java9Launch(URL[] classpathUrls, String mainClass, List<String> gameArgs) {
         try {
             Class<?> bootstrapLauncherClass = Class.forName("me.earth.headlessmc.modlauncher.LayeredBootstrapLauncher");
             Constructor<?> constructor = bootstrapLauncherClass.getConstructor(List.class, URL[].class, String.class);
@@ -114,7 +116,7 @@ public class InMemoryLauncher {
     }
 
     @SuppressWarnings({"JavaReflectionMemberAccess", "RedundantSuppression"})
-    private void addLibraryPath(Path libraryPath) {
+    protected void addLibraryPath(Path libraryPath) {
         try {
             // https://stackoverflow.com/questions/15409223/adding-new-paths-for-native-libraries-at-runtime-in-java
             if (java.getVersion() <= 8) {

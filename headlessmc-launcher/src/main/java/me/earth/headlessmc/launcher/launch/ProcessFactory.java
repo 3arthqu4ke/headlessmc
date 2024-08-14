@@ -74,7 +74,7 @@ public class ProcessFactory {
             classpath.add(0, runtimeJar);
         }
 
-        val commandBuilder = Command.builder()
+        val commandBuilder = JavaLaunchCommandBuilder.builder()
                              .account(options.getAccount())
                              .classpath(classpath)
                              .os(os)
@@ -102,7 +102,7 @@ public class ProcessFactory {
         }
 
         if (options.isInMemory()) {
-            new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()).launch();
+            inMemoryLaunch(new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()));
             return null;
         }
 
@@ -118,6 +118,10 @@ public class ProcessFactory {
             .redirectInput(options.isNoIn()
                                ? ProcessBuilder.Redirect.PIPE
                                : ProcessBuilder.Redirect.INHERIT));
+    }
+
+    protected void inMemoryLaunch(InMemoryLauncher inMemoryLauncher) throws LaunchException, AuthException, IOException {
+        inMemoryLauncher.launch();
     }
 
     private void addGameJar(Version version, List<Target> targets)

@@ -158,13 +158,11 @@ allprojects {
     }
 
     jar.finalizedBy(shadowJar)
-
-    // since we are not creating javadoc and sources on java 9+ skip
     def pubSuffix = System.getenv('IS_MAVEN_PUB') != null
             ? ''
             : System.getenv('GITHUB_RUN_NUMBER') != null && System.getenv('GITHUB_SHA') != null
-            ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
-            : '-local'
+                ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
+                : '-SNAPSHOT'
 
     publishing {
         publications {

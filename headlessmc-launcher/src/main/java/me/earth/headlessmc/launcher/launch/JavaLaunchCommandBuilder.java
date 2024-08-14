@@ -26,7 +26,7 @@ import java.util.List;
 @Builder
 @Getter
 @CustomLog
-class Command {
+public class JavaLaunchCommandBuilder {
     private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";
 
     private final LaunchAccount account;

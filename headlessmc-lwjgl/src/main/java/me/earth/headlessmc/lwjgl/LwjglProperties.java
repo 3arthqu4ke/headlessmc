@@ -9,6 +9,7 @@ public interface LwjglProperties {
     String REFRESH_RATE = "hmc.lwjgl.refreshrate";
     String BITS_PER_PIXEL = "hmc.lwjgl.bitsperpixel";
     String JNI_VERSION = "hmc.lwjgl.nativejniversion";
+    String NO_AWT = "hmc.lwjgl.no.awt";
 
     String TWEAKER_MAIN_CLASS = "hmc.tweaker.main.class";
 
