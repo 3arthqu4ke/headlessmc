@@ -8,6 +8,8 @@ import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.command.line.CommandLineReader;
 
+import java.util.function.Consumer;
+
 /**
  * Provides a global instance of {@link HeadlessMc}.
  * The main reason we provide this is, that we only want to open one {@link CommandLineReader} per JVM.
@@ -20,18 +22,42 @@ import me.earth.headlessmc.api.command.line.CommandLineReader;
  * For that the {@link ApiClassloadingHelper} exists.
  */
 public class HeadlessMcApi {
+    private static final HmcInstanceHolder INSTANCE_HOLDER = new HmcInstanceHolder();
     /**
      * If this API supports {@link ClAgnosticCommandContext}s.
      * @see ApiClassloadingHelper
      */
     @Getter
     @Setter
-    private static boolean supportingClassloadingAgnosticContexts = true;
+    private static volatile boolean supportingClassloadingAgnosticContexts = true;
+
     /**
-     * A global instance of {@link HeadlessMc}.
+     * @return a global instance of {@link HeadlessMc}.
      */
-    @Getter
-    @Setter
-    private static HeadlessMc instance;
+    public static HeadlessMc getInstance() {
+        return INSTANCE_HOLDER.getInstance();
+    }
+
+    /**
+     * Sets the global instance of {@link HeadlessMc}.
+     *
+     * @param instance the global instance.
+     * @see #getInstance()
+     */
+    public static void setInstance(HeadlessMc instance) {
+        INSTANCE_HOLDER.setInstance(instance);
+    }
+
+    /**
+     * Adds a listener that will get called if {@link #setInstance(HeadlessMc)} is called.
+     * If an instance is already present it will get notified immediately.
+     * This may happen asynchronously.
+     * It is also possible that the listener gets called multiple times if someone installs another or the same instance of HeadlessMc multiple times.
+     *
+     * @param listener the listener that listens for global instances of {@link HeadlessMc} being set here.
+     */
+    public static void addListener(Consumer<HeadlessMc> listener) {
+        INSTANCE_HOLDER.addListener(listener);
+    }
 
 }
