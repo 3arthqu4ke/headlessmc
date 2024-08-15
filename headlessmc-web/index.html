@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>HeadlessMc</title>
+    <script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100svh;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script type="module">
+    await cheerpjInit({ clipboardMode: "system" });
+    const element = document.getElementById("container");
+    const rect = element.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+
+    cheerpjCreateDisplay(-1, -1, element);
+    //await cheerpjRunJar("/app/headlessmc-cheerpj-2.1.0.jar", width, height);
+
+    const lib = await cheerpjRunLibrary("/app/headlessmc-web-2.1.0.jar");
+    const CheerpJGUI = await lib.me.earth.headlessmc.cheerpj.CheerpJGUI;
+    const gui = await new CheerpJGUI();
+    const resizeObserver = new ResizeObserver(entries => {
+        for (let entry of entries) {
+            const {width, height} = entry.contentRect;
+            gui.scheduleSizeChange(width, height).catch(error => {
+                console.error('Error when scheduling resize:', error);
+            });
+        }
+    });
+
+    resizeObserver.observe(element)
+    const Main = await lib.me.earth.headlessmc.cheerpj.Main;
+    await Main.init(gui, width, height)
+</script>
+</body>
+</html>

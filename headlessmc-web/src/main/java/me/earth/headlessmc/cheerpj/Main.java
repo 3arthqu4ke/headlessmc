@@ -7,23 +7,16 @@ import javax.swing.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 public class Main {
     public static void main(String[] args) {
-        if (true) {
-            try {
-                System.out.println(KeyFactory.getInstance("EC").getClass().getName());
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
         CheerpJGUI gui = new CheerpJGUI();
-        gui.init();
+        init(gui, 800, 600);
+    }
 
+    public static void init(CheerpJGUI gui, int width, int height) {
+        gui.init(width, height);
         InAndOutProvider inAndOutProvider = new InAndOutProvider();
         PrintStream out = new PrintStream(new OutputStream() {
             @Override

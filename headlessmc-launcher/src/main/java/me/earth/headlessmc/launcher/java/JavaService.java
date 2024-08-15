@@ -47,7 +47,7 @@ public class JavaService extends Service<Java> {
 
         newVersions.add(getCurrent());
         nanos = System.nanoTime() - nanos;
-        log.info("Java refresh took " + (nanos / 1_000_000.0) + "ms.");
+        log.debug("Java refresh took " + (nanos / 1_000_000.0) + "ms.");
         return newVersions;
     }
 

@@ -1,10 +1,12 @@
 package me.earth.headlessmc.cheerpj;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.CommandContext;
+import me.earth.headlessmc.api.command.CopyContext;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.config.ConfigImpl;
@@ -35,18 +37,26 @@ import me.earth.headlessmc.logging.NoThreadFormatter;
 import me.earth.headlessmc.runtime.RuntimeProperties;
 import me.earth.headlessmc.runtime.commands.RuntimeContext;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.Level;
 
+@Slf4j
 @RequiredArgsConstructor
 public class CheerpJLauncher {
     private final InAndOutProvider inAndOutProvider;
     private final CheerpJGUI gui;
 
     public void launch() {
+        // https://cheerpj.com/docs/guides/File-System-support.html#files-mount-point
+        Path root = Paths.get("").toAbsolutePath();
+        Path headlessMcRoot = root.resolve("HeadlessMC");
+
         LoggingService loggingService = new LoggingService();
-        loggingService.setFileHandler(false);
+        loggingService.setPathFactory(() -> headlessMcRoot.resolve("headlessmc.log"));
         loggingService.setStreamFactory(() -> inAndOutProvider.getOut().get());
         loggingService.setFormatterFactory(NoThreadFormatter::new);
         loggingService.init();
@@ -54,9 +64,10 @@ public class CheerpJLauncher {
 
         Logger logger = LoggerFactory.getLogger("HeadlessMc");
         logger.info("Initializing HeadlessMc...");
+        logger.info("Display Size: " + gui.getFrame().getWidth() + "x" + gui.getFrame().getHeight());
 
         Properties properties = new Properties();
-        initializeProperties(properties);
+        initializeProperties(properties, root);
         Config config = new ConfigImpl(properties, "default", 0);
         HasConfig configs = () -> config;
         CommandLine commandLine = new CommandLine(inAndOutProvider, gui);
@@ -65,7 +76,7 @@ public class CheerpJLauncher {
         hmc.getExitManager().setExitManager(i -> logger.info("HeadlessMc exited with code " + i));
 
         try {
-            initialize(hmc, logger);
+            initialize(hmc, logger, headlessMcRoot);
             logger.info("HeadlessMc initialized.");
         } catch (Throwable t) {
             logger.error("Failed to initialize HeadlessMc", t);
@@ -76,19 +87,24 @@ public class CheerpJLauncher {
         gui.getCommandHandler().setValue(commandLine.getCommandConsumer());
     }
 
-    private void initializeProperties(Properties properties) {
+    private void initializeProperties(Properties properties, Path root) {
         properties.put(RuntimeProperties.DONT_ASK_FOR_QUIT.getName(), "true");
+        properties.put(LauncherProperties.MC_DIR.getName(), root.resolve("mc").toString());
+        properties.put(LauncherProperties.GAME_DIR.getName(), root.resolve("mc").toString());
     }
 
-    private void initialize(HeadlessMc hmc, Logger logger) throws AuthException {
-        FileManager files = FileManager.mkdir("HeadlessMC");
+    private void initialize(HeadlessMc hmc, Logger logger, Path headlessMcRoot) {
+        FileManager files = FileManager.mkdir(headlessMcRoot.toString());
 
         val configs = Service.refresh(new ConfigService(files));
 
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
         val gameDir = FileManager.mkdir(configs.getConfig().get(LauncherProperties.GAME_DIR, mcFiles.getPath()));
-        val versions = Service.refresh(new VersionService(mcFiles));
+        val versions = new VersionService(mcFiles);
+        versions.setRetries(10);
+        versions.refresh();
+
         val javas = Service.refresh(new JavaService(configs));
 
         val accountStore = new AccountStore(files, configs);
@@ -105,9 +121,12 @@ public class CheerpJLauncher {
 
         deleteOldFiles(launcher, logger);
 
-        LaunchContext launchContext = new LaunchContext(launcher);
-        hmc.getCommandLine().setCommandContext(launchContext);
-        hmc.getCommandLine().setBaseContext(launchContext);
+        LaunchContext launchContext = new LaunchContext(launcher, false);
+        hmc.getCommandLine().setAllContexts(launchContext);
+        CopyContext copyContext = new CopyContext(hmc, true);
+        copyContext.add(new FilesCommand(hmc));
+        copyContext.add(new ResizeCommand(hmc, gui));
+        hmc.getCommandLine().setAllContexts(copyContext);
     }
 
     private void deleteOldFiles(Launcher launcher, Logger logger) {
@@ -121,8 +140,8 @@ public class CheerpJLauncher {
                     logger.debug("Deleting " + file.getAbsolutePath());
                     FileUtil.delete(file);
                 } catch (IOException ioe) {
-                    logger.error("Couldn't delete " + file.getName()
-                            + " : " + ioe.getMessage());
+                    // TODO: CheerpJ cannot delete directories
+                    logger.error("Couldn't delete " + file.getName(), ioe);
                 }
             }
         }

@@ -37,7 +37,7 @@ public class JLineCommandLineReader implements CommandLineReader {
         try {
             open(hmc);
             nanos = System.nanoTime() - nanos;
-            log.info("JLine terminal took " + (nanos / 1_000_000.0) + "ms to get ready.");
+            log.debug("JLine terminal took " + (nanos / 1_000_000.0) + "ms to get ready.");
 
             String line;
             while (true) {

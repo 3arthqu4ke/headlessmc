@@ -2,6 +2,10 @@ plugins {
     id 'application'
 }
 
+sourceSets {
+    plugin
+}
+
 def MAIN_CLASS = 'me.earth.headlessmc.cheerpj.Main'
 application {
     mainClass = MAIN_CLASS

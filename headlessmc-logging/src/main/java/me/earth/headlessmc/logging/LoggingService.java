@@ -32,13 +32,14 @@ public class LoggingService {
     private static final Iterable<Level> LEVELS = unmodifiableList(asList(OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL));
     private Supplier<PrintStream> streamFactory = () -> new PrintStream(new FileOutputStream(FileDescriptor.out), true);
     private boolean fileHandler = Boolean.parseBoolean(System.getProperty(LoggingProperties.FILE_HANDLER_ENABLED, "true"));
+    private Supplier<Path> pathFactory = () -> Paths.get("HeadlessMC").resolve("headlessmc.log");
     private Supplier<Formatter> formatterFactory = ThreadFormatter::new;
 
     public void init() {
         clearOtherHandlers();
         addLoggingHandler();
         if (fileHandler) {
-            addFileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log"));
+            addFileHandler(pathFactory.get());
         }
 
         setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "WARNING"), false);

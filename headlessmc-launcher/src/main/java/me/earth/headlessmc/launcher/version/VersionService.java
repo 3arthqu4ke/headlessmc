@@ -2,9 +2,7 @@ package me.earth.headlessmc.launcher.version;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import lombok.CustomLog;
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import lombok.*;
 import me.earth.headlessmc.launcher.Service;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.JsonUtil;
@@ -17,11 +15,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Setter
 @CustomLog
 @RequiredArgsConstructor
 public final class VersionService extends Service<Version> {
     private final ParentVersionResolver resolver = new ParentVersionResolver();
     private final FileManager files;
+
+    private int retries = 0;
 
     @Override
     protected Collection<Version> update() {
@@ -54,25 +55,38 @@ public final class VersionService extends Service<Version> {
 
         resolver.resolveParentVersions(versions);
         nanos = System.nanoTime() - nanos;
-        log.info("Version refresh took " + (nanos / 1_000_000.0) + "ms.");
+        log.debug("Version refresh took " + (nanos / 1_000_000.0) + "ms.");
         return versions.values();
     }
 
     private void read(File file, File folder, Map<String, Version> versions,
                       AtomicInteger id, VersionFactory factory) {
-        try {
-            log.debug("Reading " + file.getAbsolutePath());
-            JsonElement je = JsonUtil.fromFile(file);
-            val version = factory.parse(je.getAsJsonObject(), folder,
-                                        id::getAndIncrement);
-            if (version.getName() == null) {
-                log.warning("Failed to read version " + file.getName() + ", it did not provide a name!");
-            } else {
-                versions.put(version.getName(), version);
+        for (int i = 0; i < retries + 1; i++) {
+            try {
+                log.debug("Reading " + file.getAbsolutePath());
+                JsonElement je = JsonUtil.fromFile(file);
+                val version = factory.parse(je.getAsJsonObject(), folder,
+                        id::getAndIncrement);
+                if (version.getName() == null) {
+                    log.warning("Failed to read version " + file.getName() + ", it did not provide a name!");
+                } else {
+                    versions.put(version.getName(), version);
+                }
+
+                return;
+            } catch (IOException | JsonParseException | VersionParseException e) {
+                if (i == retries) {
+                    log.warning(file.getName() + ", " + e.getClass() + ": " + e.getMessage());
+                } else {
+                    try {
+                        log.debug("Retrying " + file.getName() + " : " + e.getMessage());
+                        //noinspection BusyWait
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
-        } catch (IOException | JsonParseException | VersionParseException e) {
-            log.warning(file.getName() + ", " + e.getClass() + ": "
-                            + e.getMessage());
         }
     }
 
