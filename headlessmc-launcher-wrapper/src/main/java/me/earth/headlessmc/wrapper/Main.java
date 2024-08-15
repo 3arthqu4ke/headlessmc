@@ -13,6 +13,9 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 public class Main {
+    public static final String WRAPPED_MAIN_PROPERTY = "hmc.wrapper.wrapped.main";
+    public static final String DEFAULT_MAIN = "me.earth.headlessmc.launcher.Main";
+
     public static void main(String[] args) throws Exception {
         Path root = Paths.get("HeadlessMC");
         Files.createDirectories(root);
@@ -29,7 +32,7 @@ public class Main {
             HeadlessMcWrapper.setClassLoader(classloader);
             Thread.currentThread().setContextClassLoader(classloader);
 
-            Class<?> mainClass = Class.forName("me.earth.headlessmc.launcher.Main", true, classloader);
+            Class<?> mainClass = Class.forName(System.getProperty(WRAPPED_MAIN_PROPERTY, DEFAULT_MAIN), true, classloader);
             Method main = mainClass.getMethod("main", String[].class);
             main.invoke(null, (Object) args);
         }

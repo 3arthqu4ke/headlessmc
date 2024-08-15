@@ -1,44 +1,17 @@
 package me.earth.headlessmc.web.cheerpj;
 
-import lombok.extern.slf4j.Slf4j;
-import me.earth.headlessmc.api.process.InAndOutProvider;
-
-import javax.swing.*;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-
-@Slf4j
 public class Main {
-    public static final PrintStream STDOUT = System.out;
+    public static final String MAIN_CLASS = "me.earth.headlessmc.web.cheerpj.plugin.CheerpJMain";
+    private static String[] args = new String[0];
 
-    public static void main(String[] args) {
-        CheerpJGUI gui = new CheerpJGUI();
-        init(gui, 800, 600);
+    public static void main(String[] args) throws Exception {
+        Main.args = args;
+        init();
     }
 
-    public static void init(CheerpJGUI gui, int width, int height) {
-        gui.init(width, height);
-        InAndOutProvider inAndOutProvider = new InAndOutProvider();
-        PrintStream out = new PrintStream(new OutputStream() {
-            @Override
-            public void write(int b) {
-                SwingUtilities.invokeLater(() -> gui.getDisplayArea().append(String.valueOf((char) b)));
-                STDOUT.write(b);
-            }
-        }, true);
-
-        inAndOutProvider.setConsole(() -> null);
-        inAndOutProvider.setOut(() -> out);
-        inAndOutProvider.setErr(() -> out);
-        inAndOutProvider.setIn(() -> new InputStream() {
-            @Override
-            public int read() {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        });
-
-        new CheerpJLauncher(inAndOutProvider, gui).launch();
+    public static void init() throws Exception {
+        System.setProperty(me.earth.headlessmc.wrapper.Main.WRAPPED_MAIN_PROPERTY, MAIN_CLASS);
+        me.earth.headlessmc.wrapper.Main.main(args);
     }
 
 }

@@ -1,10 +1,9 @@
-package me.earth.headlessmc.web.cheerpj;
+package me.earth.headlessmc.web.cheerpj.plugin;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.earth.headlessmc.api.command.PasswordAware;
-import me.earth.headlessmc.api.util.Lazy;
-import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.web.cheerpj.Resizer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,29 +16,39 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 @Getter
 public class CheerpJGUI implements PasswordAware {
-    private final JFrame frame = new JFrame("HeadlessMc - " + Launcher.VERSION);
+    @Getter
+    private static final CheerpJGUI instance = new CheerpJGUI();
 
-    private final List<String> history = new ArrayList<>();
-    private int historyIndex = -1;
+    private final JFrame frame = new JFrame("HeadlessMc - 2.1.0");
 
     private final JPanel panel = new JPanel();
     private final JTextArea displayArea = new JTextArea();
     private final JScrollPane scrollPane = new JScrollPane(displayArea);
     private final JPasswordField inputField = new JPasswordField();
     private final JPanel inputPanel = new JPanel();
-    private final Lazy<Consumer<String>> commandHandler =
-            new Lazy<>(() -> (str -> displayArea.append("HeadlessMc is still initializing, command ignored.\n")), null);
+
+    private final AtomicReference<Consumer<String>> commandHandler = new AtomicReference<>(str -> displayArea.append("Still initializing, command ignored.\n"));
+    private final List<String> history = new ArrayList<>();
+    private volatile boolean initialized = false;
+    private int historyIndex = -1;
 
     @Getter(AccessLevel.NONE)
     private final AtomicBoolean hidingPasswords = new AtomicBoolean(false);
 
-    public void init(int width, int height) {
+    public void init() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(width, height);
+        try {
+            WebWrapperBridge.setUpdateListener(this::scheduleSizeChange);
+            WebWrapperBridge.getWidthAndHeight(frame::setSize);
+        } catch (Throwable t) {
+            CheerpJMain.STDOUT.println("CheerpJ wrapper not available.");
+            t.printStackTrace(CheerpJMain.STDOUT);
+        }
 
         panel.setLayout(new BorderLayout());
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -113,9 +122,10 @@ public class CheerpJGUI implements PasswordAware {
 
         frame.add(panel);
         frame.setVisible(true);
+        System.out.println("Setting initialized on " + this);
+        initialized = true;
     }
 
-    @SuppressWarnings("unused")
     public void scheduleSizeChange(int width, int height) {
         SwingUtilities.invokeLater(() -> frame.setSize(width, height));
     }

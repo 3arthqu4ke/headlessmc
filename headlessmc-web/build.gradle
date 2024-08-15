@@ -2,18 +2,13 @@ plugins {
     id 'application'
 }
 
-sourceSets {
-    plugin
-}
-
 def MAIN_CLASS = 'me.earth.headlessmc.web.cheerpj.Main'
 application {
     mainClass = MAIN_CLASS
 }
 
 dependencies {
-    jarLibsApi project(':headlessmc-launcher')
-    jarLibsApi project(':headlessmc-runtime')
+    jarLibsApi project(':headlessmc-launcher-wrapper')
 }
 
 jar {

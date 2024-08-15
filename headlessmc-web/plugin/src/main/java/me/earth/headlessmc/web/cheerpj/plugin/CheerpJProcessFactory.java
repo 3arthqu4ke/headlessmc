@@ -1,4 +1,4 @@
-package me.earth.headlessmc.web.cheerpj;
+package me.earth.headlessmc.web.cheerpj.plugin;
 
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.files.FileManager;

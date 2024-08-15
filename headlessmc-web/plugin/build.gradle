@@ -1,0 +1,20 @@
+plugins {
+    id 'application'
+}
+
+def MAIN_CLASS = 'me.earth.headlessmc.web.cheerpj.plugin.CheerpJMain'
+application {
+    mainClass = MAIN_CLASS
+}
+
+dependencies {
+    jarLibsApi project(':headlessmc-launcher')
+    jarLibsApi project(':headlessmc-runtime')
+    compileOnly project(':headlessmc-web')
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': MAIN_CLASS)
+    }
+}

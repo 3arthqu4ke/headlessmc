@@ -1,4 +1,4 @@
-package me.earth.headlessmc.web.cheerpj;
+package me.earth.headlessmc.web.cheerpj.plugin;
 
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;

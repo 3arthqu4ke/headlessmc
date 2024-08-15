@@ -1,7 +1,6 @@
-package me.earth.headlessmc.web.cheerpj;
+package me.earth.headlessmc.web.cheerpj.plugin;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.HeadlessMcImpl;
@@ -48,7 +47,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
-@Slf4j
 @RequiredArgsConstructor
 public class CheerpJLauncher {
     private static final UUID CACHE_UUID = UUID.fromString("e75fc20d-e629-4bf9-a236-c7acb4e9e0af");
@@ -93,7 +91,7 @@ public class CheerpJLauncher {
         }
 
         @SuppressWarnings("resource") ExecutorService service = Executors.newSingleThreadExecutor();
-        gui.getCommandHandler().setValue(str -> service.submit(() -> commandLine.getCommandConsumer().accept(str)));
+        gui.getCommandHandler().set(str -> service.submit(() -> commandLine.getCommandConsumer().accept(str)));
     }
 
     private void initializeProperties(Path root) {

@@ -10,3 +10,6 @@ include 'headlessmc-launcher'
 include 'headlessmc-launcher-jfx'
 include 'headlessmc-launcher-wrapper'
 include 'headlessmc-web'
+
+include 'headlessmc-web-plugin'
+project(':headlessmc-web-plugin').projectDir = file('headlessmc-web/plugin')

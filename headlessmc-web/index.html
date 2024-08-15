@@ -27,20 +27,22 @@
 
     cheerpjCreateDisplay(-1, -1, element);
     const lib = await cheerpjRunLibrary("/app/headlessmc-web-2.1.0.jar");
-    const CheerpJGUI = await lib.me.earth.headlessmc.web.cheerpj.CheerpJGUI;
-    const gui = await new CheerpJGUI();
+    const Resizer = await lib.me.earth.headlessmc.web.cheerpj.Resizer;
+    const resizer = await Resizer.getInstance();
     const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
             const {width, height} = entry.contentRect;
-            gui.scheduleSizeChange(width, height).catch(error => {
-                console.error('Error when scheduling resize:', error);
+            resizer.setSize(width, height).catch(error => {
+                console.error('Error while resizing:', error);
             });
         }
     });
 
     resizeObserver.observe(element)
     const Main = await lib.me.earth.headlessmc.web.cheerpj.Main;
-    await Main.init(gui, width, height)
+    Main.init().catch(error => {
+        console.error('Failed to initialize HeadlessMc:', error);
+    });
 </script>
 </body>
 </html>
