@@ -1,28 +1,37 @@
 package me.earth.headlessmc.launcher.files;
 
 import lombok.CustomLog;
+import lombok.Setter;
 import me.earth.headlessmc.launcher.util.IOConsumer;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 // TODO: move to Paths?!?!?!?!?!?!
 // TODO: Why were we using Files in the first place?
 @CustomLog
 public class FileManager {
+    @Setter
+    private static Function<String, FileManager> factory = FileManager::new;
     private final String base;
 
+    // @Deprecated
     public FileManager(String base) {
         this.base = base;
+    }
+
+    public static FileManager forPath(String path) {
+        return factory.apply(path);
     }
 
     public static FileManager mkdir(String path) {
         File file = Paths.get(path).toFile();
         //noinspection ResultOfMethodCallIgnored
         file.mkdirs();
-        return new FileManager(file.getAbsolutePath());
+        return factory.apply(file.getAbsolutePath());
     }
 
     public File getBase() {
@@ -109,7 +118,7 @@ public class FileManager {
     }
 
     public FileManager relative(String... base) {
-        return new FileManager(this.base + File.separator + String.join(File.separator, base));
+        return factory.apply(this.base + File.separator + String.join(File.separator, base));
     }
 
     public String getPath() {

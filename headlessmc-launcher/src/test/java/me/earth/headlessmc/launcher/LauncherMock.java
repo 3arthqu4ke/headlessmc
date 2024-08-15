@@ -30,7 +30,7 @@ public class LauncherMock {
     public static final Launcher INSTANCE;
 
     static {
-        val base = new FileManager("build");
+        val base = FileManager.forPath("build");
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
         val in = new CommandLine();

@@ -105,6 +105,7 @@ public class CheerpJLauncher {
     }
 
     private void initialize(HeadlessMc hmc, Logger logger, Path headlessMcRoot) {
+        FileManager.setFactory(CheerpJFileManager::new);
         FileManager files = FileManager.mkdir(headlessMcRoot.toString());
 
         val configs = Service.refresh(new ConfigService(files));
@@ -153,8 +154,7 @@ public class CheerpJLauncher {
                     logger.debug("Deleting " + file.getAbsolutePath());
                     launcher.getFileManager().delete(file);
                 } catch (IOException ioe) {
-                    // TODO: CheerpJ cannot delete directories
-                    // logger.error("Couldn't delete " + file.getName(), ioe);
+                    logger.error("Couldn't delete " + file.getName(), ioe);
                 }
             }
         }
