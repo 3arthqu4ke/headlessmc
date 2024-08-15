@@ -10,7 +10,6 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
-import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
 import me.earth.headlessmc.launcher.version.Version;
@@ -117,7 +116,7 @@ public class LaunchCommand extends AbstractVersionCommand {
                 && !ctx.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
                 try {
                     log.info("Deleting " + files.getBase().getName());
-                    FileUtil.delete(files.getBase());
+                    ctx.getFileManager().delete(files.getBase());
                 } catch (IOException e) {
                     log.error("Couldn't delete files of game "
                                   + files.getBase().getName()

@@ -2,8 +2,8 @@ package me.earth.headlessmc.launcher.files;
 
 import lombok.*;
 import me.earth.headlessmc.api.config.Config;
-import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.config.ConfigImpl;
+import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.Service;
 import me.earth.headlessmc.launcher.util.StringUtil;
 

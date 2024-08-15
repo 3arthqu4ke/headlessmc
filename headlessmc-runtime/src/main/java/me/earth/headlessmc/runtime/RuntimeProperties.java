@@ -1,7 +1,7 @@
 package me.earth.headlessmc.runtime;
 
-import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.api.config.HmcProperties;
+import me.earth.headlessmc.api.config.Property;
 
 import static me.earth.headlessmc.api.config.PropertyTypes.bool;
 import static me.earth.headlessmc.api.config.PropertyTypes.number;

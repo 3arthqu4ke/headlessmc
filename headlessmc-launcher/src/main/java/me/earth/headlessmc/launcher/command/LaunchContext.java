@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.command;
 
-import me.earth.headlessmc.api.command.*;
+import me.earth.headlessmc.api.command.CommandContextImpl;
+import me.earth.headlessmc.api.command.PasswordCommand;
 import me.earth.headlessmc.api.command.impl.HelpCommand;
 import me.earth.headlessmc.api.command.impl.MemoryCommand;
 import me.earth.headlessmc.api.command.impl.MultiCommand;

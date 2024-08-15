@@ -23,7 +23,6 @@ import me.earth.headlessmc.launcher.auth.OfflineChecker;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
-import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
@@ -44,6 +43,7 @@ import me.earth.headlessmc.runtime.commands.RuntimeContext;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -51,6 +51,7 @@ import java.util.logging.Level;
 @Slf4j
 @RequiredArgsConstructor
 public class CheerpJLauncher {
+    private static final UUID CACHE_UUID = UUID.fromString("e75fc20d-e629-4bf9-a236-c7acb4e9e0af");
     private final InAndOutProvider inAndOutProvider;
     private final CheerpJGUI gui;
 
@@ -134,7 +135,7 @@ public class CheerpJLauncher {
         LaunchContext launchContext = new LaunchContext(launcher, false);
         hmc.getCommandLine().setAllContexts(launchContext);
         CopyContext copyContext = new CopyContext(hmc, true);
-        copyContext.add(new FilesCommand(hmc));
+        copyContext.add(new FilesCommand(launcher));
         copyContext.add(new ResizeCommand(hmc, gui));
         hmc.getCommandLine().setAllContexts(copyContext);
 
@@ -150,7 +151,7 @@ public class CheerpJLauncher {
             if (file.isDirectory() && UuidUtil.isUuid(file.getName())) {
                 try {
                     logger.debug("Deleting " + file.getAbsolutePath());
-                    FileUtil.delete(file);
+                    launcher.getFileManager().delete(file);
                 } catch (IOException ioe) {
                     // TODO: CheerpJ cannot delete directories
                     // logger.error("Couldn't delete " + file.getName(), ioe);

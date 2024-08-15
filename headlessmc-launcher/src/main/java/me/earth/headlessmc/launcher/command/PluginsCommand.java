@@ -3,9 +3,9 @@ package me.earth.headlessmc.launcher.command;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.HasDescription;
+import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.plugin.HeadlessMcPlugin;
-import me.earth.headlessmc.api.util.Table;
 
 public class PluginsCommand extends AbstractLauncherCommand {
     public PluginsCommand(Launcher ctx) {

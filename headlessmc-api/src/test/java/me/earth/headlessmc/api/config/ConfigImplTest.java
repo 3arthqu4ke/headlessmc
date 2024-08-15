@@ -1,9 +1,6 @@
 package me.earth.headlessmc.api.config;
 
 import lombok.val;
-import me.earth.headlessmc.api.config.Config;
-import me.earth.headlessmc.api.config.ConfigImpl;
-import me.earth.headlessmc.api.config.PropertyTypes;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

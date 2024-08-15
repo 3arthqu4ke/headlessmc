@@ -2,7 +2,10 @@ package me.earth.headlessmc.launcher.version;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import lombok.*;
+import lombok.CustomLog;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.val;
 import me.earth.headlessmc.launcher.Service;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.JsonUtil;

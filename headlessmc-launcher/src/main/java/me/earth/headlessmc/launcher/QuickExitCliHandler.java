@@ -4,8 +4,8 @@ import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.command.QuickExitCli;
-import me.earth.headlessmc.api.command.line.CommandLineReader;
 import me.earth.headlessmc.api.command.line.CommandLine;
+import me.earth.headlessmc.api.command.line.CommandLineReader;
 
 /**
  * @see QuickExitCli

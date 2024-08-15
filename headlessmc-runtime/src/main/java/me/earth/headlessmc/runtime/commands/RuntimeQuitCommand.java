@@ -2,8 +2,8 @@ package me.earth.headlessmc.runtime.commands;
 
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.api.command.impl.QuitCommand;
 import me.earth.headlessmc.api.command.YesNoContext;
+import me.earth.headlessmc.api.command.impl.QuitCommand;
 import me.earth.headlessmc.runtime.RuntimeProperties;
 
 public class RuntimeQuitCommand extends QuitCommand {

@@ -11,7 +11,10 @@ import me.earth.headlessmc.jline.JLineCommandLineReader;
 import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
-import me.earth.headlessmc.launcher.files.*;
+import me.earth.headlessmc.launcher.files.AutoConfiguration;
+import me.earth.headlessmc.launcher.files.ConfigService;
+import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
@@ -128,10 +131,9 @@ public final class Main {
             if (file.isDirectory() && UuidUtil.isUuid(file.getName())) {
                 try {
                     log.debug("Deleting " + file.getAbsolutePath());
-                    FileUtil.delete(file);
+                    launcher.getFileManager().delete(file);
                 } catch (IOException ioe) {
-                    log.error("Couldn't delete " + file.getName()
-                                  + " : " + ioe.getMessage());
+                    log.error("Couldn't delete " + file.getName() + " : " + ioe.getMessage());
                 }
             }
         }

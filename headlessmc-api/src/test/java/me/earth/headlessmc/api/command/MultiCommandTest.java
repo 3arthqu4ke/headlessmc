@@ -1,8 +1,8 @@
 package me.earth.headlessmc.api.command;
 
 import lombok.val;
-import me.earth.headlessmc.api.MockedHeadlessMc;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.MockedHeadlessMc;
 import me.earth.headlessmc.api.command.impl.MultiCommand;
 import org.junit.jupiter.api.Test;
 

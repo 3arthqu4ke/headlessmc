@@ -7,7 +7,6 @@ import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
@@ -42,7 +41,7 @@ public class FabricCommand extends AbstractVersionCommand {
         } finally {
             try {
                 log.debug("Deleting: " + jar.getAbsolutePath());
-                FileUtil.delete(tempFiles.getBase());
+                ctx.getFileManager().delete(tempFiles.getBase());
             } catch (IOException e) {
                 log.error(
                     "Failed to delete: " + jar.getAbsolutePath() + " : "

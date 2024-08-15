@@ -2,8 +2,8 @@ package me.earth.headlessmc.auth;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import net.lenni0451.commons.httpclient.HttpClient;

@@ -3,10 +3,10 @@ package me.earth.headlessmc.launcher.command;
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
 import me.earth.headlessmc.launcher.version.Version;
-import me.earth.headlessmc.api.util.Table;
 
 import java.io.IOException;
 import java.util.stream.Collectors;

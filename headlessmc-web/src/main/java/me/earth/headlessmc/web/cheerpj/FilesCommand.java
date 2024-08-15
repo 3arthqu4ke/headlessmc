@@ -1,10 +1,9 @@
 package me.earth.headlessmc.web.cheerpj;
 
-import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.launcher.files.FileUtil;
+import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,8 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-public class FilesCommand extends AbstractCommand {
-    public FilesCommand(HeadlessMc ctx) {
+public class FilesCommand extends AbstractLauncherCommand {
+    public FilesCommand(Launcher ctx) {
         super(ctx, "files", "Lists files in directories.");
     }
 
@@ -40,7 +39,7 @@ public class FilesCommand extends AbstractCommand {
 
         if (CommandUtil.hasFlag("-delete", args)) {
             try {
-                FileUtil.delete(path.toFile());
+                ctx.getFileManager().delete(path.toFile());
             } catch (IOException e) {
                 ctx.log("Failed to delete " + path + ": " + e.getMessage());
             }

@@ -2,8 +2,8 @@ package me.earth.headlessmc.launcher.instrumentation.log4j;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import me.earth.headlessmc.launcher.instrumentation.Target;
 import me.earth.headlessmc.api.util.AbstractUtilityTest;
+import me.earth.headlessmc.launcher.instrumentation.Target;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.lookup.Interpolator;
 import org.apache.logging.log4j.core.lookup.JndiLookup;
