@@ -15,6 +15,12 @@ import java.util.List;
 
 @Getter
 public class TransformingClassloader extends URLClassLoader {
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("hmc.wrapper.debug.classes", "false"));
+
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
+
     private final URLClassLoader transformerClassloader;
     private final List<TransformerPlugin> plugins;
 
@@ -26,8 +32,6 @@ public class TransformingClassloader extends URLClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        // TODO: shouldnt this look up the parent classloader to?
-        //  i am very suspicious of this!
         String path = name.replace('.', '/').concat(".class");
         try (InputStream is = this.getResourceAsStream(path)) {
             if (is == null) {
@@ -36,11 +40,14 @@ public class TransformingClassloader extends URLClassLoader {
 
             byte[] classBytes = toByteArray(is);
             classBytes = instrument(name, classBytes);
-            Path savePath = Paths.get("build").resolve("transformation").resolve(path);
-            Files.createDirectories(savePath.getParent().toAbsolutePath());
-            try (OutputStream fos = Files.newOutputStream(savePath.toAbsolutePath())) {
-                fos.write(classBytes);
+            if (DEBUG) {
+                Path savePath = Paths.get("build").resolve("transformation").resolve(path);
+                Files.createDirectories(savePath.getParent().toAbsolutePath());
+                try (OutputStream fos = Files.newOutputStream(savePath.toAbsolutePath())) {
+                    fos.write(classBytes);
+                }
             }
+
             return this.defineClass(name, classBytes, 0, classBytes.length);
         } catch (IOException e) {
             throw new ClassNotFoundException(name, e);

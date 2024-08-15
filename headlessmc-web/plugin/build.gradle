@@ -8,8 +8,12 @@ application {
 }
 
 dependencies {
-    jarLibsApi project(':headlessmc-launcher')
-    jarLibsApi project(':headlessmc-runtime')
+    jarLibs(project(':headlessmc-runtime')) {
+        transitive false
+    }
+
+
+    api project(':headlessmc-launcher')
     compileOnly project(':headlessmc-web')
 }
 

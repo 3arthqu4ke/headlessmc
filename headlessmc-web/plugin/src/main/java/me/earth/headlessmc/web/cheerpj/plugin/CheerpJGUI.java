@@ -122,7 +122,6 @@ public class CheerpJGUI implements PasswordAware {
 
         frame.add(panel);
         frame.setVisible(true);
-        System.out.println("Setting initialized on " + this);
         initialized = true;
     }
 

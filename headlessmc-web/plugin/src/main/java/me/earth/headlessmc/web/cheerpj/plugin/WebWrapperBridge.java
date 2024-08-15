@@ -7,7 +7,6 @@ import java.util.function.BiConsumer;
 public class WebWrapperBridge {
     public static void setUpdateListener(BiConsumer<Integer, Integer> updateListener) {
         Resizer resizer = Resizer.getInstance();
-        System.out.println(resizer);
         resizer.setUpdateListener(updateListener);
     }
 

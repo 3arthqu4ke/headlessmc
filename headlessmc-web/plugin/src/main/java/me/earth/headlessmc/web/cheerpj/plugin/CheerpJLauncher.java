@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.command.CopyContext;
 import me.earth.headlessmc.api.command.line.CommandLine;
+import me.earth.headlessmc.api.command.line.CommandLineReader;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.api.config.HasConfig;
@@ -45,6 +46,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
@@ -90,8 +92,15 @@ public class CheerpJLauncher {
             commandLine.setAllContexts(commands);
         }
 
-        @SuppressWarnings("resource") ExecutorService service = Executors.newSingleThreadExecutor();
-        gui.getCommandHandler().set(str -> service.submit(() -> commandLine.getCommandConsumer().accept(str)));
+        @SuppressWarnings("resource")
+        ExecutorService service = Executors.newSingleThreadExecutor(CommandLineReader.DEFAULT_THREAD_FACTORY);
+        gui.getCommandHandler().set(str -> service.submit(() -> {
+            try {
+                commandLine.getCommandConsumer().accept(str);
+            } catch (Throwable t) {
+                logger.error("Failed to execute command " + str, t);
+            }
+        }));
     }
 
     private void initializeProperties(Path root) {

@@ -29,6 +29,7 @@
     const lib = await cheerpjRunLibrary("/app/headlessmc-web-2.1.0.jar");
     const Resizer = await lib.me.earth.headlessmc.web.cheerpj.Resizer;
     const resizer = await Resizer.getInstance();
+    await resizer.setSize(width, height)
     const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
             const {width, height} = entry.contentRect;
@@ -40,9 +41,8 @@
 
     resizeObserver.observe(element)
     const Main = await lib.me.earth.headlessmc.web.cheerpj.Main;
-    Main.init().catch(error => {
-        console.error('Failed to initialize HeadlessMc:', error);
-    });
+    await Main.init()
+    console.log("Main.init() finished.")
 </script>
 </body>
 </html>

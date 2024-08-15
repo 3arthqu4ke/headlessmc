@@ -11,10 +11,6 @@ public class Resizer {
     @Getter
     private static final Resizer instance = new Resizer();
 
-    static {
-        System.out.println(instance);
-    }
-
     private volatile BiConsumer<Integer, Integer> updateListener = (width, height) -> {};
     private volatile int width = 800;
     private volatile int height = 600;
