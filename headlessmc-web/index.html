@@ -26,10 +26,8 @@
     const height = rect.height;
 
     cheerpjCreateDisplay(-1, -1, element);
-    //await cheerpjRunJar("/app/headlessmc-cheerpj-2.1.0.jar", width, height);
-
     const lib = await cheerpjRunLibrary("/app/headlessmc-web-2.1.0.jar");
-    const CheerpJGUI = await lib.me.earth.headlessmc.cheerpj.CheerpJGUI;
+    const CheerpJGUI = await lib.me.earth.headlessmc.web.cheerpj.CheerpJGUI;
     const gui = await new CheerpJGUI();
     const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {
@@ -41,7 +39,7 @@
     });
 
     resizeObserver.observe(element)
-    const Main = await lib.me.earth.headlessmc.cheerpj.Main;
+    const Main = await lib.me.earth.headlessmc.web.cheerpj.Main;
     await Main.init(gui, width, height)
 </script>
 </body>

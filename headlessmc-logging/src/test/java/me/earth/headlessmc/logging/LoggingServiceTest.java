@@ -128,6 +128,7 @@ public class LoggingServiceTest {
         me.earth.headlessmc.logging.Logger hmcLogger = new me.earth.headlessmc.logging.Logger(logger);
         loggingService.setLevel(FINE);
         logger.setLevel(FINE);
+        loggingService.setLevel(INFO, true);
         hmcLogger.debug("message1", new Exception("Stacktrace1"));
         hmcLogger.info(new Exception("Stacktrace2"));
         hmcLogger.error(new Exception("Stacktrace3"));

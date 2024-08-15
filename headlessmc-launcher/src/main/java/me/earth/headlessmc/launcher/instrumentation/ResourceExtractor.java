@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.instrumentation;
 
 import lombok.Cleanup;
+import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.util.ResourceUtil;
@@ -12,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+@CustomLog
 @RequiredArgsConstructor
 public class ResourceExtractor extends AbstractTransformer {
     private final FileManager fileManager;
@@ -19,6 +21,7 @@ public class ResourceExtractor extends AbstractTransformer {
 
     @Override
     public List<Target> transform(List<Target> targets) throws IOException {
+        log.debug("Extracting resource " + resourceName);
         val file = extract();
         targets.add(new Target(false, file.getAbsolutePath()));
         setRun(true);

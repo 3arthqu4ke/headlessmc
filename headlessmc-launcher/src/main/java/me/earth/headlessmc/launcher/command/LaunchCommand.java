@@ -50,7 +50,7 @@ public class LaunchCommand extends AbstractVersionCommand {
         boolean prepare = CommandUtil.hasFlag("-prepare", args);
         val uuid = UUID.randomUUID();
         ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
-        ctx.getLoggingService().setLevel(Level.INFO);
+        ctx.getLoggingService().setLevel(Level.INFO, true);
         val files = ctx.getFileManager().createRelative(uuid.toString());
 
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);

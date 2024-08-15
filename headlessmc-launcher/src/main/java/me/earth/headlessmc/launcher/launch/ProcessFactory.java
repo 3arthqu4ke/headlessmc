@@ -42,6 +42,7 @@ public class ProcessFactory {
         throws IOException, LaunchException, AuthException {
         val launcher = options.getLauncher();
 
+        log.debug("Creating version merger");
         val version = new VersionMerger(options.getVersion());
         if (version.getArguments() == null) {
             throw new LaunchException(
@@ -49,6 +50,7 @@ public class ProcessFactory {
                     " didn't contain arguments.");
         }
 
+        log.debug("Creating extraction directory");
         val dlls = options.getFiles().createRelative("extracted");
         val targets = processLibraries(version, dlls);
         addGameJar(version, targets);
@@ -74,6 +76,7 @@ public class ProcessFactory {
             classpath.add(0, runtimeJar);
         }
 
+        log.debug("Building command");
         val commandBuilder = JavaLaunchCommandBuilder.builder()
                              .account(options.getAccount())
                              .classpath(classpath)
@@ -89,11 +92,9 @@ public class ProcessFactory {
 
         val command = commandBuilder.build();
         downloadAssets(files, version);
+        debugCommand(command, commandBuilder);
 
-        debugCommand(command);
-
-        val dir = new File(launcher.getConfig().get(
-            LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
+        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
@@ -124,21 +125,20 @@ public class ProcessFactory {
         inMemoryLauncher.launch();
     }
 
-    private void addGameJar(Version version, List<Target> targets)
-        throws IOException {
+    private void addGameJar(Version version, List<Target> targets) throws IOException {
         File gameJar = new File(version.getFolder(), version.getName() + ".jar");
         log.debug("GameJar: " + gameJar.getAbsolutePath());
         if (!gameJar.exists() || !checkZipIntact(gameJar) && gameJar.delete()) {
-            log.info("Downloading " + version.getName() + " from "
-                         + version.getClientDownload());
+            log.info("Downloading " + version.getName() + " from " + version.getClientDownload());
             download(version.getClientDownload(), gameJar.getAbsolutePath());
         }
 
         targets.add(new Target(true, gameJar.getAbsolutePath()));
+        log.debug("Processed GameJar");
     }
 
-    private List<Target> processLibraries(Version version, FileManager dlls)
-        throws IOException {
+    private List<Target> processLibraries(Version version, FileManager dlls) throws IOException {
+        log.debug("Processing libraries...");
         // TODO: proper features
         val features = Features.EMPTY;
         val targets = new ArrayList<Target>(version.getLibraries().size());
@@ -167,6 +167,7 @@ public class ProcessFactory {
             }
         }
 
+        log.debug("Finished processing libraries");
         return targets;
     }
 
@@ -190,24 +191,27 @@ public class ProcessFactory {
         return builder.start();
     }
 
-    protected void downloadAssets(FileManager files, Version version)
-        throws IOException {
-        new AssetsDownloader(files, config, version.getAssetsUrl(), version.getAssets())
-            .download();
+    protected void downloadAssets(FileManager files, Version version) throws IOException {
+        log.debug("Downloading Assets");
+        new AssetsDownloader(files, config, version.getAssetsUrl(), version.getAssets()).download();
     }
 
     protected void download(String from, String to) throws IOException {
         IOUtil.download(from, to);
     }
 
-    private void debugCommand(List<String> command) {
+    private void debugCommand(List<String> command, JavaLaunchCommandBuilder commandBuilder) {
         StringBuilder commandDebugBuilder = new StringBuilder();
         if (!command.isEmpty()) {
             commandDebugBuilder.append("\"").append(command.get(0)).append("\" "); // escape java path
         }
 
         for (int i = 1; i < command.size(); i++) {
-            commandDebugBuilder.append(command.get(i)).append((i == command.size() - 1) ? "" : " ");
+            if (commandBuilder.getAccount().getToken().equals(command.get(i))) {
+                commandDebugBuilder.append("********").append((i == command.size() - 1) ? "" : " ");
+            } else {
+                commandDebugBuilder.append(command.get(i)).append((i == command.size() - 1) ? "" : " ");
+            }
         }
 
         log.debug(commandDebugBuilder.toString());

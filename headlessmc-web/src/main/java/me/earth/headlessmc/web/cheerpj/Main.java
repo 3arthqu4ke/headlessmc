@@ -1,4 +1,4 @@
-package me.earth.headlessmc.cheerpj;
+package me.earth.headlessmc.web.cheerpj;
 
 import lombok.extern.slf4j.Slf4j;
 import me.earth.headlessmc.api.process.InAndOutProvider;
@@ -10,6 +10,8 @@ import java.io.PrintStream;
 
 @Slf4j
 public class Main {
+    public static final PrintStream STDOUT = System.out;
+
     public static void main(String[] args) {
         CheerpJGUI gui = new CheerpJGUI();
         init(gui, 800, 600);
@@ -22,6 +24,7 @@ public class Main {
             @Override
             public void write(int b) {
                 SwingUtilities.invokeLater(() -> gui.getDisplayArea().append(String.valueOf((char) b)));
+                STDOUT.write(b);
             }
         }, true);
 

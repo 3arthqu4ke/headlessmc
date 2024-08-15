@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Builder
 @Getter
+@Builder
 @CustomLog
 public class JavaLaunchCommandBuilder {
     private static final String RT_MAIN = "me.earth.headlessmc.runtime.Main";

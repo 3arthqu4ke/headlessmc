@@ -6,8 +6,7 @@ import java.util.List;
 public interface Transformer {
     boolean hasRun();
 
-    default List<Target> transform(List<Target> targets)
-        throws IOException {
+    default List<Target> transform(List<Target> targets) throws IOException {
         return targets;
     }
 

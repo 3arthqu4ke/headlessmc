@@ -1,4 +1,4 @@
-package me.earth.headlessmc.cheerpj;
+package me.earth.headlessmc.web.cheerpj;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import me.earth.headlessmc.launcher.Launcher;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -55,6 +56,8 @@ public class CheerpJGUI implements PasswordAware {
         displayArea.setEditable(false);
         displayArea.setBackground(darkBackground);
         displayArea.setForeground(lightForeground);
+        DefaultCaret caret = (DefaultCaret) displayArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
         scrollPane.setBackground(darkBackground);
         scrollPane.setForeground(lightForeground);
@@ -150,7 +153,7 @@ public class CheerpJGUI implements PasswordAware {
         inputField.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
+                // NOP
             }
 
             @Override
@@ -180,7 +183,7 @@ public class CheerpJGUI implements PasswordAware {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                // NOP
             }
         });
     }

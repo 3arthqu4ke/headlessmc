@@ -1,4 +1,4 @@
-package me.earth.headlessmc.cheerpj;
+package me.earth.headlessmc.web.cheerpj;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,10 @@ import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.Service;
-import me.earth.headlessmc.launcher.auth.*;
+import me.earth.headlessmc.launcher.auth.AccountManager;
+import me.earth.headlessmc.launcher.auth.AccountStore;
+import me.earth.headlessmc.launcher.auth.AccountValidator;
+import me.earth.headlessmc.launcher.auth.OfflineChecker;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
@@ -30,6 +33,7 @@ import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
+import me.earth.headlessmc.launcher.version.VersionUtil;
 import me.earth.headlessmc.logging.Logger;
 import me.earth.headlessmc.logging.LoggerFactory;
 import me.earth.headlessmc.logging.LoggingService;
@@ -37,11 +41,11 @@ import me.earth.headlessmc.logging.NoThreadFormatter;
 import me.earth.headlessmc.runtime.RuntimeProperties;
 import me.earth.headlessmc.runtime.commands.RuntimeContext;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 
 @Slf4j
@@ -60,20 +64,23 @@ public class CheerpJLauncher {
         loggingService.setStreamFactory(() -> inAndOutProvider.getOut().get());
         loggingService.setFormatterFactory(NoThreadFormatter::new);
         loggingService.init();
-        loggingService.setLevel(Level.INFO);
+        loggingService.setLevel(Level.FINE);
 
         Logger logger = LoggerFactory.getLogger("HeadlessMc");
         logger.info("Initializing HeadlessMc...");
         logger.info("Display Size: " + gui.getFrame().getWidth() + "x" + gui.getFrame().getHeight());
+        logger.warn("HeadlessMc is running in a browser and will not be able to make CORS requests.");
 
-        Properties properties = new Properties();
-        initializeProperties(properties, root);
-        Config config = new ConfigImpl(properties, "default", 0);
+        initializeProperties(root);
+        Config config = ConfigImpl.empty();
         HasConfig configs = () -> config;
         CommandLine commandLine = new CommandLine(inAndOutProvider, gui);
-
         HeadlessMc hmc = new HeadlessMcImpl(configs, commandLine, new ExitManager(), loggingService);
-        hmc.getExitManager().setExitManager(i -> logger.info("HeadlessMc exited with code " + i));
+        hmc.getExitManager().setExitManager(i -> {
+            if (i != 0) {
+                logger.info("Error code " + i);
+            }
+        });
 
         try {
             initialize(hmc, logger, headlessMcRoot);
@@ -84,13 +91,16 @@ public class CheerpJLauncher {
             commandLine.setAllContexts(commands);
         }
 
-        gui.getCommandHandler().setValue(commandLine.getCommandConsumer());
+        @SuppressWarnings("resource") ExecutorService service = Executors.newSingleThreadExecutor();
+        gui.getCommandHandler().setValue(str -> service.submit(() -> commandLine.getCommandConsumer().accept(str)));
     }
 
-    private void initializeProperties(Properties properties, Path root) {
-        properties.put(RuntimeProperties.DONT_ASK_FOR_QUIT.getName(), "true");
-        properties.put(LauncherProperties.MC_DIR.getName(), root.resolve("mc").toString());
-        properties.put(LauncherProperties.GAME_DIR.getName(), root.resolve("mc").toString());
+    private void initializeProperties(Path root) {
+        System.setProperty(RuntimeProperties.DONT_ASK_FOR_QUIT.getName(), "true");
+        System.setProperty(LauncherProperties.MC_DIR.getName(), root.resolve("mc").toString());
+        System.setProperty(LauncherProperties.GAME_DIR.getName(), root.resolve("mc").toString());
+        System.setProperty(LauncherProperties.DUMMY_ASSETS.getName(), "true");
+        System.setProperty(LauncherProperties.ASSETS_PARALLEL.getName(), "false");
     }
 
     private void initialize(HeadlessMc hmc, Logger logger, Path headlessMcRoot) {
@@ -127,6 +137,8 @@ public class CheerpJLauncher {
         copyContext.add(new FilesCommand(hmc));
         copyContext.add(new ResizeCommand(hmc, gui));
         hmc.getCommandLine().setAllContexts(copyContext);
+
+        hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
     }
 
     private void deleteOldFiles(Launcher launcher, Logger logger) {
@@ -141,7 +153,7 @@ public class CheerpJLauncher {
                     FileUtil.delete(file);
                 } catch (IOException ioe) {
                     // TODO: CheerpJ cannot delete directories
-                    logger.error("Couldn't delete " + file.getName(), ioe);
+                    // logger.error("Couldn't delete " + file.getName(), ioe);
                 }
             }
         }

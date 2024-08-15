@@ -51,8 +51,16 @@ public class LoggingService {
     }
 
     public void setLevel(Level level) {
+        setLevel(level, false);
+    }
+
+    public void setLevel(Level level, boolean atLeast) {
         for (Handler handler : getRootHandlers()) {
             if (handler instanceof HmcHandler && !(handler instanceof FileHandler)) {
+                if (atLeast && handler.getLevel().intValue() < level.intValue()) {
+                    continue;
+                }
+
                 handler.setLevel(level);
             }
         }

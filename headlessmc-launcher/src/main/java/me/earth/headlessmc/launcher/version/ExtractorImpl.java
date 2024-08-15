@@ -25,8 +25,8 @@ class ExtractorImpl implements Extractor {
     }
 
     @Override
-    public void extract(String from, FileManager fileManager)
-        throws IOException {
+    public void extract(String from, FileManager fileManager) throws IOException {
+        log.debug("Extracting " + from);
         @Cleanup
         val jar = new JarFile(from);
         val enumeration = jar.entries();

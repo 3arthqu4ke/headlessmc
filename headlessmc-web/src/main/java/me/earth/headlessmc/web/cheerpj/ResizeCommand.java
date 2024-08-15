@@ -1,4 +1,4 @@
-package me.earth.headlessmc.cheerpj;
+package me.earth.headlessmc.web.cheerpj;
 
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.AbstractCommand;
