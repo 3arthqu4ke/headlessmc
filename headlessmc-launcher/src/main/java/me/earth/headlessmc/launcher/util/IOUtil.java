@@ -11,6 +11,12 @@ import java.util.jar.JarOutputStream;
 
 @UtilityClass
 public class IOUtil {
+    public static byte[] toBytes(InputStream is) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        copy(is, baos);
+        return baos.toByteArray();
+    }
+
     public static void copy(InputStream i, OutputStream o) throws IOException {
         int length;
         val bytes = new byte[1024];

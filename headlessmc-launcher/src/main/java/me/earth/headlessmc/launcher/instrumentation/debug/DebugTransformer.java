@@ -17,7 +17,7 @@ public class DebugTransformer extends AbstractClassTransformer {
     @Override
     protected void transform(ClassNode cn) {
         for (MethodNode mn : cn.methods) {
-            if (Modifier.isAbstract(mn.access) || "<init>".equals(mn.name)) {
+            if (Modifier.isAbstract(mn.access) || Modifier.isNative(mn.access) || "<init>".equals(mn.name) || "<clinit>".equals(mn.name)) {
                 continue;
             }
 
@@ -48,6 +48,7 @@ public class DebugTransformer extends AbstractClassTransformer {
             //debug.add(new MethodInsnNode(INVOKEVIRTUAL, Type.getInternalName(PrintStream.class), "println", "(Ljava/lang/String;)V", false));
             debug.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(DebugTransformer.class), "println", "(Ljava/lang/String;)V", false));
             mn.instructions.insert(debug);
+            //mn.visitMaxs(0, 0);
         }
     }
 
@@ -58,7 +59,7 @@ public class DebugTransformer extends AbstractClassTransformer {
 
     @Override
     protected boolean matches(EntryStream stream) {
-        return !stream.getEntry().getName().contains("joptsimple/OptionParser");
+        return !stream.getEntry().getName().contains("joptsimple");
     }
 
 }

@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Getter
@@ -45,22 +46,25 @@ public class InstrumentationClassloader extends URLClassLoader {
                 throw new ClassNotFoundException(name);
             }
 
-            byte[] classBytes = transformer.maybeTransform(new EntryStream(is, targets, () -> path));
+            byte[] classBytes = null;//transformer.maybeTransform(new EntryStream(is, targets, () -> path));
             if (classBytes == null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtil.copy(is, baos);
                 classBytes = baos.toByteArray();
             }
 
-            /*Path debugPath = Paths.get("build").resolve("instrumentation").resolve(path);
+            Path debugPath = Paths.get("build").resolve("instrumentation").resolve(path);
             Files.createDirectories(debugPath.getParent());
             try (OutputStream outputStream = Files.newOutputStream(debugPath)) {
                 outputStream.write(classBytes);
-            }*/
+            }
 
             log.debug("Defining class " + name);
+            log.debug(Base64.getEncoder().encodeToString(classBytes));
             try {
-                Thread.sleep(100);
+                if ("bib".equalsIgnoreCase(name)) {
+                    Thread.sleep(10_000);
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -87,11 +91,6 @@ public class InstrumentationClassloader extends URLClassLoader {
         @Override
         protected void transform(ClassNode cn) {
             transformers.forEach(t -> t.transform(cn));
-        }
-
-        @Override
-        public EntryClassWriter getEntryClassWriter(EntryStream entry) {
-            return new EntryClassWriter(classLoader);
         }
 
         @Override

@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.config.HasConfig;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
+@Getter
 @CustomLog
 @RequiredArgsConstructor
 public class ProcessFactory {

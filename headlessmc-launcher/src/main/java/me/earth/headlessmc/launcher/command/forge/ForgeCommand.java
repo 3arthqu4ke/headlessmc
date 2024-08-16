@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.command.forge;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Getter
 @CustomLog
 public class ForgeCommand extends AbstractVersionCommand {
     private final ForgeInstaller installer;
@@ -24,6 +26,7 @@ public class ForgeCommand extends AbstractVersionCommand {
         args.put("--uid", "Specify a specific " + name + " version.");
         args.put("-refresh", "Refresh index of " + name + " versions.");
         args.put("-list", "List " + name + " versions for the specified version.");
+        args.put("-inmemory", "Launch the forge installer inside this JVM.");
         this.installer = installer;
         this.cache = cache;
     }
@@ -68,7 +71,7 @@ public class ForgeCommand extends AbstractVersionCommand {
         val uuid = UUID.randomUUID();
         val fm = ctx.getFileManager().createRelative(uuid.toString());
         try {
-            installer.install(version, fm);
+            installer.install(version, fm, CommandUtil.hasFlag("-inmemory", args));
             ctx.getVersionService().refresh();
         } catch (IOException e) {
             val message = "Failed to install forge for version " + ver.getName()

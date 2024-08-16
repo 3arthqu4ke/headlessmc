@@ -38,8 +38,7 @@ class LibraryFactory {
         val rule = ruleFactory.parse(json.get("rules"));
         val extractor = extractorFactory.parse(json.get("extract"));
         val natives = nativesFactory.parse(json.get("natives"));
-        val result = new ArrayList<Library>(natives.isEmpty()
-                                                ? 1 : natives.size() + 1);
+        val result = new ArrayList<Library>(natives.isEmpty() ? 1 : natives.size() + 1);
         val name = json.get("name").getAsString();
         val baseUrl = JsonUtil.getString(json, "url");
 
@@ -47,38 +46,34 @@ class LibraryFactory {
         if (downloads != null && downloads.isJsonObject()) {
             val artifact = downloads.getAsJsonObject().get("artifact");
             if (artifact != null && artifact.isJsonObject()) {
-                val jo = artifact.getAsJsonObject();
-                val url = JsonUtil.getString(jo, "url");
-                val path = JsonUtil.getString(jo, "path");
-                result.add(new LibraryImpl(natives, Extractor.NO_EXTRACTION,
-                                           name, rule, baseUrl, url, path,
-                                           false));
+                JsonObject jo = artifact.getAsJsonObject();
+                String url = JsonUtil.getString(jo, "url");
+                String path = JsonUtil.getString(jo, "path");
+                String sha1 = JsonUtil.getString(jo, "sha1");
+                Long size = JsonUtil.getLong(jo, "size");
+                result.add(new LibraryImpl(natives, Extractor.NO_EXTRACTION, name, rule, baseUrl, sha1, size, url, path, false));
             }
 
             val classifiers = downloads.getAsJsonObject().get("classifiers");
             if (classifiers != null && classifiers.isJsonObject()) {
                 for (Map.Entry<String, JsonElement> e :
                     classifiers.getAsJsonObject().entrySet()) {
-                    val nativeEntry = getNativeEntry(natives, e.getKey());
+                    Map.Entry<String, String> nativeEntry = getNativeEntry(natives, e.getKey());
                     if (nativeEntry == null || !e.getValue().isJsonObject()) {
                         continue;
                     }
 
                     // nativeWithReplace for this library, ${arch} is replaced
-                    val nativeName = e.getKey();
+                    String nativeName = e.getKey();
                     // name of the os
-                    val os = nativeEntry.getKey();
+                    String os = nativeEntry.getKey();
                     // native name containing ${arch} to be replaced with 32/64
-                    val nativeWithReplace = nativeEntry.getValue();
+                    String nativeWithReplace = nativeEntry.getValue();
                     Rule osRule = (osIn, f) -> {
                         // check that we have the right os
                         if (os.equalsIgnoreCase(osIn.getType().getName())
                             // check that we have the right arch version
-                            && nativeWithReplace.replace("${arch}",
-                                                         osIn.isArch()
-                                                             ? "64"
-                                                             : "32")
-                                                .equals(nativeName)) {
+                            && nativeWithReplace.replace("${arch}", osIn.isArch() ? "64" : "32").equals(nativeName)) {
                             return rule.apply(osIn, f);
                         }
 
@@ -91,26 +86,24 @@ class LibraryFactory {
                         nativeExtractor = new ExtractorImpl();
                     }
 
-                    val jo = e.getValue().getAsJsonObject();
-                    val url = JsonUtil.getString(jo, "url");
-                    val path = JsonUtil.getString(jo, "path");
-                    result.add(new LibraryImpl(natives, nativeExtractor, name,
-                                               osRule, baseUrl, url, path,
-                                               true));
+                    JsonObject jo = e.getValue().getAsJsonObject();
+                    String url = JsonUtil.getString(jo, "url");
+                    String path = JsonUtil.getString(jo, "path");
+                    String sha1 = JsonUtil.getString(jo, "sha1");
+                    Long size = JsonUtil.getLong(jo, "size");
+                    result.add(new LibraryImpl(natives, nativeExtractor, name, osRule, baseUrl, sha1, size, url, path, true));
                 }
             }
         }
 
         if (result.isEmpty()) {
-            result.add(new LibraryImpl(
-                natives, extractor, name, rule, baseUrl, null, null, false));
+            result.add(new LibraryImpl(natives, extractor, name, rule, baseUrl, null, null, null, null, false));
         }
 
         return result;
     }
 
-    private Map.Entry<String, String> getNativeEntry(Map<String, String> map,
-                                                     String classifier) {
+    private Map.Entry<String, String> getNativeEntry(Map<String, String> map, String classifier) {
         for (Map.Entry<String, String> e : map.entrySet()) {
             if (e.getValue().replace("${arch}", "32").equals(classifier)
                 || e.getValue().replace("${arch}", "64").equals(classifier)) {

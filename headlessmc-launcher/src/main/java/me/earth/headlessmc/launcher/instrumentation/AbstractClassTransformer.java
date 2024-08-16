@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher.instrumentation;
 
+import lombok.Cleanup;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,8 @@ public abstract class AbstractClassTransformer extends AbstractTransformer {
             ClassNode node = new ClassNode();
             reader.accept(node, 0); // TODO: do we want parserOptions?
             this.transform(node);
-            ClassWriter writer = getEntryClassWriter(stream);
+            @Cleanup
+            EntryClassWriter writer = getEntryClassWriter(stream);
             log.debug("Writing transformed class: " + node.name);
             node.accept(writer);
             setRun(true);

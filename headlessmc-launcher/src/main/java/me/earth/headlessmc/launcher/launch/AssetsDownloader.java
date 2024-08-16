@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 // TODO: this is awful Spaghetti
 @CustomLog
 @RequiredArgsConstructor
-class AssetsDownloader {
+public class AssetsDownloader {
     private static final String URL = "https://resources.download.minecraft.net/";
     private final DummyAssets dummyAssets = new DummyAssets();
     private final FileManager files;
@@ -189,16 +189,20 @@ class AssetsDownloader {
         return hash.equalsIgnoreCase(byteHash);
     }
 
-    public String sha1(byte[] bytes) throws NoSuchAlgorithmException {
-        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-        sha1.digest(bytes);
-        byte[] hashBytes = sha1.digest(bytes);
-        StringBuilder hashBuilder = new StringBuilder(hashBytes.length * 2);
-        for (byte b : hashBytes) {
+    public String toHashString(byte[] bytes) {
+        StringBuilder hashBuilder = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
             hashBuilder.append(String.format("%02x", b));
         }
 
         return hashBuilder.toString();
+    }
+
+    public String sha1(byte[] bytes) throws NoSuchAlgorithmException {
+        MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+        sha1.digest(bytes);
+        byte[] hashBytes = sha1.digest(bytes);
+        return toHashString(hashBytes);
     }
 
 }

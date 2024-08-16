@@ -17,18 +17,18 @@ public class LibraryImplTest {
 
         LibraryImpl lib = new LibraryImpl(
             natives, Extractor.NO_EXTRACTION, "test:test:test",
-            Rule.ALLOW, "baseUrl", "url", "path", true);
+            Rule.ALLOW, "baseUrl", "url", null, null, "path", true);
         Assertions.assertEquals("path", lib.getPath(_64));
 
         lib = new LibraryImpl(
             natives, Extractor.NO_EXTRACTION, "test:test:test",
-            Rule.ALLOW, "baseUrl", "url", "path-${arch}", true);
+            Rule.ALLOW, "baseUrl", "url", null, null, "path-${arch}", true);
         Assertions.assertEquals("path-64", lib.getPath(_64));
         Assertions.assertEquals("path-32", lib.getPath(_32));
 
         lib = new LibraryImpl(
             natives, Extractor.NO_EXTRACTION, "test:test:test-${arch}",
-            Rule.ALLOW, "baseUrl", "url", null, false);
+            Rule.ALLOW, "baseUrl", "url", null, null, null, false);
         Assertions.assertEquals(
             String.join(File.separator, "test", "test",
                         "test-${arch}", "test-test-${arch}.jar"),
@@ -36,7 +36,7 @@ public class LibraryImplTest {
 
         lib = new LibraryImpl(
             natives, Extractor.NO_EXTRACTION, "test:test:test-${arch}",
-            Rule.ALLOW, "baseUrl", "url", null, true);
+            Rule.ALLOW, "baseUrl", "url", null, null, null, true);
         Assertions.assertEquals(
             String.join(File.separator, "test", "test",
                         "test-${arch}", "test-test-${arch}.jar"),

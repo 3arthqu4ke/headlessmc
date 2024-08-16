@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 @Getter
 @CustomLog
-public class EntryClassWriter extends ClassWriter {
+public class EntryClassWriter extends ClassWriter implements AutoCloseable {
     private final ClassLoader classLoader;
 
     public EntryClassWriter(EntryStream stream) throws IOException {
@@ -30,9 +30,23 @@ public class EntryClassWriter extends ClassWriter {
         try {
             return super.getCommonSuperClass(type1, type2);
         } catch (TypeNotPresentException | NoClassDefFoundError e) {
-            log.error("Couldn't find common super class! " + type1 + ", "
-                          + type2 + " : " + e.getMessage());
+            log.error("Couldn't find common super class! " + type1 + ", " + type2 + " : " + e.getMessage());
             return "java/lang/Object";
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (classLoader instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) classLoader).close();
+            } catch (Exception e) {
+                if (e instanceof IOException) {
+                    throw (IOException) e;
+                } else {
+                    throw new IOException(e);
+                }
+            }
         }
     }
 
