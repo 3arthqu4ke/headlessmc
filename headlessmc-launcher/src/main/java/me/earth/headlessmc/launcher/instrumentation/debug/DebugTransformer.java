@@ -5,10 +5,9 @@ import me.earth.headlessmc.launcher.instrumentation.EntryStream;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 
-import java.io.PrintStream;
 import java.lang.reflect.Modifier;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 public class DebugTransformer extends AbstractClassTransformer {
     public DebugTransformer() {
@@ -59,7 +58,7 @@ public class DebugTransformer extends AbstractClassTransformer {
 
     @Override
     protected boolean matches(EntryStream stream) {
-        return true;
+        return !stream.getEntry().getName().contains("joptsimple/OptionParser");
     }
 
 }

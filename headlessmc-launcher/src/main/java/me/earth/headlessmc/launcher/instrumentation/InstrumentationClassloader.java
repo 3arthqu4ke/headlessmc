@@ -31,7 +31,7 @@ public class InstrumentationClassloader extends URLClassLoader {
     @SneakyThrows
     public InstrumentationClassloader(URL[] urls, ClassLoader parent, List<AbstractClassTransformer> transformers) {
         super(urls, parent);
-        this.transformer = new AggregateTransformer(transformers);
+        this.transformer = new AggregateTransformer(transformers, this);
         for (URL url : urls) {
             targets.add(new Target(false, Paths.get(url.toURI()).toAbsolutePath().toString()));
         }
@@ -52,11 +52,11 @@ public class InstrumentationClassloader extends URLClassLoader {
                 classBytes = baos.toByteArray();
             }
 
-            Path debugPath = Paths.get("build").resolve("instrumentation").resolve(path);
+            /*Path debugPath = Paths.get("build").resolve("instrumentation").resolve(path);
             Files.createDirectories(debugPath.getParent());
             try (OutputStream outputStream = Files.newOutputStream(debugPath)) {
                 outputStream.write(classBytes);
-            }
+            }*/
 
             log.debug("Defining class " + name);
             try {
@@ -74,9 +74,12 @@ public class InstrumentationClassloader extends URLClassLoader {
     @Getter
     public static final class AggregateTransformer extends AbstractClassTransformer {
         private final List<AbstractClassTransformer> transformers;
-        public AggregateTransformer(List<AbstractClassTransformer> transformers) {
+        private final ClassLoader classLoader;
+
+        public AggregateTransformer(List<AbstractClassTransformer> transformers, ClassLoader classLoader) {
             super("");
             this.transformers = transformers;
+            this.classLoader = classLoader;
         }
 
         // TODO: could we use the this ClassLoader for the EntryClassWriter?
@@ -84,6 +87,11 @@ public class InstrumentationClassloader extends URLClassLoader {
         @Override
         protected void transform(ClassNode cn) {
             transformers.forEach(t -> t.transform(cn));
+        }
+
+        @Override
+        public EntryClassWriter getEntryClassWriter(EntryStream entry) {
+            return new EntryClassWriter(classLoader);
         }
 
         @Override

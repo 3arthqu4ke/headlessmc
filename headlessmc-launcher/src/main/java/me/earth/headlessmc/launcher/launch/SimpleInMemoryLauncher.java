@@ -25,9 +25,9 @@ public class SimpleInMemoryLauncher {
 
     public void simpleLaunch(URL[] classpathUrls, String mainClass, List<String> gameArgs) throws IOException, LaunchException {
         ClassLoader classLoaderBefore = Thread.currentThread().getContextClassLoader();
-        // try (URLClassLoader urlClassLoader = new URLClassLoader(classpathUrls)) {
-        try (InstrumentationClassloader urlClassLoader = new InstrumentationClassloader(classpathUrls, SimpleInMemoryLauncher.class.getClassLoader(), new ArrayList<>())) {
-            urlClassLoader.getTransformer().getTransformers().add(new DebugTransformer());
+        try (URLClassLoader urlClassLoader = new URLClassLoader(classpathUrls)) {
+        //try (InstrumentationClassloader urlClassLoader = new InstrumentationClassloader(classpathUrls, SimpleInMemoryLauncher.class.getClassLoader(), new ArrayList<>())) {
+        //    urlClassLoader.getTransformer().getTransformers().add(new DebugTransformer());
             try {
                 Thread.currentThread().setContextClassLoader(urlClassLoader);
                 Class<?> mainClassClass = Class.forName(mainClass, false, urlClassLoader);

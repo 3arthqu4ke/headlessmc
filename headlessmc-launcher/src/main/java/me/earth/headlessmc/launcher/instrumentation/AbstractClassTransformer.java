@@ -31,7 +31,7 @@ public abstract class AbstractClassTransformer extends AbstractTransformer {
             ClassNode node = new ClassNode();
             reader.accept(node, 0); // TODO: do we want parserOptions?
             this.transform(node);
-            ClassWriter writer = new EntryClassWriter(stream);
+            ClassWriter writer = getEntryClassWriter(stream);
             log.debug("Writing transformed class: " + node.name);
             node.accept(writer);
             setRun(true);
@@ -39,6 +39,10 @@ public abstract class AbstractClassTransformer extends AbstractTransformer {
         }
 
         return null;
+    }
+
+    public EntryClassWriter getEntryClassWriter(EntryStream entry) throws IOException {
+        return new EntryClassWriter(entry);
     }
 
     protected boolean matches(EntryStream stream) {
