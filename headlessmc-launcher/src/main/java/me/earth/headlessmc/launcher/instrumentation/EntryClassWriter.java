@@ -11,14 +11,18 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 
+@Getter
 @CustomLog
 public class EntryClassWriter extends ClassWriter {
-    @Getter
     private final ClassLoader classLoader;
 
     public EntryClassWriter(EntryStream stream) throws IOException {
+        this(EntryClassLoader.from(stream));
+    }
+
+    public EntryClassWriter(ClassLoader classLoader) {
         super(COMPUTE_FRAMES);
-        this.classLoader = EntryClassLoader.from(stream);
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -60,8 +64,7 @@ public class EntryClassWriter extends ClassWriter {
             }
         }
 
-        public static EntryClassLoader from(EntryStream stream)
-            throws IOException {
+        public static EntryClassLoader from(EntryStream stream) throws IOException {
             val urls = new ArrayList<URL>();
             for (val target : stream.getTargets()) {
                 urls.add(new File(target.getPath()).toURI().toURL());

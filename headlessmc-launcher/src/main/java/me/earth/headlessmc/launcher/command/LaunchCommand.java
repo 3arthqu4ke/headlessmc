@@ -47,7 +47,7 @@ public class LaunchCommand extends AbstractVersionCommand {
     @Override
     public void execute(Version version, String... args) throws CommandException {
         boolean prepare = CommandUtil.hasFlag("-prepare", args);
-        val uuid = UUID.randomUUID();
+        val uuid = UUID.fromString(ctx.getConfig().get(LauncherProperties.EXTRACTED_FILE_CACHE_UUID, UUID.randomUUID().toString()));
         ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
         ctx.getLoggingService().setLevel(Level.INFO, true);
         val files = ctx.getFileManager().createRelative(uuid.toString());

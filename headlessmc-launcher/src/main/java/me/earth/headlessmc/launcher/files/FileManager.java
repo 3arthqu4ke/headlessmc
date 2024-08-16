@@ -88,9 +88,9 @@ public class FileManager {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public File get(String base, boolean isDir, boolean mk, String... path) {
         File file = new File(base, String.join(File.separator, path));
-        log.debug("Checking file: " + file.getAbsolutePath());
+        log.finest("Checking file: " + file.getAbsolutePath());
         if (mk && !file.exists()) {
-            log.debug("File " + file + " doesn't exist, creating it...");
+            log.finest("File " + file + " doesn't exist, creating it...");
             if (isDir) {
                 file.mkdirs();
             } else {

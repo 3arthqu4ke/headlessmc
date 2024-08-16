@@ -46,7 +46,6 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
@@ -71,6 +70,7 @@ public class CheerpJLauncher {
         logger.info("Initializing HeadlessMc...");
         logger.info("Display Size: " + gui.getFrame().getWidth() + "x" + gui.getFrame().getHeight());
         logger.warn("HeadlessMc is running in a browser and will not be able to make CORS requests.");
+        logger.warn("You will need a CORS proxy or plugin.");
 
         initializeProperties(root);
         Config config = ConfigImpl.empty();
@@ -108,7 +108,10 @@ public class CheerpJLauncher {
         System.setProperty(LauncherProperties.MC_DIR.getName(), root.resolve("mc").toString());
         System.setProperty(LauncherProperties.GAME_DIR.getName(), root.resolve("mc").toString());
         System.setProperty(LauncherProperties.DUMMY_ASSETS.getName(), "true");
-        System.setProperty(LauncherProperties.ASSETS_PARALLEL.getName(), "false");
+        System.setProperty(LauncherProperties.ASSETS_PARALLEL.getName(), "true");
+        System.setProperty(LauncherProperties.EXTRACTED_FILE_CACHE_UUID.getName(), CACHE_UUID.toString());
+        System.setProperty(LauncherProperties.ALWAYS_IN_MEMORY.getName(), "true");
+        System.setProperty(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA.getName(), "false");
     }
 
     private void initialize(HeadlessMc hmc, Logger logger, Path headlessMcRoot) {
@@ -139,6 +142,7 @@ public class CheerpJLauncher {
                 javas, accounts, versionSpecificModManager, new PluginManager());
 
         deleteOldFiles(launcher, logger);
+        System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");
 
         LaunchContext launchContext = new LaunchContext(launcher, false);
         hmc.getCommandLine().setAllContexts(launchContext);
@@ -151,12 +155,12 @@ public class CheerpJLauncher {
     }
 
     private void deleteOldFiles(Launcher launcher, Logger logger) {
-        if (launcher.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
+        if (launcher.getConfig().get(LauncherProperties.KEEP_FILES, true)) {
             return;
         }
 
         for (val file : launcher.getFileManager().listFiles()) {
-            if (file.isDirectory() && UuidUtil.isUuid(file.getName())) {
+            if (file.isDirectory() && !CACHE_UUID.toString().equals(file.getName()) && UuidUtil.isUuid(file.getName())) {
                 try {
                     logger.debug("Deleting " + file.getAbsolutePath());
                     launcher.getFileManager().delete(file);

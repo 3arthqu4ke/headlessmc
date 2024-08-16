@@ -29,10 +29,14 @@ public class ResourceExtractor extends AbstractTransformer {
     }
 
     public File extract() throws IOException {
+        val file = getFile();
+        if (file.exists()) {
+            log.warn("Resource " + resourceName + " already exists.");
+            return file;
+        }
+
         @Cleanup
         val is = ResourceUtil.getHmcResource(resourceName);
-        val file = fileManager.create(resourceName);
-
         @Cleanup
         val os = new FileOutputStream(file);
         IOUtil.copy(is, os);

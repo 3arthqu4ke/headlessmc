@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.version.Version;
@@ -57,7 +58,7 @@ public class LaunchOptions {
             return this
                 .runtime(CommandUtil.hasFlag("-commands", args))
                 .lwjgl(lwjgl)
-                .inMemory(CommandUtil.hasFlag("-inmemory", args))
+                .inMemory(CommandUtil.hasFlag("-inmemory", args) || launcher.getConfig().get(ALWAYS_IN_MEMORY, false))
                 .jndi(flag(ctx, "-jndi", INVERT_JNDI_FLAG, args))
                 .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, args))
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))

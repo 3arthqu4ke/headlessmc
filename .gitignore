@@ -48,3 +48,4 @@ run
 
 *.jar
 !*gradle-wrapper.jar
+/mc/

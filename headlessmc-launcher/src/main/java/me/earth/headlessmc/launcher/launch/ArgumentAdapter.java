@@ -54,6 +54,8 @@ class ArgumentAdapter {
             }
         }
 
+        result.add("--thisArgumentDoesNotExist");
+        result.add("dummy");
         return result;
     }
 

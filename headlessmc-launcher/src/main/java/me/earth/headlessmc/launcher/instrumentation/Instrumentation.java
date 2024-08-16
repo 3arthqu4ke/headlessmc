@@ -66,10 +66,7 @@ public class Instrumentation {
         log.debug("Transforming " + target.getPath());
         @Cleanup
         val jar = target.toJar();
-        // TODO: cache????
-        val file = base.getAbsolutePath()
-            + File.separator
-            + new File(jar.getName()).getName();
+        val file = base.getAbsolutePath() + File.separator + new File(jar.getName()).getName();
         File targetJar = new File(file);
         if (targetJar.exists()) {
             log.warning(targetJar + " already exists!");
@@ -82,7 +79,7 @@ public class Instrumentation {
             val next = e.nextElement();
             @Cleanup
             val is = jar.getInputStream(next);
-            EntryStream stream = new EntryStream(is, targets, next);
+            EntryStream stream = new EntryStream(is, targets, next::getName);
 
             for (Transformer transformer : transformers) {
                 val stream2 = transformer.transform(stream);

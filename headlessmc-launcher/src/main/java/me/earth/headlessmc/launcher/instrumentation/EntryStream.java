@@ -3,11 +3,11 @@ package me.earth.headlessmc.launcher.instrumentation;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.earth.headlessmc.api.HasName;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
-import java.util.jar.JarEntry;
 
 @Getter
 @Setter
@@ -15,13 +15,13 @@ import java.util.jar.JarEntry;
 public class EntryStream {
     private final InputStream stream;
     private final List<Target> targets;
-    private final JarEntry entry;
+    private final HasName entry;
     private boolean transformed;
     private boolean skipped;
 
-    public static EntryStream of(byte[] bytes, List<Target> ts, JarEntry je) {
+    public static EntryStream of(byte[] bytes, List<Target> ts, HasName hasName) {
         InputStream is = new ByteArrayInputStream(bytes);
-        EntryStream res = new EntryStream(is, ts, je);
+        EntryStream res = new EntryStream(is, ts, hasName);
         res.setTransformed(true);
         return res;
     }

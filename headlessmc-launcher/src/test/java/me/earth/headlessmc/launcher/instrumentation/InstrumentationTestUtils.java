@@ -17,7 +17,8 @@ public class InstrumentationTestUtils {
         try (val is = InstrumentationTestUtils.class.getClassLoader()
                                                     .getResourceAsStream(path)) {
             assertNotNull(is);
-            val es = new EntryStream(is, emptyList(), new JarEntry(path));
+            JarEntry entry = new JarEntry(path);
+            val es = new EntryStream(is, emptyList(), entry::getName);
             try (val clIs = transformer.transform(es).getStream()) {
                 return new ClassStreamLoader().define(clazz.getName(), clIs);
             }

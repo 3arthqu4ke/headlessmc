@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -47,7 +48,10 @@ class AssetsDownloader {
             IOUtil.download(url, index.toAbsolutePath().toString());
         }
 
-        val objects = JsonUtil.getObject(JsonUtil.fromFile(index.toFile()), "objects");
+        // TODO: cheerpJ retry?!
+        //val objects = JsonUtil.getObject(JsonUtil.fromFile(index.toFile()), "objects");
+        log.info("Downloading assets from " + url);
+        val objects = JsonUtil.getObject(JsonUtil.fromInput(new URL(url).openStream()), "objects");
         if (objects == null || !objects.isJsonObject()) {
             throw new IOException("Couldn't read contents of " + index.toAbsolutePath());
         }

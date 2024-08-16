@@ -39,7 +39,7 @@ public class BootstrapLauncherTransformer extends AbstractClassTransformer {
     }
 
     @Override
-    protected void transform(ClassNode cn) {
+    public void transform(ClassNode cn) {
         // TOP TEN WORST IDEAS #8 THIS!
         log.debug("Transforming " + cn.name);
         for (MethodNode mn: cn.methods) {

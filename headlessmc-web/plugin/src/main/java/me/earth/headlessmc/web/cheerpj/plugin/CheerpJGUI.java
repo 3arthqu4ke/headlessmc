@@ -3,7 +3,6 @@ package me.earth.headlessmc.web.cheerpj.plugin;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.earth.headlessmc.api.command.PasswordAware;
-import me.earth.headlessmc.web.cheerpj.Resizer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -27,7 +26,7 @@ public class CheerpJGUI implements PasswordAware {
     private final JFrame frame = new JFrame("HeadlessMc - 2.1.0");
 
     private final JPanel panel = new JPanel();
-    private final JTextArea displayArea = new JTextArea();
+    private final JTextArea displayArea = new JTextArea(); // TODO: use JTextPane for color instead
     private final JScrollPane scrollPane = new JScrollPane(displayArea);
     private final JPasswordField inputField = new JPasswordField();
     private final JPanel inputPanel = new JPanel();
@@ -158,6 +157,8 @@ public class CheerpJGUI implements PasswordAware {
         // NOP
     }
 
+    // TODO: same command added multiple times
+    // TODO: what if empty
     private void addHistoryKeyListener() {
         inputField.addKeyListener(new KeyListener() {
             @Override

@@ -12,10 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ import java.util.stream.Collectors;
 @Getter
 @CustomLog
 @RequiredArgsConstructor
-public class InMemoryLauncher {
+public class InMemoryLauncher extends SimpleInMemoryLauncher {
     private final LaunchOptions options;
     private final JavaLaunchCommandBuilder command;
     private final Version version;
@@ -84,22 +82,6 @@ public class InMemoryLauncher {
         } else {
             log.info("Launching with simple in-memory launcher.");
             simpleLaunch(classpathUrls, mainClass, gameArgs);
-        }
-    }
-
-    protected void simpleLaunch(URL[] classpathUrls, String mainClass, List<String> gameArgs) throws IOException, LaunchException {
-        try (URLClassLoader urlClassLoader = new URLClassLoader(classpathUrls)) {
-            try {
-                Thread.currentThread().setContextClassLoader(urlClassLoader);
-                Class<?> mainClassClass = Class.forName(mainClass, false, urlClassLoader);
-                Method main = mainClassClass.getDeclaredMethod("main", String[].class);
-                main.setAccessible(true);
-                main.invoke(null, (Object) gameArgs.toArray(new String[0]));
-            } catch (InvocationTargetException e) {
-                log.error(e);
-            } catch (Exception e) {
-                throw new LaunchException("Failed to launch game", e);
-            }
         }
     }
 
