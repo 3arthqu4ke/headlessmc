@@ -20,13 +20,15 @@ import java.util.jar.Manifest;
 @Setter
 @CustomLog
 public class SimpleInMemoryLauncher {
-    private Function<URL[], URLClassLoader> classLoaderFactory = urls -> new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
+    private Function<URL[], ClassLoader> classLoaderFactory = urls -> new URLClassLoader(urls, ClassLoader.getSystemClassLoader());
 
     public void simpleLaunch(URL[] classpathUrls, String mainClass, List<String> gameArgs) throws LaunchException {
         ClassLoader classLoaderBefore = Thread.currentThread().getContextClassLoader();
-        try (URLClassLoader urlClassLoader = classLoaderFactory.apply(classpathUrls)) {
-            Thread.currentThread().setContextClassLoader(urlClassLoader);
-            Class<?> mainClassClass = Class.forName(mainClass, false, urlClassLoader);
+        ClassLoader classLoader = null;
+        try {
+            classLoader = classLoaderFactory.apply(classpathUrls);
+            Thread.currentThread().setContextClassLoader(classLoader);
+            Class<?> mainClassClass = Class.forName(mainClass, false, classLoader);
             Method main = mainClassClass.getDeclaredMethod("main", String[].class);
             main.setAccessible(true);
             main.invoke(null, (Object) gameArgs.toArray(new String[0]));
@@ -37,6 +39,13 @@ public class SimpleInMemoryLauncher {
             throw new LaunchException("Failed to launch", e);
         } finally {
             Thread.currentThread().setContextClassLoader(classLoaderBefore);
+            if (classLoader instanceof AutoCloseable) {
+                try {
+                    ((AutoCloseable) classLoader).close();
+                } catch (Exception e) {
+                    log.error("Failed to close ClassLoader.", e);
+                }
+            }
         }
     }
 
