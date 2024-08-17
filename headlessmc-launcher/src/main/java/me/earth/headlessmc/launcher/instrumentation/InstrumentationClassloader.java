@@ -16,12 +16,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Getter
 @CustomLog
 public class InstrumentationClassloader extends URLClassLoader {
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("hmc.instrumentation.classloader.dump.classes", "false"));
+
     static {
         ClassLoader.registerAsParallelCapable();
     }
@@ -46,28 +47,22 @@ public class InstrumentationClassloader extends URLClassLoader {
                 throw new ClassNotFoundException(name);
             }
 
-            byte[] classBytes = null;//transformer.maybeTransform(new EntryStream(is, targets, () -> path));
+            byte[] classBytes = transformer.maybeTransform(new EntryStream(is, targets, () -> path));
             if (classBytes == null) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtil.copy(is, baos);
                 classBytes = baos.toByteArray();
             }
 
-            Path debugPath = Paths.get("build").resolve("instrumentation").resolve(path);
-            Files.createDirectories(debugPath.getParent());
-            try (OutputStream outputStream = Files.newOutputStream(debugPath)) {
-                outputStream.write(classBytes);
+            if (DEBUG) {
+                Path debugPath = Paths.get("build").resolve("instrumentation").resolve(path);
+                Files.createDirectories(debugPath.getParent());
+                try (OutputStream outputStream = Files.newOutputStream(debugPath)) {
+                    outputStream.write(classBytes);
+                }
             }
 
             log.debug("Defining class " + name);
-            log.debug(Base64.getEncoder().encodeToString(classBytes));
-            try {
-                if ("bib".equalsIgnoreCase(name)) {
-                    Thread.sleep(10_000);
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
             return this.defineClass(name, classBytes, 0, classBytes.length);
         } catch (IOException e) {
             log.error("Failed to define class " + name, e);
