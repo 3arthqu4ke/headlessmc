@@ -4,26 +4,26 @@
       "path": "artifact_path",
       "sha1": "artifact_sha1",
       "size": 1337,
-      "url": "artifact_url"
+      "url": "http://artifact_url"
     },
     "classifiers": {
       "javadoc": {
         "path": "javadoc_path",
         "sha1": "javadoc_sha1",
         "size": 1337,
-        "url": "javadoc_url"
+        "url": "http://javadoc_url"
       },
       "natives-osx": {
         "path": "natives_path",
         "sha1": "natives_sha1",
         "size": 1337,
-        "url": "natives_url"
+        "url": "http://natives_url"
       },
       "sources": {
         "path": "sources_path",
         "sha1": "sources_sha1",
         "size": 1337,
-        "url": "sources_url"
+        "url": "http://sources_url"
       }
     }
   },

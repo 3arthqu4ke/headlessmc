@@ -1,23 +1,23 @@
 package me.earth.headlessmc.launcher.command;
 
+import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
-import me.earth.headlessmc.launcher.launch.AssetsDownloader;
+import me.earth.headlessmc.launcher.download.AssetsDownloader;
 import me.earth.headlessmc.launcher.version.Library;
 import me.earth.headlessmc.launcher.version.Version;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class IntegrityCommand extends AbstractVersionCommand {
     public IntegrityCommand(Launcher ctx) {
-        super(ctx, "integrity", "Checks the integrity of a version.");
+        super(ctx, "integrity", "Checks the integrity of the libraries of a version.");
     }
 
     @Override
@@ -27,30 +27,15 @@ public class IntegrityCommand extends AbstractVersionCommand {
             int successful = 0;
             int notThere = 0;
             // TODO: make this a service instead
-            AssetsDownloader assetsDownloader = new AssetsDownloader(ctx.getMcFiles(), ctx, "", "");
             for (Library library : version.getLibraries()) {
                 String libPath = library.getPath(ctx.getProcessFactory().getOs());
                 Path path = Paths.get(ctx.getProcessFactory().getFiles().getDir("libraries") + File.separator + libPath);
                 if (Files.exists(path)) {
                     ctx.log("Checking " + libPath);
-                    Long expectedSize = library.getSize();
-                    long size;
-                    if (expectedSize != null && expectedSize != (size = Files.size(path))) {
-                        Files.delete(path);
-                        ctx.log("Integrity check failed! Expected size " + expectedSize + " but was " + size + "! Deleting " + libPath);
+                    if (!ctx.getSha1Service().checkIntegrity(path, library.getSize(), library.getSha1())) {
+                        ctx.log("Integrity check failed! Deleting " + libPath);
                         failed++;
                         continue;
-                    }
-
-                    String sha1 = library.getSha1();
-                    if (sha1 != null) {
-                        String actualHash = assetsDownloader.toHashString(createSha1(path));
-                        if (!sha1.equalsIgnoreCase(actualHash)) {
-                            Files.delete(path);
-                            ctx.log("Integrity check failed, expected " + sha1 + ", actual " + actualHash + ", deleting " + libPath);
-                            failed++;
-                            continue;
-                        }
                     }
 
                     successful++;
@@ -60,25 +45,48 @@ public class IntegrityCommand extends AbstractVersionCommand {
                 }
             }
 
-            ctx.log("Integrity check finished, " + failed + " failed, " + successful + " successful and " + notThere + " not found.");
-        } catch (IOException | NoSuchAlgorithmException e) {
+            int[] values = { failed, successful, notThere };
+            checkAssets(version, values, args);
+            ctx.log("Integrity check finished, " + values[0] + " failed, " + values[1] + " successful and " + values[2] + " not found.");
+        } catch (IOException e) {
             throw new CommandException("Failed to check integrity: " + e.getMessage());
         }
     }
 
-    public byte[] createSha1(Path file) throws IOException, NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-1");
-        try (InputStream is = Files.newInputStream(file)) {
-            int n = 0;
-            byte[] buffer = new byte[8192];
-            while (n != -1) {
-                n = is.read(buffer);
-                if (n > 0) {
-                    digest.update(buffer, 0, n);
+    private void checkAssets(Version version, int[] values, String...args) throws IOException {
+        if (CommandUtil.hasFlag("-assets", args)) {
+            ctx.log("Checking assets of version " + version.getName());
+            AssetsDownloader assetsDownloader = new AssetsDownloader(ctx.getDownloadService(), ctx, ctx.getMcFiles(), version.getAssetsUrl(), version.getAssets()) {
+                @Override
+                protected void downloadAsset(String progress, String name, String hash, @Nullable Long size, boolean mapToResources) throws IOException {
+                    val firstTwo = hash.substring(0, 2);
+                    val to = ctx.getMcFiles().getDir("assets").toPath().resolve("objects").resolve(firstTwo).resolve(hash);
+                    Path file = getAssetsFile(name, to, hash, size);
+                    copyToLegacy(name, file, hash, size, false);
+                    mapToResources(name, file, mapToResources, hash, size, false);
                 }
-            }
 
-            return digest.digest();
+                @Override
+                protected boolean shouldCheckFileHash() {
+                    return true;
+                }
+
+                @Override
+                protected boolean integrityCheck(String type, Path file, String hash, @Nullable Long size) throws IOException {
+                    if (!Files.exists(file)) {
+                        values[2]++; // notThere
+                        return true;
+                    } else if (super.integrityCheck(type, file, hash, size)) {
+                        values[1]++; // successful
+                        return true;
+                    } else {
+                        values[0]++; // unsuccessful
+                        return false;
+                    }
+                }
+            };
+
+            assetsDownloader.download();
         }
     }
 

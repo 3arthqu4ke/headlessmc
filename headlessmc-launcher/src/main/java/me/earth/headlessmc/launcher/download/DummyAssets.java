@@ -1,4 +1,4 @@
-package me.earth.headlessmc.launcher.launch;
+package me.earth.headlessmc.launcher.download;
 
 import lombok.SneakyThrows;
 import me.earth.headlessmc.launcher.util.IOUtil;

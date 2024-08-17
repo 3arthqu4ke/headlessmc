@@ -65,6 +65,7 @@ allprojects {
 
     dependencies {
         compileOnly 'org.jetbrains:annotations:24.1.0'
+        testCompileOnly 'org.jetbrains:annotations:24.1.0'
 
         // no lombok for modlauncher cause we do bad hacks there in the java9 stub.
         if (project != project(':headlessmc-modlauncher')) {

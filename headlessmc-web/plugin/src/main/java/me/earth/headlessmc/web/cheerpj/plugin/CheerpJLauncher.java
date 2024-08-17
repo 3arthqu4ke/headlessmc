@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.HeadlessMcImpl;
+import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandContext;
 import me.earth.headlessmc.api.command.CopyContext;
 import me.earth.headlessmc.api.command.line.CommandLine;
@@ -13,6 +14,7 @@ import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.process.InAndOutProvider;
+import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.Service;
@@ -21,6 +23,8 @@ import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.auth.OfflineChecker;
 import me.earth.headlessmc.launcher.command.LaunchContext;
+import me.earth.headlessmc.launcher.download.ChecksumService;
+import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
@@ -38,10 +42,14 @@ import me.earth.headlessmc.logging.LoggingService;
 import me.earth.headlessmc.logging.NoThreadFormatter;
 import me.earth.headlessmc.runtime.RuntimeProperties;
 import me.earth.headlessmc.runtime.commands.RuntimeContext;
+import net.lenni0451.commons.httpclient.constants.ContentTypes;
+import net.lenni0451.commons.httpclient.constants.Headers;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Security;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -117,9 +125,11 @@ public class CheerpJLauncher {
         System.setProperty(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA.getName(), "false");
         // TODO: it the assets index file always corrupts on CheerpJ for some reason
         System.setProperty(LauncherProperties.ALWAYS_DOWNLOAD_ASSETS_INDEX.getName(), "true");
+        System.setProperty(LauncherProperties.HTTP_USER_AGENT_ENABLED.getName(), "false");
     }
 
     private void initialize(HeadlessMc hmc, Logger logger, Path headlessMcRoot) {
+        Security.addProvider(new BouncyCastleProvider());
         FileManager.setFactory(CheerpJFileManager::new);
         FileManager files = FileManager.mkdir(headlessMcRoot.toString());
 
@@ -136,27 +146,38 @@ public class CheerpJLauncher {
 
         val accountStore = new AccountStore(files, configs);
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
-        // TODO: CheerpJVm does not have the EC Keyfactory!
+        // accounts.load(configs.getConfig()); // CheerpJ doesnt support logging in right now
         accounts.getOfflineChecker().setOffline(true);
 
-        val versionSpecificModManager = new VersionSpecificModManager(files.createRelative("specifics"));
+        DownloadService downloadService = new DownloadService();
+        val versionSpecificModManager = new VersionSpecificModManager(downloadService, files.createRelative("specifics"));
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
 
-        val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
-                new CheerpJProcessFactory(mcFiles, configs, os), configs,
+        val launcher = new Launcher(hmc, versions, mcFiles, gameDir,
+                new ChecksumService(), downloadService,
+                files, new CheerpJProcessFactory(downloadService, mcFiles, configs, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager());
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");
 
-        LaunchContext launchContext = new LaunchContext(launcher, false);
+        LaunchContext launchContext = new LaunchContext(launcher);
         hmc.getCommandLine().setAllContexts(launchContext);
         CopyContext copyContext = new CopyContext(hmc, true);
         copyContext.add(new FilesCommand(launcher));
         copyContext.add(new ResizeCommand(hmc, gui));
         copyContext.add(new ClearCommand(hmc, gui));
         hmc.getCommandLine().setAllContexts(copyContext);
+        for (Command command : copyContext) {
+            if (command instanceof AbstractLoginCommand) {
+                // The default HttpClient sets a user agent which causes the browser to make a CORS preflight check
+                ((AbstractLoginCommand) command).setHttpClientFactory(() ->
+                    downloadService.getDefaultHttpClient()
+                        .setHeader(Headers.ACCEPT, ContentTypes.APPLICATION_JSON.toString())
+                        .setHeader(Headers.ACCEPT_LANGUAGE, "en-US,en"));
+            }
+        }
 
         // launcher.getPluginManager().init(launcher);
         launcher.getPluginManager().getPlugins().add(new CheerpJPlugin());

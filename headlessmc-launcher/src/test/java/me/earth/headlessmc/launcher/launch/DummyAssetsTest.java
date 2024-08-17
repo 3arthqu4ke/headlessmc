@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher.launch;
 
+import me.earth.headlessmc.launcher.download.DummyAssets;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

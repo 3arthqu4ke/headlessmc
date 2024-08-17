@@ -9,7 +9,6 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.ResourceExtractor;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
-import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.io.File;
@@ -101,14 +100,14 @@ public class ForgeInstaller {
         String url = repoFormat.getUrl(baseUrl, version);
         log.debug("Downloading Installer from " + url);
         try {
-            IOUtil.download(url, file.getAbsolutePath());
+            launcher.getDownloadService().download(url, file.toPath());
         } catch (IOException e) {
             log.debug("Failed to download Forge from " + url + ": " + e.getMessage());
             url = baseUrl + version.getFullName() + "-" + version.getVersion()
                 + "/forge-" + version.getFullName() + "-" + version.getVersion()
                 + "-installer.jar";
             log.debug("Downloading from forge from " + url);
-            IOUtil.download(url, file.getAbsolutePath());
+            launcher.getDownloadService().download(url, file.toPath());
         }
     }
 

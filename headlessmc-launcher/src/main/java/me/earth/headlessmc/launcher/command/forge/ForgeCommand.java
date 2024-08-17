@@ -99,12 +99,12 @@ public class ForgeCommand extends AbstractVersionCommand {
 
     public static ForgeCommand lexforge(Launcher launcher) {
         ForgeInstaller installer = new ForgeInstaller(ForgeRepoFormat.lexForge(), launcher, "Forge", ForgeRepoFormat.LEX_FORGE_URL);
-        return new ForgeCommand(launcher, "forge", installer, new ForgeIndexCache(ForgeIndexCache.LEX_FORGE_INDICES));
+        return new ForgeCommand(launcher, "forge", installer, new ForgeIndexCache(launcher, ForgeIndexCache.LEX_FORGE_INDICES));
     }
 
     public static ForgeCommand neoforge(Launcher launcher) {
         ForgeInstaller installer = new ForgeInstaller(ForgeRepoFormat.neoForge(), launcher, "NeoForge", ForgeRepoFormat.NEO_FORGE_URL);
-        return new ForgeCommand(launcher, "neoforge", installer, new ForgeIndexCache(ForgeIndexCache.NEO_FORGE_INDICES));
+        return new ForgeCommand(launcher, "neoforge", installer, new ForgeIndexCache(launcher, ForgeIndexCache.NEO_FORGE_INDICES));
     }
 
 }

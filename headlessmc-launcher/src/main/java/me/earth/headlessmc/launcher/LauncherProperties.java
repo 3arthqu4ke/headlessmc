@@ -64,9 +64,14 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> ASSETS_PARALLEL = bool("hmc.assets.parallel");
     Property<Boolean> DUMMY_ASSETS = bool("hmc.assets.dummy");
     Property<Boolean> ASSETS_CHECK_HASH = bool("hmc.assets.check.hash");
+    Property<Boolean> ASSETS_CHECK_SIZE = bool("hmc.assets.check.size"); // < implied by check hash
     Property<Boolean> ASSETS_CHECK_FILE_HASH = bool("hmc.assets.check.file.hash");
     Property<Boolean> ASSETS_BACKOFF = bool("hmc.assets.backoff");
     Property<Boolean> ALWAYS_DOWNLOAD_ASSETS_INDEX = bool("hmc.always.download.assets.index");
+
+    Property<Boolean> LIBRARIES_CHECK_HASH = bool("hmc.libraries.check.hash");
+    Property<Boolean> LIBRARIES_CHECK_SIZE = bool("hmc.libraries.check.size"); // < implied by check hash
+    Property<Boolean> LIBRARIES_CHECK_FILE_HASH = bool("hmc.libraries.check.file.hash");
 
     Property<Boolean> SET_LIBRARY_DIR = bool("hmc.set.library.dir");
     Property<Boolean> NO_AUTO_CONFIG = bool("hmc.no.auto.config");
@@ -79,5 +84,8 @@ public interface LauncherProperties extends HmcProperties {
 
     // TODO: actual cache for each version?
     Property<String> EXTRACTED_FILE_CACHE_UUID = string("hmc.extracted.file.cache.uuid");
+
+    Property<Boolean> HTTP_USER_AGENT_ENABLED = bool("hmc.http.user.agent.enabled");
+    Property<String> HTTP_USER_AGENT = string("hmc.http.user.agent");
 
 }

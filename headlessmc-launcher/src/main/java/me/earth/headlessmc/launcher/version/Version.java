@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.launcher.version.family.HasParent;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -34,6 +35,11 @@ public interface Version extends HasName, HasId, HasParent<Version> {
 
     boolean isNewArgumentFormat();
 
+    // TODO: instead the entire downloads, with client, client_mappings, server and server_mappings?
     String getClientDownload();
+
+    @Nullable String getClientSha1();
+
+    @Nullable Long getClientSize();
 
 }

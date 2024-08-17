@@ -1,6 +1,7 @@
 package me.earth.headlessmc.auth;
 
 import lombok.CustomLog;
+import lombok.Setter;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
@@ -24,6 +25,7 @@ import java.net.CookieManager;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @CustomLog
 public abstract class AbstractLoginCommand extends AbstractCommand {
@@ -32,6 +34,9 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
     protected final Object webviewLock = new Object();
     protected AbstractStep<?, StepFullJavaSession.FullJavaSession> webview;
     protected volatile Window webviewWindow = null;
+
+    @Setter
+    protected Supplier<HttpClient> httpClientFactory = MinecraftAuth::createHttpClient;
 
     public AbstractLoginCommand(HeadlessMc ctx) {
         this(ctx, "login", "Logs you into an account.");
@@ -98,7 +103,7 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
 
     protected void login(String email, String password, String... args) {
         try {
-            HttpClient httpClient = MinecraftAuth.createHttpClient();
+            HttpClient httpClient = httpClientFactory.get();
             StepFullJavaSession.FullJavaSession session = MinecraftAuth.JAVA_CREDENTIALS_LOGIN.getFromInput(
                 getLogger(args), httpClient, new StepCredentialsMsaCode.MsaCredentials(email, password));
 
@@ -121,7 +126,7 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
             @Override
             public void run() {
                 try {
-                    HttpClient httpClient = MinecraftAuth.createHttpClient();
+                    HttpClient httpClient = httpClientFactory.get();
 
                     // TODO: look into this?
                     if (webviewWindow != null) {
@@ -193,7 +198,8 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
             @Override
             public void run() {
                 try {
-                    HttpClient httpClient = MinecraftAuth.createHttpClient();
+                    HttpClient httpClient = httpClientFactory.get();
+
                     StepMsaDeviceCode.MsaDeviceCodeCallback callback = new StepMsaDeviceCode.MsaDeviceCodeCallback(
                         msaDeviceCode -> ctx.log("Go to " + msaDeviceCode.getDirectVerificationUri()));
 

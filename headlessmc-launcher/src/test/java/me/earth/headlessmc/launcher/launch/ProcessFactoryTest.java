@@ -4,6 +4,8 @@ import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.api.MockedHeadlessMc;
 import me.earth.headlessmc.launcher.LauncherMock;
+import me.earth.headlessmc.launcher.download.DownloadService;
+import me.earth.headlessmc.launcher.download.MockDownloadService;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +24,7 @@ public class ProcessFactoryTest {
     public void testCheckZipIntact() {
         val launcher = LauncherMock.INSTANCE;
         val processFactory = new ProcessFactory(
+            new MockDownloadService(),
             launcher.getFileManager(),
             MockedHeadlessMc.INSTANCE,
             new OS("win", OS.Type.WINDOWS, "10", true));

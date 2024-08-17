@@ -6,6 +6,7 @@ import me.earth.headlessmc.launcher.version.Argument;
 import me.earth.headlessmc.launcher.version.Library;
 import me.earth.headlessmc.launcher.version.Version;
 import me.earth.headlessmc.launcher.version.family.FamilyUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,16 @@ class VersionMerger extends DelegatingVersion {
     @Override
     public String getClientDownload() {
         return get(Version::getClientDownload);
+    }
+
+    @Override
+    public @Nullable Long getClientSize() {
+        return get(Version::getClientSize);
+    }
+
+    @Override
+    public @Nullable String getClientSha1() {
+        return get(Version::getClientSha1);
     }
 
     private <T> List<T> merge(Function<Version, List<T>> func) {

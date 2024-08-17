@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.HasName;
+import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
@@ -33,6 +34,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class VersionSpecificModManager {
     private final List<VersionSpecificModRepository> specificMods = new ArrayList<>();
+    private final DownloadService downloadService;
     private final FileManager fileManager;
 
     public VersionSpecificModRepository getRepository(String name) throws VersionSpecificException {
@@ -53,7 +55,7 @@ public class VersionSpecificModManager {
 
         URL url = repository.getDownloadURL(info);
         log.info("Downloading " + file.getName() + " from " + url);
-        IOUtil.download(url.toString(), file.getAbsolutePath()); // TODO: HttpClient?
+        downloadService.download(url.toString(), file.toPath());
     }
 
     public void install(Version version, VersionSpecificModRepository repository, Path modsFolder) throws VersionSpecificException, IOException {

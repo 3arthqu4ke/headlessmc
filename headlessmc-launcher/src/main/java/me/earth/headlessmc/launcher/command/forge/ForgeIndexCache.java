@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.command.forge;
 import com.google.gson.JsonElement;
 import lombok.CustomLog;
 import lombok.val;
+import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.util.AbstractDownloadService;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
@@ -19,8 +20,8 @@ public class ForgeIndexCache extends AbstractDownloadService<ForgeVersion> {
     public static final URL LEX_FORGE_INDICES = url("https://meta.prismlauncher.org/v1/net.minecraftforge/index.json");
     public static final URL NEO_FORGE_INDICES = url("https://meta.prismlauncher.org/v1/net.neoforged/index.json");
 
-    public ForgeIndexCache(URL url) {
-        super(url);
+    public ForgeIndexCache(Launcher launcher, URL url) {
+        super(launcher, url);
     }
 
     @Override

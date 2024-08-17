@@ -61,7 +61,7 @@ public class FabricCommand extends AbstractVersionCommand {
 
     private void downloadInstaller(String url, File jar) throws CommandException {
         try {
-            IOUtil.download(url, jar.getAbsolutePath());
+            ctx.getDownloadService().download(url, jar.toPath());
         } catch (IOException e) {
             throw new CommandException(
                     "Couldn't download Fabric installer from " + url + " to "

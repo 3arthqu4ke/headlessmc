@@ -30,7 +30,7 @@
     "sha1": "asset_sha1",
     "size": 1337,
     "totalSize": 1337,
-    "url": "asset_url"
+    "url": "http://asset_url"
   },
   "assets": "1.17",
   "complianceLevel": 1,
@@ -38,22 +38,22 @@
     "client": {
       "sha1": "client_download",
       "size": 1337,
-      "url": "client_download_url"
+      "url": "http://client_download_url"
     },
     "client_mappings": {
       "sha1": "client_mappings_sha1",
       "size": 1337,
-      "url": "client_mappings_url"
+      "url": "http://client_mappings_url"
     },
     "server": {
       "sha1": "server_sha1",
       "size": 1337,
-      "url": "server_url"
+      "url": "http://server_url"
     },
     "server_mappings": {
       "sha1": "server_mappingsSha1",
       "size": 1337,
-      "url": "server_download"
+      "url": "http://server_download"
     }
   },
   "javaVersion": {
@@ -67,7 +67,7 @@
           "path": "path_to_library",
           "sha1": "library_sha1",
           "size": 1337,
-          "url": "library_download"
+          "url": "http://library_download"
         }
       },
       "name": "me.earth:logging:1.0.0"
@@ -80,7 +80,7 @@
         "id": "client-1.12.xml",
         "sha1": "bd65e7d2e3c237be76cfbef4c2405033d7f91521",
         "size": 888,
-        "url": "client-1.12-url"
+        "url": "http://client-1.12-url"
       },
       "type": "log4j2-xml"
     }
