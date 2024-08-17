@@ -28,18 +28,17 @@ jobs:
 
       - name: Rename Web jar
         run: mv headlessmc-web/build/libs/headlessmc-web-*.jar headlessmc-web/build/libs/headlessmc-web.jar
+
+      - name: Create site dir
+        run: mkdir _site
+
       - name: Copy Web jar
-        run: cp headlessmc-web/build/libs/headlessmc-web.jar .
+        run: cp headlessmc-web/build/libs/headlessmc-web.jar _site/
       - name: Copy index.html
-        run: cp headlessmc-web/index.html .
+        run: cp headlessmc-web/index.html _site/
 
       - name: Upload Web Jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-pages
-          path: |
-            ./headlessmc-web.jar
-            ./index.html
+        uses: actions/upload-pages-artifact@v3.0.1
 
   deploy:
     needs: build
@@ -52,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: .
       - name: Display structure of downloaded files
         run: ls -R
       - name: Deploy to GitHub Pages
