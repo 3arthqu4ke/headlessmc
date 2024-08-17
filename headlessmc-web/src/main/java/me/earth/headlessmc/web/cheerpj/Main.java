@@ -17,7 +17,8 @@ public class Main {
         Path jarPath = root.resolve("plugins").resolve("headlessmc-web-plugin.jar");
         Files.createDirectories(jarPath.getParent());
         me.earth.headlessmc.wrapper.Main.extractResource("headlessmc/headlessmc-web-plugin.jar", jarPath);
-
+        // do not close classloader the awt thread will continue but we want to give control back to JavaScript
+        System.setProperty(me.earth.headlessmc.wrapper.Main.CLOSE_CLASSLOADER_PROPERTY, "false");
         System.setProperty(me.earth.headlessmc.wrapper.Main.WRAPPED_MAIN_PROPERTY, MAIN_CLASS);
         me.earth.headlessmc.wrapper.Main.main(args);
     }

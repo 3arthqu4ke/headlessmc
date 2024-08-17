@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 public class Main {
+    public static final String CLOSE_CLASSLOADER_PROPERTY = "hmc.wrapper.close.classloader";
     public static final String WRAPPED_MAIN_PROPERTY = "hmc.wrapper.wrapped.main";
     public static final String DEFAULT_MAIN = "me.earth.headlessmc.launcher.Main";
 
@@ -22,14 +23,21 @@ public class Main {
         Path jarPath = root.resolve("headlessmc-launcher.jar");
         extractResource("headlessmc/headlessmc-launcher.jar", jarPath);
 
-        TransformingPluginFinder pluginFinder = HeadlessMcWrapper.getPluginFinderFactory().apply(root.resolve("transformers"));
-        TransformingClassloader classloader = pluginFinder.build(jarPath, root.resolve("plugins"));
-        HeadlessMcWrapper.setClassLoader(classloader);
-        Thread.currentThread().setContextClassLoader(classloader);
+        TransformingClassloader classloader = null;
+        try {
+            TransformingPluginFinder pluginFinder = HeadlessMcWrapper.getPluginFinderFactory().apply(root.resolve("transformers"));
+            classloader = pluginFinder.build(jarPath, root.resolve("plugins"));
+            HeadlessMcWrapper.setClassLoader(classloader);
+            Thread.currentThread().setContextClassLoader(classloader);
 
-        Class<?> mainClass = Class.forName(System.getProperty(WRAPPED_MAIN_PROPERTY, DEFAULT_MAIN), true, classloader);
-        Method main = mainClass.getMethod("main", String[].class);
-        main.invoke(null, (Object) args);
+            Class<?> mainClass = Class.forName(System.getProperty(WRAPPED_MAIN_PROPERTY, DEFAULT_MAIN), true, classloader);
+            Method main = mainClass.getMethod("main", String[].class);
+            main.invoke(null, (Object) args);
+        } finally {
+            if (classloader != null && Boolean.parseBoolean(System.getProperty(CLOSE_CLASSLOADER_PROPERTY, "true"))) {
+                classloader.close();
+            }
+        }
     }
 
     public static Path createRootDirectory() throws IOException {
