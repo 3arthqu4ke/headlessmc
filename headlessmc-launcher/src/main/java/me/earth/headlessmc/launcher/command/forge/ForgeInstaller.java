@@ -26,15 +26,11 @@ import java.util.List;
 public class ForgeInstaller {
     private static final String FORGE_CLI = "forge-cli.jar";
 
-    private final SimpleInMemoryLauncher inMemoryLauncher = new SimpleInMemoryLauncher();
+    private final SimpleInMemoryLauncher inMemoryLauncher = new ForgeInMemoryLauncher();
     private final ForgeRepoFormat repoFormat;
     private final Launcher launcher;
     private final String forgeName;
     private final String baseUrl;
-
-    {
-        inMemoryLauncher.setClassLoaderFactory(ForgeInstallerProtectionDomainClassloader::new);
-    }
 
     public void install(ForgeVersion version, FileManager fileManager, boolean inMemory) throws IOException {
         val cli = new ResourceExtractor(fileManager, FORGE_CLI).extract();

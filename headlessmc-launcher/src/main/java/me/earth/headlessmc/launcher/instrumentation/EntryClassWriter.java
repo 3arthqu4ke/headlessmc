@@ -40,12 +40,10 @@ public class EntryClassWriter extends ClassWriter implements AutoCloseable {
         if (classLoader instanceof AutoCloseable) {
             try {
                 ((AutoCloseable) classLoader).close();
+            } catch (IOException e) {
+                throw e;
             } catch (Exception e) {
-                if (e instanceof IOException) {
-                    throw (IOException) e;
-                } else {
-                    throw new IOException(e);
-                }
+                throw new IOException(e);
             }
         }
     }

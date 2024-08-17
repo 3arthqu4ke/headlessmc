@@ -87,17 +87,19 @@ information see the [HmcProperties](headlessmc-commons/src/main/java/me/earth/he
 [RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
 [LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
 
-## Building and Documentation
-Simply run `./gradlew build` or import the [build.gradle](build.gradle) into an IDE of your choice,
-and you should be good to go.
+## Building from Source
 
-In order to keep compatibility with older Java and Minecraft versions HeadlessMc uses Java language level 8. It can be
+Simply run `./gradlew build` or import the [build.gradle](build.gradle)
+into an IDE of your choice, and you should be good to go.
+
+In order to keep compatibility with older Java and Minecraft versions
+HeadlessMc uses Java language level 8. It can be
 built with any JDK &geq; 8, but language features > 8 can't be used. 
-HeadlessMc uses [project lombok](https://github.com/projectlombok/lombok) to eliminate Java boilerplate.
-
-
+HeadlessMc uses [project lombok](https://github.com/projectlombok/lombok)
+to eliminate Java boilerplate.
 
 ## License and Libraries
+
 Some cool libraries we use:
 
 *   [MinecraftAuth by RaphiMC](https://github.com/RaphiMC/MinecraftAuth)
