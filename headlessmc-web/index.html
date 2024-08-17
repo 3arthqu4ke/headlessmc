@@ -26,7 +26,7 @@
     const height = rect.height;
 
     cheerpjCreateDisplay(-1, -1, element);
-    const lib = await cheerpjRunLibrary("/app/headlessmc-web.jar");
+    const lib = await cheerpjRunLibrary("/app/headlessmc/headlessmc-web.jar");
     const Resizer = await lib.me.earth.headlessmc.web.cheerpj.Resizer;
     const resizer = await Resizer.getInstance();
     await resizer.setVersion("1.0.0");
