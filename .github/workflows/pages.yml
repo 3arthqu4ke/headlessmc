@@ -36,7 +36,7 @@ jobs:
       - name: Upload Web Jar
         uses: actions/upload-artifact@v4
         with:
-          name: web-jar
+          name: github-pages
           path: |
             ./headlessmc-web.jar
             ./index.html
