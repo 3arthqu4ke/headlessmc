@@ -5,12 +5,11 @@ import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.YesNoContext;
+import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
 import me.earth.headlessmc.launcher.command.FindByCommand;
 import me.earth.headlessmc.launcher.command.VersionTypeFilter;
-import me.earth.headlessmc.launcher.util.IOUtil;
-import me.earth.headlessmc.api.util.Table;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -59,7 +58,7 @@ public class DownloadCommand extends AbstractLauncherCommand
         try {
             log.debug("Downloading version " + version.getName() + " from "
                           + version.getUrl() + " to " + file.getAbsolutePath());
-            IOUtil.download(version.getUrl(), file.getAbsolutePath());
+            ctx.getDownloadService().download(version.getUrl(), file.toPath());
             ctx.getVersionService().refresh();
             ctx.log("Download successful!");
         } catch (IOException ioe) {

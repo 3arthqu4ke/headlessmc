@@ -27,9 +27,8 @@ public class ThreadFormatter extends Formatter {
         appendTimeNumber(sb, dt.getMinute());
         sb.append(':');
         appendTimeNumber(sb, dt.getSecond());
-        sb.append("] [")
+        sb.append("] ")
           .append(thread)
-          .append('/')
           .append(record.getLevel())
           .append("] [")
           .append(record.getLoggerName())
@@ -49,15 +48,15 @@ public class ThreadFormatter extends Formatter {
         return sb.toString();
     }
 
-    private String getThread(long threadId) {
+    protected String getThread(long threadId) {
         // could we get any performance benefit from caching this?
-        return Thread.getAllStackTraces()
+        return "[" + Thread.getAllStackTraces()
                      .keySet()
                      .stream()
                      .filter(t -> t.getId() == threadId)
                      .map(Thread::getName)
                      .findFirst()
-                     .orElse("Unknown-Thread");
+                     .orElse("Unknown-Thread") + "/";
     }
 
     private void appendTimeNumber(StringBuilder sb, int number) {

@@ -3,6 +3,9 @@ package me.earth.headlessmc.lwjgl.redirections;
 import lombok.experimental.UtilityClass;
 import me.earth.headlessmc.lwjgl.LwjglProperties;
 import me.earth.headlessmc.lwjgl.api.RedirectionManager;
+import me.earth.headlessmc.lwjgl.redirections.stb.STBImage;
+import me.earth.headlessmc.lwjgl.redirections.stb.STBImageRedirection;
+import me.earth.headlessmc.lwjgl.redirections.stb.STBImageRedirectionNoAWT;
 
 import java.lang.reflect.Field;
 import java.nio.*;
@@ -208,8 +211,12 @@ public class LwjglRedirections {
         manager.redirect("Lorg/lwjgl/system/MemoryUtil;" +
                              "memAddress(Ljava/nio/ByteBuffer;)J", of(1L));
 
-        manager.redirect(STBIImageRedirection.DESC,
-                         STBIImageRedirection.INSTANCE);
+        if (Boolean.parseBoolean(System.getProperty(LwjglProperties.NO_AWT, "false"))) {
+            manager.redirect(STBImage.DESC, STBImageRedirectionNoAWT.INSTANCE);
+        } else {
+            manager.redirect(STBImage.DESC, STBImageRedirection.INSTANCE);
+        }
+
         manager.redirect(MemASCIIRedirection.DESC,
                          MemASCIIRedirection.INSTANCE);
 

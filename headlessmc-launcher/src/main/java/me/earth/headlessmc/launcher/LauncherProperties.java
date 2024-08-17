@@ -1,7 +1,7 @@
 package me.earth.headlessmc.launcher;
 
-import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.api.config.HmcProperties;
+import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.launcher.files.ConfigService;
 
 import static me.earth.headlessmc.api.config.PropertyTypes.*;
@@ -64,15 +64,28 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> ASSETS_PARALLEL = bool("hmc.assets.parallel");
     Property<Boolean> DUMMY_ASSETS = bool("hmc.assets.dummy");
     Property<Boolean> ASSETS_CHECK_HASH = bool("hmc.assets.check.hash");
+    Property<Boolean> ASSETS_CHECK_SIZE = bool("hmc.assets.check.size"); // < implied by check hash
     Property<Boolean> ASSETS_CHECK_FILE_HASH = bool("hmc.assets.check.file.hash");
     Property<Boolean> ASSETS_BACKOFF = bool("hmc.assets.backoff");
+    Property<Boolean> ALWAYS_DOWNLOAD_ASSETS_INDEX = bool("hmc.always.download.assets.index");
+
+    Property<Boolean> LIBRARIES_CHECK_HASH = bool("hmc.libraries.check.hash");
+    Property<Boolean> LIBRARIES_CHECK_SIZE = bool("hmc.libraries.check.size"); // < implied by check hash
+    Property<Boolean> LIBRARIES_CHECK_FILE_HASH = bool("hmc.libraries.check.file.hash");
 
     Property<Boolean> SET_LIBRARY_DIR = bool("hmc.set.library.dir");
     Property<Boolean> NO_AUTO_CONFIG = bool("hmc.no.auto.config");
 
     Property<Boolean> IN_MEMORY = bool("hmc.in.memory");
     Property<Boolean> IN_MEMORY_REQUIRE_CORRECT_JAVA = bool("hmc.in.memory.require.correct.java");
+    Property<Boolean> ALWAYS_IN_MEMORY = bool("hmc.always.in.memory");
 
     Property<Boolean> REFRESH_ON_LAUNCH = bool("hmc.account.refresh.on.launch");
+
+    // TODO: actual cache for each version?
+    Property<String> EXTRACTED_FILE_CACHE_UUID = string("hmc.extracted.file.cache.uuid");
+
+    Property<Boolean> HTTP_USER_AGENT_ENABLED = bool("hmc.http.user.agent.enabled");
+    Property<String> HTTP_USER_AGENT = string("hmc.http.user.agent");
 
 }

@@ -1,6 +1,8 @@
 package me.earth.headlessmc.launcher.command.forge;
 
 import lombok.val;
+import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.UsesResources;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +14,7 @@ public class ForgeIndexCacheTest extends ForgeIndexCache
     implements UsesResources {
 
     public ForgeIndexCacheTest() {
-        super(LEX_FORGE_INDICES);
+        super(LauncherMock.INSTANCE, LEX_FORGE_INDICES);
     }
 
     @Test

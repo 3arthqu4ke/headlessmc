@@ -7,8 +7,7 @@ import java.nio.ByteBuffer;
 public enum MemASCIIRedirection implements Redirection {
     INSTANCE;
 
-    public static final String DESC = "Lorg/lwjgl/system/MemoryUtil;" +
-        "memASCII(Ljava/nio/ByteBuffer;I)Ljava/lang/String;";
+    public static final String DESC = "Lorg/lwjgl/system/MemoryUtil;memASCII(Ljava/nio/ByteBuffer;I)Ljava/lang/String;";
 
     @Override
     public Object invoke(Object obj, String desc, Class<?> type, Object... args)

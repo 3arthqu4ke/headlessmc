@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.util;
 import com.google.gson.*;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +41,16 @@ public class JsonUtil {
         }
     }
 
-    public static String getString(JsonElement jo, String... path) {
+    public static @Nullable String getString(JsonElement jo, String... path) {
         val result = getElement(jo, path);
         // TODO: if JsonArray, iterate and concatenate
         return result == null ? null : result.getAsString();
+    }
+
+    public static @Nullable Long getLong(JsonElement jo, String... path) {
+        val result = getElement(jo, path);
+        // TODO: if JsonArray, iterate and concatenate
+        return result == null ? null : result.getAsLong();
     }
 
     public static JsonObject getObject(JsonElement jo, String... path) {

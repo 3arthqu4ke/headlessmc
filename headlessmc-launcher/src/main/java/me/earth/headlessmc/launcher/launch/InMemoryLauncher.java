@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.java.Java;
@@ -11,10 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -23,11 +22,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 // TOP 10 worst ideas #9 this
+@Getter
 @CustomLog
 @RequiredArgsConstructor
-public class InMemoryLauncher {
+public class InMemoryLauncher extends SimpleInMemoryLauncher {
     private final LaunchOptions options;
-    private final Command command;
+    private final JavaLaunchCommandBuilder command;
     private final Version version;
     private final Java java;
 
@@ -85,23 +85,7 @@ public class InMemoryLauncher {
         }
     }
 
-    private void simpleLaunch(URL[] classpathUrls, String mainClass, List<String> gameArgs) throws IOException, LaunchException {
-        try (URLClassLoader urlClassLoader = new URLClassLoader(classpathUrls)) {
-            try {
-                Thread.currentThread().setContextClassLoader(urlClassLoader);
-                Class<?> mainClassClass = Class.forName(mainClass, false, urlClassLoader);
-                Method main = mainClassClass.getDeclaredMethod("main", String[].class);
-                main.setAccessible(true);
-                main.invoke(null, (Object) gameArgs.toArray(new String[0]));
-            } catch (InvocationTargetException e) {
-                log.error(e);
-            } catch (Exception e) {
-                throw new LaunchException("Failed to launch game", e);
-            }
-        }
-    }
-
-    private void java9Launch(URL[] classpathUrls, String mainClass, List<String> gameArgs) {
+    protected void java9Launch(URL[] classpathUrls, String mainClass, List<String> gameArgs) {
         try {
             Class<?> bootstrapLauncherClass = Class.forName("me.earth.headlessmc.modlauncher.LayeredBootstrapLauncher");
             Constructor<?> constructor = bootstrapLauncherClass.getConstructor(List.class, URL[].class, String.class);
@@ -114,7 +98,7 @@ public class InMemoryLauncher {
     }
 
     @SuppressWarnings({"JavaReflectionMemberAccess", "RedundantSuppression"})
-    private void addLibraryPath(Path libraryPath) {
+    protected void addLibraryPath(Path libraryPath) {
         try {
             // https://stackoverflow.com/questions/15409223/adding-new-paths-for-native-libraries-at-runtime-in-java
             if (java.getVersion() <= 8) {

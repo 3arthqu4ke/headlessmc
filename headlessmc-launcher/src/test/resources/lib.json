@@ -4,7 +4,7 @@
       "path": "_download_path",
       "sha1": "",
       "size": 1,
-      "url": "_download_url"
+      "url": "http://_download_url"
     }
   },
   "name": "testpackage:test:testversion",

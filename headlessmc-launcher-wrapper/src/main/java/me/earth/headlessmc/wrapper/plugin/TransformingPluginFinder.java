@@ -21,7 +21,7 @@ public class TransformingPluginFinder extends PluginFinder {
         //Thread.currentThread().setContextClassLoader(transformerClassloader);
         List<TransformerPlugin> plugins = new ArrayList<>();
         ServiceLoader.load(TransformerPlugin.class, transformerClassloader).forEach(plugins::add);
-        ServiceLoader.load(TransformerPlugin.class).forEach(plugins::add);
+        ServiceLoader.load(TransformerPlugin.class).forEach(plugins::add); // TODO: I think this line is unnecessary!
         Collections.sort(plugins);
 
         List<URL> classpath = find(pluginsDirectory);

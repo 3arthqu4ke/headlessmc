@@ -1,7 +1,6 @@
 package me.earth.headlessmc.api.command;
 
 import lombok.experimental.UtilityClass;
-import me.earth.headlessmc.api.command.CommandException;
 
 @UtilityClass
 public class ParseUtil {

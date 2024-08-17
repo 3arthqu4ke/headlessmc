@@ -1,7 +1,7 @@
 package me.earth.headlessmc.api.command;
 
-import me.earth.headlessmc.api.MockedHeadlessMc;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.MockedHeadlessMc;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

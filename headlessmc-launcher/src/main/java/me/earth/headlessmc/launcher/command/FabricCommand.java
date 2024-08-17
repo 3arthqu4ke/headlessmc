@@ -1,40 +1,46 @@
 package me.earth.headlessmc.launcher.command;
 
 import lombok.CustomLog;
-import lombok.val;
+import lombok.Getter;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.files.FileUtil;
+import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.Java;
+import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
+import me.earth.headlessmc.launcher.launch.SystemPropertyHelper;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 
+@Getter
 @CustomLog
 public class FabricCommand extends AbstractVersionCommand {
     private static final String URL = "https://maven.fabricmc.net/" +
-        "net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
+            "net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
+
+    private final SimpleInMemoryLauncher inMemoryLauncher = new SimpleInMemoryLauncher();
 
     public FabricCommand(Launcher ctx) {
         super(ctx, "fabric", "Downloads Fabric for the specified version.");
         args.put("<version>", "The version to download.");
         args.put("--jvm", "Jvm args for the Fabric Installer.");
         args.put("--java", "Java version to use (e.g. 8, 17).");
+        args.put("-inmemory", "If you want to run the installer inside this JVM.");
     }
 
     @Override
     public void execute(Version ver, String... args) throws CommandException {
         ctx.log("Installing Fabric for version " + ver.getName() + "...");
-        val tempFiles = ctx.getFileManager().createRelative(UUID.randomUUID()
-                                                                .toString());
-        val jar = tempFiles.create("fabric-installer.jar");
-        val url = ctx.getConfig().get(LauncherProperties.FABRIC_URL, URL);
+        FileManager tempFiles = ctx.getFileManager().createRelative(UUID.randomUUID().toString());
+        File jar = tempFiles.create("fabric-installer.jar");
+        String url = ctx.getConfig().get(LauncherProperties.FABRIC_URL, URL);
 
         try {
             downloadInstaller(url, jar);
@@ -42,37 +48,36 @@ public class FabricCommand extends AbstractVersionCommand {
         } finally {
             try {
                 log.debug("Deleting: " + jar.getAbsolutePath());
-                FileUtil.delete(tempFiles.getBase());
+                ctx.getFileManager().delete(tempFiles.getBase());
             } catch (IOException e) {
                 log.error(
-                    "Failed to delete: " + jar.getAbsolutePath() + " : "
-                        + e.getMessage());
+                        "Failed to delete: " + jar.getAbsolutePath() + " : "
+                                + e.getMessage());
             }
         }
 
         ctx.log("Installed Fabric for: " + ver.getName() + " successfully!");
     }
 
-    private void downloadInstaller(String url, File jar)
-        throws CommandException {
+    private void downloadInstaller(String url, File jar) throws CommandException {
         try {
-            IOUtil.download(url, jar.getAbsolutePath());
+            ctx.getDownloadService().download(url, jar.toPath());
         } catch (IOException e) {
             throw new CommandException(
-                "Couldn't download Fabric installer from " + url + " to "
-                    + jar.getAbsolutePath() + " : " + e.getMessage());
+                    "Couldn't download Fabric installer from " + url + " to "
+                            + jar.getAbsolutePath() + " : " + e.getMessage());
         }
     }
 
-    private void install(Version version, File jarFile, String... args)
-        throws CommandException {
+    private void install(Version version, File jarFile, String... args) throws CommandException {
         int bestVersion = 17;
-        val javaVersion = CommandUtil.getOption("--java", args);
+        String javaVersion = CommandUtil.getOption("--java", args);
         if (javaVersion != null) {
             bestVersion = ParseUtil.parseI(javaVersion);
         }
 
-        Java java = ctx.getJavaService().findBestVersion(bestVersion);
+        boolean inMemory = CommandUtil.hasFlag("-inmemory", args) || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false);
+        Java java = inMemory ? ctx.getJavaService().getCurrent() : ctx.getJavaService().findBestVersion(bestVersion);
         if (java == null) {
             java = ctx.getJavaService().findBestVersion(8);
             if (java == null) {
@@ -80,29 +85,46 @@ public class FabricCommand extends AbstractVersionCommand {
             }
         }
 
-        val jvmArgs = CommandUtil.getOption("--jvm", args);
+        String jvmArgs = CommandUtil.getOption("--jvm", args);
         List<String> jvm = Collections.emptyList();
         if (jvmArgs != null) {
             jvm = new ArrayList<>(Arrays.asList(CommandUtil.split(jvmArgs)));
         }
 
-        val command = getCommand(version, java, jarFile, jvm);
+        Properties properties = System.getProperties();
+        Properties systemPropertiesBefore = new Properties();
+        for (Object key : properties.keySet()) {
+            systemPropertiesBefore.put(key, properties.getProperty(key.toString()));
+        }
+
+        List<String> command = getCommand(version, java, jarFile, jvm, inMemory);
 
         try {
             log.debug("Launching Fabric-Installer for command: " + command);
-            val process = new ProcessBuilder()
-                .directory(ctx.getMcFiles().getBase())
-                .command(command)
-                .inheritIO()
-                .start();
+            if (inMemory) {
+                try {
+                    inMemoryLauncher.simpleLaunch(new URL[]{jarFile.toURI().toURL()}, inMemoryLauncher.getMainClassFromJar(jarFile), command);
+                    log.debug("Fabric-Installer finished.");
+                } finally {
+                    // restore old system properties
+                    System.getProperties().clear();
+                    System.getProperties().putAll(systemPropertiesBefore);
+                }
+            } else {
+                Process process = new ProcessBuilder()
+                        .directory(ctx.getMcFiles().getBase())
+                        .command(command)
+                        .inheritIO()
+                        .start();
 
-            int exitCode = process.waitFor();
-            log.debug("Fabric-Installer quit with exit-code: " + exitCode);
-            if (exitCode != 0) {
-                throw new CommandException(
-                    "Fabric installer exit code: " + exitCode
-                        + ". Failed to install fabric for version "
-                        + version.getName());
+                int exitCode = process.waitFor();
+                log.debug("Fabric-Installer quit with exit-code: " + exitCode);
+                if (exitCode != 0) {
+                    throw new CommandException(
+                            "Fabric installer exit code: " + exitCode
+                                    + ". Failed to install fabric for version "
+                                    + version.getName());
+                }
             }
 
             ctx.getVersionService().refresh();
@@ -110,19 +132,29 @@ public class FabricCommand extends AbstractVersionCommand {
             Thread.currentThread().interrupt();
             log.error("Thread got interrupted!");
             throw new IllegalStateException("Thread got interrupted!");
-        } catch (IOException e) {
-            val message = "Fabric installation failed: " + e.getMessage();
+        } catch (Throwable throwable) {
+            String message = "Fabric installation failed: " + throwable.getMessage();
             log.error(message);
             throw new CommandException(message);
         }
     }
 
-    protected List<String> getCommand(Version version, Java java, File jar, List<String> jvm) {
-        val command = new ArrayList<String>();
-        command.add(java.getExecutable());
-        command.addAll(jvm);
-        command.add("-jar");
-        command.add(jar.getAbsolutePath());
+    protected List<String> getCommand(Version version, Java java, File jar, List<String> jvm, boolean inMemory) {
+        List<String> command = new ArrayList<>();
+        if (inMemory) {
+            for (String jvmArg : jvm) {
+                if (SystemPropertyHelper.isSystemProperty(jvmArg)) {
+                    String[] keyValue = SystemPropertyHelper.splitSystemProperty(jvmArg);
+                    System.setProperty(keyValue[0], keyValue[1]);
+                }
+            }
+        } else {
+            command.add(java.getExecutable());
+            command.addAll(jvm);
+            command.add("-jar");
+            command.add(jar.getAbsolutePath());
+        }
+
         command.add("client");
         command.add("-noprofile");
         command.add("-mcversion");

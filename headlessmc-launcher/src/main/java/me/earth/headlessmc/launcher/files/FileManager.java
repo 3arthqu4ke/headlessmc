@@ -1,26 +1,37 @@
 package me.earth.headlessmc.launcher.files;
 
 import lombok.CustomLog;
+import lombok.Setter;
+import me.earth.headlessmc.launcher.util.IOConsumer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.function.Function;
 
 // TODO: move to Paths?!?!?!?!?!?!
 // TODO: Why were we using Files in the first place?
 @CustomLog
 public class FileManager {
+    @Setter
+    private static Function<String, FileManager> factory = FileManager::new;
     private final String base;
 
+    // @Deprecated
     public FileManager(String base) {
         this.base = base;
+    }
+
+    public static FileManager forPath(String path) {
+        return factory.apply(path);
     }
 
     public static FileManager mkdir(String path) {
         File file = Paths.get(path).toFile();
         //noinspection ResultOfMethodCallIgnored
         file.mkdirs();
-        return new FileManager(file.getAbsolutePath());
+        return factory.apply(file.getAbsolutePath());
     }
 
     public File getBase() {
@@ -77,9 +88,9 @@ public class FileManager {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public File get(String base, boolean isDir, boolean mk, String... path) {
         File file = new File(base, String.join(File.separator, path));
-        log.debug("Checking file: " + file.getAbsolutePath());
+        log.finest("Checking file: " + file.getAbsolutePath());
         if (mk && !file.exists()) {
-            log.debug("File " + file + " doesn't exist, creating it...");
+            log.finest("File " + file + " doesn't exist, creating it...");
             if (isDir) {
                 file.mkdirs();
             } else {
@@ -98,8 +109,7 @@ public class FileManager {
     }
 
     public File[] listFiles() {
-        File[] result = getBase().listFiles();
-        return result == null ? new File[0] : result;
+        return listFiles(getBase());
     }
 
     public FileManager createRelative(String... base) {
@@ -108,13 +118,32 @@ public class FileManager {
     }
 
     public FileManager relative(String... base) {
-        return new FileManager(this.base
-                                   + File.separator
-                                   + String.join(File.separator, base));
+        return factory.apply(this.base + File.separator + String.join(File.separator, base));
     }
 
     public String getPath() {
         return getBase().getAbsolutePath();
+    }
+
+    public File[] listFiles(File file) {
+        File[] result = file.listFiles();
+        return result == null ? new File[0] : result;
+    }
+
+    public void delete(File file) throws IOException {
+        iterate(file, f -> Files.delete(f.toPath()));
+    }
+
+    protected void iterate(File file, IOConsumer<File> action) throws IOException {
+        for (File content : listFiles(file)) {
+            if (content.isDirectory()) {
+                iterate(content, action);
+            } else {
+                action.accept(content);
+            }
+        }
+
+        action.accept(file);
     }
 
 }

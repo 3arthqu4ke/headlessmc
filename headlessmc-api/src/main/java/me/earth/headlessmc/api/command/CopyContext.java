@@ -2,6 +2,8 @@ package me.earth.headlessmc.api.command;
 
 import me.earth.headlessmc.api.HeadlessMc;
 
+import java.util.List;
+
 public class CopyContext extends CommandContextImpl {
     public CopyContext(HeadlessMc ctx, boolean baseContext) {
         super(ctx);
@@ -15,6 +17,10 @@ public class CopyContext extends CommandContextImpl {
     @Override
     public void add(Command command) {
         super.add(command);
+    }
+
+    public List<Command> getCommandList() {
+        return commands;
     }
 
 }

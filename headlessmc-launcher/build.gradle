@@ -43,6 +43,7 @@ processResources {
     into('headlessmc') {
         from project(':headlessmc-runtime')['shadowJar']
         from project(':headlessmc-lwjgl')['jar']
+        // TODO: this does not actually include, I think the excludes on the shadow task might cause it?
         from configurations.includeJarInResources
         rename 'ForgeCLI(.*).jar', 'forge-cli.jar'
         rename 'forgecli(.*).jar', 'forge-cli.jar'

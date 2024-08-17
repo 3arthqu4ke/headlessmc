@@ -1,2 +1,2 @@
 @echo off
-"%JAVA_HOME%\bin\java" -jar headlessmc-launcher-wrapper-2.0.0.jar --command %*
+"%JAVA_HOME%\bin\java" -jar headlessmc-launcher-wrapper-2.1.0-SNAPSHOT.jar --command %*

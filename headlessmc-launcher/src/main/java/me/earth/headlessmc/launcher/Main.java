@@ -11,7 +11,12 @@ import me.earth.headlessmc.jline.JLineCommandLineReader;
 import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
-import me.earth.headlessmc.launcher.files.*;
+import me.earth.headlessmc.launcher.download.ChecksumService;
+import me.earth.headlessmc.launcher.download.DownloadService;
+import me.earth.headlessmc.launcher.files.AutoConfiguration;
+import me.earth.headlessmc.launcher.files.ConfigService;
+import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
@@ -22,6 +27,7 @@ import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.launcher.version.VersionUtil;
 import me.earth.headlessmc.logging.LoggingService;
+import net.lenni0451.commons.httpclient.constants.Headers;
 
 import java.io.IOException;
 
@@ -92,12 +98,19 @@ public final class Main {
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
         accounts.load(configs.getConfig());
 
-        val versionSpecificModManager = new VersionSpecificModManager(files.createRelative("specifics"));
+        DownloadService downloadService = new DownloadService();
+        if (configs.getConfig().get(LauncherProperties.HTTP_USER_AGENT_ENABLED, true)) {
+            downloadService.setHttpClientFactory(() ->
+                downloadService.getDefaultHttpClient()
+                    .setHeader(Headers.USER_AGENT, configs.getConfig().get(LauncherProperties.HTTP_USER_AGENT, "Mozilla/5.0")));
+        }
+
+        val versionSpecificModManager = new VersionSpecificModManager(downloadService, files.createRelative("specifics"));
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
 
-        val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
-                                    new ProcessFactory(mcFiles, configs, os), configs,
+        val launcher = new Launcher(hmc, versions, mcFiles, gameDir, new ChecksumService(), new DownloadService(), files,
+                                    new ProcessFactory(downloadService, mcFiles, configs, os), configs,
                                     javas, accounts, versionSpecificModManager, new PluginManager());
         LauncherApi.setLauncher(launcher);
         deleteOldFiles(launcher);
@@ -128,10 +141,9 @@ public final class Main {
             if (file.isDirectory() && UuidUtil.isUuid(file.getName())) {
                 try {
                     log.debug("Deleting " + file.getAbsolutePath());
-                    FileUtil.delete(file);
+                    launcher.getFileManager().delete(file);
                 } catch (IOException ioe) {
-                    log.error("Couldn't delete " + file.getName()
-                                  + " : " + ioe.getMessage());
+                    log.error("Couldn't delete " + file.getName() + " : " + ioe.getMessage());
                 }
             }
         }

@@ -1,0 +1,59 @@
+name: Github pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: temurin
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build
+        run: ./gradlew build
+
+      - name: Delete dev jar
+        run: rm headlessmc-web/build/libs/headlessmc-web-*-dev.jar
+      - name: Delete javadoc jar
+        run: rm headlessmc-web/build/libs/headlessmc-web-*-javadoc.jar
+      - name: Delete sources jar
+        run: rm headlessmc-web/build/libs/headlessmc-web-*-sources.jar
+
+      - name: Rename Web jar
+        run: mv headlessmc-web/build/libs/headlessmc-web-*.jar headlessmc-web/build/libs/headlessmc-web.jar
+      - name: Copy Web jar
+        run: cp headlessmc-web/build/libs/headlessmc-web.jar .
+      - name: Copy index.html
+        run: cp headlessmc-web/index.html .
+
+      - name: Upload Web Jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-jar
+          path: |
+            ./headlessmc-web.jar
+            ./index.html
+
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Display structure of downloaded files
+        run: ls -R
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

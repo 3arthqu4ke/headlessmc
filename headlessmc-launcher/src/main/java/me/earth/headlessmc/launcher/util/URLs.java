@@ -1,49 +1,28 @@
 package me.earth.headlessmc.launcher.util;
 
+import lombok.CustomLog;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.val;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
  * Utility for {@link URL}s.
  */
+@CustomLog
 @UtilityClass
 public class URLs {
+    /**
+     * Creates a new {@link URL} for the given String.
+     * Will throw a {@link java.net.MalformedURLException} if the URL is malformed.
+     * This method is meant to reduce boilerplate for URLConstants by Sneaky Throwing this exception.
+     *
+     * @param url the string to create a URL for.
+     * @return a URL for the String.
+     */
     @SneakyThrows
     public static URL url(String url) {
         return new URL(url);
-    }
-
-    public static HttpURLConnection get(URL url) throws IOException {
-        return get(url.toString());
-    }
-
-    public static HttpURLConnection get(String url) throws IOException {
-        // TODO: switch to Lennie http client?
-        val con = (HttpURLConnection) new URL(url).openConnection();
-        con.setRequestMethod("GET");
-        con.setDoOutput(true);
-        con.setConnectTimeout(60_000);
-        con.setReadTimeout(60_000);
-        return con;
-    }
-
-    public static Reader reader(HttpURLConnection con) throws IOException {
-        int status = con.getResponseCode();
-        Reader reader;
-        if (status > 299) {
-            reader = new InputStreamReader(con.getErrorStream());
-        } else {
-            reader = new InputStreamReader(con.getInputStream());
-        }
-
-        return reader;
     }
 
 }

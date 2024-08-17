@@ -10,7 +10,6 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
-import me.earth.headlessmc.launcher.files.FileUtil;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
 import me.earth.headlessmc.launcher.version.Version;
@@ -48,9 +47,9 @@ public class LaunchCommand extends AbstractVersionCommand {
     @Override
     public void execute(Version version, String... args) throws CommandException {
         boolean prepare = CommandUtil.hasFlag("-prepare", args);
-        val uuid = UUID.randomUUID();
+        val uuid = UUID.fromString(ctx.getConfig().get(LauncherProperties.EXTRACTED_FILE_CACHE_UUID, UUID.randomUUID().toString()));
         ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
-        ctx.getLoggingService().setLevel(Level.INFO);
+        ctx.getLoggingService().setLevel(Level.INFO, true);
         val files = ctx.getFileManager().createRelative(uuid.toString());
 
         boolean quit = flag("-quit", LauncherProperties.INVERT_QUIT_FLAG, args);
@@ -117,7 +116,7 @@ public class LaunchCommand extends AbstractVersionCommand {
                 && !ctx.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
                 try {
                     log.info("Deleting " + files.getBase().getName());
-                    FileUtil.delete(files.getBase());
+                    ctx.getFileManager().delete(files.getBase());
                 } catch (IOException e) {
                     log.error("Couldn't delete files of game "
                                   + files.getBase().getName()

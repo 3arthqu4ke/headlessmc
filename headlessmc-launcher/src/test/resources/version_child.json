@@ -14,7 +14,7 @@
   "libraries": [
     {
       "name": "child_library_name",
-      "url": "child_library_url"
+      "url": "http://child_library_url"
     }
   ]
 }

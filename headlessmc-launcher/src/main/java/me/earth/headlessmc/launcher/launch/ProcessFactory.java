@@ -1,17 +1,20 @@
 package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.download.AssetsDownloader;
+import me.earth.headlessmc.launcher.download.DownloadService;
+import me.earth.headlessmc.launcher.download.LibraryDownloader;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.Instrumentation;
 import me.earth.headlessmc.launcher.instrumentation.InstrumentationHelper;
 import me.earth.headlessmc.launcher.instrumentation.Target;
 import me.earth.headlessmc.launcher.os.OS;
-import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Features;
 import me.earth.headlessmc.launcher.version.Rule;
 import me.earth.headlessmc.launcher.version.Version;
@@ -19,29 +22,31 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
+@Getter
 @CustomLog
 @RequiredArgsConstructor
 public class ProcessFactory {
+    private final DownloadService downloadService;
     private final FileManager files;
     private final HasConfig config;
     private final OS os;
 
-    public @Nullable Process run(LaunchOptions options)
-        throws LaunchException, AuthException, IOException {
+    public @Nullable Process run(LaunchOptions options) throws LaunchException, AuthException, IOException {
         val instrumentation = InstrumentationHelper.create(options);
         return run(options, instrumentation);
     }
 
-    public @Nullable Process run(LaunchOptions options, Instrumentation instrumentation)
-        throws IOException, LaunchException, AuthException {
+    public @Nullable Process run(LaunchOptions options, Instrumentation instrumentation) throws IOException, LaunchException, AuthException {
         val launcher = options.getLauncher();
 
+        log.debug("Creating version merger");
         val version = new VersionMerger(options.getVersion());
         if (version.getArguments() == null) {
             throw new LaunchException(
@@ -49,32 +54,18 @@ public class ProcessFactory {
                     " didn't contain arguments.");
         }
 
+        log.debug("Creating extraction directory");
         val dlls = options.getFiles().createRelative("extracted");
         val targets = processLibraries(version, dlls);
         addGameJar(version, targets);
+
         List<String> classpath = instrumentation.instrument(targets);
         if (options.isRuntime()) {
-            String runtimeJar = null;
-            for (String path : classpath) {
-                if (path.endsWith(InstrumentationHelper.RUNTIME_JAR)) {
-                    runtimeJar = path;
-                    classpath.remove(path);
-                    break;
-                }
-            }
-
-            if (runtimeJar == null) {
-                throw new IllegalStateException("Failed to find RuntimeJar in classpath " + classpath);
-            }
-            // add RuntimeJar as the first jar on the classpath
-            // this makes java look it up for libraries first
-            // really important because forge provides an incompatible version of JLine.
-            // TODO: this works, but is it really something we want to trust?
-            //  bring over the VersionAgnosticJLineCommandLineReader from hmc-specifics?
-            classpath.add(0, runtimeJar);
+            moveRuntimeJarToFirstPlace(classpath);
         }
 
-        val commandBuilder = Command.builder()
+        log.debug("Building command");
+        val commandBuilder = JavaLaunchCommandBuilder.builder()
                              .account(options.getAccount())
                              .classpath(classpath)
                              .os(os)
@@ -89,11 +80,9 @@ public class ProcessFactory {
 
         val command = commandBuilder.build();
         downloadAssets(files, version);
+        debugCommand(command, commandBuilder);
 
-        debugCommand(command);
-
-        val dir = new File(launcher.getConfig().get(
-            LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
+        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
@@ -102,7 +91,7 @@ public class ProcessFactory {
         }
 
         if (options.isInMemory()) {
-            new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()).launch();
+            inMemoryLaunch(new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()));
             return null;
         }
 
@@ -120,25 +109,51 @@ public class ProcessFactory {
                                : ProcessBuilder.Redirect.INHERIT));
     }
 
-    private void addGameJar(Version version, List<Target> targets)
-        throws IOException {
+    protected void moveRuntimeJarToFirstPlace(List<String> classpath) {
+        String runtimeJar = null;
+        for (String path : classpath) {
+            if (path.endsWith(InstrumentationHelper.RUNTIME_JAR)) {
+                runtimeJar = path;
+                classpath.remove(path);
+                break;
+            }
+        }
+
+        if (runtimeJar == null) {
+            throw new IllegalStateException("Failed to find RuntimeJar in classpath " + classpath);
+        }
+        // add RuntimeJar as the first jar on the classpath
+        // this makes java look it up for libraries first
+        // really important because forge provides an incompatible version of JLine.
+        // TODO: this works, but is it really something we want to trust?
+        //  bring over the VersionAgnosticJLineCommandLineReader from hmc-specifics?
+        classpath.add(0, runtimeJar);
+    }
+
+    protected void inMemoryLaunch(InMemoryLauncher inMemoryLauncher) throws LaunchException, AuthException, IOException {
+        inMemoryLauncher.launch();
+    }
+
+    protected void addGameJar(Version version, List<Target> targets) throws IOException {
         File gameJar = new File(version.getFolder(), version.getName() + ".jar");
         log.debug("GameJar: " + gameJar.getAbsolutePath());
         if (!gameJar.exists() || !checkZipIntact(gameJar) && gameJar.delete()) {
-            log.info("Downloading " + version.getName() + " from "
-                         + version.getClientDownload());
-            download(version.getClientDownload(), gameJar.getAbsolutePath());
+            LibraryDownloader downloader = new LibraryDownloader(downloadService, config, os);
+            log.info("Downloading " + version.getName() + " from " + version.getClientDownload());
+            downloader.download(version.getClientDownload(), gameJar.toPath().toAbsolutePath(), version.getClientSha1(), version.getClientSize());
         }
 
         targets.add(new Target(true, gameJar.getAbsolutePath()));
+        log.debug("Processed GameJar");
     }
 
-    private List<Target> processLibraries(Version version, FileManager dlls)
-        throws IOException {
+    protected List<Target> processLibraries(Version version, FileManager dlls) throws IOException {
+        log.debug("Processing libraries...");
         // TODO: proper features
         val features = Features.EMPTY;
         val targets = new ArrayList<Target>(version.getLibraries().size());
         Set<String> libPaths = new HashSet<>();
+        LibraryDownloader libraryDownloader = new LibraryDownloader(downloadService, config, os);
         for (val library : version.getLibraries()) {
             if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
                 log.debug("Checking: " + library);
@@ -147,22 +162,30 @@ public class ProcessFactory {
                     continue;
                 }
 
-                val path = files.getDir("libraries") + File.separator + libPath;
-                if (!new File(path).exists()) {
-                    String url = library.getUrl(libPath);
-                    log.info(libPath + " is missing, downloading from " + url);
-                    download(url, path);
+                val path = files.getDir("libraries").toPath().resolve(libPath);
+                if ((library.getSha1() != null || library.getSize() != null)
+                        && config.getConfig().get(LauncherProperties.LIBRARIES_CHECK_FILE_HASH, false)
+                        && Files.exists(path)
+                        && !downloadService.getChecksumService().checkIntegrity(path, library.getSize(), library.getSha1())) {
+                    log.warn("Library " + libPath + " failed integrity check, deleting...");
+                    Files.delete(path);
                 }
 
-                library.getExtractor().extract(path, dlls);
+                if (!Files.exists(path)) {
+                    libraryDownloader.download(library, path);
+                }
+
+                String absolutePath = path.toAbsolutePath().toString();
+                library.getExtractor().extract(absolutePath, dlls);
                 if (!library.isNativeLibrary()) {
-                    targets.add(new Target(false, path));
+                    targets.add(new Target(false, absolutePath));
                 }
             } else {
                 log.debug("Ignoring: " + library.getName());
             }
         }
 
+        log.debug("Finished processing libraries");
         return targets;
     }
 
@@ -186,24 +209,23 @@ public class ProcessFactory {
         return builder.start();
     }
 
-    protected void downloadAssets(FileManager files, Version version)
-        throws IOException {
-        new AssetsDownloader(files, config, version.getAssetsUrl(), version.getAssets())
-            .download();
+    protected void downloadAssets(FileManager files, Version version) throws IOException {
+        log.debug("Downloading Assets");
+        new AssetsDownloader(downloadService, config, files, version.getAssetsUrl(), version.getAssets()).download();
     }
 
-    protected void download(String from, String to) throws IOException {
-        IOUtil.download(from, to);
-    }
-
-    private void debugCommand(List<String> command) {
+    private void debugCommand(List<String> command, JavaLaunchCommandBuilder commandBuilder) {
         StringBuilder commandDebugBuilder = new StringBuilder();
         if (!command.isEmpty()) {
             commandDebugBuilder.append("\"").append(command.get(0)).append("\" "); // escape java path
         }
 
         for (int i = 1; i < command.size(); i++) {
-            commandDebugBuilder.append(command.get(i)).append((i == command.size() - 1) ? "" : " ");
+            if (commandBuilder.getAccount().getToken().equals(command.get(i))) {
+                commandDebugBuilder.append("********").append((i == command.size() - 1) ? "" : " ");
+            } else {
+                commandDebugBuilder.append(command.get(i)).append((i == command.size() - 1) ? "" : " ");
+            }
         }
 
         log.debug(commandDebugBuilder.toString());

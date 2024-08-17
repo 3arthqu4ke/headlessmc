@@ -15,10 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Supplier;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.*;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
@@ -34,12 +32,14 @@ public class LoggingService {
     private static final Iterable<Level> LEVELS = unmodifiableList(asList(OFF, SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, ALL));
     private Supplier<PrintStream> streamFactory = () -> new PrintStream(new FileOutputStream(FileDescriptor.out), true);
     private boolean fileHandler = Boolean.parseBoolean(System.getProperty(LoggingProperties.FILE_HANDLER_ENABLED, "true"));
+    private Supplier<Path> pathFactory = () -> Paths.get("HeadlessMC").resolve("headlessmc.log");
+    private Supplier<Formatter> formatterFactory = ThreadFormatter::new;
 
     public void init() {
         clearOtherHandlers();
         addLoggingHandler();
         if (fileHandler) {
-            addFileHandler(Paths.get("HeadlessMC").resolve("headlessmc.log"));
+            addFileHandler(pathFactory.get());
         }
 
         setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "WARNING"), false);
@@ -51,8 +51,16 @@ public class LoggingService {
     }
 
     public void setLevel(Level level) {
+        setLevel(level, false);
+    }
+
+    public void setLevel(Level level, boolean atLeast) {
         for (Handler handler : getRootHandlers()) {
             if (handler instanceof HmcHandler && !(handler instanceof FileHandler)) {
+                if (atLeast && handler.getLevel().intValue() < level.intValue()) {
+                    continue;
+                }
+
                 handler.setLevel(level);
             }
         }
@@ -96,13 +104,13 @@ public class LoggingService {
     }
 
     public void addLoggingHandler() {
-        Logger.getLogger("").addHandler(new HmcStreamHandler(streamFactory.get()));
+        Logger.getLogger("").addHandler(new HmcStreamHandler(streamFactory.get(), formatterFactory.get()));
     }
 
     public void addFileHandler(Path path) {
         try {
             Files.createDirectories(path.getParent());
-            Logger.getLogger("").addHandler(new HmcFileHandler(path));
+            Logger.getLogger("").addHandler(new HmcFileHandler(path, formatterFactory.get()));
         } catch (IOException e) {
             log.error("Failed to create directories for path " + path, e);
         }

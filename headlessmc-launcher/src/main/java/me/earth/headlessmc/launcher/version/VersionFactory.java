@@ -18,7 +18,7 @@ class VersionFactory {
     private final ArgumentFactory argumentFactory;
 
     public Version parse(JsonObject json, File folder, Supplier<Integer> id)
-        throws VersionParseException {
+            throws VersionParseException {
         val parentName = JsonUtil.getString(json, "inheritsFrom");
         val assets = JsonUtil.getString(json, "assets");
         val mainClass = JsonUtil.getString(json, "mainClass");
@@ -33,24 +33,29 @@ class VersionFactory {
 
         val assetsUrl = JsonUtil.getString(json, "assetIndex", "url");
         val clientUrl = JsonUtil.getString(json, "downloads", "client", "url");
+        val clientSha1 = JsonUtil.getString(json, "downloads", "client", "sha1");
+        val clientSize = JsonUtil.getLong(json, "downloads", "client", "size");
         val newFormat = new AtomicBoolean();
         val arguments = argumentFactory.parse(argumentElement, newFormat::set);
-        return VersionImpl.builder()
-                          .folder(folder)
-                          .json(json)
-                          .type(type == null ? "unknown" : type)
-                          .arguments(arguments)
-                          .java(majorVersion)
-                          .id(id.get())
-                          .assets(assets)
-                          .assetsUrl(assetsUrl)
-                          .name(name)
-                          .parentName(parentName)
-                          .mainClass(mainClass)
-                          .newArgumentFormat(newFormat.get())
-                          .libraries(libraries)
-                          .clientDownload(clientUrl)
-                          .build();
+        return VersionImpl
+                .builder()
+                .folder(folder)
+                .json(json)
+                .type(type == null ? "unknown" : type)
+                .arguments(arguments)
+                .java(majorVersion)
+                .id(id.get())
+                .assets(assets)
+                .assetsUrl(assetsUrl)
+                .name(name)
+                .parentName(parentName)
+                .mainClass(mainClass)
+                .newArgumentFormat(newFormat.get())
+                .libraries(libraries)
+                .clientDownload(clientUrl)
+                .clientSha1(clientSha1)
+                .clientSize(clientSize)
+                .build();
     }
 
 }

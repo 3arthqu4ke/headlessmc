@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.Instrumentation;
 import me.earth.headlessmc.launcher.os.OS;
@@ -22,8 +23,8 @@ public class MockProcessFactory extends ProcessFactory {
     private ProcessBuilder builder;
     private LaunchOptions options;
 
-    public MockProcessFactory(FileManager files, HasConfig hasConfig, OS os) {
-        super(files, hasConfig, os);
+    public MockProcessFactory(DownloadService downloadService, FileManager files, HasConfig hasConfig, OS os) {
+        super(downloadService, files, hasConfig, os);
     }
 
     @Override
@@ -41,11 +42,6 @@ public class MockProcessFactory extends ProcessFactory {
 
     @Override
     protected void downloadAssets(FileManager files, Version version) {
-        // dummy
-    }
-
-    @Override
-    protected void download(String from, String to) throws IOException {
         // dummy
     }
 

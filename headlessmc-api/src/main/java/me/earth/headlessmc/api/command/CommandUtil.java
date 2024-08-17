@@ -1,8 +1,6 @@
 package me.earth.headlessmc.api.command;
 
 import lombok.experimental.UtilityClass;
-import me.earth.headlessmc.api.command.Command;
-import me.earth.headlessmc.api.command.CommandContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;

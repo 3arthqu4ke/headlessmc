@@ -1,6 +1,5 @@
 package me.earth.headlessmc.api.util;
 
-import me.earth.headlessmc.api.util.Table;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

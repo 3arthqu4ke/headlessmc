@@ -2,8 +2,8 @@ package me.earth.headlessmc.launcher.command;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.AbstractCommand;
+import me.earth.headlessmc.api.command.CommandException;
 
 import java.util.Locale;
 import java.util.logging.Level;

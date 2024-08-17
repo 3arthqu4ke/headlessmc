@@ -8,7 +8,6 @@ import me.earth.headlessmc.launcher.version.Version;
 import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;

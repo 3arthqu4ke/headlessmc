@@ -37,12 +37,11 @@ public class FabricCommandTest implements UsesResources, ParsesVersions {
         val java = new Java("dummyJava", 17);
         val jar = new File("dummyJar");
 
-        val result = command.getCommand(version, java, jar, new ArrayList<>());
+        val  result = command.getCommand(version, java, jar, new ArrayList<>(), false);
         assertEquals(Arrays.asList(
             "dummyJava", "-jar", jar.getAbsolutePath(), "client",
             "-noprofile", "-mcversion", "1.19", "-dir",
-            LauncherMock.INSTANCE.getMcFiles().getBase().toPath().toAbsolutePath().toString()),
-                     result);
+            LauncherMock.INSTANCE.getMcFiles().getBase().toPath().toAbsolutePath().toString()), result);
     }
 
 }

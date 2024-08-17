@@ -21,7 +21,7 @@ public class LibraryFactoryTest
         assertEquals("testpackage", libs.get(0).getPackage());
         assertEquals("test", libs.get(0).getNameAfterPackage());
         assertEquals("testversion", libs.get(0).getVersionNumber());
-        assertEquals("_download_url", libs.get(0).getUrl(""));
+        assertEquals("http://_download_url", libs.get(0).getUrl(""));
         assertFalse(libs.get(0).isNativeLibrary());
     }
 

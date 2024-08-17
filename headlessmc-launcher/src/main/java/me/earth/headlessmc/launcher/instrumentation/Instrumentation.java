@@ -21,17 +21,21 @@ public class Instrumentation {
     private final File base;
 
     public List<String> instrument(List<Target> targetsIn) throws IOException {
+        log.debug("Instrumenting Classpath");
         List<Target> targets = targetsIn;
         if (transformers.isEmpty()) {
+            log.debug("No Transformers found");
             return targets.stream()
                           .map(Target::getPath)
                           .collect(Collectors.toList());
         }
 
         for (val transformer : transformers) {
+            log.debug("Transforming classpath with " + transformer);
             targets = transformer.transform(targets);
         }
 
+        log.debug("Classpath Transformers ran successfully");
         val result = new ArrayList<String>(targets.size());
         for (val target : targets) {
             val targetTransformers = transformers
@@ -46,26 +50,23 @@ public class Instrumentation {
         val inactive = getInactiveTransformers(transformers);
         if (!inactive.isEmpty()) {
             log.info("Transformers did not run: " + inactive);
+        } else {
+            log.debug("Transformers ran successfully");
         }
 
         return result;
     }
 
     // TODO: this is too long and kinda ugly
-    private String runTransformers(Target target,
-                                   List<Target> targets,
-                                   List<Transformer> transformers)
-        throws IOException {
+    private String runTransformers(Target target, List<Target> targets, List<Transformer> transformers) throws IOException {
         if (transformers.isEmpty()) {
             return target.getPath();
         }
 
+        log.debug("Transforming " + target.getPath());
         @Cleanup
         val jar = target.toJar();
-        // TODO: cache????
-        val file = base.getAbsolutePath()
-            + File.separator
-            + new File(jar.getName()).getName();
+        val file = base.getAbsolutePath() + File.separator + new File(jar.getName()).getName();
         File targetJar = new File(file);
         if (targetJar.exists()) {
             log.warning(targetJar + " already exists!");
@@ -78,7 +79,7 @@ public class Instrumentation {
             val next = e.nextElement();
             @Cleanup
             val is = jar.getInputStream(next);
-            EntryStream stream = new EntryStream(is, targets, next);
+            EntryStream stream = new EntryStream(is, targets, next::getName);
 
             for (Transformer transformer : transformers) {
                 val stream2 = transformer.transform(stream);

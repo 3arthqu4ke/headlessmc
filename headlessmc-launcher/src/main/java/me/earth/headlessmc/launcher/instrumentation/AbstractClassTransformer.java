@@ -1,7 +1,9 @@
 package me.earth.headlessmc.launcher.instrumentation;
 
+import lombok.Cleanup;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -15,22 +17,34 @@ public abstract class AbstractClassTransformer extends AbstractTransformer {
 
     @Override
     public EntryStream transform(EntryStream stream) throws IOException {
+        byte @Nullable [] transformedClassBytes = maybeTransform(stream);
+        if (transformedClassBytes != null) {
+            return EntryStream.of(transformedClassBytes, stream.getTargets(), stream.getEntry());
+        }
+
+        return stream;
+    }
+
+    public byte @Nullable [] maybeTransform(EntryStream stream) throws IOException {
         if (matches(stream)) {
             log.debug("Reading " + stream.getEntry().getName());
             ClassReader reader = new ClassReader(stream.getStream());
             ClassNode node = new ClassNode();
             reader.accept(node, 0); // TODO: do we want parserOptions?
             this.transform(node);
-            ClassWriter writer = new EntryClassWriter(stream);
+            @Cleanup
+            EntryClassWriter writer = getEntryClassWriter(stream);
             log.debug("Writing transformed class: " + node.name);
             node.accept(writer);
             setRun(true);
-            return EntryStream.of(writer.toByteArray(),
-                                  stream.getTargets(),
-                                  stream.getEntry());
+            return writer.toByteArray();
         }
 
-        return stream;
+        return null;
+    }
+
+    public EntryClassWriter getEntryClassWriter(EntryStream entry) throws IOException {
+        return new EntryClassWriter(entry);
     }
 
     protected boolean matches(EntryStream stream) {

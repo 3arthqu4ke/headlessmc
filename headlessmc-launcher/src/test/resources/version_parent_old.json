@@ -11,7 +11,7 @@
     "sha1": "assetIndex_sha1",
     "size": 1337,
     "totalSize": 1337,
-    "url": "assetIndex_url"
+    "url": "http://assetIndex_url"
   },
   "assets": "1.19",
   "complianceLevel": 1,
@@ -19,22 +19,22 @@
     "client": {
       "sha1": "client_download",
       "size": 1337,
-      "url": "client_download_url"
+      "url": "http://client_download_url"
     },
     "client_mappings": {
       "sha1": "client_mappings_sha1",
       "size": 1337,
-      "url": "client_mappings_url"
+      "url": "http://client_mappings_url"
     },
     "server": {
       "sha1": "server_sha1",
       "size": 1337,
-      "url": "server_url"
+      "url": "http://server_url"
     },
     "server_mappings": {
       "sha1": "server_mappingsSha1",
       "size": 1337,
-      "url": "server_download"
+      "url": "http://server_download"
     }
   },
   "javaVersion": {
@@ -48,7 +48,7 @@
           "path": "library2_path",
           "sha1": "library2_sha1",
           "size": 1337,
-          "url": "library2_url"
+          "url": "http://library2_url"
         }
       },
       "name": "com.mojang:logging:1.0.0"
@@ -59,7 +59,7 @@
           "path": "library1_path",
           "sha1": "library1_sha1",
           "size": 1337,
-          "url": "library1_url"
+          "url": "http://library1_url"
         }
       },
       "name": "test:library1:1.0.0",
@@ -80,7 +80,7 @@
         "id": "client-1.12.xml",
         "sha1": "logging-sha1",
         "size": 1337,
-        "url": "logging-url"
+        "url": "http://logging-url"
       },
       "type": "log4j2-xml"
     }

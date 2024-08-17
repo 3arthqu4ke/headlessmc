@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.Data;
 import lombok.val;
 import me.earth.headlessmc.launcher.os.OS;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Map;
@@ -18,6 +19,8 @@ class LibraryImpl implements Library {
     private final String name;
     private final Rule rule;
     private final String baseUrl;
+    private final @Nullable String sha1;
+    private final @Nullable Long size;
     private final String url;
     private final String path;
     private final boolean nativeLibrary;

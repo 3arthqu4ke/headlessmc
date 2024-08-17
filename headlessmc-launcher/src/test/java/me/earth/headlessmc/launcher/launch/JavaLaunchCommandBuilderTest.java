@@ -16,7 +16,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class CommandTest implements UsesResources {
+public class JavaLaunchCommandBuilderTest implements UsesResources {
     private final Version version = getVersion("version_parent.json", 0);
 
     @Test
@@ -41,8 +41,8 @@ public class CommandTest implements UsesResources {
         Assertions.assertEquals(expected, command.build());
     }
 
-    private Command setupCommand() {
-        return Command.builder()
+    private JavaLaunchCommandBuilder setupCommand() {
+        return JavaLaunchCommandBuilder.builder()
                       .classpath(Arrays.asList("test", "test"))
                       .account(new LaunchAccount("d", "d", "d", "d", "d"))
                       .os(new OS("win", OS.Type.WINDOWS, "11", true))

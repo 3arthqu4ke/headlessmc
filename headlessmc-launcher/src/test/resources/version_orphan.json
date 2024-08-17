@@ -14,7 +14,7 @@
   "libraries": [
     {
       "name": "net.fabricmc:fabric-loader:1.33.7",
-      "url": "fabric-url"
+      "url": "http://fabric-url"
     }
   ]
 }

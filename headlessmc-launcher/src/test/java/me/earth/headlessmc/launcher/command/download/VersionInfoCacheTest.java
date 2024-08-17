@@ -22,25 +22,25 @@ public class VersionInfoCacheTest implements UsesResources {
         Assertions.assertEquals(0, info.getId());
         Assertions.assertEquals(vic.getLatestSnapshot(), info.getName());
         Assertions.assertEquals("snapshot", info.getType());
-        Assertions.assertEquals("1.19.1-rc1-url", info.getUrl());
+        Assertions.assertEquals("http://1.19.1-rc1-url", info.getUrl());
 
         info = vic.get(1);
         Assertions.assertEquals(1, info.getId());
         Assertions.assertEquals(vic.getLatestRelease(), info.getName());
         Assertions.assertEquals("release", info.getType());
-        Assertions.assertEquals("1.19-url", info.getUrl());
+        Assertions.assertEquals("http://1.19-url", info.getUrl());
 
         info = vic.get(2);
         Assertions.assertEquals(2, info.getId());
         Assertions.assertEquals("rd-132211", info.getName());
         Assertions.assertEquals("old_alpha", info.getType());
-        Assertions.assertEquals("rd-132211-url", info.getUrl());
+        Assertions.assertEquals("http://rd-132211-url", info.getUrl());
 
         info = vic.get(3);
         Assertions.assertEquals(3, info.getId());
         Assertions.assertEquals("b1.6.1", info.getName());
         Assertions.assertEquals("old_beta", info.getType());
-        Assertions.assertEquals("b1.6.1-url", info.getUrl());
+        Assertions.assertEquals("http://b1.6.1-url", info.getUrl());
     }
 
 }

@@ -3,7 +3,6 @@ package me.earth.headlessmc.api.config;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
-import me.earth.headlessmc.api.config.Property;
 
 import java.util.function.Function;
 

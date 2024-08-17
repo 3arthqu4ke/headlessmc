@@ -2,8 +2,9 @@ package me.earth.headlessmc.runtime.commands;
 
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.api.command.impl.QuitCommand;
 import me.earth.headlessmc.api.command.YesNoContext;
+import me.earth.headlessmc.api.command.impl.QuitCommand;
+import me.earth.headlessmc.runtime.RuntimeProperties;
 
 public class RuntimeQuitCommand extends QuitCommand {
     public RuntimeQuitCommand(HeadlessMc ctx) {
@@ -13,7 +14,7 @@ public class RuntimeQuitCommand extends QuitCommand {
 
     @Override
     public void execute(String line, String... args) {
-        if (CommandUtil.hasFlag("-y", args)) {
+        if (CommandUtil.hasFlag("-y", args) || ctx.getConfig().get(RuntimeProperties.DONT_ASK_FOR_QUIT, false)) {
             super.execute(line, args);
         } else {
             ctx.log("Minecraft won't save properly. Quit anyways (Y/N)?");
@@ -22,6 +23,7 @@ public class RuntimeQuitCommand extends QuitCommand {
                     super.execute(line, args);
                 }
             });
+
         }
     }
 

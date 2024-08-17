@@ -11,6 +11,9 @@ import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.launcher.download.ChecksumService;
+import me.earth.headlessmc.launcher.download.DownloadService;
+import me.earth.headlessmc.launcher.download.MockDownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.JavaService;
@@ -30,7 +33,7 @@ public class LauncherMock {
     public static final Launcher INSTANCE;
 
     static {
-        val base = new FileManager("build");
+        val base = FileManager.forPath("build");
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
         val in = new CommandLine();
@@ -45,11 +48,12 @@ public class LauncherMock {
         val store = new DummyAccountStore(fileManager, configs);
         val accounts = new DummyAccountManager(store, new DummyAccountValidator());
 
-        val versionSpecificModManager = new VersionSpecificModManager(fileManager.createRelative("specifics"));
-
-        INSTANCE = new Launcher(hmc, versions, mcFiles, mcFiles, fileManager,
-                                new MockProcessFactory(mcFiles, configs, os), configs,
-                                javas, accounts, versionSpecificModManager, new PluginManager());
+        DownloadService downloadService = new MockDownloadService();
+        val versionSpecificModManager = new VersionSpecificModManager(downloadService, fileManager.createRelative("specifics"));
+        INSTANCE = new Launcher(hmc, versions, mcFiles, mcFiles,
+                new ChecksumService(), new MockDownloadService(),
+                fileManager, new MockProcessFactory(downloadService, mcFiles, configs, os), configs,
+                javas, accounts, versionSpecificModManager, new PluginManager());
 
         INSTANCE.getConfigService().setConfig(ConfigImpl.empty());
     }
