@@ -11,6 +11,7 @@ public class CheerpJPlugin implements HeadlessMcPlugin {
 
     @Override
     public void init(Launcher launcher) {
+        // TODO: make this usable as a normal plugin?!
         // NOP
     }
 
