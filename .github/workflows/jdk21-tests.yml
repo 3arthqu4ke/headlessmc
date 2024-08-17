@@ -1,4 +1,4 @@
-name: JDK-17-Tests
+name: JDK-21-Tests
 
 on:
   push:
