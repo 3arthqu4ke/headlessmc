@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -64,6 +65,8 @@ public class CheerpJGUI implements PasswordAware {
         displayArea.setEditable(false);
         displayArea.setBackground(darkBackground);
         displayArea.setForeground(lightForeground);
+        // TODO: does not work well
+        // TODO: also I do not want to autoscroll if the user is scrolling manually!
         DefaultCaret caret = (DefaultCaret) displayArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
@@ -97,12 +100,15 @@ public class CheerpJGUI implements PasswordAware {
             String textString = new String(inputText);
             Arrays.fill(inputText, (char) 0);
             if (inputField.getEchoChar() != '*') {
-                history.add(0, textString);
+                if (history.isEmpty() || !textString.equalsIgnoreCase(history.get(0))) {
+                    history.add(0, textString);
+                }
+
                 while (history.size() > 128) {
                     history.remove(history.size() - 1);
                 }
 
-                displayArea.append(textString + "\n");
+                displayArea.append("> " + textString + "\n");
             }
 
             inputField.setText("");
@@ -121,6 +127,17 @@ public class CheerpJGUI implements PasswordAware {
 
         frame.add(panel);
         frame.setVisible(true);
+
+        try {
+            String version = WebWrapperBridge.getVersion();
+            String expectedVersion = WebWrapperBridge.getExpectedVersion();
+            if (!Objects.equals(version, expectedVersion)) {
+                displayArea.append("Your index.html is out of date! Please update your browser cache for this website!\n");
+            }
+        } catch (Throwable t) {
+            displayArea.append("CheerpJ wrapper not available!");
+        }
+
         initialized = true;
     }
 
@@ -168,14 +185,15 @@ public class CheerpJGUI implements PasswordAware {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                boolean empty = history.isEmpty();
+                if (!empty && e.getKeyCode() == KeyEvent.VK_UP) {
                     historyIndex++;
                     if (historyIndex >= history.size()) {
                         historyIndex = history.size() - 1;
                     }
 
                     inputField.setText(history.get(historyIndex));
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                } else if (!empty && e.getKeyCode() == KeyEvent.VK_DOWN) {
                     historyIndex--;
                     if (historyIndex < 0) {
                         historyIndex = -1;

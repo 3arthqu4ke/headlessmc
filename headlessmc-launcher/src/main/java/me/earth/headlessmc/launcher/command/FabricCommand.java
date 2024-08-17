@@ -59,8 +59,7 @@ public class FabricCommand extends AbstractVersionCommand {
         ctx.log("Installed Fabric for: " + ver.getName() + " successfully!");
     }
 
-    private void downloadInstaller(String url, File jar)
-            throws CommandException {
+    private void downloadInstaller(String url, File jar) throws CommandException {
         try {
             IOUtil.download(url, jar.getAbsolutePath());
         } catch (IOException e) {
@@ -77,7 +76,7 @@ public class FabricCommand extends AbstractVersionCommand {
             bestVersion = ParseUtil.parseI(javaVersion);
         }
 
-        boolean inMemory = CommandUtil.hasFlag("-inmemory", args);
+        boolean inMemory = CommandUtil.hasFlag("-inmemory", args) || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false);
         Java java = inMemory ? ctx.getJavaService().getCurrent() : ctx.getJavaService().findBestVersion(bestVersion);
         if (java == null) {
             java = ctx.getJavaService().findBestVersion(8);

@@ -12,7 +12,7 @@ public class CheerpJFileManager extends FileManager {
 
     @Override
     public void delete(File file) throws IOException {
-        // CheerpJ does not seem to support java.nio.files.Files.delete
+        // CheerpJ does not seem to support java.nio.files.Files.delete yet
         //noinspection ResultOfMethodCallIgnored
         iterate(file, File::delete);
     }

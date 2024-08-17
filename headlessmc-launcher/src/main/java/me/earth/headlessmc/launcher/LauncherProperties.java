@@ -66,6 +66,7 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> ASSETS_CHECK_HASH = bool("hmc.assets.check.hash");
     Property<Boolean> ASSETS_CHECK_FILE_HASH = bool("hmc.assets.check.file.hash");
     Property<Boolean> ASSETS_BACKOFF = bool("hmc.assets.backoff");
+    Property<Boolean> ALWAYS_DOWNLOAD_ASSETS_INDEX = bool("hmc.always.download.assets.index");
 
     Property<Boolean> SET_LIBRARY_DIR = bool("hmc.set.library.dir");
     Property<Boolean> NO_AUTO_CONFIG = bool("hmc.no.auto.config");

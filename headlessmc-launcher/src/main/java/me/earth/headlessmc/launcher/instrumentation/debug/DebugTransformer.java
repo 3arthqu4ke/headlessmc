@@ -9,6 +9,9 @@ import java.lang.reflect.Modifier;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
+/**
+ * A transformer that prints the name of every method that is called.
+ */
 public class DebugTransformer extends AbstractClassTransformer {
     public DebugTransformer() {
         super("");
@@ -52,6 +55,7 @@ public class DebugTransformer extends AbstractClassTransformer {
         }
     }
 
+    @SuppressWarnings("unused") // called by the injected bytecode
     public static void println(String string) throws InterruptedException {
         System.out.println(string);
         Thread.sleep(50);
@@ -59,7 +63,7 @@ public class DebugTransformer extends AbstractClassTransformer {
 
     @Override
     protected boolean matches(EntryStream stream) {
-        return !stream.getEntry().getName().contains("joptsimple");
+        return true;
     }
 
 }

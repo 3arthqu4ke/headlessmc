@@ -1,10 +1,8 @@
 package me.earth.headlessmc.web.cheerpj.plugin;
 
 import me.earth.headlessmc.api.process.InAndOutProvider;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -20,36 +18,15 @@ public class CheerpJMain {
         PrintStream out = new PrintStream(new OutputStream() {
             @Override
             public void write(int b) {
-                // SwingUtilities.invokeLater(() -> gui.getDisplayArea().append(String.valueOf((char) b)));
+                SwingUtilities.invokeLater(() -> gui.getDisplayArea().append(String.valueOf((char) b)));
                 STDOUT.write(b);
             }
 
-            @Override
-            public void write(byte @NotNull [] b) throws IOException {
-                STDOUT.write(b);
-            }
-
-            @Override
-            public void write(byte @NotNull [] b, int off, int len) {
-                STDOUT.write(b, off, len);
-            }
+            /// idk I failed to implement write(byte[] b, int off, int len), and idk why
         }, true);
 
         System.setOut(out);
         System.setErr(out);
-        Thread setOutThread = new Thread(() -> {
-            while (true) {
-                try {
-                    Thread.sleep(250);
-                    System.setOut(out);
-                    System.setErr(out);
-                } catch (InterruptedException e) {
-                    e.printStackTrace(out);
-                }
-            }
-        });
-
-        setOutThread.start();
 
         inAndOutProvider.setConsole(() -> null);
         inAndOutProvider.setOut(() -> out);

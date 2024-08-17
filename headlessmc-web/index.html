@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>HeadlessMc</title>
-    <script src="https://cjrtnc.leaningtech.com/3.0/cj3loader.js"></script>
+    <script src="https://cjrtnc.leaningtech.com/3_20240813_522/cj3loader.js"></script>
     <style>
         html, body {
             margin: 0;
@@ -29,6 +29,7 @@
     const lib = await cheerpjRunLibrary("/app/headlessmc-web-2.1.0.jar");
     const Resizer = await lib.me.earth.headlessmc.web.cheerpj.Resizer;
     const resizer = await Resizer.getInstance();
+    await resizer.setVersion("1.0.0");
     await resizer.setSize(width, height)
     const resizeObserver = new ResizeObserver(entries => {
         for (let entry of entries) {

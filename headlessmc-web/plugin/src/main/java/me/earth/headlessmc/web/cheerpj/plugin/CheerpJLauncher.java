@@ -25,7 +25,6 @@ import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
-import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OSFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
@@ -64,10 +63,14 @@ public class CheerpJLauncher {
         loggingService.setStreamFactory(() -> inAndOutProvider.getOut().get());
         loggingService.setFormatterFactory(NoThreadFormatter::new);
         loggingService.init();
-        loggingService.setLevel(Level.FINE);
+        loggingService.setLevel(Level.INFO);
 
         Logger logger = LoggerFactory.getLogger("HeadlessMc");
         logger.info("Initializing HeadlessMc...");
+        logger.info("This is just a demo!");
+        logger.info("Powered by CheerpJ!");
+        logger.info("https://cheerpj.com/");
+        logger.info("CheerpJ currently does not support some features we need, so you will probably not be able to launch the game yet!");
         logger.info("Display Size: " + gui.getFrame().getWidth() + "x" + gui.getFrame().getHeight());
         logger.warn("HeadlessMc is running in a browser and will not be able to make CORS requests.");
         logger.warn("You will need a CORS proxy or plugin.");
@@ -112,6 +115,8 @@ public class CheerpJLauncher {
         System.setProperty(LauncherProperties.EXTRACTED_FILE_CACHE_UUID.getName(), CACHE_UUID.toString());
         System.setProperty(LauncherProperties.ALWAYS_IN_MEMORY.getName(), "true");
         System.setProperty(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA.getName(), "false");
+        // TODO: it the assets index file always corrupts on CheerpJ for some reason
+        System.setProperty(LauncherProperties.ALWAYS_DOWNLOAD_ASSETS_INDEX.getName(), "true");
     }
 
     private void initialize(HeadlessMc hmc, Logger logger, Path headlessMcRoot) {
@@ -131,6 +136,7 @@ public class CheerpJLauncher {
 
         val accountStore = new AccountStore(files, configs);
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
+        // TODO: CheerpJVm does not have the EC Keyfactory!
         accounts.getOfflineChecker().setOffline(true);
 
         val versionSpecificModManager = new VersionSpecificModManager(files.createRelative("specifics"));
@@ -138,7 +144,7 @@ public class CheerpJLauncher {
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
 
         val launcher = new Launcher(hmc, versions, mcFiles, gameDir, files,
-                new ProcessFactory(mcFiles, configs, os), configs,
+                new CheerpJProcessFactory(mcFiles, configs, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager());
 
         deleteOldFiles(launcher, logger);
@@ -149,8 +155,11 @@ public class CheerpJLauncher {
         CopyContext copyContext = new CopyContext(hmc, true);
         copyContext.add(new FilesCommand(launcher));
         copyContext.add(new ResizeCommand(hmc, gui));
+        copyContext.add(new ClearCommand(hmc, gui));
         hmc.getCommandLine().setAllContexts(copyContext);
 
+        // launcher.getPluginManager().init(launcher);
+        launcher.getPluginManager().getPlugins().add(new CheerpJPlugin());
         hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
     }
 

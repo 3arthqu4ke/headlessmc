@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.AbstractVersionCommand;
 import me.earth.headlessmc.launcher.version.Version;
 
@@ -71,7 +72,7 @@ public class ForgeCommand extends AbstractVersionCommand {
         val uuid = UUID.randomUUID();
         val fm = ctx.getFileManager().createRelative(uuid.toString());
         try {
-            installer.install(version, fm, CommandUtil.hasFlag("-inmemory", args));
+            installer.install(version, fm, CommandUtil.hasFlag("-inmemory", args) || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false));
             ctx.getVersionService().refresh();
         } catch (IOException e) {
             val message = "Failed to install forge for version " + ver.getName()
