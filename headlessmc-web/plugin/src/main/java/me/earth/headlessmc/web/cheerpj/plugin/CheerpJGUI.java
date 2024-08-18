@@ -3,6 +3,7 @@ package me.earth.headlessmc.web.cheerpj.plugin;
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.earth.headlessmc.api.command.PasswordAware;
+import me.earth.headlessmc.launcher.Launcher;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,7 +25,7 @@ public class CheerpJGUI implements PasswordAware {
     @Getter
     private static final CheerpJGUI instance = new CheerpJGUI();
 
-    private final JFrame frame = new JFrame("HeadlessMc - 2.1.0");
+    private final JFrame frame = new JFrame("HeadlessMc - " + Launcher.VERSION);
 
     private final JPanel panel = new JPanel();
     private final JTextArea displayArea = new JTextArea(); // TODO: use JTextPane for color instead
