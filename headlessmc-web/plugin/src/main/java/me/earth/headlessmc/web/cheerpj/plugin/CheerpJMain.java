@@ -15,10 +15,16 @@ public class CheerpJMain {
         gui.init();
 
         InAndOutProvider inAndOutProvider = new InAndOutProvider();
+        setupInAndOutProvider(gui, inAndOutProvider);
+
+        new CheerpJLauncher(inAndOutProvider, gui).launch();
+    }
+
+    public static void setupInAndOutProvider(CheerpJGUI cheerpJGUI, InAndOutProvider inAndOutProvider) {
         PrintStream out = new PrintStream(new OutputStream() {
             @Override
             public void write(int b) {
-                SwingUtilities.invokeLater(() -> gui.getDisplayArea().append(String.valueOf((char) b)));
+                SwingUtilities.invokeLater(() -> cheerpJGUI.getDisplayArea().append(String.valueOf((char) b)));
                 STDOUT.write(b);
             }
 
@@ -37,8 +43,6 @@ public class CheerpJMain {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         });
-
-        new CheerpJLauncher(inAndOutProvider, gui).launch();
     }
 
 }

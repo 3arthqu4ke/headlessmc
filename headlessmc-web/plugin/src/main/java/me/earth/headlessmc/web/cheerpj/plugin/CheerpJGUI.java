@@ -48,6 +48,7 @@ public class CheerpJGUI implements PasswordAware {
         } catch (Throwable t) {
             CheerpJMain.STDOUT.println("CheerpJ wrapper not available.");
             t.printStackTrace(CheerpJMain.STDOUT);
+            frame.setSize(800, 600);
         }
 
         panel.setLayout(new BorderLayout());
@@ -135,7 +136,7 @@ public class CheerpJGUI implements PasswordAware {
                 displayArea.append("Your index.html is out of date! Please update your browser cache for this website!\n");
             }
         } catch (Throwable t) {
-            displayArea.append("CheerpJ wrapper not available!");
+            displayArea.append("CheerpJ wrapper not available! If you are not running this in a browser, ignore this message.\n");
         }
 
         initialized = true;
