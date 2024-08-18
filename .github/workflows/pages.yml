@@ -37,6 +37,9 @@ jobs:
       - name: Copy index.html
         run: cp headlessmc-web/index.html _site/
 
+      - name: Copy javadoc
+        run: cp -r build/docs/javadoc/ _site/
+
       - name: Upload Web Jar
         uses: actions/upload-pages-artifact@v3.0.1
 
