@@ -1,26 +1,30 @@
 # the image currently can't run non-headlessly which is ok, but maybe get an image with libX11?
 # libX11.so.6: cannot open shared object file: No such file or directory
-
-# TODO: download HMC-Specifics?
-FROM openjdk:17.0.2-jdk as java17
-FROM openjdk:21-jdk as java21
-FROM openjdk:8u332-jdk
-
-COPY --from=java17 /usr/java/openjdk-17 /usr/java/openjdk-17
-COPY --from=java21 /usr/java/openjdk-21 /usr/java/openjdk-21
-
-# For some reason the jdk17 image does not come with any certificates, which causes problems
-RUN cp --remove-destination /usr/local/openjdk-8/jre/lib/security/cacerts /usr/java/openjdk-17/lib/security/cacerts
-RUN cp --remove-destination /usr/local/openjdk-8/jre/lib/security/cacerts /usr/java/openjdk-21/lib/security/cacerts
+FROM eclipse-temurin:21-jdk-noble AS build
 
 COPY . /headlessmc
 WORKDIR /headlessmc
 
 RUN chmod +x ./gradlew
-RUN ./gradlew build -Dhmc.jar.dir=headlessmc-scripts
+RUN ./gradlew build
 
-WORKDIR /headlessmc/headlessmc-scripts
+RUN rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-dev.jar
+RUN rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-javadoc.jar
+RUN rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-sources.jar
+
+FROM eclipse-temurin:8-jre-noble AS java8
+FROM eclipse-temurin:17-jre-noble AS java17
+FROM eclipse-temurin:21-jre-noble
+
+COPY --from=java8 /opt/java/openjdk /opt/java/java8
+COPY --from=java17 /opt/java/openjdk /opt/java/java17
+
+COPY --from=build /headlessmc/headlessmc-scripts /headlessmc
+COPY --from=build /headlessmc/headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*.jar /headlessmc
+
+WORKDIR /headlessmc
 # add the scripts directory to the path. this allows us to just execute hmc ... comfortably without any ./
-ENV PATH="/headlessmc/headlessmc-scripts:${PATH}"
+ENV PATH="/headlessmc:${PATH}"
 RUN chmod +x hmc
-# TODO: maybe clean up, create a directory which contains nothing but the launcher jar and the hmc file?
+
+ENTRYPOINT ["/bin/bash"]
