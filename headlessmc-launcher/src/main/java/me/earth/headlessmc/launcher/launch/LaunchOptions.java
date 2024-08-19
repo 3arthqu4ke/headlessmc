@@ -48,7 +48,7 @@ public class LaunchOptions {
 
         public LaunchOptionsBuilder parseFlags(
             Launcher ctx, boolean quit, String... args) {
-            boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, args);
+            boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, ALWAYS_LWJGL_FLAG, args);
             // if offline only allow launching with the lwjgl flag!
             if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
                 log.warning("You are offline, game will start in headless mode!");
@@ -59,9 +59,9 @@ public class LaunchOptions {
                 .runtime(CommandUtil.hasFlag("-commands", args))
                 .lwjgl(lwjgl)
                 .inMemory(CommandUtil.hasFlag("-inmemory", args) || launcher.getConfig().get(ALWAYS_IN_MEMORY, false))
-                .jndi(flag(ctx, "-jndi", INVERT_JNDI_FLAG, args))
-                .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, args))
-                .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, args))
+                .jndi(flag(ctx, "-jndi", INVERT_JNDI_FLAG, ALWAYS_JNDI_FLAG, args))
+                .lookup(flag(ctx, "-lookup", INVERT_LOOKUP_FLAG, ALWAYS_LOOKUP_FLAG, args))
+                .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, ALWAYS_PAULS_FLAG, args))
                 .noOut(quit || CommandUtil.hasFlag("-noout", args))
                 .forceSimple(CommandUtil.hasFlag("-forceSimple", args))
                 .forceBoot(CommandUtil.hasFlag("-forceBoot", args))
@@ -79,10 +79,8 @@ public class LaunchOptions {
             return this;
         }
 
-        private boolean flag(
-            HasConfig ctx, String flg, Property<Boolean> inv, String... args) {
-            return CommandUtil.hasFlag(flg, args)
-                ^ ctx.getConfig().get(inv, false);
+        private boolean flag(HasConfig ctx, String flg, Property<Boolean> invertFlag, Property<Boolean> alwaysFlag, String... args) {
+            return ctx.getConfig().get(alwaysFlag, false) || CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(invertFlag, false);
         }
     }
 
