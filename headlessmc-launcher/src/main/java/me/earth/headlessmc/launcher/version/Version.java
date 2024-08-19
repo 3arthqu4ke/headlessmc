@@ -17,7 +17,7 @@ public interface Version extends HasName, HasId, HasParent<Version> {
 
     int getId();
 
-    String getParentName();
+    @Nullable String getParentName();
 
     String getAssets();
 

@@ -68,7 +68,7 @@ public class DownloadService extends IOService {
                 .setConnectTimeout(5_000)
                 .setReadTimeout(5_000 * 2)
                 .setCookieManager(null)
-                .setFollowRedirects(false)
+                .setFollowRedirects(true)
                 .setRetryHandler(new RetryHandler(0, 50));
     }
 

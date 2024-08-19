@@ -175,6 +175,7 @@ public class CheerpJLauncher {
                 // The default HttpClient sets a user agent which causes the browser to make a CORS preflight check
                 ((AbstractLoginCommand) command).setHttpClientFactory(() ->
                     downloadService.getDefaultHttpClient()
+                        .setFollowRedirects(false)
                         .setHeader(Headers.ACCEPT, ContentTypes.APPLICATION_JSON.toString())
                         .setHeader(Headers.ACCEPT_LANGUAGE, "en-US,en"));
             }

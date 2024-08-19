@@ -5,7 +5,7 @@ import lombok.experimental.Delegate;
 import me.earth.headlessmc.launcher.version.Version;
 
 @RequiredArgsConstructor
-class DelegatingVersion implements Version {
+public class DelegatingVersion implements Version {
     @Delegate
     protected final Version version;
 

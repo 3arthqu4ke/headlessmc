@@ -17,7 +17,7 @@ public class VersionInfo {
     private final @Nullable Modlauncher modlauncher;
 
     public VersionInfo(Version version) {
-        Version vanilla = FamilyUtil.getOldestParent(version);
+        Version vanilla = FamilyUtil.getOldestParent(version); // TODO: use parent name instead?
         this.version = vanilla.getName();
         this.modlauncher = Modlauncher.getFromVersionName(version.getName());
     }
