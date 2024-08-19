@@ -6,7 +6,7 @@ COPY . /headlessmc
 WORKDIR /headlessmc
 
 RUN chmod +x ./gradlew
-RUN ./gradlew build
+RUN ./gradlew headlessmc-launcher-wrapper:build
 
 RUN rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-dev.jar
 RUN rm headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*-javadoc.jar
