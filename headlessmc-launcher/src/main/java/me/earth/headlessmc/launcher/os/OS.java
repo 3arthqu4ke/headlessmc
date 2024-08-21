@@ -15,13 +15,14 @@ public class OS implements HasName {
     private final String version;
     private final boolean arch;
 
+    @Getter
     @RequiredArgsConstructor
     public enum Type implements HasName {
         WINDOWS("windows"),
         LINUX("linux"),
-        OSX("osx");
+        OSX("osx"),
+        UNKNOWN("unknown");
 
-        @Getter
         private final String name;
     }
 
