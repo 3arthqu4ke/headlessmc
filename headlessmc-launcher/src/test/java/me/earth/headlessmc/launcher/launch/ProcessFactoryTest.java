@@ -4,7 +4,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.api.MockedHeadlessMc;
 import me.earth.headlessmc.launcher.LauncherMock;
-import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.download.MockDownloadService;
 import me.earth.headlessmc.launcher.os.OS;
 import org.junit.jupiter.api.Test;

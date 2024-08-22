@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.java;
 
 import lombok.CustomLog;
-import lombok.experimental.UtilityClass;
 import me.earth.headlessmc.launcher.os.OS;
 
 import java.io.IOException;
@@ -15,9 +14,8 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 @CustomLog
-@UtilityClass
 public class JavaVersionFinder {
-    public static List<Java> findJavaVersions(JavaService javaService, OS os) {
+    public List<Java> findJavaVersions(JavaService javaService, OS os) {
         List<Java> result = new ArrayList<>();
         if (os.getType() == OS.Type.WINDOWS) {
             Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
@@ -37,7 +35,7 @@ public class JavaVersionFinder {
         return result;
     }
 
-    private static List<Java> checkDirectory(JavaService javaService, Path javaDirPath, OS os) {
+    private List<Java> checkDirectory(JavaService javaService, Path javaDirPath, OS os) {
         if (Files.exists(javaDirPath) && Files.isDirectory(javaDirPath)) {
             try (Stream<Path> stream = Files.list(javaDirPath)) {
                 List<Java> result = new ArrayList<>();

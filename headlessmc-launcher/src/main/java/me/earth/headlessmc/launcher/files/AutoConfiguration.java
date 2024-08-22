@@ -22,6 +22,10 @@ import java.util.Properties;
 @CustomLog
 public class AutoConfiguration {
     public static void runAutoConfiguration(FileManager fileManager) {
+        runAutoConfiguration(fileManager, new JavaVersionFinder());
+    }
+
+    public static void runAutoConfiguration(FileManager fileManager, JavaVersionFinder javaVersionFinder) {
         Config dummyConfig = new ConfigImpl(new Properties(), "dummy", 0);
         if (dummyConfig.get(LauncherProperties.NO_AUTO_CONFIG, false)) {
             return;
@@ -31,7 +35,7 @@ public class AutoConfiguration {
             File file = fileManager.create("config.properties");
             OS os = OSFactory.detect(dummyConfig);
             JavaService javaService = new JavaService(() -> dummyConfig);
-            List<Java> javas = JavaVersionFinder.findJavaVersions(javaService, os);
+            List<Java> javas = javaVersionFinder.findJavaVersions(javaService, os);
             try (OutputStream output = Files.newOutputStream(file.toPath())) {
                 output.write("hmc.java.versions=".getBytes(StandardCharsets.UTF_8));
                 Iterator<Java> itr = javas.iterator();

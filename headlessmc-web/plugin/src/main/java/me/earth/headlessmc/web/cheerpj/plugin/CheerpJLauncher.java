@@ -183,7 +183,7 @@ public class CheerpJLauncher {
 
         // launcher.getPluginManager().init(launcher);
         launcher.getPluginManager().getPlugins().add(new CheerpJPlugin());
-        hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions)));
+        hmc.log(VersionUtil.makeTable(VersionUtil.releases(versions.getContents())));
     }
 
     private void deleteOldFiles(Launcher launcher, Logger logger) {

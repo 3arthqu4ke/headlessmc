@@ -26,10 +26,10 @@ public class JavaLaunchCommandBuilderTest implements UsesResources {
         Assertions.assertThrows(LaunchException.class, command::build);
         LauncherMock.INSTANCE.getJavaService().add(new Java("dummy", 8));
         Assertions.assertThrows(LaunchException.class, command::build);
-        LauncherMock.INSTANCE.getJavaService().add(new Java("java-17", 17));
+        LauncherMock.INSTANCE.getJavaService().add(new Java("java-10000", 10000));
         System.setProperty(LauncherProperties.SET_LIBRARY_DIR.getName(), "false");
         val expected = Arrays.asList(
-            "java-17", "-Dhmc.deencapsulate=true",
+            "java-10000", "-Dhmc.deencapsulate=true",
             "-Djava.library.path=natives_path", "-cp",
             "test" + File.pathSeparator + "test",
             "-DSomeSystemProperty=${some_arg}",

@@ -12,11 +12,12 @@ import java.util.function.Function;
 
 // TODO: move to Paths?!?!?!?!?!?!
 // TODO: Why were we using Files in the first place?
+@Setter
 @CustomLog
 public class FileManager {
     @Setter
     private static Function<String, FileManager> factory = FileManager::new;
-    private final String base;
+    private String base;
 
     // @Deprecated
     public FileManager(String base) {

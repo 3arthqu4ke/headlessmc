@@ -18,7 +18,7 @@ public class VersionsCommand extends AbstractLauncherCommand {
         }
 
         val filter = VersionTypeFilter.forVersions();
-        val versions = filter.apply(ctx.getVersionService(), args);
+        val versions = filter.apply(ctx.getVersionService().getContents(), args);
         ctx.log(VersionUtil.makeTable(versions));
     }
 

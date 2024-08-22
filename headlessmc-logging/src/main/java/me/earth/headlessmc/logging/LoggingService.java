@@ -1,6 +1,7 @@
 package me.earth.headlessmc.logging;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.Setter;
 import me.earth.headlessmc.logging.handlers.HmcFileHandler;
 import me.earth.headlessmc.logging.handlers.HmcHandler;
@@ -34,6 +35,8 @@ public class LoggingService {
     private boolean fileHandler = Boolean.parseBoolean(System.getProperty(LoggingProperties.FILE_HANDLER_ENABLED, "true"));
     private Supplier<Path> pathFactory = () -> Paths.get("HeadlessMC").resolve("headlessmc.log");
     private Supplier<Formatter> formatterFactory = ThreadFormatter::new;
+    @Getter
+    private boolean initialized = false;
 
     public void init() {
         clearOtherHandlers();
@@ -44,6 +47,7 @@ public class LoggingService {
 
         setLevelFromString(System.getProperty(LoggingProperties.LOG_LEVEL, "WARNING"), false);
         setLevelFromString(System.getProperty(LoggingProperties.FILE_LOG_LEVEL, "DEBUG"), true);
+        initialized = true;
     }
 
     public boolean setLevel(String level) {

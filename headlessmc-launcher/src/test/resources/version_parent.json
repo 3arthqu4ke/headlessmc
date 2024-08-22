@@ -91,7 +91,7 @@
   },
   "javaVersion": {
     "component": "java-runtime-gamma",
-    "majorVersion": 17
+    "majorVersion": 10000
   },
   "libraries": [
     {

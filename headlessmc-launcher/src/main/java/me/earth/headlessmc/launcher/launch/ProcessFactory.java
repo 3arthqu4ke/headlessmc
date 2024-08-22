@@ -55,8 +55,8 @@ public class ProcessFactory {
         }
 
         log.debug("Creating extraction directory");
-        val dlls = options.getFiles().createRelative("extracted");
-        val targets = processLibraries(version, dlls);
+        val natives = options.getFiles().createRelative("extracted");
+        val targets = processLibraries(version, natives);
         addGameJar(version, targets);
 
         List<String> classpath = instrumentation.instrument(targets);
@@ -65,24 +65,13 @@ public class ProcessFactory {
         }
 
         log.debug("Building command");
-        val commandBuilder = JavaLaunchCommandBuilder.builder()
-                             .account(options.getAccount())
-                             .classpath(classpath)
-                             .os(os)
-                             .jvmArgs(options.getAdditionalJvmArgs())
-                             .natives(dlls.getBase().getAbsolutePath())
-                             .runtime(options.isRuntime())
-                             .version(version)
-                             .launcher(launcher)
-                             .inMemory(options.isInMemory())
-                             .lwjgl(options.isLwjgl())
-                             .build();
+        val commandBuilder = configureCommandBuilder(options, version, classpath, natives).build();
 
         val command = commandBuilder.build();
         downloadAssets(files, version);
         debugCommand(command, commandBuilder);
 
-        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getMcFiles().getPath()));
+        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getGameDir().getPath()));
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
@@ -107,6 +96,22 @@ public class ProcessFactory {
             .redirectInput(options.isNoIn()
                                ? ProcessBuilder.Redirect.PIPE
                                : ProcessBuilder.Redirect.INHERIT));
+    }
+
+    protected JavaLaunchCommandBuilder.JavaLaunchCommandBuilderBuilder configureCommandBuilder(
+            LaunchOptions options, Version version, List<String> classpath, FileManager natives) {
+        return JavaLaunchCommandBuilder
+                .builder()
+                .account(options.getAccount())
+                .classpath(classpath)
+                .os(os)
+                .jvmArgs(options.getAdditionalJvmArgs())
+                .natives(natives.getBase().getAbsolutePath())
+                .runtime(options.isRuntime())
+                .version(version)
+                .launcher(options.getLauncher())
+                .inMemory(options.isInMemory())
+                .lwjgl(options.isLwjgl());
     }
 
     protected void moveRuntimeJarToFirstPlace(List<String> classpath) {

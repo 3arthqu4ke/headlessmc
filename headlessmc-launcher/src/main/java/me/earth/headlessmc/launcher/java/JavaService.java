@@ -4,7 +4,7 @@ import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.Service;
+import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.util.PathUtil;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -17,7 +17,7 @@ import java.util.Set;
 // TODO: This!
 @CustomLog
 @RequiredArgsConstructor
-public class JavaService extends Service<Java> {
+public class JavaService extends LazyService<Java> {
     private final JavaVersionParser parser = new JavaVersionParser();
     private final HasConfig cfg;
     private Java current;
@@ -70,6 +70,7 @@ public class JavaService extends Service<Java> {
     }
 
     public @Nullable Java findBestVersion(Integer version) {
+        ensureInitialized();
         if (version == null) {
             log.error("Version was null, assuming Java 8 is needed!");
             return findBestVersion(8);

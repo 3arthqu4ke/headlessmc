@@ -26,7 +26,7 @@ public class ParallelIOService {
     }
 
     public void execute() throws IOException {
-        long time = System.nanoTime();
+        long nanos = System.nanoTime();
         int total = tasks.size();
         AtomicInteger count = new AtomicInteger();
         AtomicReference<IOException> failed = new AtomicReference<>();
@@ -37,8 +37,8 @@ public class ParallelIOService {
             return failed.get() != null; // end stream early if an asset failed completely
         });
 
-        time = System.currentTimeMillis() - time;
-        log.info("Download took " + time + "ms, parallel: " + parallel);
+        nanos = System.nanoTime() - nanos;
+        log.info("Download took " + (nanos / 1_000_000.0) + "ms, parallel: " + parallel);
         if (failed.get() != null) {
             throw failed.get();
         }

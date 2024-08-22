@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.command;
 
 import lombok.CustomLog;
 import lombok.Getter;
+import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.ParseUtil;
@@ -11,7 +12,6 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
 import me.earth.headlessmc.launcher.launch.SystemPropertyHelper;
-import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
@@ -32,6 +32,7 @@ public class FabricCommand extends AbstractVersionCommand {
         args.put("<version>", "The version to download.");
         args.put("--jvm", "Jvm args for the Fabric Installer.");
         args.put("--java", "Java version to use (e.g. 8, 17).");
+        args.put("--uid", "Specify a specific Fabric version.");
         args.put("-inmemory", "If you want to run the installer inside this JVM.");
     }
 
@@ -97,7 +98,7 @@ public class FabricCommand extends AbstractVersionCommand {
             systemPropertiesBefore.put(key, properties.getProperty(key.toString()));
         }
 
-        List<String> command = getCommand(version, java, jarFile, jvm, inMemory);
+        List<String> command = getCommand(version, java, jarFile, jvm, inMemory, args);
 
         try {
             log.debug("Launching Fabric-Installer for command: " + command);
@@ -139,7 +140,7 @@ public class FabricCommand extends AbstractVersionCommand {
         }
     }
 
-    protected List<String> getCommand(Version version, Java java, File jar, List<String> jvm, boolean inMemory) {
+    protected List<String> getCommand(Version version, Java java, File jar, List<String> jvm, boolean inMemory, String... args) {
         List<String> command = new ArrayList<>();
         if (inMemory) {
             for (String jvmArg : jvm) {
@@ -159,6 +160,13 @@ public class FabricCommand extends AbstractVersionCommand {
         command.add("-noprofile");
         command.add("-mcversion");
         command.add(version.getName());
+        String uid = CommandUtil.getOption("--uid", args);
+        if (uid != null) {
+            log.info("Adding -loader " + uid);
+            command.add("-loader");
+            command.add(uid);
+        }
+
         command.add("-dir");
         command.add(ctx.getMcFiles().getBase().toPath().toAbsolutePath().toString());
         return command;

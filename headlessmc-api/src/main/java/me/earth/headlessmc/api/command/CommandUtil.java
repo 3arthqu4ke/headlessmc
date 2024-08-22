@@ -1,6 +1,7 @@
 package me.earth.headlessmc.api.command;
 
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,7 +97,7 @@ public class CommandUtil {
         return Arrays.stream(args).anyMatch(s -> s.equalsIgnoreCase(arg));
     }
 
-    public static String getOption(String option, String... args) {
+    public static @Nullable String getOption(String option, String... args) {
         for (int i = 0; i < args.length; i++) {
             if (option.equalsIgnoreCase(args[i]) && i < args.length - 1) {
                 return args[i + 1];

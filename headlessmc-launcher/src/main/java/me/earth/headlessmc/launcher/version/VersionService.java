@@ -1,17 +1,15 @@
 package me.earth.headlessmc.launcher.version;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
-import me.earth.headlessmc.launcher.Service;
+import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -21,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Setter
 @CustomLog
 @RequiredArgsConstructor
-public final class VersionService extends Service<Version> {
+public final class VersionService extends LazyService<Version> {
     private final ParentVersionResolver resolver = new ParentVersionResolver();
     private final FileManager files;
 
@@ -62,14 +60,12 @@ public final class VersionService extends Service<Version> {
         return versions.values();
     }
 
-    private void read(File file, File folder, Map<String, Version> versions,
-                      AtomicInteger id, VersionFactory factory) {
+    private void read(File file, File folder, Map<String, Version> versions, AtomicInteger id, VersionFactory factory) {
         for (int i = 0; i < retries + 1; i++) {
             try {
                 log.debug("Reading " + file.getAbsolutePath());
                 JsonElement je = JsonUtil.fromFile(file);
-                val version = factory.parse(je.getAsJsonObject(), folder,
-                        id::getAndIncrement);
+                val version = factory.parse(je.getAsJsonObject(), folder, id::getAndIncrement);
                 if (version.getName() == null) {
                     log.warning("Failed to read version " + file.getName() + ", it did not provide a name!");
                 } else {
@@ -77,9 +73,9 @@ public final class VersionService extends Service<Version> {
                 }
 
                 return;
-            } catch (IOException | JsonParseException | VersionParseException e) {
+            } catch (Exception e) {
                 if (i == retries) {
-                    log.warning(file.getName() + ", " + e.getClass() + ": " + e.getMessage());
+                    log.warning("Failed to read " + file.getName() + ", " + e.getClass() + ": " + e.getMessage());
                 } else {
                     try {
                         log.debug("Retrying " + file.getName() + " : " + e.getMessage());

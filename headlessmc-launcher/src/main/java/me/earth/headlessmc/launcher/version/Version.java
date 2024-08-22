@@ -9,6 +9,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Represents a Minecraft version.
+ * More specifically a parsed version.json of a Minecraft version.
+ */
 // TODO: support logging.xml file?
 public interface Version extends HasName, HasId, HasParent<Version> {
     File getFolder();
