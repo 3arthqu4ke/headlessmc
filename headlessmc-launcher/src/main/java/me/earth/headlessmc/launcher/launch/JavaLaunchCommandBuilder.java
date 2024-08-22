@@ -141,4 +141,9 @@ public class JavaLaunchCommandBuilder {
         }
     }
 
+    // here to make the javadoc happy
+    public static class JavaLaunchCommandBuilderBuilder {
+
+    }
+
 }
