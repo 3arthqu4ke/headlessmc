@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 
 /**
  * A {@link CommandLineReader} that decides whether to use a {@link BufferedCommandLineReader} or a {@link ConsoleCommandLineReader}.
- * If the {@link InAndOutProvider#getConsole()} is available a {@link ConsoleCommandLineReader} will be used always.
+ * If the {@link InAndOutProvider}{@code .getConsole()} is available a {@link ConsoleCommandLineReader} will be used always.
  *
  * @see BufferedCommandLineReader
  * @see ConsoleCommandLineReader

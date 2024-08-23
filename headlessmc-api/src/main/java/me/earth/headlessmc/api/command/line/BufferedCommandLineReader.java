@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 /**
  * The simplest {@link CommandLineReader} implementation,
- * which reads {@link InAndOutProvider#getIn()} with a {@link BufferedReader}.
+ * which reads {@link InAndOutProvider}{@code .getIn()} with a {@link BufferedReader}.
  */
 @CustomLog
 public class BufferedCommandLineReader implements CommandLineReader {

@@ -9,7 +9,7 @@ import java.io.Console;
 import java.io.IOError;
 
 /**
- * An implementation of {@link CommandLineReader} that reads from the console supplied by {@link InAndOutProvider#getConsole()}.
+ * An implementation of {@link CommandLineReader} that reads from the console supplied by {@link InAndOutProvider}{@code .getConsole()}.
  * This is usually {@link System#console()}.
  */
 @CustomLog
