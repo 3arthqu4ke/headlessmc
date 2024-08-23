@@ -37,11 +37,6 @@ allprojects {
         }
 
         maven {
-            name = "ossrh" // for MinecraftAuth SNAPSHOTS, TODO: PLEASE RELEASE ON MAVENCENTRAL!
-            url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-        }
-
-        maven {
             name 'JitPackMaven'
             url 'https://jitpack.io'
         }
