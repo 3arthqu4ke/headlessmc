@@ -134,8 +134,7 @@ public abstract class AbstractLoginCommand extends AbstractCommand {
                     }
 
                     StepFullJavaSession.FullJavaSession session = webview.getFromInput(getLogger(args), httpClient, getWebViewCallback());
-
-                    ctx.log("Session from Webview: " + session);
+                    ctx.log("Session from Webview: " + session.getMcProfile().getName());
                     onSuccessfulLogin(session);
                 } catch (InterruptedException e) {
                     ctx.log("Login process cancelled successfully.");

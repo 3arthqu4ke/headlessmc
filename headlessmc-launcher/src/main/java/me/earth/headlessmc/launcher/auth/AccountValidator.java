@@ -26,7 +26,7 @@ public class AccountValidator {
     private static final URL URL = URLs.url("https://api.minecraftservices.com/entitlements/mcstore");
 
     public ValidatedAccount validate(StepFullJavaSession.FullJavaSession session) throws AuthException {
-        log.debug("Validating session " + session);
+        log.debug("Validating session " + session.getMcProfile().getName() + " : " + session.getMcProfile().getId());
         try {
             HttpClient httpClient = MinecraftAuth.createHttpClient();
             GetRequest getRequest = new GetRequest(URL);
