@@ -20,14 +20,32 @@ import java.io.IOError;
 import java.io.IOException;
 import java.util.function.BiConsumer;
 
+/**
+ * An implementation of a {@link CommandLineReader} that reads commands from a JLine {@link Terminal} with a {@link LineReader}.
+ */
 @Getter
 @CustomLog
 public class JLineCommandLineReader implements CommandLineReader {
+    /**
+     * The prefix to display when reading from the command line.
+     */
     @Setter
     protected volatile String readPrefix;
 
-    protected volatile LineReader lineReader;
-    protected volatile Terminal terminal;
+    /**
+     * The LineReader we are currently reading from.
+     * Might be {@code null}.
+     */
+    protected volatile @Nullable LineReader lineReader;
+    /**
+     * The Terminal that is currently in use.
+     * Might be {@code null}.
+     */
+    protected volatile @Nullable Terminal terminal;
+    /**
+     * If the {@link #terminal} in use is a dumb terminal.
+     * @see TerminalBuilder#dumb(boolean)
+     */
     protected volatile boolean dumb;
 
     @Override

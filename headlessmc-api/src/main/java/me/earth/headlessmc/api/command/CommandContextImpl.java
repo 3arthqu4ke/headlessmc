@@ -3,15 +3,25 @@ package me.earth.headlessmc.api.command;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.LogsMessages;
 import me.earth.headlessmc.api.config.HmcProperties;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * Default implementation of {@link CommandContext}.
+ */
 @RequiredArgsConstructor
 @SuppressWarnings({"unchecked", "RedundantSuppression"}) // delegate
 public class CommandContextImpl implements CommandContext {
+    /**
+     * The list of Commands that this CommandContext can execute.
+     */
     protected final List<Command> commands = new ArrayList<>();
+    /**
+     * The HeadlessMc instance this CommandContext uses for {@link LogsMessages#log(String)}.
+     */
     protected final HeadlessMc log;
 
     @Override
@@ -31,6 +41,14 @@ public class CommandContextImpl implements CommandContext {
         }
     }
 
+    /**
+     * Calls {@link Command#execute(String, String...)} on the given command for the given Arguments.
+     * Catches any {@link CommandException} that might occur and logs it.
+     *
+     * @param cmd the command to execute.
+     * @param message the full command.
+     * @param args the message split into arguments.
+     */
     protected void executeCommand(Command cmd, String message, String... args) {
         try {
             cmd.execute(message, args);

@@ -3,6 +3,9 @@ package me.earth.headlessmc.jline;
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.api.config.PropertyTypes;
 
+/**
+ * A collection of properties for configuring JLine.
+ */
 public interface JLineProperties {
     Property<Boolean> ENABLED = PropertyTypes.bool("hmc.jline.enabled");
 

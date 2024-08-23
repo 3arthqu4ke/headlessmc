@@ -2,15 +2,23 @@ package me.earth.headlessmc.api.command.impl;
 
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.HeadlessMc;
-import me.earth.headlessmc.api.command.AbstractCommand;
-import me.earth.headlessmc.api.command.Command;
-import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.api.command.HasDescription;
+import me.earth.headlessmc.api.command.*;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.util.Table;
 
 import java.util.Map;
 
+/**
+ * A {@link Command} implementation that displays information about Commands from a {@link CommandContext}.
+ */
 public class HelpCommand extends AbstractCommand {
+    /**
+     * Constructs a new HelpCommand.
+     * The {@link CommandContext} from the {@link CommandLine} of the given {@link HeadlessMc}
+     * will be used to list commands and to find commands to display information for.
+     *
+     * @param ctx the HeadlessMc instance holding the CommandLine with the commands.
+     */
     public HelpCommand(HeadlessMc ctx) {
         super(ctx, "help", "Information about commands.");
         args.put("<command>", "The name of the command to get help for.");
@@ -25,25 +33,22 @@ public class HelpCommand extends AbstractCommand {
                 if (args.length > 2) {
                     String desc = cmd.getArgDescription(args[2]);
                     if (desc == null) {
-                        throw new CommandException(
-                            "No description found for '" + args[2] + "'.");
+                        throw new CommandException("No description found for '" + args[2] + "'.");
                     } else {
-                        ctx.log(String.format(
-                            "%s %s: %s", cmd.getName(), args[2], desc));
+                        ctx.log(String.format("%s %s: %s", cmd.getName(), args[2], desc));
                     }
                 } else {
-                    ctx.log(String.format("%s : %s", cmd.getName(),
-                                          cmd.getDescription()));
+                    ctx.log(String.format("%s : %s", cmd.getName(), cmd.getDescription()));
                     ctx.log(
                         new Table<Map.Entry<String, String>>()
                             .withColumn("arg", Map.Entry::getKey)
                             .withColumn("description", Map.Entry::getValue)
                             .addAll(cmd.getArgs2Descriptions())
-                            .build());
+                            .build()
+                    );
                 }
             } else {
-                throw new CommandException(
-                    String.format("Couldn't find command %s", args[1]));
+                throw new CommandException(String.format("Couldn't find command %s", args[1]));
             }
         } else {
             ctx.log(
@@ -52,7 +57,8 @@ public class HelpCommand extends AbstractCommand {
                     .withColumn("description", HasDescription::getDescription)
                     .withColumn("args", this::argsToString)
                     .addAll(ctx.getCommandLine().getCommandContext())
-                    .build());
+                    .build()
+            );
         }
     }
 

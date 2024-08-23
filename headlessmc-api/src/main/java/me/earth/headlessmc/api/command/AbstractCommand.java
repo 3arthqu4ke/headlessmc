@@ -8,6 +8,9 @@ import me.earth.headlessmc.api.HeadlessMc;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Abstract base class for {@link Command}.
+ */
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public abstract class AbstractCommand implements Command {

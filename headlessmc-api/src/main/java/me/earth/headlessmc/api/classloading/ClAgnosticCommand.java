@@ -3,6 +3,7 @@ package me.earth.headlessmc.api.classloading;
 import lombok.Data;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.util.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,10 +13,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * A {@link Command} implementation that delegates to another command.
+ * This delegation happens via reflection so any object that exposes the same methods as {@link Command} can be used.
+ * This is generally meant for environments where the Command class has been loaded multiple times from multiple ClassLoaders.
+ * Through the Reflection delegation this allows you to communicate commands between ClassLoaders.
+ *
  * @see ApiClassloadingHelper
  */
 @Data
 public class ClAgnosticCommand implements Command {
+    /**
+     * A remote instance of {@link Command}, potentially loaded by another classloader.
+     * Because of that we cannot cast it to a Command directly,
+     * but need to use reflection to access its methods.
+     */
     private final Object delegate;
 
     @Override

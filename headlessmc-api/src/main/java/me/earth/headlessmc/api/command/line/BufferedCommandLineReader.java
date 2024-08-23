@@ -2,12 +2,17 @@ package me.earth.headlessmc.api.command.line;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.process.InAndOutProvider;
 
 import java.io.BufferedReader;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/**
+ * The simplest {@link CommandLineReader} implementation,
+ * which reads {@link InAndOutProvider#getIn()} with a {@link BufferedReader}.
+ */
 @CustomLog
 public class BufferedCommandLineReader implements CommandLineReader {
     @Override

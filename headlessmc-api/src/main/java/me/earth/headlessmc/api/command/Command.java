@@ -14,6 +14,8 @@ import java.util.Map;
  * Commands are managed by a {@link CommandContext}.
  * Due to classloading problems, Commands and CommandContext both only expose methods
  * where parameters and return values are from the java packages (see {@link ApiClassloadingHelper}).
+ *
+ * @see AbstractCommand
  */
 public interface Command extends HasName, HasDescription, HasArguments {
     /**

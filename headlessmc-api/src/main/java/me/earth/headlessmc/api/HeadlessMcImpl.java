@@ -10,6 +10,9 @@ import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.logging.LoggingService;
 
+/**
+ * A default implementation for the {@link HeadlessMc} interface.
+ */
 @Getter
 @RequiredArgsConstructor
 public class HeadlessMcImpl implements HeadlessMc {

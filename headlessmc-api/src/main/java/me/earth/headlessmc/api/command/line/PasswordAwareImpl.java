@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import me.earth.headlessmc.api.command.PasswordAware;
 
+/**
+ * Simplest implementation of {@link PasswordAware}.
+ */
 @Getter
 @Setter
 public class PasswordAwareImpl implements PasswordAware {

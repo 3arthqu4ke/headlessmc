@@ -3,10 +3,15 @@ package me.earth.headlessmc.api.command.line;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.process.InAndOutProvider;
 
 import java.io.Console;
 import java.io.IOError;
 
+/**
+ * An implementation of {@link CommandLineReader} that reads from the console supplied by {@link InAndOutProvider#getConsole()}.
+ * This is usually {@link System#console()}.
+ */
 @CustomLog
 @RequiredArgsConstructor
 class ConsoleCommandLineReader implements CommandLineReader {

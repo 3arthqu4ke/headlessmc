@@ -7,6 +7,13 @@ import me.earth.headlessmc.api.process.InAndOutProvider;
 import java.io.Console;
 import java.util.function.Supplier;
 
+/**
+ * A {@link CommandLineReader} that decides whether to use a {@link BufferedCommandLineReader} or a {@link ConsoleCommandLineReader}.
+ * If the {@link InAndOutProvider#getConsole()} is available a {@link ConsoleCommandLineReader} will be used always.
+ *
+ * @see BufferedCommandLineReader
+ * @see ConsoleCommandLineReader
+ */
 @CustomLog
 @RequiredArgsConstructor
 public class DefaultCommandLineProvider implements Supplier<CommandLineReader> {
