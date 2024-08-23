@@ -40,6 +40,7 @@ public class JavaServiceTest {
         assertEquals(11, javaService.parseSystemProperty("11.0.2"));
         assertEquals(12, javaService.parseSystemProperty("12"));
         assertEquals(13, javaService.parseSystemProperty("13.0.1"));
+        assertEquals(21, javaService.parseSystemProperty("21-internal"));
     }
 
     @Test

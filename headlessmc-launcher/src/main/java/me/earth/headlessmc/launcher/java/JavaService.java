@@ -131,6 +131,11 @@ public class JavaService extends LazyService<Java> {
             if (dot != -1) {
                 version = version.substring(0, dot);
             }
+
+            int hyphen = version.indexOf("-"); // 21-internal
+            if (hyphen != -1) {
+                version = version.substring(0, hyphen);
+            }
         }
 
         return Integer.parseInt(version);
