@@ -86,7 +86,8 @@ public class JavaLaunchCommandBuilder {
         }
 
         CommandLineReader commandLineReader = launcher.getCommandLine().getCommandLineReader();
-        if (runtime && commandLineReader instanceof JLineCommandLineReader && ((JLineCommandLineReader) commandLineReader).isDumb()) {
+        if (runtime && commandLineReader instanceof JLineCommandLineReader && ((JLineCommandLineReader) commandLineReader).isDumb()
+                || config.get(JLineProperties.PROPAGATE_ENABLED, true) && !config.get(JLineProperties.ENABLED, true)) {
             result.add(SystemPropertyHelper.toSystemProperty(JLineProperties.ENABLED.getName(), "false"));
         }
 

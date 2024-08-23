@@ -8,6 +8,7 @@ import me.earth.headlessmc.api.config.PropertyTypes;
  */
 public interface JLineProperties {
     Property<Boolean> ENABLED = PropertyTypes.bool("hmc.jline.enabled");
+    Property<Boolean> PROPAGATE_ENABLED = PropertyTypes.bool("hmc.jline.propagate.enabled");
 
     Property<String> PROVIDERS = PropertyTypes.string("hmc.jline.providers");
     Property<String> READ_PREFIX = PropertyTypes.string("hmc.jline.read.prefix");
