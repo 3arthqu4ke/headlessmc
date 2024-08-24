@@ -64,7 +64,7 @@ jobs:
         run: cp headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar .
 
       - name: Run the MC client
-        uses: 3arthqu4ke/mc-runtime-test@2.2.0
+        uses: 3arthqu4ke/mc-runtime-test@2.4.0
         with:
           mc: ${{ github.event.inputs.mc }}
           modloader: ${{ github.event.inputs.modloader }}
