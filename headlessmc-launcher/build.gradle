@@ -59,6 +59,12 @@ jar {
         attributes('Main-Class': MAIN_CLASS)
     }
 
+    into ('headlessmc') {
+        from configurations.includeJarInResources
+        rename 'ForgeCLI(.*).jar', 'forge-cli.jar'
+        rename 'forgecli(.*).jar', 'forge-cli.jar'
+    }
+
     exclude("module-info.class")
     exclude("META-INF/maven/com.google.code.gson/**")
 }
