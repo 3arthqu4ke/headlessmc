@@ -1,6 +1,7 @@
+<!--suppress HtmlDeprecatedAttribute -->
 <h1 align="center" style="font-weight: normal;"><b>HeadlessMc</b></h1>
 <p align="center">A command line launcher for Minecraft Java Edition.</p>
-<p align="center"><img src="headlessmc-web/page/logo.png" alt="logo" style="width:200px;"></img></p>
+<p align="center"><img src="headlessmc-web/page/logo.png" alt="logo" style="width:200px;"></p>
 <p align="center"><a href="https://github.com/3arthqu4ke/mc-runtime-test">Mc-Runtime-Test</a> | HMC | <a href="https://github.com/3arthqu4ke/hmc-specifics">HMC-Specifics</a> | <a href="https://github.com/3arthqu4ke/hmc-optimizations">HMC-Optimizations</a></p>
 
 <div align="center">
@@ -104,8 +105,10 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 
 HeadlessMc can be configured using properties. These can be passed as SystemProperties from the command line or via the
 `HeadlessMc/config.properties` file. Additional configs can be added to the `HeadlessMc/configs` folder. For available
-information see the [HmcProperties](headlessmc-commons/src/main/java/me/earth/headlessmc/config/HmcProperties.java), the
+properties see the [HmcProperties](headlessmc-api/src/main/java/me/earth/headlessmc/api/config/HmcProperties.java), the
 [LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
+[JLineProperties](headlessmc-jline/src/main/java/me/earth/headlessmc/jline/JLineProperties.java), the
+[LoggingProperties](headlessmc-logging/src/main/java/me/earth/headlessmc/logging/LoggingProperties.java), the
 [RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
 [LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
 
