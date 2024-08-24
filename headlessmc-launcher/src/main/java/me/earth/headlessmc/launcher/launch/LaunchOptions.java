@@ -4,10 +4,7 @@ import lombok.Builder;
 import lombok.CustomLog;
 import lombok.Data;
 import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.api.config.HasConfig;
-import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.launcher.Launcher;
-import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.version.Version;
@@ -17,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static me.earth.headlessmc.api.command.CommandUtil.flag;
 import static me.earth.headlessmc.launcher.LauncherProperties.*;
 
 @Data
@@ -77,10 +75,6 @@ public class LaunchOptions {
             }
 
             return this;
-        }
-
-        private boolean flag(HasConfig ctx, String flg, Property<Boolean> invertFlag, Property<Boolean> alwaysFlag, String... args) {
-            return ctx.getConfig().get(alwaysFlag, false) || CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(invertFlag, false);
         }
     }
 

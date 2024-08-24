@@ -7,10 +7,7 @@ import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.launcher.auth.AccountManager;
-import me.earth.headlessmc.launcher.auth.AccountStore;
-import me.earth.headlessmc.launcher.auth.AccountValidator;
-import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.download.MockDownloadService;
@@ -33,6 +30,10 @@ public class LauncherMock {
     public static final Launcher INSTANCE;
 
     static {
+        INSTANCE = create();
+    }
+
+    public static Launcher create() {
         val base = FileManager.forPath("build");
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
@@ -50,12 +51,14 @@ public class LauncherMock {
 
         DownloadService downloadService = new MockDownloadService();
         val versionSpecificModManager = new VersionSpecificModManager(downloadService, fileManager.createRelative("specifics"));
-        INSTANCE = new Launcher(hmc, versions, mcFiles, mcFiles,
+        Launcher launcher = new Launcher(hmc, versions, mcFiles, mcFiles,
                 new ChecksumService(), new MockDownloadService(),
                 fileManager, new MockProcessFactory(downloadService, mcFiles, configs, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager());
 
-        INSTANCE.getConfigService().setConfig(ConfigImpl.empty());
+        launcher.getConfigService().setConfig(ConfigImpl.empty());
+
+        return launcher;
     }
 
     private static final class DummyAccountManager extends AccountManager {

@@ -96,5 +96,5 @@ jobs:
           java: ${{ matrix.version.java }}
           mc-runtime-test: ${{ matrix.version.type }}
           xvfb: false
-          headlessmc-command: -lwjgl --jvm -Djava.awt.headless=true
+          headlessmc-command: -lwjgl --retries 2 --jvm -Djava.awt.headless=true
           download-hmc: false

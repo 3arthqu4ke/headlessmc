@@ -86,6 +86,7 @@ public class InMemoryLauncher extends SimpleInMemoryLauncher {
     }
 
     protected void java9Launch(URL[] classpathUrls, String mainClass, List<String> gameArgs) {
+        ClassLoader contextClassloader = Thread.currentThread().getContextClassLoader();
         try {
             Class<?> bootstrapLauncherClass = Class.forName("me.earth.headlessmc.modlauncher.LayeredBootstrapLauncher");
             Constructor<?> constructor = bootstrapLauncherClass.getConstructor(List.class, URL[].class, String.class);
@@ -94,6 +95,8 @@ public class InMemoryLauncher extends SimpleInMemoryLauncher {
             launch.invoke(bootstrapLauncher, (Object) gameArgs.toArray(new String[0]));
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
+        } finally {
+            Thread.currentThread().setContextClassLoader(contextClassloader);
         }
     }
 

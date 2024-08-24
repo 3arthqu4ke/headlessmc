@@ -43,6 +43,7 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> ALWAYS_LWJGL_FLAG = bool("hmc.always.lwjgl.flag");
     Property<Boolean> ALWAYS_PAULS_FLAG = bool("hmc.always.pauls.flag");
+    Property<Boolean> ALWAYS_QUIT_FLAG = bool("hmc.always.quit.flag");
     Property<Boolean> ALWAYS_JNDI_FLAG = bool("hmc.always.jndi.flag");
     Property<Boolean> ALWAYS_LOOKUP_FLAG = bool("hmc.always.lookup.flag");
 

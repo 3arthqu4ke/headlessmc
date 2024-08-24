@@ -1,6 +1,8 @@
 package me.earth.headlessmc.api.command;
 
 import lombok.experimental.UtilityClass;
+import me.earth.headlessmc.api.config.HasConfig;
+import me.earth.headlessmc.api.config.Property;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -95,6 +97,10 @@ public class CommandUtil {
     // TODO: accept with -- and -!
     public static boolean hasFlag(String arg, String... args) {
         return Arrays.stream(args).anyMatch(s -> s.equalsIgnoreCase(arg));
+    }
+
+    public static boolean flag(HasConfig ctx, String flg, Property<Boolean> invertFlag, Property<Boolean> alwaysFlag, String... args) {
+        return ctx.getConfig().get(alwaysFlag, false) || CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(invertFlag, false);
     }
 
     public static @Nullable String getOption(String option, String... args) {
