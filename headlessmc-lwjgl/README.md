@@ -10,8 +10,8 @@ But it can also run at runtime as a Java agent
 or as a LaunchWrapper Tweaker.
 If you want to do that you also need to add the system property
 `-Djoml.nounsafe=true` to your game, and, if you are
-running on fabric, the path to the headlessmc-lwjg
-l agent jar to the system property `fabric.systemLibraries`.  
+running on fabric, the path to the headlessmc-lwjgl
+agent jar to the system property `fabric.systemLibraries`.  
 
 The transformer will transform every `org.lwjgl`class in the following way:
 Every method body will be replaced with a call to the RedirectionAPI:
