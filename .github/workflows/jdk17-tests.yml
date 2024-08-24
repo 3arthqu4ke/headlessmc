@@ -33,6 +33,7 @@ jobs:
         with:
           name: HeadlessMc
           path: |
-            ./build/libs/headlessmc-*.jar
+            ./build/libs/headlessmc-launcher*.jar
+            ./build/libs/headlessmc-lwjgl*.jar
             ./headlessmc-scripts/hmc
             ./headlessmc-scripts/hmc.bat
