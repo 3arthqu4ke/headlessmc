@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
@@ -39,13 +40,9 @@ public class Launcher implements HeadlessMc {
      */
     private VersionService versionService;
     /**
-     * The .minecraft directory in which we store assets, libraries and versions.
+     * The directories the HeadlessMc launcher will work in.
      */
-    private FileManager mcFiles;
-    /**
-     * The directory in which the game will run.
-     */
-    private FileManager gameDir;
+    private final LauncherConfig launcherConfig;
     /**
      * A service for checking SHA1 hashes.
      */
@@ -54,10 +51,6 @@ public class Launcher implements HeadlessMc {
      * A service for making GET requests.
      */
     private DownloadService downloadService;
-    /**
-     * The directory for HeadlessMc files.
-     */
-    private FileManager fileManager;
     /**
      * Actual Launching happens here.
      */
@@ -82,5 +75,51 @@ public class Launcher implements HeadlessMc {
      * Manages Plugins for the HeadlessMc launcher.
      */
     private PluginManager pluginManager;
+
+    /**
+     * The FileManager managing the HeadlessMc config, log and other files.
+     * This is a convenience method that calls {@link LauncherConfig} and by extension {@link ConfigService}.
+     *
+     * @return the FileManager managing the HeadlessMc config, log and other files.
+     * @see LauncherConfig
+     * @see ConfigService
+     */
+    public FileManager getFileManager() {
+        return launcherConfig.getFileManager();
+    }
+
+    /**
+     * The .minecraft directory in which we store assets, libraries and versions.
+     * This is a convenience method that calls {@link LauncherConfig}.
+     * 
+     * @return the .minecraft directory in which we store assets, libraries and versions.
+     * @see LauncherConfig
+     */
+    public FileManager getMcFiles() {
+        return launcherConfig.getMcFiles();
+    }
+
+    /**
+     * Returns the default game directory.
+     * 
+     * @return the default game directory.
+     * @deprecated call {@link #getGameDir(Version)} or {@link LauncherConfig#getGameDir(String)} instead.
+     */
+    @Deprecated
+    public FileManager getGameDir() {
+        return launcherConfig.getGameDir();
+    }
+
+    /**
+     * Gets the directory to run the game in for a specific version.
+     * This is a convenience method that calls {@link LauncherConfig#getGameDir(Version)}.
+     *
+     * @param version the version to get a game directory for.
+     * @return a FileManager managing the game dir for this version.
+     * @see LauncherConfig#getGameDir(Version) 
+     */
+    public FileManager getGameDir(Version version) {
+        return launcherConfig.getGameDir(version);
+    }
 
 }

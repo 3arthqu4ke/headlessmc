@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
 
@@ -35,7 +36,7 @@ import java.util.stream.Stream;
 public class VersionSpecificModManager {
     private final List<VersionSpecificModRepository> specificMods = new ArrayList<>();
     private final DownloadService downloadService;
-    private final FileManager fileManager;
+    private final LauncherConfig directories;
 
     public VersionSpecificModRepository getRepository(String name) throws VersionSpecificException {
         VersionSpecificModRepository repository = HasName.getByName(name, specificMods);
@@ -48,7 +49,7 @@ public class VersionSpecificModManager {
 
     public void download(Version version, VersionSpecificModRepository repository) throws VersionSpecificException, IOException {
         VersionInfo info = VersionInfo.requireModLauncher(version);
-        File file = fileManager.createRelative(repository.getName()).get(false, false, repository.getFileName(info));
+        File file = getFileManager().createRelative(repository.getName()).get(false, false, repository.getFileName(info));
         if (file.exists()) {
             return;
         }
@@ -60,7 +61,7 @@ public class VersionSpecificModManager {
 
     public void install(Version version, VersionSpecificModRepository repository, Path modsFolder) throws VersionSpecificException, IOException {
         VersionInfo info = VersionInfo.requireModLauncher(version);
-        File file = fileManager.createRelative(repository.getName()).get(false, false, repository.getFileName(info));
+        File file = getFileManager().createRelative(repository.getName()).get(false, false, repository.getFileName(info));
         if (!file.exists()) {
             throw new VersionSpecificException("Failed to find " + repository.getName() + " for version " + info.getDescription());
         }
@@ -116,6 +117,10 @@ public class VersionSpecificModManager {
 
     public void removeRepository(VersionSpecificModRepository repository) {
         specificMods.remove(repository);
+    }
+
+    public FileManager getFileManager() {
+        return directories.getFileManager().createRelative("specifics");
     }
 
 }

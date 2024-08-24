@@ -94,4 +94,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> HTTP_USER_AGENT_ENABLED = bool("hmc.http.user.agent.enabled");
     Property<String> HTTP_USER_AGENT = string("hmc.http.user.agent");
 
+    Property<Boolean> GAME_DIR_FOR_EACH_VERSION = bool("hmc.game.dir.for.each.version");
+
 }

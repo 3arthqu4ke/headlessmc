@@ -1,9 +1,8 @@
 package me.earth.headlessmc.web.cheerpj.plugin;
 
-import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.download.DownloadService;
-import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.instrumentation.InstrumentationClassloader;
 import me.earth.headlessmc.launcher.instrumentation.debug.DebugTransformer;
 import me.earth.headlessmc.launcher.launch.InMemoryLauncher;
@@ -16,8 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CheerpJProcessFactory extends ProcessFactory {
-    public CheerpJProcessFactory(DownloadService downloadService, FileManager files, HasConfig config, OS os) {
-        super(downloadService, files, config, os);
+    public CheerpJProcessFactory(DownloadService downloadService, LauncherConfig launcherConfig, OS os) {
+        super(downloadService, launcherConfig, os);
     }
 
     @Override

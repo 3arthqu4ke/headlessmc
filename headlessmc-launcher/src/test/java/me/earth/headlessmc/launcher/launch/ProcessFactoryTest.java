@@ -24,8 +24,7 @@ public class ProcessFactoryTest {
         val launcher = LauncherMock.INSTANCE;
         val processFactory = new ProcessFactory(
             new MockDownloadService(),
-            launcher.getFileManager(),
-            MockedHeadlessMc.INSTANCE,
+            launcher.getLauncherConfig(),
             new OS("win", OS.Type.WINDOWS, "10", true));
 
         File invalid = new File("DOES_NOT_EXIST!!!!");

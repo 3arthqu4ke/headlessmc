@@ -4,13 +4,13 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.download.AssetsDownloader;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.download.LibraryDownloader;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.instrumentation.Instrumentation;
 import me.earth.headlessmc.launcher.instrumentation.InstrumentationHelper;
 import me.earth.headlessmc.launcher.instrumentation.Target;
@@ -34,8 +34,7 @@ import java.util.zip.ZipFile;
 @RequiredArgsConstructor
 public class ProcessFactory {
     private final DownloadService downloadService;
-    private final FileManager files;
-    private final HasConfig config;
+    private final LauncherConfig config;
     private final OS os;
 
     public @Nullable Process run(LaunchOptions options) throws LaunchException, AuthException, IOException {
@@ -68,10 +67,10 @@ public class ProcessFactory {
         val commandBuilder = configureCommandBuilder(options, version, classpath, natives).build();
 
         val command = commandBuilder.build();
-        downloadAssets(files, version);
+        downloadAssets(config.getMcFiles(), version);
         debugCommand(command, commandBuilder);
 
-        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getGameDir().getPath()));
+        val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getGameDir(version).getPath()));
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
@@ -143,7 +142,7 @@ public class ProcessFactory {
         File gameJar = new File(version.getFolder(), version.getName() + ".jar");
         log.debug("GameJar: " + gameJar.getAbsolutePath());
         if (!gameJar.exists() || !checkZipIntact(gameJar) && gameJar.delete()) {
-            LibraryDownloader downloader = new LibraryDownloader(downloadService, config, os);
+            LibraryDownloader downloader = new LibraryDownloader(downloadService, config.getConfig(), os);
             log.info("Downloading " + version.getName() + " from " + version.getClientDownload());
             downloader.download(version.getClientDownload(), gameJar.toPath().toAbsolutePath(), version.getClientSha1(), version.getClientSize());
         }
@@ -158,7 +157,7 @@ public class ProcessFactory {
         val features = Features.EMPTY;
         val targets = new ArrayList<Target>(version.getLibraries().size());
         Set<String> libPaths = new HashSet<>();
-        LibraryDownloader libraryDownloader = new LibraryDownloader(downloadService, config, os);
+        LibraryDownloader libraryDownloader = new LibraryDownloader(downloadService, config.getConfig(), os);
         for (val library : version.getLibraries()) {
             if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
                 log.debug("Checking: " + library);
@@ -167,9 +166,9 @@ public class ProcessFactory {
                     continue;
                 }
 
-                val path = files.getDir("libraries").toPath().resolve(libPath);
+                val path = config.getMcFiles().getDir("libraries").toPath().resolve(libPath);
                 if ((library.getSha1() != null || library.getSize() != null)
-                        && config.getConfig().get(LauncherProperties.LIBRARIES_CHECK_FILE_HASH, false)
+                        && config.getConfig().getConfig().get(LauncherProperties.LIBRARIES_CHECK_FILE_HASH, false)
                         && Files.exists(path)
                         && !downloadService.getChecksumService().checkIntegrity(path, library.getSize(), library.getSha1())) {
                     log.warn("Library " + libPath + " failed integrity check, deleting...");
@@ -216,7 +215,14 @@ public class ProcessFactory {
 
     protected void downloadAssets(FileManager files, Version version) throws IOException {
         log.debug("Downloading Assets");
-        new AssetsDownloader(downloadService, config, files, version.getAssetsUrl(), version.getAssets()).download();
+        new AssetsDownloader(downloadService, config.getConfig(), files, version.getAssetsUrl(), version.getAssets()).download();
+    }
+
+    /**
+     * @return a FileManager representing the .minecraft directory.
+     */
+    public FileManager getFiles() {
+        return config.getMcFiles();
     }
 
     private void debugCommand(List<String> command, JavaLaunchCommandBuilder commandBuilder) {

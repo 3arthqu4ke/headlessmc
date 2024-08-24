@@ -27,6 +27,7 @@ import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.os.OSFactory;
@@ -139,25 +140,26 @@ public class CheerpJLauncher {
         val os = OSFactory.detect(configs.getConfig());
         val mcFiles = MinecraftFinder.find(configs.getConfig(), os);
         val gameDir = FileManager.mkdir(configs.getConfig().get(LauncherProperties.GAME_DIR, mcFiles.getPath()));
-        val versions = new VersionService(mcFiles);
+        LauncherConfig launcherConfig = new LauncherConfig(configs, mcFiles, gameDir);
+        val versions = new VersionService(launcherConfig);
         versions.setRetries(10);
         versions.refresh();
 
         val javas = Service.refresh(new JavaService(configs));
 
-        val accountStore = new AccountStore(files, configs);
+        val accountStore = new AccountStore(launcherConfig);
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
         // accounts.load(configs.getConfig()); // CheerpJ doesnt support logging in right now
         accounts.getOfflineChecker().setOffline(true);
 
         DownloadService downloadService = new DownloadService();
-        val versionSpecificModManager = new VersionSpecificModManager(downloadService, files.createRelative("specifics"));
+        val versionSpecificModManager = new VersionSpecificModManager(downloadService, launcherConfig);
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
 
-        val launcher = new Launcher(hmc, versions, mcFiles, gameDir,
+        val launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), downloadService,
-                files, new CheerpJProcessFactory(downloadService, mcFiles, configs, os), configs,
+                new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager());
 
         deleteOldFiles(launcher, logger);
@@ -191,11 +193,11 @@ public class CheerpJLauncher {
             return;
         }
 
-        for (val file : launcher.getFileManager().listFiles()) {
+        for (val file : launcher.getLauncherConfig().getFileManager().listFiles()) {
             if (file.isDirectory() && !CACHE_UUID.toString().equals(file.getName()) && UuidUtil.isUuid(file.getName())) {
                 try {
                     logger.debug("Deleting " + file.getAbsolutePath());
-                    launcher.getFileManager().delete(file);
+                    launcher.getLauncherConfig().getFileManager().delete(file);
                 } catch (IOException ioe) {
                     logger.error("Couldn't delete " + file.getName(), ioe);
                 }

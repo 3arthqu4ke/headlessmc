@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 import me.earth.headlessmc.launcher.LazyService;
-import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.io.File;
@@ -21,14 +21,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public final class VersionService extends LazyService<Version> {
     private final ParentVersionResolver resolver = new ParentVersionResolver();
-    private final FileManager files;
+    private final LauncherConfig launcherConfig;
 
     private int retries = 0;
 
     @Override
     protected Collection<Version> update() {
         long nanos = System.nanoTime();
-        val versionFolders = files.getDir("versions").listFiles();
+        val versionFolders = launcherConfig.getMcFiles().getDir("versions").listFiles();
         if (versionFolders == null) {
             log.warning("No Minecraft Version folder found!");
             return Collections.emptyList();

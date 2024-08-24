@@ -5,14 +5,17 @@ import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.ConfigImpl;
-import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
-import me.earth.headlessmc.launcher.auth.*;
+import me.earth.headlessmc.launcher.auth.AccountManager;
+import me.earth.headlessmc.launcher.auth.AccountStore;
+import me.earth.headlessmc.launcher.auth.AccountValidator;
+import me.earth.headlessmc.launcher.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.download.MockDownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.MockProcessFactory;
 import me.earth.headlessmc.launcher.os.OS;
@@ -43,17 +46,18 @@ public class LauncherMock {
 
         val os = new OS("windows", OS.Type.WINDOWS, "11", true);
         val mcFiles = base.createRelative("mcFiles");
-        val versions = new VersionService(mcFiles);
+        LauncherConfig launcherConfig = new LauncherConfig(configs, mcFiles, mcFiles);
+        val versions = new VersionService(launcherConfig);
         val javas = new JavaService(configs);
 
-        val store = new DummyAccountStore(fileManager, configs);
+        val store = new DummyAccountStore(launcherConfig);
         val accounts = new DummyAccountManager(store, new DummyAccountValidator());
 
         DownloadService downloadService = new MockDownloadService();
-        val versionSpecificModManager = new VersionSpecificModManager(downloadService, fileManager.createRelative("specifics"));
-        Launcher launcher = new Launcher(hmc, versions, mcFiles, mcFiles,
+        val versionSpecificModManager = new VersionSpecificModManager(downloadService, launcherConfig);
+        Launcher launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), new MockDownloadService(),
-                fileManager, new MockProcessFactory(downloadService, mcFiles, configs, os), configs,
+                new MockProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager());
 
         launcher.getConfigService().setConfig(ConfigImpl.empty());
@@ -77,8 +81,8 @@ public class LauncherMock {
     }
 
     public static final class DummyAccountStore extends AccountStore {
-        public DummyAccountStore(FileManager fileManager, HasConfig cfg) {
-            super(fileManager, cfg);
+        public DummyAccountStore(LauncherConfig launcherConfig) {
+            super(launcherConfig);
         }
 
         @Override

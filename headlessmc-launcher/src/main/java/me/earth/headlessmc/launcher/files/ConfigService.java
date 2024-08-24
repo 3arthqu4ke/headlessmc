@@ -16,14 +16,17 @@ import java.util.List;
 import java.util.Properties;
 
 // TODO: for convenience we could add a 'hmc.' to every property
+@Setter
+@Getter
 @CustomLog
-@RequiredArgsConstructor
 public class ConfigService extends Service<Config> implements HasConfig {
     private static final String ENDING = ".properties";
-    private final FileManager fileManager;
-    @Getter
-    @Setter
+    private FileManager fileManager;
     private Config config;
+
+    public ConfigService(FileManager fileManager) {
+        this.fileManager = fileManager;
+    }
 
     @Override
     protected List<Config> update() {

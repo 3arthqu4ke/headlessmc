@@ -5,9 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
-import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
 import java.io.File;
@@ -21,11 +20,10 @@ import java.util.List;
 @CustomLog
 @RequiredArgsConstructor
 public class AccountStore {
-    private final FileManager fileManager;
-    private final HasConfig cfg;
+    private final LauncherConfig launcherConfig;
 
     public void save(List<ValidatedAccount> accounts) throws IOException {
-        if (!cfg.getConfig().get(LauncherProperties.STORE_ACCOUNTS, true)) {
+        if (!launcherConfig.getConfig().getConfig().get(LauncherProperties.STORE_ACCOUNTS, true)) {
             return;
         }
 
@@ -41,7 +39,7 @@ public class AccountStore {
 
         JsonObject object = new JsonObject();
         object.add("accounts", array);
-        File file = fileManager.create("auth", ".accounts.json");
+        File file = launcherConfig.getFileManager().create("auth", ".accounts.json");
         String string = JsonUtil.PRETTY_PRINT.toJson(object);
         try (OutputStream os = Files.newOutputStream(file.toPath())) {
             os.write(string.getBytes(StandardCharsets.UTF_8));
@@ -49,7 +47,7 @@ public class AccountStore {
     }
 
     public List<ValidatedAccount> load() throws IOException {
-        File file = fileManager.create("auth", ".accounts.json");
+        File file = launcherConfig.getFileManager().create("auth", ".accounts.json");
         JsonElement je = JsonUtil.fromFile(file);
 
         JsonArray array = JsonUtil.getArray(je, "accounts");

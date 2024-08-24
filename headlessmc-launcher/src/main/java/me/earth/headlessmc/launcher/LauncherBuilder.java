@@ -16,10 +16,7 @@ import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
-import me.earth.headlessmc.launcher.files.AutoConfiguration;
-import me.earth.headlessmc.launcher.files.ConfigService;
-import me.earth.headlessmc.launcher.files.FileManager;
-import me.earth.headlessmc.launcher.files.MinecraftFinder;
+import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.os.OS;
@@ -55,9 +52,8 @@ public class LauncherBuilder {
     private CommandLine commandLine = new CommandLine();
     private PluginManager pluginManager = new PluginManager();
 
+    private LauncherConfig launcherConfig;
     private FileManager fileManager;
-    private FileManager mcFiles;
-    private FileManager gameDir;
 
     private HeadlessMc headlessMc;
     private VersionService versionService;
@@ -88,7 +84,7 @@ public class LauncherBuilder {
 
     public LauncherBuilder initConfigService() {
         return ifNull(LauncherBuilder::configService, LauncherBuilder::configService,
-                () ->  Service.refresh(new ConfigService(requireNonNull(this.fileManager, "FileManager not initialized"))));
+                () -> Service.refresh(new ConfigService(requireNonNull(this.fileManager, "FileManager not initialized"))));
     }
 
     public LauncherBuilder initHmcInstance() {
@@ -108,18 +104,19 @@ public class LauncherBuilder {
 
     public LauncherBuilder initDefaultServices() {
         return ifNull(LauncherBuilder::os, LauncherBuilder::os, () -> OSFactory.detect(requireNonNull(configService, "ConfigHolder was null!").getConfig()))
-            .ifNull(LauncherBuilder::mcFiles, LauncherBuilder::mcFiles, () -> MinecraftFinder.find(configService.getConfig(), os))
-            .ifNull(LauncherBuilder::gameDir, LauncherBuilder::gameDir, () -> FileManager.mkdir(configService.getConfig().get(LauncherProperties.GAME_DIR, mcFiles.getPath())))
-            .ifNull(LauncherBuilder::versionService, LauncherBuilder::versionService, () -> new VersionService(mcFiles))
-            .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService));
+                .ifNull(LauncherBuilder::launcherConfig, LauncherBuilder::launcherConfig, () -> {
+                    FileManager mcFiles = MinecraftFinder.find(configService.getConfig(), os);
+                    FileManager gameDir = FileManager.mkdir(configService.getConfig().get(LauncherProperties.GAME_DIR, mcFiles.getPath()));
+                    return new LauncherConfig(configService, mcFiles, gameDir);
+                })
+                .ifNull(LauncherBuilder::versionService, LauncherBuilder::versionService, () -> new VersionService(requireNonNull(launcherConfig(), "LauncherConfig!")))
+                .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService));
     }
 
     public LauncherBuilder initAccountManager() throws AuthException {
         if (this.accountManager == null) {
-            FileManager fileManager = requireNonNull(this.fileManager, "FileManager was null!");
-            ConfigService configService = requireNonNull(this.configService, "ConfigHolder was null!");
-            AccountStore accountStore = new AccountStore(fileManager, configService);
-            this.accountManager = new AccountManager(new AccountValidator(), new OfflineChecker(configService), accountStore);
+            AccountStore accountStore = new AccountStore(requireNonNull(launcherConfig));
+            this.accountManager = new AccountManager(new AccountValidator(), new OfflineChecker(requireNonNull(configService)), accountStore);
             accountManager.load(configService.getConfig());
         }
 
@@ -128,8 +125,9 @@ public class LauncherBuilder {
 
     public LauncherBuilder configureVersionSpecificModManager() {
         if (this.versionSpecificModManager == null) {
-            FileManager fileManager = requireNonNull(this.fileManager, "FileManager was null!");
-            this.versionSpecificModManager = new VersionSpecificModManager(downloadService, fileManager.createRelative("specifics"));
+            requireNonNull(downloadService, "DownloadService was null!");
+            requireNonNull(launcherConfig, "LauncherConfig was null!");
+            this.versionSpecificModManager = new VersionSpecificModManager(downloadService, launcherConfig);
             versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
             versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
         }
@@ -149,8 +147,7 @@ public class LauncherBuilder {
         if (this.processFactory == null) {
             this.processFactory = new ProcessFactory(
                     requireNonNull(downloadService, "Download Service was null!"),
-                    requireNonNull(mcFiles, "McFiles were null!"),
-                    requireNonNull(configService, "ConfigHolder was null!"),
+                    requireNonNull(launcherConfig, "LauncherConfig was null!"),
                     requireNonNull(os, "OS was null!")
             );
         }
@@ -163,7 +160,7 @@ public class LauncherBuilder {
             return this;
         }
 
-        for (val file : requireNonNull(fileManager, "FileManager was null!").listFiles()) {
+        for (val file : requireNonNull(launcherConfig, "LauncherConfig was null!").getFileManager().listFiles()) {
             if (file.isDirectory() && UuidUtil.isUuid(file.getName())) {
                 try {
                     log.debug("Deleting " + file.getAbsolutePath());
@@ -214,11 +211,9 @@ public class LauncherBuilder {
         return new Launcher(
                 requireNonNull(headlessMc, "HeadlessMc was null!"),
                 requireNonNull(versionService, "VersionService was null!"),
-                requireNonNull(mcFiles, "McFiles were null!"),
-                requireNonNull(gameDir, "GameDir was null!"),
+                requireNonNull(launcherConfig, "LauncherConfig was null!"),
                 requireNonNull(sha1Service, "Sha1Service was null!"),
                 requireNonNull(downloadService, "Download Service was null"),
-                requireNonNull(fileManager, "FileManager was null!"),
                 requireNonNull(processFactory, "ProcessFactory was null!"),
                 requireNonNull(configService, "ConfigService was null!"),
                 requireNonNull(javaService, "JavaService was null!"),

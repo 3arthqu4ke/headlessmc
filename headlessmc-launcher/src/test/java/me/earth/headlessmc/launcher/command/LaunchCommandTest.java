@@ -70,7 +70,7 @@ public class LaunchCommandTest {
         private int runs = 0;
 
         public MockProcessFactory(Launcher launcher) {
-            super(launcher.getDownloadService(), launcher.getMcFiles(), launcher.getConfigService(), launcher.getProcessFactory().getOs());
+            super(launcher.getDownloadService(), launcher.getLauncherConfig(), launcher.getProcessFactory().getOs());
         }
 
         @Override
