@@ -52,11 +52,64 @@ with the `forge`, `fabric`, and `neoforge` commands, e.g. `fabric 1.21`.
 10. If you are ready to launch the game execute `launch <version>`.
 If you want to start the game in headless mode add the `-lwjgl` flag.
 
+### HeadlessMc-Specifics
+
 The [hmc-specifics](https://github.com/3arthqu4ke/hmc-specifics) are mods
 that you can place inside your .minecraft/mods folder.
-With HeadlessMc they allow you to control the game via the command line, e.g.
+Together with HeadlessMc they allow you to control the game via the command line, e.g.
 by sending chat messages and commands with `msg "<message>"`,
 visualizing the menus displayed by Minecraft via `gui` and clicking through menus via `click`.
+
+### Docker 
+
+A preconfigured [docker image](https://hub.docker.com/r/3arthqu4ke/headlessmc/) exists,
+which comes with Java 8, 17 and 21 installed.
+Pull it via `docker pull 3arthqu4ke/headlessmc:latest`
+and run it with `docker run -it 3arthqu4ke/headlessmc:latest`.
+Inside the container you can use the `hmc` command anywhere.
+
+### Android
+
+HeadlessMc can run inside Termux.
+* Download Termux from F-Droid, NOT from the PlayStore.
+* Install Java: `apt update && apt upgrade $ apt install openjdk-<version>`
+* Download the headlessmc-launcher-wrapper.jar into Termux.
+* Disable JLine, as we could not get it to work on Termux for now,
+  by adding `hmc.jline.enabled=false` to the HeadlessMC/config.properties.
+* Now you can use HeadlessMc like you do on Desktop or Docker.
+
+### Web
+
+HeadlessMc can run inside the browser, kinda.
+First, there is CheerpJ, a WebAssembly JVM,
+but it does not support all features we need to launch the game.
+The CheerpJ instance can be tried out [here](https://3arthqu4ke.github.io/headlessmc/).
+Secondly, there is [container2wasm](https://github.com/headlesshq/hmc-container2wasm),
+which can translate the HeadlessMc Docker container
+to WebAssembly and the run it inside the browser, but this is extremly slow.
+
+### Optimizations 
+
+HeadlessMc achieves headless mode by patching the LWJGL library: 
+every of its functions is rewritten to do nothing, or to return stub values
+(you can read more about this [here](headlessmc-lwjgl/README.md)).
+This has the advantage of being independent of Minecraft versions,
+but comes with some overhead.
+A Minecraft version dependent approach are the [hmc-optimizations](https://github.com/3arthqu4ke/hmc-optimizations),
+another set of mods which patch Minecraft itself to skip all rendering code.
+You can also achieve headless mode without patching lwjgl by running headlessmc with a virtual framebuffer like
+[Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml).
+
+### Configuring HeadlessMc
+
+HeadlessMc can be configured using properties. These can be passed as SystemProperties from the command line or via the
+`HeadlessMc/config.properties` file. Additional configs can be added to the `HeadlessMc/configs` folder. For available
+information see the [HmcProperties](headlessmc-commons/src/main/java/me/earth/headlessmc/config/HmcProperties.java), the
+[LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
+[RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
+[LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
+
+### A Note on command arguments
 
 Arguments passed to commands have to be separated using spaces. If you want to pass an Argument which contains spaces
 you need to escape it using quotation marks, like this:
@@ -66,29 +119,7 @@ So `msg "A text with spaces"` will send the chat message `A text with spaces`,
 while `msg "\"A text with spaces\"" additional space`
 will send the chat message `"A text with spaces"` and the argument `additional space` will be dropped.
 
-HeadlessMc also has a preconfigured [docker image](https://hub.docker.com/r/3arthqu4ke/headlessmc/),
-which comes with Java 8, 17 and 21 installed.
-Pull it via `docker pull 3arthqu4ke/headlessmc`
-and run it with `docker run -i -t -p 3arthqu4ke/headlessmc`.
-Inside the container you can use the `hmc` command anywhere.
-
-HeadlessMc achieves headless mode by patching the LWJGL library: 
-every of its functions is rewritten to do nothing, or to return stub values.
-This has the advantage of being independent of Minecraft versions,
-but comes with some overhead.
-A Minecraft version dependent approach are the [hmc-optimizations](https://github.com/3arthqu4ke/hmc-optimizations),
-another set of mods which patch Minecraft itself to skip all rendering code.
-You can also achieve headless mode without patching lwjgl by running headlessmc with a virtual framebuffer like
-[Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml).
-
-HeadlessMc can be configured using properties. These can be passed as SystemProperties from the command line or via the
-`HeadlessMc/config.properties` file. Additional configs can be added to the `HeadlessMc/configs` folder. For available
-information see the [HmcProperties](headlessmc-commons/src/main/java/me/earth/headlessmc/config/HmcProperties.java), the
-[LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
-[RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
-[LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
-
-## Building from Source
+## Building, Developing and Contributing
 
 Simply run `./gradlew build` or import the [build.gradle](build.gradle)
 into an IDE of your choice, and you should be good to go.
@@ -98,6 +129,17 @@ HeadlessMc uses Java language level 8. It can be
 built with any JDK &geq; 8, but language features > 8 can't be used. 
 HeadlessMc uses [project lombok](https://github.com/projectlombok/lombok)
 to eliminate Java boilerplate.
+
+The (sparse) javadoc can be found [here](https://3arthqu4ke.github.io/headlessmc/javadoc/).
+
+Contributions are welcome!
+
+### Plugins
+
+You can also write Plugins for HeadlessMc.
+Plugins can run through the `headlessmc-launcher-wrapper`,
+which launches the `headlessmc-launcher` on another classloader.
+You can find a small example [here](headlessmc-launcher-wrapper/src/testPlugin).
 
 ## License and Libraries
 

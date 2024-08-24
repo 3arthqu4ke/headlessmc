@@ -1,4 +1,4 @@
-# HeadlessMc-Lwjgl
+# HeadlessMc-LWJGL
 
 This module is responsible for instrumenting the LWJGL library
 and thus making the Minecraft client "headless".
