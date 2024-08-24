@@ -158,7 +158,9 @@ allprojects {
             ? ''
             : System.getenv('GITHUB_RUN_NUMBER') != null && System.getenv('GITHUB_SHA') != null
                 ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
-                : '-SNAPSHOT'
+                : project.version.endsWith('-SNAPSHOT')
+                    ? ''
+                    : '-SNAPSHOT'
 
     publishing {
         publications {
