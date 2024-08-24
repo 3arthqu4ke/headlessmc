@@ -28,6 +28,7 @@ dependencies {
     jarLibs group: 'org.ow2.asm', name: 'asm-tree', version: '9.7'
     jarLibs group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
     jarLibs group: 'dev.xdark', name: 'deencapsulation', version: '1.0'
+    jarLibs 'org.semver4j:semver4j:5.3.0'
     jarLibs project(':headlessmc-jline')
 
     includeJarInResources ('net.kunmc.lab:forgecli:1.2.0:all') {

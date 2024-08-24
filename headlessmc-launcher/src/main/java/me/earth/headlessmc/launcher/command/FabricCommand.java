@@ -2,7 +2,6 @@ package me.earth.headlessmc.launcher.command;
 
 import lombok.CustomLog;
 import lombok.Getter;
-import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.ParseUtil;
@@ -13,6 +12,8 @@ import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
 import me.earth.headlessmc.launcher.launch.SystemPropertyHelper;
 import me.earth.headlessmc.launcher.version.Version;
+import me.earth.headlessmc.launcher.version.VersionUtil;
+import me.earth.headlessmc.launcher.version.family.FamilyUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +23,8 @@ import java.util.*;
 @Getter
 @CustomLog
 public class FabricCommand extends AbstractVersionCommand {
-    private static final String URL = "https://maven.fabricmc.net/" +
-            "net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
+    private static final String LEGACY = "https://maven.legacyfabric.net/net/legacyfabric/fabric-installer/1.0.0/fabric-installer-1.0.0.jar";
+    private static final String URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
 
     private final SimpleInMemoryLauncher inMemoryLauncher = new SimpleInMemoryLauncher();
 
@@ -41,8 +42,14 @@ public class FabricCommand extends AbstractVersionCommand {
         ctx.log("Installing Fabric for version " + ver.getName() + "...");
         FileManager tempFiles = ctx.getFileManager().createRelative(UUID.randomUUID().toString());
         File jar = tempFiles.create("fabric-installer.jar");
-        String url = ctx.getConfig().get(LauncherProperties.FABRIC_URL, URL);
+        Version vanilla = FamilyUtil.getOldestParent(ver);
+        String defaultUrl = URL;
+        if (VersionUtil.isOlderThanSafe(vanilla.getName(), "1.14") && !CommandUtil.hasFlag("-forcenew", args) || CommandUtil.hasFlag("-legacy", args)) {
+            ctx.log("Using Legacy Fabric...");
+            defaultUrl = LEGACY;
+        }
 
+        String url = ctx.getConfig().get(LauncherProperties.FABRIC_URL, defaultUrl);
         try {
             downloadInstaller(url, jar);
             install(ver, jar, args);
