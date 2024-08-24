@@ -22,7 +22,7 @@ public class VersionSpecificMods {
      * @see <a href=https://github.com/3arthqu4ke/mc-runtime-test>https://github.com/3arthqu4ke/mc-runtime-test</a>
      */
     public static final VersionSpecificModRepository MC_RUNTIME_TEST =
-        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/mc-runtime-test/releases/download/"), "mc-runtime-test", "2.2.0", "-release");
+        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/mc-runtime-test/releases/download/"), "mc-runtime-test", "2.4.0", "-release");
 
     // Not yet... public static final VersionSpecificModRepository HMC_OPTIMIZATIONS =
     //    new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/hmc-optimizations/releases/download/"), "hmc-optimizations", "1.0.0", "-release");
