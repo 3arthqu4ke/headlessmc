@@ -98,6 +98,9 @@ This has the advantage of being independent of Minecraft versions,
 but comes with some overhead.
 A Minecraft version dependent approach are the [hmc-optimizations](https://github.com/3arthqu4ke/hmc-optimizations),
 another set of mods which patch Minecraft itself to skip all rendering code.
+Additionally HeadlessMc also comes with the `hmc.assets.dummy` property,
+which replaces all assets with small dummy textures and sounds,
+which allows for a smaller memory footprint and much less downloads before launch.
 You can also achieve headless mode without patching lwjgl by running headlessmc with a virtual framebuffer like
 [Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml).
 
