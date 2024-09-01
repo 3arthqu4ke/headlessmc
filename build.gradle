@@ -160,7 +160,7 @@ allprojects {
                 ? "-${System.getenv('GITHUB_RUN_NUMBER')}-${System.getenv('GITHUB_SHA').substring(0, 7)}"
                 : project.version.endsWith('-SNAPSHOT')
                     ? ''
-                    : '-SNAPSHOT'
+                    : ''
 
     publishing {
         publications {
