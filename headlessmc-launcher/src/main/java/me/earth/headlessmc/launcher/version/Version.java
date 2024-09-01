@@ -46,4 +46,6 @@ public interface Version extends HasName, HasId, HasParent<Version> {
 
     @Nullable Long getClientSize();
 
+    @Nullable Logging getLogging();
+
 }

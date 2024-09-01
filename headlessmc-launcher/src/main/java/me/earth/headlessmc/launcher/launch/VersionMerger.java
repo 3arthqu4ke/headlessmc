@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import me.earth.headlessmc.launcher.util.Pair;
 import me.earth.headlessmc.launcher.version.Argument;
 import me.earth.headlessmc.launcher.version.Library;
+import me.earth.headlessmc.launcher.version.Logging;
 import me.earth.headlessmc.launcher.version.Version;
 import me.earth.headlessmc.launcher.version.family.FamilyUtil;
 import org.jetbrains.annotations.Nullable;
@@ -71,6 +72,11 @@ class VersionMerger extends DelegatingVersion {
     @Override
     public @Nullable String getClientSha1() {
         return get(Version::getClientSha1);
+    }
+
+    @Override
+    public @Nullable Logging getLogging() {
+        return get(Version::getLogging);
     }
 
     private <T> List<T> merge(Function<Version, List<T>> func) {

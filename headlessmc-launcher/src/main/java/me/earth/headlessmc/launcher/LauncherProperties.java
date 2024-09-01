@@ -96,4 +96,6 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> GAME_DIR_FOR_EACH_VERSION = bool("hmc.game.dir.for.each.version");
 
+    Property<Boolean> INSTALL_LOGGING = bool("hmc.install.mc.logging");
+
 }

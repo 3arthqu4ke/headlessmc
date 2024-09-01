@@ -27,6 +27,7 @@ public class VersionImpl implements Version {
     private final @Nullable String clientSha1;
     private final @Nullable Long clientSize;
     private final boolean newArgumentFormat;
+    private final @Nullable Logging logging;
     private Version parent;
 
 }

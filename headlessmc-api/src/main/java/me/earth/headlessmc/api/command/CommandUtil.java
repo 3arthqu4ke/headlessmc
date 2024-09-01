@@ -99,6 +99,10 @@ public class CommandUtil {
         return Arrays.stream(args).anyMatch(s -> s.equalsIgnoreCase(arg));
     }
 
+    public static boolean flag(HasConfig ctx, boolean alwaysFlagOn, String flg, Property<Boolean> invertFlag, Property<Boolean> alwaysFlag, String... args) {
+        return ctx.getConfig().get(alwaysFlag, alwaysFlagOn) || CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(invertFlag, false);
+    }
+
     public static boolean flag(HasConfig ctx, String flg, Property<Boolean> invertFlag, Property<Boolean> alwaysFlag, String... args) {
         return ctx.getConfig().get(alwaysFlag, false) || CommandUtil.hasFlag(flg, args) ^ ctx.getConfig().get(invertFlag, false);
     }

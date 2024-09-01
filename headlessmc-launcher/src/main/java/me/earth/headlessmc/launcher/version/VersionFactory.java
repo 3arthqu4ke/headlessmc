@@ -35,6 +35,7 @@ class VersionFactory {
         val clientUrl = JsonUtil.getString(json, "downloads", "client", "url");
         val clientSha1 = JsonUtil.getString(json, "downloads", "client", "sha1");
         val clientSize = JsonUtil.getLong(json, "downloads", "client", "size");
+        val logging = Logging.getFromVersion(json);
         val newFormat = new AtomicBoolean();
         val arguments = argumentFactory.parse(argumentElement, newFormat::set);
         return VersionImpl
@@ -55,6 +56,7 @@ class VersionFactory {
                 .clientDownload(clientUrl)
                 .clientSha1(clientSha1)
                 .clientSize(clientSize)
+                .logging(logging)
                 .build();
     }
 

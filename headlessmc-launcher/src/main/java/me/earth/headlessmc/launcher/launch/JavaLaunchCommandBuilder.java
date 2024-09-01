@@ -16,9 +16,11 @@ import me.earth.headlessmc.launcher.instrumentation.InstrumentationHelper;
 import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Features;
+import me.earth.headlessmc.launcher.version.Logging;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,6 +101,20 @@ public class JavaLaunchCommandBuilder {
             result.add(SystemPropertyHelper.toSystemProperty(LauncherProperties.IN_MEMORY.getName(), "true"));
         }
 
+        // we generally do not download logging, because it seems to log xml on the console... TODO: why?
+        // instead the log4j patch is on by default
+        // also old version logging, like 1.8.9 does not contain the {nolookups}, so they are unsafe anyways
+        if (launcher.getConfig().get(LauncherProperties.INSTALL_LOGGING, false)) {
+            Logging logging = version.getLogging();
+            if (logging == null) {
+                throw new IllegalArgumentException("Version " + version + " has no logging configured!");
+            }
+
+            File file = launcher.getMcFiles().get(false, true, "logging", logging.getFile().getId());
+            installLogging(logging, file);
+            result.add(logging.getArgument().replace("${path}", file.getAbsolutePath()));
+        }
+
         result.add("-Djava.library.path=" + natives);
         result.add("-cp");
         result.add(String.join("" + File.pathSeparatorChar, classpath) + config.get(LauncherProperties.CLASS_PATH, ""));
@@ -110,6 +126,22 @@ public class JavaLaunchCommandBuilder {
         result.addAll(adapter.build(os, Features.EMPTY, "game"));
         result.addAll(Arrays.asList(config.get(LauncherProperties.GAME_ARGS, new String[0])));
         return result;
+    }
+
+    // TODO: not the correct location but I dont care
+    private void installLogging(Logging logging, File file) throws LaunchException {
+        Logging.File loggingFile = logging.getFile();
+        try {
+            if (!file.exists() || !launcher.getSha1Service().checkIntegrity(file.toPath(), loggingFile.getSize(), loggingFile.getSha1())) {
+                log.info("Downloading logging file: " + loggingFile.getUrl());
+                launcher.getDownloadService().download(loggingFile.getUrl(), file.toPath(), loggingFile.getSize(), loggingFile.getSha1());
+                if (!launcher.getSha1Service().checkIntegrity(file.toPath(), loggingFile.getSize(), loggingFile.getSha1())) {
+                    throw new LaunchException("Logging file failed integrity check! (" + logging + ")");
+                }
+            }
+        } catch (IOException e) {
+            throw new LaunchException("Failed to install logging " + logging, e);
+        }
     }
 
     public String getActualMainClass(List<String> result) {
