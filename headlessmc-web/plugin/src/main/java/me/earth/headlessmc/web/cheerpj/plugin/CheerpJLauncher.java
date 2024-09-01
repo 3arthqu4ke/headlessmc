@@ -156,6 +156,7 @@ public class CheerpJLauncher {
         val versionSpecificModManager = new VersionSpecificModManager(downloadService, launcherConfig);
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
+        versionSpecificModManager.addRepository(VersionSpecificMods.HMC_OPTIMIZATIONS);
 
         val launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), downloadService,
