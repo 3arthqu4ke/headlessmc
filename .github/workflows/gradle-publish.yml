@@ -35,5 +35,6 @@ jobs:
           path: |
             ./build/libs/headlessmc-launcher*.jar
             ./build/libs/headlessmc-lwjgl*.jar
+            ./headlessmc-lwjgl/build/noasm/headlessmc-lwjgl-*-no-asm.jar
             ./headlessmc-scripts/hmc
             ./headlessmc-scripts/hmc.bat
