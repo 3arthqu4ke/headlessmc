@@ -65,6 +65,19 @@ jar {
     }
 }
 
+// https://github.com/3arthqu4ke/headlessmc/issues/199
+// fabric 0.16.2+ doesn't like multiple asm versions in the classpath
+tasks.register('noAsmJar', Copy) {
+    dependsOn jar
+    from jar.archiveFile
+    into layout.buildDirectory.dir('noasm')
+    rename { fileName ->
+        fileName.replace("-${version}-dev.jar", "-${version}-no-asm.jar")
+    }
+}
+
+build.dependsOn(noAsmJar)
+
 tasks.register('testAgent', Test) {
     dependsOn jar
     group = 'verification'
