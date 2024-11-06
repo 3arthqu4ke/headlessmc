@@ -49,8 +49,12 @@ public class LaunchOptions {
             boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, ALWAYS_LWJGL_FLAG, args);
             // if offline only allow launching with the lwjgl flag!
             if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
-                log.warning("You are offline, game will start in headless mode!");
-                lwjgl = true;
+                if (!new XvfbService(launcher.getConfigService(), launcher.getProcessFactory().getOs()).isRunningWithXvfb()) {
+                    log.warning("You are offline, game will start in headless mode!");
+                    lwjgl = true;
+                } else {
+                    log.info("You are offline but running with xvfb, not using headless mode.");
+                }
             }
 
             return this

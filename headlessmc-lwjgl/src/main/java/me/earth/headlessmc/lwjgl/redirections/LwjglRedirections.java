@@ -277,6 +277,18 @@ public class LwjglRedirections {
 
         // 1.20.4 (3?)
         MemReallocRedirections.redirect(manager);
+
+        // Embeddium
+        // https://github.com/3arthqu4ke/headlessmc/issues/208
+        // manager.redirect("Lorg/lwjgl/opengl/GL32C;glFenceSync(II)J", of(1L));
+        // not enough, game now crashes with SIGSEGV, use xvfb for embeddium
+        // v  ~StubRoutines::jlong_disjoint_arraycopy
+        //J 10112 c2 jdk.internal.misc.Unsafe.copyMemory(Ljava/lang/Object;JLjava/lang/Object;JJ)V java.base@17.0.12 (33 bytes) @ 0x00007ea004efdf19 [0x00007ea004efdda0+0x0000000000000179]
+        //j  jdk.internal.misc.Unsafe.copyMemory(JJJ)V+7 java.base@17.0.12
+        //j  sun.misc.Unsafe.copyMemory(JJJ)V+7 jdk.unsupported@17.0.12
+        //j  net.caffeinemc.mods.sodium.api.memory.MemoryIntrinsics.copyMemory(JJI)V+8
+        //j  net.minecraft.class_287.push(Lorg/lwjgl/system/MemoryStack;JILnet/caffeinemc/mods/sodium/api/vertex/format/VertexFormatDescription;)V+47
+        //j  me.jellysquid.mods.sodium.client.render.vertex.buffer.SodiumBufferBuilder.push(Lorg/lwjgl/system/MemoryStack;JILnet/caffeinemc/mods/sodium/api/vertex/format
     }
 
 }
