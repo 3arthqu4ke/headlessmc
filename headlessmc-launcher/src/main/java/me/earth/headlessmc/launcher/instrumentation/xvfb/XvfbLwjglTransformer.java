@@ -9,6 +9,11 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Locale;
 
+/**
+ * Lwjgl 2.9.4 (Mc 1.12.2) crashes in Github actions with xvfb at getAvailableDisplayModes,
+ * because the array returned by XRandR.getResolutions is empty.
+ * This patches that by always using XF86VIDMODE instead of XRANDR.
+ */
 @CustomLog
 public class XvfbLwjglTransformer extends AbstractClassTransformer {
     public XvfbLwjglTransformer() {
@@ -17,6 +22,8 @@ public class XvfbLwjglTransformer extends AbstractClassTransformer {
 
     @Override
     protected void transform(ClassNode cn) {
+        // TODO: Actually isXrandrSupported can also be overriden by setting the system property LWJGL_DISABLE_XRANDR
+        // but this would theoretically cover the case when XF86VIDMODE is not supported?
         for (MethodNode mn : cn.methods) {
             if ("getBestDisplayModeExtension".equals(mn.name) && "()I".equals(mn.desc)) {
                 for (AbstractInsnNode insnNode : mn.instructions) {
