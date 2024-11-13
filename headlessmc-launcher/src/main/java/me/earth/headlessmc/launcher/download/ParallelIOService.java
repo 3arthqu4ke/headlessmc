@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.download;
 
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import me.earth.headlessmc.launcher.util.IOConsumer;
 
@@ -21,6 +22,9 @@ public class ParallelIOService {
     private final boolean parallel;
     private final boolean backoff;
 
+    @Setter
+    private boolean shouldLog = true;
+
     public void addTask(IOConsumer<String> task) {
         tasks.add(task);
     }
@@ -38,7 +42,9 @@ public class ParallelIOService {
         });
 
         nanos = System.nanoTime() - nanos;
-        log.info("Download took " + (nanos / 1_000_000.0) + "ms, parallel: " + parallel);
+        if (shouldLog) {
+            log.info("Download took " + (nanos / 1_000_000.0) + "ms, parallel: " + parallel);
+        }
         if (failed.get() != null) {
             throw failed.get();
         }
@@ -49,7 +55,10 @@ public class ParallelIOService {
         int downloaded = count.incrementAndGet();
         String percentage = String.format("%d", (downloaded * 100 / total)) + "%";
         String progress =  percentage + " (" + downloaded + "/" + total + ")";
-        log.debug(progress + " Checking " + task);
+        if (shouldLog) {
+            log.debug(progress + " Checking " + task);
+        }
+
         return progress;
     }
 

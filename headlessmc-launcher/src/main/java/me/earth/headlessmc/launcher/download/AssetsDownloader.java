@@ -3,7 +3,10 @@ package me.earth.headlessmc.launcher.download;
 import com.google.gson.JsonObject;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
+import me.earth.headlessmc.api.command.line.CommandLine;
+import me.earth.headlessmc.api.command.line.Progressbar;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.files.FileManager;
@@ -25,11 +28,15 @@ public class AssetsDownloader {
     private final ChecksumService checksumService = new ChecksumService();
     private final DummyAssets dummyAssets = new DummyAssets();
 
+    private final CommandLine commandLine;
     private final DownloadService downloadService;
     private final HasConfig config;
     private final FileManager files;
     private final String url;
     private final String id;
+
+    @Setter
+    protected boolean shouldLog = true;
 
     public void download() throws IOException {
         Path index = files.getDir("assets").toPath().resolve("indexes").resolve(id + ".json");
@@ -51,18 +58,26 @@ public class AssetsDownloader {
                 config.getConfig().get(LauncherProperties.ASSETS_BACKOFF, true)
         );
 
-        objects.getAsJsonObject().entrySet().forEach(entry -> ioService.addTask(progress -> {
-            JsonObject jo = entry.getValue().getAsJsonObject();
-            downloadAsset(
-                    progress,
-                    entry.getKey(),
-                    jo.get("hash").getAsString(),
-                    jo.get("size") == null ? null : jo.get("size").getAsLong(),
-                    jo.get("map_to_resources") != null && jo.get("map_to_resources").getAsBoolean()
-            );
-        }));
+        // TODO: provide better ETA, later assets take longer
+        try (Progressbar progressbar = commandLine.displayProgressBar(new Progressbar.Configuration("Downloading Assets", objects.size()))) {
+            ioService.setShouldLog(progressbar.isDummy());
+            shouldLog = progressbar.isDummy();
 
-        ioService.execute();
+            objects.getAsJsonObject().entrySet().forEach(entry -> ioService.addTask(progress -> {
+                JsonObject jo = entry.getValue().getAsJsonObject();
+                downloadAsset(
+                        progress,
+                        entry.getKey(),
+                        jo.get("hash").getAsString(),
+                        jo.get("size") == null ? null : jo.get("size").getAsLong(),
+                        jo.get("map_to_resources") != null && jo.get("map_to_resources").getAsBoolean()
+                );
+
+                progressbar.step();
+            }));
+
+            ioService.execute();
+        }
     }
 
     protected void downloadAsset(String progress, String name, String hash, @Nullable Long size, boolean mapToResources) throws IOException {
@@ -94,7 +109,10 @@ public class AssetsDownloader {
 
     protected byte @Nullable [] download(String firstTwo, String hash, String progress, String name, Path to, @Nullable Long size) throws IOException {
         val from = URL + firstTwo + "/" + hash;
-        log.info(progress + " Downloading: " + name + " from " + from + " to " + to);
+        if (shouldLog) {
+            log.info(progress + " Downloading: " + name + " from " + from + " to " + to);
+        }
+
         boolean checkHash = config.getConfig().get(LauncherProperties.ASSETS_CHECK_HASH, true);
         boolean checkSize = checkHash || config.getConfig().get(LauncherProperties.ASSETS_CHECK_SIZE, true);
         Long expectedSize = checkSize ? size : null;
@@ -115,7 +133,12 @@ public class AssetsDownloader {
         if ("pre-1.6".equals(id)) {
             // TODO: old versions have the map_to_resource thing, copy to resources
             val legacy = files.getDir("assets").toPath().resolve("virtual").resolve("legacy").resolve(name);
-            log.info("Legacy version, copying to " + legacy);
+            if (shouldLog) {
+                log.info("Legacy version, copying to " + legacy);
+            } else {
+                log.debug("Legacy version, copying to " + legacy);
+            }
+
             integrityCheck("Legacy", legacy, hash, size);
             if (copy && !Files.exists(legacy)) {
                 Files.copy(file, legacy, StandardCopyOption.REPLACE_EXISTING);

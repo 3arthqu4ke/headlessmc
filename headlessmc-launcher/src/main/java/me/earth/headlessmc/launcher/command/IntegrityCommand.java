@@ -56,7 +56,7 @@ public class IntegrityCommand extends AbstractVersionCommand {
     private void checkAssets(Version version, int[] values, String...args) throws IOException {
         if (CommandUtil.hasFlag("-assets", args)) {
             ctx.log("Checking assets of version " + version.getName());
-            AssetsDownloader assetsDownloader = new AssetsDownloader(ctx.getDownloadService(), ctx, ctx.getMcFiles(), version.getAssetsUrl(), version.getAssets()) {
+            AssetsDownloader assetsDownloader = new AssetsDownloader(ctx.getCommandLine(), ctx.getDownloadService(), ctx, ctx.getMcFiles(), version.getAssetsUrl(), version.getAssets()) {
                 @Override
                 protected void downloadAsset(String progress, String name, String hash, @Nullable Long size, boolean mapToResources) throws IOException {
                     val firstTwo = hash.substring(0, 2);

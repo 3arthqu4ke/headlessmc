@@ -4,6 +4,7 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import me.earth.headlessmc.api.command.line.Progressbar;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.download.AssetsDownloader;
@@ -16,7 +17,6 @@ import me.earth.headlessmc.launcher.instrumentation.InstrumentationHelper;
 import me.earth.headlessmc.launcher.instrumentation.Target;
 import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Features;
-import me.earth.headlessmc.launcher.version.Logging;
 import me.earth.headlessmc.launcher.version.Rule;
 import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +56,7 @@ public class ProcessFactory {
 
         log.debug("Creating extraction directory");
         val natives = options.getFiles().createRelative("extracted");
-        val targets = processLibraries(version, natives);
+        val targets = processLibraries(options, version, natives);
         addGameJar(version, targets);
 
         List<String> classpath = instrumentation.instrument(targets);
@@ -68,7 +68,7 @@ public class ProcessFactory {
         val commandBuilder = configureCommandBuilder(options, version, classpath, natives).build();
 
         val command = commandBuilder.build();
-        downloadAssets(config.getMcFiles(), version);
+        downloadAssets(options, config.getMcFiles(), version);
         debugCommand(command, commandBuilder);
 
         val dir = new File(launcher.getConfig().get(LauncherProperties.GAME_DIR, launcher.getGameDir(version).getPath()));
@@ -77,6 +77,10 @@ public class ProcessFactory {
         dir.mkdirs();
         if (options.isPrepare()) {
             return null;
+        }
+
+        if (options.isCloseCommandLine()) {
+            launcher.getCommandLine().close();
         }
 
         if (options.isInMemory()) {
@@ -152,16 +156,16 @@ public class ProcessFactory {
         log.debug("Processed GameJar");
     }
 
-    protected List<Target> processLibraries(Version version, FileManager dlls) throws IOException {
+    protected List<Target> processLibraries(LaunchOptions options, Version version, FileManager dlls) throws IOException {
         log.debug("Processing libraries...");
         // TODO: proper features
         val features = Features.EMPTY;
         val targets = new ArrayList<Target>(version.getLibraries().size());
         Set<String> libPaths = new HashSet<>();
         LibraryDownloader libraryDownloader = new LibraryDownloader(downloadService, config.getConfig(), os);
+        int librariesTODownload = 0;
         for (val library : version.getLibraries()) {
             if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
-                log.debug("Checking: " + library);
                 String libPath = library.getPath(os);
                 if (!libPaths.add(libPath)) {
                     continue;
@@ -177,16 +181,36 @@ public class ProcessFactory {
                 }
 
                 if (!Files.exists(path)) {
-                    libraryDownloader.download(library, path);
+                    librariesTODownload++;
                 }
+            }
+        }
 
-                String absolutePath = path.toAbsolutePath().toString();
-                library.getExtractor().extract(absolutePath, dlls);
-                if (!library.isNativeLibrary()) {
-                    targets.add(new Target(false, absolutePath));
+        libPaths.clear();
+        try (Progressbar progressbar = options.getLauncher().getCommandLine().displayProgressBar(new Progressbar.Configuration("Downloading Libraries", librariesTODownload))) {
+            libraryDownloader.setShouldLog(progressbar.isDummy());
+            for (val library : version.getLibraries()) {
+                if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
+                    log.debug("Checking: " + library);
+                    String libPath = library.getPath(os);
+                    if (!libPaths.add(libPath)) {
+                        continue;
+                    }
+
+                    val path = config.getMcFiles().getDir("libraries").toPath().resolve(libPath);
+                    if (!Files.exists(path)) {
+                        libraryDownloader.download(library, path);
+                        progressbar.step();
+                    }
+
+                    String absolutePath = path.toAbsolutePath().toString();
+                    library.getExtractor().extract(absolutePath, dlls);
+                    if (!library.isNativeLibrary()) {
+                        targets.add(new Target(false, absolutePath));
+                    }
+                } else {
+                    log.debug("Ignoring: " + library.getName());
                 }
-            } else {
-                log.debug("Ignoring: " + library.getName());
             }
         }
 
@@ -214,9 +238,9 @@ public class ProcessFactory {
         return builder.start();
     }
 
-    protected void downloadAssets(FileManager files, Version version) throws IOException {
+    protected void downloadAssets(LaunchOptions options, FileManager files, Version version) throws IOException {
         log.debug("Downloading Assets");
-        new AssetsDownloader(downloadService, config.getConfig(), files, version.getAssetsUrl(), version.getAssets()).download();
+        new AssetsDownloader(options.getLauncher().getCommandLine(), downloadService, config.getConfig(), files, version.getAssetsUrl(), version.getAssets()).download();
     }
 
     /**

@@ -83,4 +83,11 @@ public interface CommandLineReader {
         // see JLineCommandLineReader
     }
 
+    /**
+     * @return a Progressbar to display progress with.
+     */
+    default Progressbar displayProgressBar(Progressbar.Configuration configuration) {
+        return Progressbar.dummy();
+    }
+
 }
