@@ -41,7 +41,7 @@ public class MockProcessFactory extends ProcessFactory {
     }
 
     @Override
-    protected void downloadAssets(FileManager files, Version version) {
+    protected void downloadAssets(LaunchOptions options, FileManager files, Version version) {
         // dummy
     }
 
