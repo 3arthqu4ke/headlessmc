@@ -77,7 +77,7 @@ HeadlessMc can run inside Termux.
 * Download the headlessmc-launcher-wrapper.jar into Termux.
 * Disable JLine, as we could not get it to work on Termux for now,
   by adding `hmc.jline.enabled=false` to the HeadlessMC/config.properties.
-* Now you can use HeadlessMc like you do on Desktop or Docker.
+* Now you can use HeadlessMc like you would on Desktop or Docker.
 
 ### Web
 
@@ -87,7 +87,7 @@ but it does not support all features we need to launch the game.
 The CheerpJ instance can be tried out [here](https://3arthqu4ke.github.io/headlessmc/).
 Secondly, there is [container2wasm](https://github.com/headlesshq/hmc-container2wasm),
 which can translate the HeadlessMc Docker container
-to WebAssembly and the run it inside the browser, but this is extremly slow.
+to WebAssembly and the run it inside the browser, but this is extremely slow.
 
 ### Optimizations 
 

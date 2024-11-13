@@ -36,6 +36,7 @@ public class LaunchOptions {
     private final boolean inMemory;
     private final boolean forceSimple;
     private final boolean forceBoot;
+    private final boolean xvfb;
     private final boolean prepare;
 
     @SuppressWarnings("unused")
@@ -46,10 +47,12 @@ public class LaunchOptions {
 
         public LaunchOptionsBuilder parseFlags(
             Launcher ctx, boolean quit, String... args) {
+            boolean xvfb = false;
             boolean lwjgl = flag(ctx, "-lwjgl", INVERT_LWJGL_FLAG, ALWAYS_LWJGL_FLAG, args);
             // if offline only allow launching with the lwjgl flag!
             if (!lwjgl && launcher.getAccountManager().getOfflineChecker().isOffline()) {
-                if (!new XvfbService(launcher.getConfigService(), launcher.getProcessFactory().getOs()).isRunningWithXvfb()) {
+                xvfb = new XvfbService(launcher.getConfigService(), launcher.getProcessFactory().getOs()).isRunningWithXvfb();
+                if (!xvfb) {
                     log.warning("You are offline, game will start in headless mode!");
                     lwjgl = true;
                 } else {
@@ -68,6 +71,7 @@ public class LaunchOptions {
                 .forceSimple(CommandUtil.hasFlag("-forceSimple", args))
                 .forceBoot(CommandUtil.hasFlag("-forceBoot", args))
                 .parseJvmArgs(args)
+                .xvfb(xvfb)
                 .noIn(quit);
         }
 
