@@ -38,6 +38,7 @@ public class LaunchOptions {
     private final boolean forceBoot;
     private final boolean xvfb;
     private final boolean prepare;
+    private final boolean closeCommandLine;
 
     @SuppressWarnings("unused")
     public static class LaunchOptionsBuilder {

@@ -6,8 +6,11 @@ import lombok.Setter;
 import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.command.line.CommandLineReader;
+import me.earth.headlessmc.api.command.line.Progressbar;
 import me.earth.headlessmc.api.config.Property;
 import me.earth.headlessmc.api.process.InAndOutProvider;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.jetbrains.annotations.Nullable;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
@@ -47,6 +50,9 @@ public class JLineCommandLineReader implements CommandLineReader {
      * @see TerminalBuilder#dumb(boolean)
      */
     protected volatile boolean dumb;
+
+    protected volatile boolean enableProgressbar = Boolean.parseBoolean(System.getProperty(JLineProperties.ENABLE_PROGRESS_BAR.getName(), "true"));
+    protected volatile String progressBarStyle = System.getProperty(JLineProperties.PROGRESS_BAR_STYLE.getName());
 
     @Override
     public void read(HeadlessMc hmc) throws IOError {
@@ -99,6 +105,8 @@ public class JLineCommandLineReader implements CommandLineReader {
 
     @Override
     public synchronized void open(HeadlessMc hmc) throws IOException {
+        enableProgressbar = hmc.getConfig().get(JLineProperties.ENABLE_PROGRESS_BAR, true);
+        progressBarStyle = hmc.getConfig().get(JLineProperties.PROGRESS_BAR_STYLE, null);
         if (hmc.getConfig().get(JLineProperties.PREVENT_DEPRECATION_WARNING, true)) {
             System.setProperty("org.jline.terminal.disableDeprecatedProviderWarning", "true");
         }
@@ -138,6 +146,39 @@ public class JLineCommandLineReader implements CommandLineReader {
             terminal = null;
             lineReader = null;
         }
+    }
+
+    @Override
+    public Progressbar displayProgressBar(Progressbar.Configuration configuration) {
+        Terminal currentTerminal = terminal;
+        if (currentTerminal == null || !enableProgressbar) {
+            return Progressbar.dummy();
+        }
+
+        ProgressBarBuilder builder = new ProgressBarBuilder();
+        builder.setTaskName(configuration.getTaskName());
+        builder.setInitialMax(configuration.getInitialMax());
+        String style = progressBarStyle;
+        if (style != null) {
+            // ProgressBarStyle is not an enum anymore after 0.10.0
+            switch (style) {
+                case "COLORFUL_UNICODE_BLOCK":
+                    builder.setStyle(ProgressBarStyle.COLORFUL_UNICODE_BLOCK);
+                    break;
+                case "COLORFUL_UNICODE_BAR":
+                    builder.setStyle(ProgressBarStyle.COLORFUL_UNICODE_BAR);
+                    break;
+                case "UNICODE_BLOCK":
+                    builder.setStyle(ProgressBarStyle.UNICODE_BLOCK);
+                    break;
+                case "ASCII":
+                    builder.setStyle(ProgressBarStyle.ASCII);
+                    break;
+                default:
+            }
+        }
+
+        return new JlineProgressbar(builder.build());
     }
 
     protected Terminal buildTerminal(HeadlessMc hmc, boolean dumb, String providers, InAndOutProvider io) throws IOException {

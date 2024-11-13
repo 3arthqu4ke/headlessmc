@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.download;
 
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.os.OS;
@@ -18,10 +19,16 @@ public class LibraryDownloader {
     private final HasConfig config;
     private final OS os;
 
+    @Setter
+    private boolean shouldLog = true;
+
     public void download(Library library, Path to) throws IOException {
         String libPath = library.getPath(os);
         String url = library.getUrl(libPath);
-        log.info(libPath + " is missing, downloading from " + url);
+        if (shouldLog) {
+            log.info(libPath + " is missing, downloading from " + url);
+        }
+
         download(url, to, library.getSha1(), library.getSize());
     }
 

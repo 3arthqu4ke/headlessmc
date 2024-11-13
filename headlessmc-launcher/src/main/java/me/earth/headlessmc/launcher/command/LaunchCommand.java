@@ -51,12 +51,8 @@ public class LaunchCommand extends AbstractVersionCommand {
         boolean quit = flag(ctx, "-quit", LauncherProperties.INVERT_QUIT_FLAG, LauncherProperties.ALWAYS_QUIT_FLAG, args);
         int status = 0;
         try {
-            if (!prepare) {
-                ctx.getCommandLine().close();
-            }
-
             status = runProcess(version, files, quit, prepare, args);
-        } catch (IOException | LaunchException | AuthException e) {
+        } catch (LaunchException | AuthException e) {
             status = -1;
             log.error(e);
             ctx.log(String.format("Couldn't launch %s: %s", version.getName(), e.getMessage()));
@@ -112,6 +108,7 @@ public class LaunchCommand extends AbstractVersionCommand {
                                 .version(version)
                                 .launcher(ctx)
                                 .files(files)
+                                .closeCommandLine(!prepare)
                                 .parseFlags(ctx, quit, args)
                                 .prepare(prepare)
                                 .build()

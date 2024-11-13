@@ -144,6 +144,16 @@ public class CommandLine implements PasswordAware, QuickExitCli, HasCommandConte
         passwordContext.setHidingPasswordsSupported(hidingPasswordsSupported);
     }
 
+    @Override
+    public Progressbar displayProgressBar(Progressbar.Configuration configuration) {
+        CommandLineReader commandLineReader = this.commandLineReader;
+        if (commandLineReader != null) {
+            return commandLineReader.displayProgressBar(configuration);
+        }
+
+        return Progressbar.dummy();
+    }
+
     private static final class EmptyCommandContext implements CommandContext {
         private static final EmptyCommandContext INSTANCE = new EmptyCommandContext();
 

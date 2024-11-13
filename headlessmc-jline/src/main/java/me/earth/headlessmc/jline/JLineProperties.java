@@ -28,4 +28,7 @@ public interface JLineProperties {
     Property<Boolean> EXEC = PropertyTypes.bool("hmc.jline.exec");
     Property<Boolean> SYSTEM = PropertyTypes.bool("hmc.jline.system");
 
+    Property<Boolean> ENABLE_PROGRESS_BAR = PropertyTypes.bool("hmc.jline.enable.progressbar");
+    Property<String> PROGRESS_BAR_STYLE = PropertyTypes.string("hmc.jline.progressbar.style");
+
 }
