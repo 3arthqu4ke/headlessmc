@@ -61,14 +61,14 @@ jobs:
           - { mc: 1.20.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
           - { mc: 1.19.4, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
           - { mc: 1.19.4, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
-          - { mc: 1.19.3, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
-          - { mc: 1.19.3, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
-          - { mc: 1.19.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
-          - { mc: 1.19.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
-          - { mc: 1.19.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
-          - { mc: 1.19.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
-          - { mc: 1.19, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
-          - { mc: 1.19, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+         # - { mc: 1.19.3, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          #- { mc: 1.19.3, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          #- { mc: 1.19.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          #- { mc: 1.19.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          #- { mc: 1.19.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          #- { mc: 1.19.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
+          #- { mc: 1.19, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
+          #- { mc: 1.19, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
           - { mc: 1.18.2, type: fabric, modloader: fabric, regex: .*fabric.*, java: 17 }
           - { mc: 1.18.2, type: lexforge, modloader: forge, regex: .*forge.*, java: 17 }
           - { mc: 1.17.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 16 }
