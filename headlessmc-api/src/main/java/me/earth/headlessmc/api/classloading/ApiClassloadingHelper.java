@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Method;
 import java.util.*;
 
-/**
+    /**
  * Its possible that multiple classes named {@link HeadlessMcApi} exist on multiple Classloaders.
  * E.g. when running the Runtime and HMC-Specifics together:
  * The Runtime instance might be loaded through the system classloader,
@@ -40,9 +40,9 @@ public class ApiClassloadingHelper {
             // might be on another module, requires us to deencapsulate
             headlessMc.getDeencapsulator().deencapsulate(apiClass);
             try {
-                Method supportingClassloadingAgnosticContexts = apiClass.getMethod("isSupportingClassloadingAgnosticContexts");
-                // HeadlessMcAPI.isSupportingClassloadingAgnosticContexts()
-                if (!(Boolean) supportingClassloadingAgnosticContexts.invoke(null)) {
+                Method supportsClAgnosticContexts = apiClass.getMethod("isSupportsClAgnosticContexts");
+                // HeadlessMcAPI.isSupportsClAgnosticContexts()
+                if (!(Boolean) supportsClAgnosticContexts.invoke(null)) {
                     log.info("Found a HeadlessMcAPI that does not support cl agnostic contexts. " + apiClass + " on classloader " + apiClass.getClassLoader());
                     continue;
                 }
@@ -109,7 +109,7 @@ public class ApiClassloadingHelper {
         return result;
     }
 
-    private void collectParentClassloaders(@Nullable ClassLoader classLoader, List<ClassLoader> classLoaders) {
+    private static void collectParentClassloaders(@Nullable ClassLoader classLoader, List<ClassLoader> classLoaders) {
         ClassLoader cl = classLoader;
         while (cl != null) {
             if (!classLoaders.contains(cl)) {

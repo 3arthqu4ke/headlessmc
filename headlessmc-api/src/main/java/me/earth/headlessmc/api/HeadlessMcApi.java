@@ -29,7 +29,7 @@ public class HeadlessMcApi {
      */
     @Getter
     @Setter
-    private static volatile boolean supportingClassloadingAgnosticContexts = true;
+    private static volatile boolean supportsClAgnosticContexts = true;
 
     /**
      * @return a global instance of {@link HeadlessMc}.

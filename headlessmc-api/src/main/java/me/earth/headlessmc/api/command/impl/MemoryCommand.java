@@ -15,6 +15,8 @@ import java.text.DecimalFormat;
  */
 public class MemoryCommand extends AbstractCommand {
     private static final DecimalFormat DF = new DecimalFormat("#.##");
+    private static final long BYTES_TO_MB = 1024L * 1024L; // Bytes to megabytes conversion factor
+    private static final long PERCENTAGE_SCALE = 100L;
 
     static {
         DF.setRoundingMode(RoundingMode.CEILING);
@@ -31,11 +33,11 @@ public class MemoryCommand extends AbstractCommand {
 
     @Override
     public void execute(String line, String... args) throws CommandException {
-        val total = (Runtime.getRuntime().totalMemory() / 1024L / 1024L);
-        val free = (Runtime.getRuntime().freeMemory() / 1024L / 1024L);
-        val max = (Runtime.getRuntime().maxMemory() / 1024L / 1024L);
+        val total = Runtime.getRuntime().totalMemory() / BYTES_TO_MB;
+        val free = Runtime.getRuntime().freeMemory() / BYTES_TO_MB;
+        val max = Runtime.getRuntime().maxMemory() / BYTES_TO_MB;
         val usedMemory = total - free;
-        val percent = DF.format(usedMemory * 100L / (double) max);
+        val percent = DF.format(usedMemory * PERCENTAGE_SCALE / (double) max);
         ctx.log("-Used:  " + usedMemory + "mb, (" + percent + "%)");
         ctx.log("-Free:  " + free + "mb");
         ctx.log("-Total: " + total + "mb");

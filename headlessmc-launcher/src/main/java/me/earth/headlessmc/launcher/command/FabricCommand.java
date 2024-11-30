@@ -24,7 +24,7 @@ import java.util.*;
 @CustomLog
 public class FabricCommand extends AbstractVersionCommand {
     private static final String LEGACY = "https://maven.legacyfabric.net/net/legacyfabric/fabric-installer/1.0.0/fabric-installer-1.0.0.jar";
-    private static final String URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
+    private static final String DEFAULT_URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
 
     private final SimpleInMemoryLauncher inMemoryLauncher = new SimpleInMemoryLauncher();
 
@@ -43,13 +43,9 @@ public class FabricCommand extends AbstractVersionCommand {
         FileManager tempFiles = ctx.getFileManager().createRelative(UUID.randomUUID().toString());
         File jar = tempFiles.create("fabric-installer.jar");
         Version vanilla = FamilyUtil.getOldestParent(ver);
-        String defaultUrl = URL;
-        if (VersionUtil.isOlderThanSafe(vanilla.getName(), "1.14") && !CommandUtil.hasFlag("-forcenew", args) || CommandUtil.hasFlag("-legacy", args)) {
-            ctx.log("Using Legacy Fabric...");
-            defaultUrl = LEGACY;
-        }
+        String fabricUrl = determineFabricUrl(vanilla.getName(), args);
 
-        String url = ctx.getConfig().get(LauncherProperties.FABRIC_URL, defaultUrl);
+        String url = ctx.getConfig().get(LauncherProperties.FABRIC_URL, fabricUrl);
         try {
             downloadInstaller(url, jar);
             install(ver, jar, args);
@@ -65,6 +61,19 @@ public class FabricCommand extends AbstractVersionCommand {
         }
 
         ctx.log("Installed Fabric for: " + ver.getName() + " successfully!");
+    }
+
+    private String determineFabricUrl(String vanillaName, String[] args) {
+        boolean isOlderVersion = VersionUtil.isOlderThanSafe(vanillaName, "1.14");
+        boolean forceNewFlag = CommandUtil.hasFlag("-forcenew", args);
+        boolean legacyFlag = CommandUtil.hasFlag("-legacy", args);
+
+        if ((isOlderVersion && !forceNewFlag) || legacyFlag) {
+            ctx.log("Using Legacy Fabric...");
+            return LEGACY;  // Use legacy Fabric URL
+        } else {
+            return DEFAULT_URL;  // Default Fabric URL
+        }
     }
 
     private void downloadInstaller(String url, File jar) throws CommandException {
@@ -178,5 +187,4 @@ public class FabricCommand extends AbstractVersionCommand {
         command.add(ctx.getMcFiles().getBase().toPath().toAbsolutePath().toString());
         return command;
     }
-
 }
