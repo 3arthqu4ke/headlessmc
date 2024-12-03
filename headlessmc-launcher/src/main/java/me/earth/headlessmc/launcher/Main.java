@@ -50,7 +50,7 @@ public final class Main {
         builder.initLogging();
         AbstractLoginCommand.replaceLogger();
         if (Main.class.getClassLoader() == ClassLoader.getSystemClassLoader()) {
-            log.warn("You are not running from headlessmc-launcher-wrapper. Some things will not work properly!");
+            log.warn("Not running from the headlessmc-launcher-wrapper. No plugin support and in-memory launching.");
         }
 
         Launcher launcher = builder.buildDefault();

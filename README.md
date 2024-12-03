@@ -33,6 +33,7 @@ to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.co
 ## How to use
 
 1. Download the `headlessmc-launcher.jar` from the releases tab and install a Java version &geq; 8.
+    - If you want additional features such as plugins and launching the game inside the same JVM, use the `headlessmc-launcher-wrapper.jar` instead.
 2. Run the launcher with `java -jar headlessmc-launcher.jar` in your terminal. 
 You can also use the `hmc.sh/bat` scripts for convenience.
 3. You need to specify which Java installations HeadlessMc can use to run the game.
@@ -107,13 +108,15 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 ### Configuring HeadlessMc
 
 HeadlessMc can be configured using properties. These can be passed as SystemProperties from the command line or via the
-`HeadlessMc/config.properties` file. Additional configs can be added to the `HeadlessMc/configs` folder. For available
-properties see the [HmcProperties](headlessmc-api/src/main/java/me/earth/headlessmc/api/config/HmcProperties.java), the
+`HeadlessMc/config.properties` file.
+For available properties see the [HmcProperties](headlessmc-api/src/main/java/me/earth/headlessmc/api/config/HmcProperties.java), the
 [LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
 [JLineProperties](headlessmc-jline/src/main/java/me/earth/headlessmc/jline/JLineProperties.java), the
 [LoggingProperties](headlessmc-logging/src/main/java/me/earth/headlessmc/logging/LoggingProperties.java), the
 [RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
 [LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
+
+You can e.g. set `hmc.gamedir` to run the game inside another directory.
 
 ### A Note on command arguments
 
