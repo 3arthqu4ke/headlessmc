@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
-          java-version: 8
+          java-version: ${{ github.event.inputs.java }}
           distribution: temurin
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -64,7 +64,7 @@ jobs:
         run: cp headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar .
 
       - name: Run the MC client
-        uses: 3arthqu4ke/mc-runtime-test@2.4.2
+        uses: 3arthqu4ke/mc-runtime-test@v3.0.0
         with:
           mc: ${{ github.event.inputs.mc }}
           modloader: ${{ github.event.inputs.modloader }}

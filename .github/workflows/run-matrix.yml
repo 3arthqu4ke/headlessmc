@@ -94,13 +94,18 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     needs: build
     steps:
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.version.java }}
+          distribution: "temurin"
       - uses: actions/download-artifact@v4
       - name: Display structure of downloaded files
         run: ls -R
       - name: Copy launcher jar
         run: cp launcher-jar/headlessmc-launcher.jar .
       - name: Run the MC client
-        uses: 3arthqu4ke/mc-runtime-test@2.4.2
+        uses: 3arthqu4ke/mc-runtime-test@v3.0.0
         with:
           mc: ${{ matrix.version.mc }}
           modloader: ${{ matrix.version.modloader }}
