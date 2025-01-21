@@ -1,4 +1,4 @@
-if (!JavaVersion.current().isJava9Compatible()) {
+if (!rootProject.hmc_graal_build) {
     sourceSets {
         java9stub
         main {

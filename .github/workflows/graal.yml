@@ -9,7 +9,8 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -26,15 +27,15 @@ jobs:
           java --version
           native-image --version
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      #- name: Grant execute permission for gradlew
+      #  run: chmod +x gradlew
 
       - name: Build with Gradle
         run: |
           ./gradlew -Phmc_graal_build=true headlessmc-launcher:nativeCompile
 
-      - name: List files
-        run: ls headlessmc-launcher/build/native/nativeCompile
+      #- name: List files
+      #  run: ls headlessmc-launcher/build/native/nativeCompile
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
