@@ -103,7 +103,8 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - name: Copy launcher jar
-        run: cp launcher-jar/headlessmc-launcher.jar .
+        # rename because mc-runtime-test matches a jar with headlessmc-launcher-<version>.jar
+        run: cp launcher-jar/headlessmc-launcher.jar headlessmc-launcher-0.0.0.jar
       - name: Run the MC client
         uses: 3arthqu4ke/mc-runtime-test@3.0.0
         with:
@@ -111,6 +112,7 @@ jobs:
           modloader: ${{ matrix.version.modloader }}
           regex: ${{ matrix.version.regex }}
           java: ${{ matrix.version.java }}
+          hmc-version: 0.0.0
           mc-runtime-test: ${{ matrix.version.type }}
           xvfb: true
           headlessmc-command: --retries 2 --jvm -Djava.awt.headless=true

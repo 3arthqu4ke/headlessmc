@@ -61,7 +61,8 @@ jobs:
       - name: Rename launcher jar
         run: mv headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*.jar headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar
       - name: Copy launcher jar
-        run: cp headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar .
+
+        run: cp headlessmc-launcher-wrapper/build/libs/headlessmc-launcher.jar headlessmc-launcher-0.0.0.jar
 
       - name: Run the MC client
         uses: 3arthqu4ke/mc-runtime-test@3.0.0
@@ -74,4 +75,5 @@ jobs:
           mc-runtime-test: ${{ github.event.inputs.mc-runtime-test }}
           xvfb: ${{ github.event.inputs.xvfb }}
           headlessmc-command: ${{ github.event.inputs.headlessmc-command }}
+          hmc-version: 0.0.0
           download-hmc: false
