@@ -42,6 +42,15 @@ jobs:
     strategy:
       matrix:
         version:
+          - { mc: 1.21.4, type: lexforge, modloader: forge, regex: .*forge.*, java: 21 }
+          - { mc: 1.21.4, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 21 }
+          - { mc: 1.21.4, type: fabric, modloader: fabric, regex: .*fabric.*, java: 21 }
+          - { mc: 1.21.3, type: lexforge, modloader: forge, regex: .*forge.*, java: 21 }
+          - { mc: 1.21.3, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 21 }
+          - { mc: 1.21.3, type: fabric, modloader: fabric, regex: .*fabric.*, java: 21 }
+          - { mc: 1.21.1, type: lexforge, modloader: forge, regex: .*forge.*, java: 21 }
+          - { mc: 1.21.1, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 21 }
+          - { mc: 1.21.1, type: fabric, modloader: fabric, regex: .*fabric.*, java: 21 }
           - { mc: 1.21, type: lexforge, modloader: forge, regex: .*forge.*, java: 21 }
           - { mc: 1.21, type: neoforge, modloader: neoforge, regex: .*neoforge.*, java: 21 }
           - { mc: 1.21, type: fabric, modloader: fabric, regex: .*fabric.*, java: 21 }
@@ -82,18 +91,25 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
     needs: build
     steps:
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.version.java }}
+          distribution: "temurin"
       - uses: actions/download-artifact@v4
       - name: Display structure of downloaded files
         run: ls -R
       - name: Copy launcher jar
-        run: cp launcher-jar/headlessmc-launcher.jar .
+        # rename because mc-runtime-test matches a jar with headlessmc-launcher-<version>.jar
+        run: cp launcher-jar/headlessmc-launcher.jar headlessmc-launcher-0.0.0.jar
       - name: Run the MC client
-        uses: 3arthqu4ke/mc-runtime-test@2.4.2
+        uses: 3arthqu4ke/mc-runtime-test@3.0.0
         with:
           mc: ${{ matrix.version.mc }}
           modloader: ${{ matrix.version.modloader }}
           regex: ${{ matrix.version.regex }}
           java: ${{ matrix.version.java }}
+          hmc-version: 0.0.0
           mc-runtime-test: ${{ matrix.version.type }}
           xvfb: true
           headlessmc-command: --retries 2 --jvm -Djava.awt.headless=true

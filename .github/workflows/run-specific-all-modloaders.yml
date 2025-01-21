@@ -63,13 +63,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.version.java }}
+          distribution: "temurin"
       - uses: actions/download-artifact@v4
       - name: Display structure of downloaded files
         run: ls -R
       - name: Copy launcher jar
-        run: cp launcher-jar/headlessmc-launcher.jar .
+        # rename because mc-runtime-test matches a jar with headlessmc-launcher-<version>.jar
+        run: cp launcher-jar/headlessmc-launcher.jar headlessmc-launcher-0.0.0.jar
       - name: Run the MC client
-        uses: 3arthqu4ke/mc-runtime-test@2.4.2
+        uses: 3arthqu4ke/mc-runtime-test@3.0.0
         with:
           mc: ${{ github.event.inputs.mc }}
           modloader: ${{ matrix.version.modloader }}
@@ -78,4 +84,5 @@ jobs:
           mc-runtime-test: ${{ matrix.version.type }}
           xvfb: ${{ github.event.inputs.xvfb }}
           headlessmc-command: ${{ github.event.inputs.headlessmc-command }}
+          hmc-version: 0.0.0
           download-hmc: false
