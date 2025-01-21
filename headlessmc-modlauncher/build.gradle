@@ -1,7 +1,9 @@
-sourceSets {
-    java9stub
-    main {
-        compileClasspath += java9stub.compileClasspath + java9stub.output
+if (!JavaVersion.current().isJava9Compatible()) {
+    sourceSets {
+        java9stub
+        main {
+            compileClasspath += java9stub.compileClasspath + java9stub.output
+        }
     }
 }
 

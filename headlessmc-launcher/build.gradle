@@ -1,10 +1,11 @@
 plugins {
     id 'application'
+    id 'org.graalvm.buildtools.native' version '0.10.4'
 }
 
 def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'
 application {
-    mainClass = MAIN_CLASS
+    mainClass.set(MAIN_CLASS)
 }
 
 run {

@@ -1,0 +1,44 @@
+name: Build Graal Native Image
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '23'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Output Graal Info
+        run: |
+          echo "GRAALVM_HOME: $GRAALVM_HOME"
+          echo "JAVA_HOME: $JAVA_HOME"
+          java --version
+          native-image --version
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: |
+          ./gradlew -Phmc_graal_build=true headlessmc-launcher:nativeCompile
+
+      - name: List files
+        run: ls headlessmc-launcher/build/native/nativeCompile
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HeadlessMc Native image files
+          path: |
+            ./headlessmc-launcher/build/native/nativeCompile/*

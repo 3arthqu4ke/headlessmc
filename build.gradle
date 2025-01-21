@@ -42,12 +42,17 @@ allprojects {
         }
     }
 
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    if (rootProject.hmc_graal_build) {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    } else {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
 
-    compileJava {
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.compilerArgs.addAll(['--release', '8'])
+        compileJava {
+            if (JavaVersion.current().isJava9Compatible()) {
+                options.compilerArgs.addAll(['--release', '8'])
+            }
         }
     }
 
