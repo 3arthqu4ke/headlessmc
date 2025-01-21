@@ -115,3 +115,16 @@ shadowJar {
     exclude("module-info.class")
     exclude("LICENSE")
 }
+
+graalvmNative {
+    agent {
+        defaultMode = "standard"
+        enabled = true
+    }
+    binaries {
+        main {
+            sharedLibrary = false
+            buildArgs.add('--enable-url-protocols=https')
+        }
+    }
+}
