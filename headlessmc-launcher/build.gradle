@@ -100,6 +100,7 @@ shadowJar {
     dependsOn shadowBugWorkaround
     from shadowBugWorkaround
 
+    // TODO: fix this, since it breaks graalvm, because the resource is not available!!!
     // ignore the forge-cli jar from processResources as it will get expanded
     // that the runtime and lwjgl jars get expanded isnt problematic
     processResources.exclude('forgecli*.jar')
@@ -125,6 +126,7 @@ graalvmNative {
         main {
             sharedLibrary = false
             buildArgs.add('--enable-url-protocols=https')
+            buildArgs.add('-Ob')
         }
     }
 }
