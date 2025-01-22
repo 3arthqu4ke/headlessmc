@@ -1,6 +1,10 @@
 plugins {
     id 'application'
-    id 'org.graalvm.buildtools.native' version '0.10.4'
+    id 'org.graalvm.buildtools.native' version '0.10.4' apply false
+}
+
+if (hmc_graal_build.toBoolean()) {
+    apply plugin: 'org.graalvm.buildtools.native'
 }
 
 def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'
