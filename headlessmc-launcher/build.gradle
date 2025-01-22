@@ -100,7 +100,7 @@ shadowJar {
     dependsOn shadowBugWorkaround
     from shadowBugWorkaround
 
-    if (!hmc_graal_build) {
+    if (!hmc_graal_build.toBoolean()) {
         // TODO: fix this, since it breaks graalvm, because the resource is not available!!!
         // ignore the forge-cli jar from processResources as it will get expanded
         // that the runtime and lwjgl jars get expanded isnt problematic
@@ -122,7 +122,7 @@ shadowJar {
 graalvmNative {
     agent {
         defaultMode = "standard"
-        enabled = rootProject.hmc_graal_build
+        enabled = hmc_graal_build.toBoolean()
     }
     binaries {
         main {

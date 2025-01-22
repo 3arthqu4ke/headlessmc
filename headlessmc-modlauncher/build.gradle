@@ -1,4 +1,4 @@
-if (!rootProject.hmc_graal_build) {
+if (!hmc_graal_build.toBoolean()) {
     sourceSets {
         java9stub
         main {
