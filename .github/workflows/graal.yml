@@ -31,14 +31,14 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew -Phmc_graal_build=true headlessmc-launcher:nativeCompile
+          ./gradlew -Phmc_graal_build=true headlessmc-graalvm:nativeCompile
 
       - name: List files
-        run: ls headlessmc-launcher/build/native/nativeCompile
+        run: ls headlessmc-graalvm/build/native/nativeCompile
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
           name: HeadlessMc Native image files
           path: |
-            ./headlessmc-launcher/build/native/nativeCompile/*
+            ./headlessmc-graalvm/build/native/nativeCompile/*
