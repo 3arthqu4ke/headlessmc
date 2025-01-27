@@ -24,12 +24,13 @@ import java.util.Set;
 @CustomLog
 @RequiredArgsConstructor
 public class JavaService extends LazyService<Java> implements JavaScanner {
+    private final Object lock = new Object();
     @Getter
     private final JavaVersionParser parser = new JavaVersionParser();
     private final ConfigService cfg;
     private final OS os;
 
-    private Java current;
+    private volatile Java current;
 
     @Override
     protected Set<Java> update() {
@@ -58,7 +59,11 @@ public class JavaService extends LazyService<Java> implements JavaScanner {
             }
         }
 
-        newVersions.add(getCurrent());
+        Java current = getCurrent();
+        if (current != null && !current.isInvalid()) {
+            newVersions.add(getCurrent());
+        }
+
         nanos = System.nanoTime() - nanos;
         log.debug("Java refresh took " + (nanos / 1_000_000.0) + "ms.");
         return newVersions;
@@ -127,16 +132,30 @@ public class JavaService extends LazyService<Java> implements JavaScanner {
 
     public Java getCurrent() {
         if (current == null) {
-            String executable = PathUtil.stripQuotesAtStartAndEnd(System.getProperty("java.home", "current")).replace("\"", "").concat("/bin/java");
-            String version = System.getProperty("java.version");
-            if (version == null) {
-                if ("current".equals(executable)) {
-                    throw new IllegalStateException("Failed to parse current Java version!");
-                }
+            synchronized (lock) {
+                if (current == null) {
+                    String javaHome = System.getProperty("java.home");
+                    boolean javaHomeNull = false;
+                    if (javaHome == null) {
+                        javaHome = "current";
+                        javaHomeNull = true;
+                    }
 
-                current = scanJava(executable);
-            } else {
-                current = new Java(executable, parseSystemProperty(version));
+                    String executable = PathUtil.stripQuotesAtStartAndEnd(javaHome).replace("\"", "").concat("/bin/java");
+                    String version = System.getProperty("java.version");
+                    if (version == null) {
+                        if (javaHomeNull) {
+                            throw new IllegalStateException("Failed to parse current Java version!");
+                        }
+
+                        current = scanJava(executable);
+                    } else {
+                        current = scanJava(executable);
+                        if (current == null) {
+                            current = new Java(executable, parseSystemProperty(version), true);
+                        }
+                    }
+                }
             }
         }
 

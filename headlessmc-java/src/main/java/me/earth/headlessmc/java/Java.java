@@ -1,17 +1,20 @@
 package me.earth.headlessmc.java;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Represents a Java executable.
  */
 @Data
+@RequiredArgsConstructor
 public class Java implements Comparable<Java> {
     private final String executable;
     private final int version;
+    private final boolean invalid;
 
-    public boolean isCurrent() {
-        return executable.equals("current/bin/java");
+    public Java(String executable, int version) {
+        this(executable, version, false);
     }
 
     @Override

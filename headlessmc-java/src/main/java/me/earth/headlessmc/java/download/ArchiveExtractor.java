@@ -61,6 +61,7 @@ public class ArchiveExtractor {
     }
 
     private void untar(Path from, Path to) throws IOException {
+        log.debug("Extracting tar " + from.toAbsolutePath() + " to " + to.toAbsolutePath());
         try (GzipCompressorInputStream gzipIn = new GzipCompressorInputStream(Files.newInputStream(from));
              TarArchiveInputStream tarIn = new TarArchiveInputStream(gzipIn)) {
             TarArchiveEntry entry;

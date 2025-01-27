@@ -10,10 +10,10 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 // TODO: spin up simple http server and serve some files to check all download stuff?
-@Disabled("downloads stuff")
+//@Disabled("downloads stuff")
 public class Java11DownloadClientTest {
     @Test
-    @Disabled("downloads stuff")
+    //@Disabled("downloads stuff")
     public void testDownload() throws IOException {
         ProgressBarProvider progressBarProvider = new JlineProgressbarProvider();
         DownloadClient client = new Java11DownloadClient();

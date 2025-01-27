@@ -1,16 +1,23 @@
 package me.earth.headlessmc.jline;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.earth.headlessmc.api.command.line.ProgressBarProvider;
 import me.earth.headlessmc.api.command.line.Progressbar;
+import me.earth.headlessmc.api.config.HasConfig;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class JlineProgressbarProvider implements ProgressBarProvider {
     private volatile String progressBarStyle = System.getProperty(JLineProperties.PROGRESS_BAR_STYLE.getName());
+
+    public JlineProgressbarProvider(HasConfig config) {
+        this.progressBarStyle = config.getConfig().get(JLineProperties.PROGRESS_BAR_STYLE, null);
+    }
 
     @Override
     public Progressbar displayProgressBar(Progressbar.Configuration configuration) {

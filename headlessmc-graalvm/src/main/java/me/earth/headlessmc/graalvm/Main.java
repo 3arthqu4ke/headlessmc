@@ -1,9 +1,12 @@
 package me.earth.headlessmc.graalvm;
 
+import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMcApi;
+import me.earth.headlessmc.api.command.line.ProgressBarProvider;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.java.download.JavaDownloadRequest;
 import me.earth.headlessmc.java.download.JavaDownloaderManager;
+import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.jline.JlineProgressbarProvider;
 import me.earth.headlessmc.launcher.Service;
 import me.earth.headlessmc.launcher.files.AutoConfiguration;
@@ -25,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+@CustomLog
 public class Main {
     private static final Path HEADLESSMC_PATH = Paths.get(HeadlessMcApi.NAME);
 
@@ -89,9 +93,18 @@ public class Main {
         if (java == null || forceDownload) {
             int versionToDownload = requestedVersion == -1 ? 21 : requestedVersion;
             JavaDownloaderManager downloaderManager = JavaDownloaderManager.getDefault();
+
+            ProgressBarProvider progressBarProvider = ProgressBarProvider.dummy();
+            boolean progressBarEnabled = configs.getConfig().get(JLineProperties.ENABLE_PROGRESS_BAR, true);
+            if (progressBarEnabled) {
+                progressBarProvider = new JlineProgressbarProvider(configs);
+            } else {
+                log.info("Downloading Java " + requestedVersion + " (" + distribution + ")");
+            }
+
             JavaDownloadRequest request = new JavaDownloadRequest(
                     new Java11DownloadClient(),
-                    new JlineProgressbarProvider(),
+                    progressBarProvider,
                     versionToDownload,
                     distribution,
                     os,
@@ -113,7 +126,7 @@ public class Main {
         List<Java> javas = new ArrayList<>();
         javaService.forEach(javas::add);
         javas.removeIf(java -> java.getVersion() < 8);
-        javas.removeIf(Java::isCurrent);
+        javas.removeIf(Java::isInvalid);
         Collections.sort(javas);
 
         return requestedVersion == -1

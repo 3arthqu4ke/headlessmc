@@ -20,13 +20,14 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Path root = createRootDirectory();
+        // TODO: save file with hash in name, then check if it already exists!
+        Path jarPath = root.resolve("headlessmc-launcher.jar");
+        extractResource("headlessmc/headlessmc-launcher.jar", jarPath);
 
         TransformingClassloader classloader = null;
         try {
             TransformingPluginFinder pluginFinder = HeadlessMcWrapper.getPluginFinderFactory().apply(root.resolve("transformers"));
-            URL url = Main.class.getClassLoader().getResource("headlessmc/headlessmc-launcher.jar");
-            System.out.println("HeadlessMC Launcher Jar: " + url);
-            classloader = pluginFinder.build(url, root.resolve("plugins"));
+            classloader = pluginFinder.build(jarPath, root.resolve("plugins"));
             HeadlessMcWrapper.setClassLoader(classloader);
             Thread.currentThread().setContextClassLoader(classloader);
 
