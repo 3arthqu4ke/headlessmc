@@ -1,4 +1,4 @@
-package me.earth.headlessmc.launcher.java;
+package me.earth.headlessmc.java;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

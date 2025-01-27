@@ -6,10 +6,12 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.HeadlessMcApi;
 import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.classloading.Deencapsulator;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.exit.ExitManager;
+import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.jline.JLineCommandLineReader;
 import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
@@ -19,14 +21,14 @@ import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
-import me.earth.headlessmc.launcher.os.OS;
-import me.earth.headlessmc.launcher.os.OSFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.LoggingService;
+import me.earth.headlessmc.os.OS;
+import me.earth.headlessmc.os.OSFactory;
 import net.lenni0451.commons.httpclient.constants.Headers;
 
 import java.io.IOException;
@@ -62,6 +64,7 @@ public class LauncherBuilder {
     private JavaService javaService;
     private AccountManager accountManager;
     private VersionSpecificModManager versionSpecificModManager;
+    private JavaDownloaderManager javaDownloaderManager;
 
     private OS os;
 
@@ -74,7 +77,7 @@ public class LauncherBuilder {
     }
 
     public LauncherBuilder initFileManager() {
-        return ifNull(LauncherBuilder::fileManager, LauncherBuilder::fileManager, () -> FileManager.mkdir("HeadlessMC"));
+        return ifNull(LauncherBuilder::fileManager, LauncherBuilder::fileManager, () -> FileManager.mkdir(HeadlessMcApi.NAME));
     }
 
     public LauncherBuilder runAutoConfiguration() {
@@ -110,7 +113,7 @@ public class LauncherBuilder {
                     return new LauncherConfig(configService, mcFiles, gameDir);
                 })
                 .ifNull(LauncherBuilder::versionService, LauncherBuilder::versionService, () -> new VersionService(requireNonNull(launcherConfig(), "LauncherConfig!")))
-                .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService));
+                .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService(), os()));
     }
 
     public LauncherBuilder initAccountManager() throws AuthException {
@@ -131,6 +134,14 @@ public class LauncherBuilder {
             versionSpecificModManager.addRepository(VersionSpecificMods.HMC_SPECIFICS);
             versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
             versionSpecificModManager.addRepository(VersionSpecificMods.HMC_OPTIMIZATIONS);
+        }
+
+        return this;
+    }
+
+    public LauncherBuilder configureJavaDownloader() {
+        if (this.javaDownloaderManager == null) {
+            this.javaDownloaderManager = JavaDownloaderManager.getDefault();
         }
 
         return this;
@@ -192,6 +203,7 @@ public class LauncherBuilder {
                 .initDefaultServices()
                 .initAccountManager()
                 .configureDownloadService()
+                .configureJavaDownloader()
                 .configureVersionSpecificModManager()
                 .configureCommandLineProvider()
                 .configureProcessFactory()
@@ -220,7 +232,8 @@ public class LauncherBuilder {
                 requireNonNull(javaService, "JavaService was null!"),
                 requireNonNull(accountManager, "AccountManager was null!"),
                 requireNonNull(versionSpecificModManager, "VersionSpecificModManager was null!"),
-                requireNonNull(pluginManager, "PluginManager was null!")
+                requireNonNull(pluginManager, "PluginManager was null!"),
+                requireNonNull(javaDownloaderManager, "JavaDownloaderManager was null!")
         );
     }
 

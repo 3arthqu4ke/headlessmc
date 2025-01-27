@@ -2,8 +2,8 @@ package me.earth.headlessmc.launcher.launch;
 
 import lombok.val;
 import me.earth.headlessmc.launcher.UsesResources;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Features;
+import me.earth.headlessmc.os.OS;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

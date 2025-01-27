@@ -3,8 +3,8 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.auth.AuthException;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.util.PathUtil;
 import me.earth.headlessmc.launcher.version.Version;
 

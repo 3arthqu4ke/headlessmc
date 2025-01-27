@@ -1,7 +1,6 @@
 package me.earth.headlessmc.launcher.command.forge;
 
 import lombok.val;
-import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.UsesResources;
 import org.junit.jupiter.api.Test;

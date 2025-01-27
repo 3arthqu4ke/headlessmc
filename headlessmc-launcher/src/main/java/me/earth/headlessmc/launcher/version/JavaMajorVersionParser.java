@@ -2,7 +2,7 @@ package me.earth.headlessmc.launcher.version;
 
 import com.google.gson.JsonElement;
 import lombok.val;
-import me.earth.headlessmc.launcher.java.JavaVersionParser;
+import me.earth.headlessmc.java.JavaVersionParser;
 
 class JavaMajorVersionParser {
     public Integer parse(JsonElement element) {

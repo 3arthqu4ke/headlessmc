@@ -1,25 +1,34 @@
 package me.earth.headlessmc.launcher.java;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import me.earth.headlessmc.api.config.HasConfig;
+import me.earth.headlessmc.java.Java;
+import me.earth.headlessmc.java.JavaScanner;
+import me.earth.headlessmc.java.JavaVersionFinder;
+import me.earth.headlessmc.java.JavaVersionParser;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.LazyService;
+import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.util.PathUtil;
+import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-// TODO: This!
 @CustomLog
 @RequiredArgsConstructor
-public class JavaService extends LazyService<Java> {
+public class JavaService extends LazyService<Java> implements JavaScanner {
+    @Getter
     private final JavaVersionParser parser = new JavaVersionParser();
-    private final HasConfig cfg;
+    private final ConfigService cfg;
+    private final OS os;
+
     private Java current;
 
     @Override
@@ -33,6 +42,10 @@ public class JavaService extends LazyService<Java> {
                 newVersions.add(java);
             }
         }
+
+        JavaScanner javaScanner = JavaScanner.of(parser);
+        JavaVersionFinder javaVersionFinder = new JavaVersionFinder();
+        newVersions.addAll(javaVersionFinder.checkDirectory(javaScanner, cfg.getFileManager().getDir("java").toPath(), os));
 
         if (System.getenv("JAVA_HOME") != null) {
             try {
@@ -49,6 +62,15 @@ public class JavaService extends LazyService<Java> {
         nanos = System.nanoTime() - nanos;
         log.debug("Java refresh took " + (nanos / 1_000_000.0) + "ms.");
         return newVersions;
+    }
+
+    public void refreshHeadlessMcJavaVersions() {
+        Set<Java> versions = new HashSet<>(contents);
+        boolean addFilePermissions = os.getType() == OS.Type.LINUX || os.getType() == OS.Type.OSX;
+        JavaScanner javaScanner = JavaScanner.of(new JavaVersionParser(addFilePermissions));
+        JavaVersionFinder javaVersionFinder = new JavaVersionFinder();
+        versions.addAll(javaVersionFinder.checkDirectory(javaScanner, cfg.getFileManager().getDir("java").toPath(), os, versions));
+        contents = versions;
     }
 
     public @Nullable Java scanJava(String path) {

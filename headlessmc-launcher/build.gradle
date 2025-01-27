@@ -1,10 +1,5 @@
 plugins {
     id 'application'
-    id 'org.graalvm.buildtools.native' version '0.10.4' apply false
-}
-
-if (hmc_graal_build.toBoolean()) {
-    apply plugin: 'org.graalvm.buildtools.native'
 }
 
 def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'
@@ -24,6 +19,8 @@ configurations {
 
 dependencies {
     jarLibsApi project(':headlessmc-api')
+    jarLibsApi project(':headlessmc-os')
+    jarLibsApi project(':headlessmc-java')
     jarLibsApi project(':headlessmc-logging')
     jarLibsApi project(':headlessmc-lwjgl')
     jarLibsApi project(':headlessmc-auth')
@@ -104,14 +101,12 @@ shadowJar {
     dependsOn shadowBugWorkaround
     from shadowBugWorkaround
 
-    if (!hmc_graal_build.toBoolean()) {
-        // TODO: fix this, since it breaks graalvm, because the resource is not available!!!
-        // ignore the forge-cli jar from processResources as it will get expanded
-        // that the runtime and lwjgl jars get expanded isnt problematic
-        processResources.exclude('forgecli*.jar')
-        processResources.exclude('ForgeCLI*.jar')
-        processResources.exclude('forge-cli.jar')
-    }
+    // TODO: fix this, since it breaks graalvm, because the resource is not available!!!
+    // ignore the forge-cli jar from processResources as it will get expanded
+    // that the runtime and lwjgl jars get expanded isnt problematic
+    processResources.exclude('forgecli*.jar')
+    processResources.exclude('ForgeCLI*.jar')
+    processResources.exclude('forge-cli.jar')
 
     exclude("META-INF/maven/com.google.code.gson/**")
     exclude("META-INF/versions/**")
@@ -121,18 +116,4 @@ shadowJar {
     exclude("net/kunmc/lab/**")
     exclude("module-info.class")
     exclude("LICENSE")
-}
-
-graalvmNative {
-    agent {
-        defaultMode = "standard"
-        enabled = hmc_graal_build.toBoolean()
-    }
-    binaries {
-        main {
-            sharedLibrary = false
-            buildArgs.add('--enable-url-protocols=https')
-            buildArgs.add('-Ob')
-        }
-    }
 }

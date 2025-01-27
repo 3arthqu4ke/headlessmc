@@ -16,6 +16,10 @@ public class TransformingPluginFinder extends PluginFinder {
     private final Path transformerPluginsDirectory;
 
     public TransformingClassloader build(Path launcherJar, Path pluginsDirectory) throws IOException {
+        return build(launcherJar.toUri().toURL(), pluginsDirectory);
+    }
+
+    public TransformingClassloader build(URL launcherJar, Path pluginsDirectory) throws IOException {
         URLClassLoader transformerClassloader = new URLClassLoader(find(transformerPluginsDirectory).toArray(new URL[0]), getClass().getClassLoader());
         // while we load the TransformerPlugins I want this to be the context classloader
         //Thread.currentThread().setContextClassLoader(transformerClassloader);
@@ -25,7 +29,7 @@ public class TransformingPluginFinder extends PluginFinder {
         Collections.sort(plugins);
 
         List<URL> classpath = find(pluginsDirectory);
-        classpath.add(launcherJar.toUri().toURL());
+        classpath.add(launcherJar);
         return newTransformingClassloader(classpath.toArray(new URL[0]), getClass().getClassLoader(), transformerClassloader, plugins);
     }
 

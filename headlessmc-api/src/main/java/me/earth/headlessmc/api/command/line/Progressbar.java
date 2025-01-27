@@ -1,6 +1,8 @@
 package me.earth.headlessmc.api.command.line;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 
 public interface Progressbar extends AutoCloseable {
     void stepBy(long n);
@@ -51,9 +53,21 @@ public interface Progressbar extends AutoCloseable {
     }
 
     @Data
+    @RequiredArgsConstructor
     class Configuration {
         private final String taskName;
         private final long initialMax;
+        private final @Nullable Unit unit;
+
+        public Configuration(String taskName, long initialMax) {
+            this(taskName, initialMax, null);
+        }
+
+        @Data
+        public static class Unit {
+            private final String name;
+            private final long max;
+        }
     }
 
 }

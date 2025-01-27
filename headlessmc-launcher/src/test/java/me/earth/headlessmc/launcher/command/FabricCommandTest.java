@@ -2,10 +2,10 @@ package me.earth.headlessmc.launcher.command;
 
 import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.UsesResources;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.version.ParsesVersions;
 import org.junit.jupiter.api.Test;
 

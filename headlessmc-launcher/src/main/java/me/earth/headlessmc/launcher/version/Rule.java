@@ -1,6 +1,6 @@
 package me.earth.headlessmc.launcher.version;
 
-import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.os.OS;
 
 import java.util.function.BiFunction;
 

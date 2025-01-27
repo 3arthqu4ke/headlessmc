@@ -2,13 +2,13 @@ package me.earth.headlessmc.launcher.launch;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.UsesResources;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
-import me.earth.headlessmc.launcher.java.Java;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Version;
+import me.earth.headlessmc.os.OS;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

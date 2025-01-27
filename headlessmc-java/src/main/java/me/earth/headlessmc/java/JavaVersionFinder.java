@@ -1,41 +1,46 @@
-package me.earth.headlessmc.launcher.java;
+package me.earth.headlessmc.java;
 
 import lombok.CustomLog;
-import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.api.HeadlessMcApi;
+import me.earth.headlessmc.os.OS;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Stream;
 
 @CustomLog
 public class JavaVersionFinder {
-    public List<Java> findJavaVersions(JavaService javaService, OS os) {
+    public List<Java> findJavaVersions(JavaScanner javaScanner, OS os) {
         List<Java> result = new ArrayList<>();
+        checkDirectory(javaScanner, Paths.get(HeadlessMcApi.NAME).resolve("java"), os);
         if (os.getType() == OS.Type.WINDOWS) {
             Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
             for (Path rootPath : rootDirectories) {
-                result.addAll(checkDirectory(javaService, rootPath.resolve("Program Files").resolve("Java"), os));
+                result.addAll(checkDirectory(javaScanner, rootPath.resolve("Program Files").resolve("Java"), os));
             }
 
             // search Users/<user>/.jdks?
         } else if (os.getType() == OS.Type.LINUX) {
             Iterable<Path> rootDirectories = FileSystems.getDefault().getRootDirectories();
             for (Path rootPath : rootDirectories) {
-                result.addAll(checkDirectory(javaService, rootPath.resolve("usr").resolve("lib").resolve("jvm"), os));
-                result.addAll(checkDirectory(javaService, rootPath.resolve("usr").resolve("local"), os));
+                result.addAll(checkDirectory(javaScanner, rootPath.resolve("usr").resolve("lib").resolve("jvm"), os));
+                result.addAll(checkDirectory(javaScanner, rootPath.resolve("usr").resolve("local"), os));
             }
         }
 
+        result.sort(Comparator.naturalOrder());
         return result;
     }
 
-    private List<Java> checkDirectory(JavaService javaService, Path javaDirPath, OS os) {
+    public List<Java> checkDirectory(JavaScanner javaScanner, Path javaDirPath, OS os) {
+        return checkDirectory(javaScanner, javaDirPath, os, Collections.emptyList());
+    }
+
+    public List<Java> checkDirectory(JavaScanner javaScanner, Path javaDirPath, OS os, Collection<Java> alreadyIn) {
         if (Files.exists(javaDirPath) && Files.isDirectory(javaDirPath)) {
             try (Stream<Path> stream = Files.list(javaDirPath)) {
                 List<Java> result = new ArrayList<>();
@@ -47,9 +52,12 @@ public class JavaVersionFinder {
                             path = path.substring(0, path.length() - 4);
                         }
 
-                        Java java = javaService.scanJava(path);
-                        if (java != null) {
-                            result.add(java);
+                        String replaced = path.replace("\\", "/");
+                        if (!alreadyIn.stream().anyMatch(java -> replaced.equals(java.getExecutable()))) {
+                            Java java = javaScanner.scanJava(log, path);
+                            if (java != null) {
+                                result.add(java);
+                            }
                         }
                     }
                 });

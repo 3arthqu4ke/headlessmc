@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
 import me.earth.headlessmc.api.HeadlessMc;
+import me.earth.headlessmc.api.HeadlessMcApi;
+import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
@@ -28,7 +30,7 @@ public class Launcher implements HeadlessMc {
     /**
      * The current version of HeadlessMc.
      */
-    public static final String VERSION = "2.4.1";
+    public static final String VERSION = HeadlessMcApi.VERSION;
 
     /**
      * A HeadlessMc instance that this Launcher delegates to for CommandLine, ExitManager, etc..
@@ -75,6 +77,10 @@ public class Launcher implements HeadlessMc {
      * Manages Plugins for the HeadlessMc launcher.
      */
     private PluginManager pluginManager;
+    /**
+     * Manages the downloading of Java.
+     */
+    private JavaDownloaderManager javaDownloaderManager;
 
     /**
      * The FileManager managing the HeadlessMc config, log and other files.

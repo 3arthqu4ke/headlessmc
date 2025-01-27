@@ -9,7 +9,7 @@ import me.earth.headlessmc.launcher.launch.InMemoryLauncher;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
-import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.os.OS;
 
 import java.io.IOException;
 import java.util.ArrayList;
