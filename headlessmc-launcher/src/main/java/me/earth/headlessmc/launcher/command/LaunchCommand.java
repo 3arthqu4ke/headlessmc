@@ -54,7 +54,11 @@ public class LaunchCommand extends AbstractVersionCommand {
             status = runProcess(version, files, quit, prepare, args);
         } catch (LaunchException | AuthException e) {
             status = -1;
-            log.error(e);
+            // ignore this specific message for tests, because otherwise Intellij shows it as red which looks like something failed
+            if (!(e instanceof LaunchException && "Mock Factory".equals(e.getMessage()))) {
+                log.error(e);
+            }
+
             ctx.log(String.format("Couldn't launch %s: %s", version.getName(), e.getMessage()));
             if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
                 throw new IllegalStateException(e);

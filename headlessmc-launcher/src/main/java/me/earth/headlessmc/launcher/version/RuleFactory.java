@@ -3,8 +3,8 @@ package me.earth.headlessmc.launcher.version;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.val;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.util.JsonUtil;
+import me.earth.headlessmc.os.OS;
 
 import java.util.ArrayList;
 import java.util.List;

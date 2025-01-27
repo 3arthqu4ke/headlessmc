@@ -15,6 +15,7 @@ import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
+import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.Service;
@@ -30,7 +31,6 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
-import me.earth.headlessmc.launcher.os.OSFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
@@ -41,6 +41,7 @@ import me.earth.headlessmc.logging.Logger;
 import me.earth.headlessmc.logging.LoggerFactory;
 import me.earth.headlessmc.logging.LoggingService;
 import me.earth.headlessmc.logging.NoThreadFormatter;
+import me.earth.headlessmc.os.OSFactory;
 import me.earth.headlessmc.runtime.RuntimeProperties;
 import me.earth.headlessmc.runtime.commands.RuntimeContext;
 import net.lenni0451.commons.httpclient.constants.ContentTypes;
@@ -105,7 +106,6 @@ public class CheerpJLauncher {
             commandLine.setAllContexts(commands);
         }
 
-        @SuppressWarnings("resource")
         ExecutorService service = Executors.newSingleThreadExecutor(CommandLineReader.DEFAULT_THREAD_FACTORY);
         gui.getCommandHandler().set(str -> service.submit(() -> {
             try {
@@ -145,7 +145,7 @@ public class CheerpJLauncher {
         versions.setRetries(10);
         versions.refresh();
 
-        val javas = Service.refresh(new JavaService(configs));
+        val javas = Service.refresh(new JavaService(configs, os));
 
         val accountStore = new AccountStore(launcherConfig);
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
@@ -161,7 +161,7 @@ public class CheerpJLauncher {
         val launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), downloadService,
                 new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
-                javas, accounts, versionSpecificModManager, new PluginManager());
+                javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault());
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");

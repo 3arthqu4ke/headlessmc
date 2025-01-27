@@ -1,0 +1,11 @@
+{
+  "reflection": [],
+  "resources": [
+    {
+      "glob": "headlessmc/headlessmc-launcher-wrapper.jar"
+    }
+  ],
+  "bundles": [],
+  "serialization": [],
+  "jni": []
+}

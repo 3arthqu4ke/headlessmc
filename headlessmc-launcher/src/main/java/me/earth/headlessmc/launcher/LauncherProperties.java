@@ -14,11 +14,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> MC_DIR = string("hmc.mcdir");
     Property<String> GAME_DIR = string("hmc.gamedir");
 
-    Property<String> OS_NAME = string("hmc.osname");
-    Property<String> OS_TYPE = string("hmc.ostype");
-    Property<String> OS_VERSION = string("hmc.osversion");
-    Property<Boolean> OS_ARCH = bool("hmc.osarch");
-
     Property<String[]> JAVA = array("hmc.java.versions", ";");
 
     Property<String[]> JVM_ARGS = array("hmc.jvmargs", " ");

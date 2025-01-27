@@ -1,15 +1,15 @@
 package me.earth.headlessmc.launcher.java;
 
-import me.earth.headlessmc.api.config.ConfigImpl;
+import me.earth.headlessmc.java.Java;
+import me.earth.headlessmc.launcher.LauncherMock;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JavaServiceTest {
-    private final JavaService javaService = new JavaService(() -> new ConfigImpl(new Properties(), "dummy", 0));
+    private final JavaService javaService = new JavaService(LauncherMock.INSTANCE.getConfigService(), LauncherMock.INSTANCE.getProcessFactory().getOs());
 
     @Test
     public void testFindBestVersion() {

@@ -1,10 +1,9 @@
-package me.earth.headlessmc.launcher.os;
+package me.earth.headlessmc.os;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.config.Property;
-import me.earth.headlessmc.launcher.LauncherProperties;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -16,21 +15,22 @@ public class OSFactory {
         val name = getName(config);
         val version = getVersion(config);
         val type = getType(config, name);
-        val arch = isArch(config, type);
+        val architecture = getArchitecture(config, type);
+        val arch = is64Bit(config, type);
 
-        return new OS(name, type, version, arch);
+        return new OS(name, type, version, architecture, arch);
     }
 
     private static String getName(Config config) {
-        return getGeneric(config, LauncherProperties.OS_NAME, "os.name");
+        return getGeneric(config, OsProperties.OS_NAME, "os.name");
     }
 
     private static String getVersion(Config config) {
-        return getGeneric(config, LauncherProperties.OS_VERSION, "os.version");
+        return getGeneric(config, OsProperties.OS_VERSION, "os.version");
     }
 
     private static OS.Type getType(Config config, String osIn) {
-        val type = config.get(LauncherProperties.OS_TYPE);
+        val type = config.get(OsProperties.OS_TYPE);
         if (type != null) {
             return OS.Type.valueOf(type.toUpperCase(Locale.ENGLISH));
         }
@@ -50,14 +50,33 @@ public class OSFactory {
             throw new IllegalStateException(
                 "Couldn't detect your Operating System Type from '" + os
                     + "' please provide one of WINDOWS, OSX or LINUX with the "
-                    + LauncherProperties.OS_TYPE + " property!");
+                    + OsProperties.OS_TYPE + " property!");
         }
 
         return result;
     }
 
-    private static boolean isArch(Config config, OS.Type type) {
-        Boolean arch = config.get(LauncherProperties.OS_ARCH);
+    private static String getArchitecture(Config config, OS.Type type) {
+        String architecture = config.get(OsProperties.OS_ARCHITECTURE);
+        if (architecture == null) {
+            if (type == OS.Type.WINDOWS) {
+                String p_arch = System.getenv("PROCESSOR_ARCHITECTURE");
+                String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432");
+                return p_arch == null
+                        ? (wow64Arch == null
+                            ? Objects.requireNonNull(System.getProperty("os.arch"), "Couldn't detect OS architecture")
+                            : wow64Arch)
+                        : p_arch;
+            } else {
+                architecture = Objects.requireNonNull(System.getProperty("os.arch"), "Couldn't detect OS architecture");
+            }
+        }
+
+        return architecture;
+    }
+
+    private static boolean is64Bit(Config config, OS.Type type) {
+        Boolean arch = config.get(OsProperties.OS_ARCH);
         if (arch == null) {
             if (type == OS.Type.WINDOWS) {
                 String p_arch = System.getenv("PROCESSOR_ARCHITECTURE");

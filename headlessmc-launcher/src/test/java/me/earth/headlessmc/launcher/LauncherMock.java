@@ -6,6 +6,7 @@ import me.earth.headlessmc.api.HeadlessMcImpl;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.config.ConfigImpl;
 import me.earth.headlessmc.api.exit.ExitManager;
+import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
@@ -18,11 +19,11 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.MockProcessFactory;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.LoggingService;
+import me.earth.headlessmc.os.OS;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class LauncherMock {
         val mcFiles = base.createRelative("mcFiles");
         LauncherConfig launcherConfig = new LauncherConfig(configs, mcFiles, mcFiles);
         val versions = new VersionService(launcherConfig);
-        val javas = new JavaService(configs);
+        val javas = new JavaService(configs, os);
 
         val store = new DummyAccountStore(launcherConfig);
         val accounts = new DummyAccountManager(store, new DummyAccountValidator());
@@ -58,7 +59,7 @@ public class LauncherMock {
         Launcher launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), new MockDownloadService(),
                 new MockProcessFactory(downloadService, launcherConfig, os), configs,
-                javas, accounts, versionSpecificModManager, new PluginManager());
+                javas, accounts, versionSpecificModManager, new PluginManager(), new JavaDownloaderManager());
 
         launcher.getConfigService().setConfig(ConfigImpl.empty());
 

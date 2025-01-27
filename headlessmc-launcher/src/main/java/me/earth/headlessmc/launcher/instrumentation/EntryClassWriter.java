@@ -27,6 +27,11 @@ public class EntryClassWriter extends ClassWriter implements AutoCloseable {
 
     @Override
     protected String getCommonSuperClass(String type1, String type2) {
+        // TODO: we are lucky that this has not bitten us yet,
+        //  but loading the classes into this jvm is a bit problematic
+        //  - graalvm wont work
+        //  - what if we need to instrument something java 21 while headlessmc runs in java 17?
+        //  - i do not think the static initializer runs, but still, we are loading foreign code
         try {
             return super.getCommonSuperClass(type1, type2);
         } catch (TypeNotPresentException | NoClassDefFoundError e) {
@@ -82,6 +87,10 @@ public class EntryClassWriter extends ClassWriter implements AutoCloseable {
                 urls.add(new File(target.getPath()).toURI().toURL());
             }
 
+            // TODO: this might not include the entire Minecraft classpath?
+            //  if its just the targets of the stream
+            //  this could become a problem if a class we instrument
+            //  references a super-type from another jar?
             return new EntryClassLoader(urls.toArray(new URL[0]));
         }
     }

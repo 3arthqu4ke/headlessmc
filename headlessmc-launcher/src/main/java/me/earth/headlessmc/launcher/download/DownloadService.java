@@ -3,6 +3,8 @@ package me.earth.headlessmc.launcher.download;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import me.earth.headlessmc.api.command.line.ProgressBarProvider;
+import me.earth.headlessmc.java.download.DownloadClient;
 import me.earth.headlessmc.launcher.files.IOService;
 import me.earth.headlessmc.launcher.util.IOConsumer;
 import net.lenni0451.commons.httpclient.HttpClient;
@@ -17,7 +19,7 @@ import java.util.function.Supplier;
 
 @Getter
 @RequiredArgsConstructor
-public class DownloadService extends IOService {
+public class DownloadService extends IOService implements DownloadClient {
     private final ChecksumService defaultChecksumService = new ChecksumService();
     private final ChecksumService checksumService;
     @Setter
@@ -70,6 +72,26 @@ public class DownloadService extends IOService {
                 .setCookieManager(null)
                 .setFollowRedirects(true)
                 .setRetryHandler(new RetryHandler(0, 50));
+    }
+
+    @Override
+    public String httpGetText(String url) throws IOException {
+        HttpResponse httpResponse = get(new URL(url));
+        if (httpResponse.getStatusCode() > 299 || httpResponse.getStatusCode() < 200) {
+            throw new IOException("Failed to download " + url + ", response " + httpResponse.getStatusCode() + ": " + httpResponse.getContentAsString());
+        }
+
+        return httpResponse.getContentAsString();
+    }
+
+    @Override
+    public void downloadBigFile(String url, Path destination, String progressBarTitle, ProgressBarProvider progressBarProvider) throws IOException {
+        HttpClient httpClient = httpClientFactory.get()
+                .setExecutor(hc -> new LargeFileRequestExecutor(hc, progressBarProvider, progressBarTitle, destination));
+        HttpResponse httpResponse = httpClient.get(new URL(url)).execute();
+        if (httpResponse.getStatusCode() > 299 || httpResponse.getStatusCode() < 200) {
+            throw new IOException("Failed to download " + url + ", response " + httpResponse.getStatusCode() + ": " + httpResponse.getContentAsString());
+        }
     }
 
 }

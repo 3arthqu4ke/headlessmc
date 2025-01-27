@@ -7,8 +7,8 @@ import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.instrumentation.Instrumentation;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Version;
+import me.earth.headlessmc.os.OS;
 
 import java.io.File;
 import java.io.IOException;
