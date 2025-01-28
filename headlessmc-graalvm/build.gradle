@@ -39,9 +39,10 @@ graalvmNative {
     }
     binaries {
         main {
+            imageName = hmc_graal_executable
             sharedLibrary = false
             buildArgs.add('--enable-url-protocols=https')
-            buildArgs.add('-Ob')
+            buildArgs.add('-O4')
         }
     }
 }

@@ -12,7 +12,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ macos-latest, windows-latest, ubuntu-latest ]
+        os:
+          - { os: windows-latest, name: headlessmc-launcher-windows-x64 }
+          - { os: ubuntu-latest, name: headlessmc-launcher-linux-x64 }
+          - { os: macos-latest, name: headlessmc-launcher-macos-x64 }
+          # TODO Use https://github.com/marketplace/actions/run-on-architecture to support ARM
 
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +39,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew -Phmc_graal_build=true headlessmc-graalvm:nativeCompile
+          ./gradlew -Phmc_graal_executable=${{ matrix.name }} -Phmc_graal_build=true headlessmc-graalvm:nativeCompile
 
       - name: List files
         run: ls headlessmc-graalvm/build/native/nativeCompile
