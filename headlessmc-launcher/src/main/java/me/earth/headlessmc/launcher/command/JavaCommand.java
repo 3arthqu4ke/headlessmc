@@ -27,7 +27,12 @@ public class JavaCommand extends AbstractLauncherCommand {
     public void execute(String line, String... args) throws CommandException {
         if (CommandUtil.hasFlag("-current", args)) {
             Java current = ctx.getJavaService().getCurrent();
-            ctx.log("Current: Java " + current.getVersion() + " at " + current.getPath());
+            if (current != null) {
+                ctx.log("Current: Java " + current.getVersion() + " at " + current.getPath());
+            } else {
+                ctx.log("Current Java unknown.");
+            }
+
             return;
         }
 

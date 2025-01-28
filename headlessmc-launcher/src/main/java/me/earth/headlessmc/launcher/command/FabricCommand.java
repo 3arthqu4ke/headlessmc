@@ -87,9 +87,9 @@ public class FabricCommand extends AbstractDownloadingVersionCommand implements 
         }
 
         boolean inMemory = CommandUtil.hasFlag("-inmemory", args) || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false);
-        Java java = inMemory ? ctx.getJavaService().getCurrent() : ctx.getJavaService().findBestVersion(bestVersion);
+        Java java = inMemory ? ctx.getJavaService().getCurrent() : ctx.getJavaService().findBestVersion(ctx, bestVersion, true);
         if (java == null) {
-            java = ctx.getJavaService().findBestVersion(8);
+            java = ctx.getJavaService().findBestVersion(ctx, 8);
             if (java == null) {
                 throw new CommandException("No Java version found! Please configure hmc.java.versions.");
             }

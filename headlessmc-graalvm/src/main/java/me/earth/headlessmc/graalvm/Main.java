@@ -3,6 +3,7 @@ package me.earth.headlessmc.graalvm;
 import lombok.CustomLog;
 import me.earth.headlessmc.api.HeadlessMcApi;
 import me.earth.headlessmc.api.command.line.ProgressBarProvider;
+import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.java.download.JavaDownloadRequest;
 import me.earth.headlessmc.java.download.JavaDownloaderManager;
@@ -37,6 +38,14 @@ public class Main {
         service.setFileHandler(false);
         service.init();
 
+        if (args.length > 0
+                && (args[0].equalsIgnoreCase("version")
+                    || args[0].equalsIgnoreCase("-version")
+                    || args[0].equalsIgnoreCase("--version"))) {
+            new InAndOutProvider().getOut().get().println(HeadlessMcApi.NAME + " - " + HeadlessMcApi.VERSION);
+            return;
+        }
+
         FileManager fileManager = new FileManager(HEADLESSMC_PATH.toAbsolutePath().toString());
         AutoConfiguration.runAutoConfiguration(fileManager);
         ConfigService configs = Service.refresh(new ConfigService(fileManager));
@@ -59,11 +68,15 @@ public class Main {
         arguments.addAll(mx.getInputArguments());
         arguments.add("-jar");
         arguments.add(launcherWrapper.toAbsolutePath().toString());
+        if (args.length > 0 && !args[0].equalsIgnoreCase("cli") && !args[0].equalsIgnoreCase("--command")) {
+            arguments.add("--command");
+        }
+
         arguments.addAll(Arrays.asList(args));
 
         Process process = new ProcessBuilder(arguments)
                 .inheritIO()
-                .directory(Paths.get("").toAbsolutePath().toFile())
+                .directory(null) // use current directory
                 .start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

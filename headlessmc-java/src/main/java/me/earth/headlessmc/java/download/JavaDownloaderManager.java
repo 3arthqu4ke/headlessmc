@@ -40,7 +40,7 @@ public class JavaDownloaderManager implements JavaDownloader {
                 : request.getDistribution().toLowerCase(Locale.ENGLISH));
 
         if (downloader == null) {
-            throw new IOException("Failed to find downloader for distribution " + request.getDistribution());
+            throw new IOException("Failed to find downloader for distribution " + request.getDistribution() + ", available: " + distributions.keySet());
         }
 
         downloader.download(javaVersionsDir, request);
@@ -48,7 +48,7 @@ public class JavaDownloaderManager implements JavaDownloader {
 
     public static JavaDownloaderManager getDefault() {
         JavaDownloaderManager manager = new JavaDownloaderManager();
-        manager.register("temurin", new TemurinDownloader());
+        manager.register(DEFAULT_DISTRIBUTION, new TemurinDownloader());
         return manager;
     }
 

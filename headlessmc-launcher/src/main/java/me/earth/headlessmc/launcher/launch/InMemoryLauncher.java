@@ -4,9 +4,11 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.java.Java;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.util.PathUtil;
 import me.earth.headlessmc.launcher.version.Version;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +31,16 @@ public class InMemoryLauncher extends SimpleInMemoryLauncher {
     private final LaunchOptions options;
     private final JavaLaunchCommandBuilder command;
     private final Version version;
-    private final Java java;
+    private final @Nullable Java java;
+
+    public Java getJava() {
+        Java java = this.java;
+        if (java == null) {
+            java = new Java("unknown", options.getLauncher().getConfig().get(LauncherProperties.ASSUMED_JAVA_VERSION, 8L).intValue());
+        }
+
+        return java;
+    }
 
     public void launch() throws IOException, LaunchException, AuthException {
         log.warning("The In-Memory Launcher is a BETA feature and has not been thoroughly tested yet!");
@@ -37,6 +48,7 @@ public class InMemoryLauncher extends SimpleInMemoryLauncher {
             throw new LaunchException("Both -forceSimple and -forceBoot specified!");
         }
 
+        Java java = getJava();
         boolean java9 = java.getVersion() > 8
             && !options.isForceSimple()
             && ("cpw.mods.bootstraplauncher.BootstrapLauncher".equals(version.getMainClass()) || options.isForceBoot());
@@ -104,7 +116,7 @@ public class InMemoryLauncher extends SimpleInMemoryLauncher {
     protected void addLibraryPath(Path libraryPath) {
         try {
             // https://stackoverflow.com/questions/15409223/adding-new-paths-for-native-libraries-at-runtime-in-java
-            if (java.getVersion() <= 8) {
+            if (getJava().getVersion() <= 8) {
                 String libraryPathToAdd = libraryPath.toString();
 
                 Field usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");

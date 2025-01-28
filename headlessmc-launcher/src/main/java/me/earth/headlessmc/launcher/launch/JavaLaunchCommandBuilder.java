@@ -20,6 +20,7 @@ import me.earth.headlessmc.launcher.version.Version;
 import me.earth.headlessmc.os.OS;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,26 +45,33 @@ public class JavaLaunchCommandBuilder {
 
     public List<String> build() throws LaunchException, AuthException {
         val config = launcher.getConfig();
-        Java java = launcher.getJavaService().findBestVersion(version.getJava());
+        Java java;
+        try {
+            java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(launcher, version.getJava());
+        } catch (IOError e) {
+            throw new LaunchException("Could not find Java " + version.getJava(), e);
+        }
+
         if (inMemory) {
-            Java current = launcher.getJavaService().getCurrent();
-            if (current.getVersion() != version.getJava()) {
+            if (java == null || java.getVersion() != version.getJava()) {
                 if (launcher.getConfig().get(LauncherProperties.IN_MEMORY_REQUIRE_CORRECT_JAVA, true)) {
-                    throw new LaunchException("Running in memory with java version "
-                                                  + current.getVersion()
-                                                  + " but minecraft needs "
+                    throw new LaunchException("Running in memory with " + (java == null ? "unknown" : "") + " java version "
+                                                  + (java == null ? "" : (java.getVersion() + "but "))
+                                                  + "minecraft needs "
                                                   + version.getJava());
                 }
 
-                log.warning("Running in memory with java version "
-                                + current.getVersion()
-                                + " but minecraft needs "
+                log.warning("Running in memory with "+ (java == null ? "unknown" : "") + " java version "
+                                + (java == null ? "" : (java.getVersion() + "but "))
+                                + "minecraft needs "
                                 + version.getJava());
             } else {
                 log.info("Running with Minecraft in memory in this JVM.");
             }
 
-            java = current;
+            if (java == null) {
+                java = new Java("unknown", version.getJava());
+            }
         } else if (java == null) {
             throw new LaunchException("Couldn't find Java version for "
                                           + version.getName()

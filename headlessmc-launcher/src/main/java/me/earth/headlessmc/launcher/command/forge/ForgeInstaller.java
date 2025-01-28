@@ -38,7 +38,7 @@ public class ForgeInstaller {
         val installer = fileManager.create(fileName);
         downloadInstaller(version, installer);
 
-        val java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(8);
+        val java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(launcher, 8);
         if (java == null) {
             throw new IOException("No Java version found! Please configure hmc.java.versions.");
         }

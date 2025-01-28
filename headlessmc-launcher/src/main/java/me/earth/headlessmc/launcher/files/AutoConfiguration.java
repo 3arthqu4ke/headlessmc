@@ -36,7 +36,9 @@ public class AutoConfiguration {
         if (!fileManager.get(false, false, "config.properties").exists()) {
             File file = fileManager.create("config.properties");
             OS os = OSFactory.detect(dummyConfig);
-            List<Java> javas = javaVersionFinder.findJavaVersions(JavaScanner.of(new JavaVersionParser()), os);
+            boolean addFilePermissions = os.getType() == OS.Type.LINUX || os.getType() == OS.Type.OSX;
+            addFilePermissions &= dummyConfig.get(LauncherProperties.JAVA_ALWAYS_ADD_FILE_PERMISSIONS, true);
+            List<Java> javas = javaVersionFinder.findJavaVersions(JavaScanner.of(new JavaVersionParser(addFilePermissions)), os);
             try (OutputStream output = Files.newOutputStream(file.toPath())) {
                 output.write("hmc.java.versions=".getBytes(StandardCharsets.UTF_8));
                 Iterator<Java> itr = javas.iterator();

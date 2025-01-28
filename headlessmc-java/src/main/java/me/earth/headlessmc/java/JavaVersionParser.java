@@ -27,10 +27,13 @@ public class JavaVersionParser {
         if (addFilePermissions) {
             Set<PosixFilePermission> executePermissions = new HashSet<>();
             executePermissions.add(PosixFilePermission.OWNER_READ);
+            //executePermissions.add(PosixFilePermission.OWNER_WRITE);
             executePermissions.add(PosixFilePermission.OWNER_EXECUTE);
             executePermissions.add(PosixFilePermission.GROUP_READ);
+            //executePermissions.add(PosixFilePermission.GROUP_WRITE);
             executePermissions.add(PosixFilePermission.GROUP_EXECUTE);
             executePermissions.add(PosixFilePermission.OTHERS_READ);
+            //executePermissions.add(PosixFilePermission.OTHERS_WRITE);
             executePermissions.add(PosixFilePermission.OTHERS_EXECUTE);
             Files.setPosixFilePermissions(Paths.get(path), executePermissions);
         }

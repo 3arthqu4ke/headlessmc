@@ -79,6 +79,7 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> IN_MEMORY = bool("hmc.in.memory");
     Property<Boolean> IN_MEMORY_REQUIRE_CORRECT_JAVA = bool("hmc.in.memory.require.correct.java");
+    Property<Long> ASSUMED_JAVA_VERSION = number("hmc.assumed.java.version");
     Property<Boolean> ALWAYS_IN_MEMORY = bool("hmc.always.in.memory");
 
     Property<Boolean> REFRESH_ON_LAUNCH = bool("hmc.account.refresh.on.launch");
@@ -95,7 +96,12 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> CHECK_XVFB = bool("hmc.check.xvfb");
 
+    Property<Boolean> USE_CURRENT_JAVA = bool("hmc.java.use.current");
     Property<Boolean> AUTO_DOWNLOAD = bool("hmc.auto.download.versions");
     Property<Boolean> AUTO_DOWNLOAD_JAVA = bool("hmc.auto.download.java");
+    Property<Boolean> AUTO_DOWNLOAD_JAVA_THROW_EXCEPTION = bool("hmc.auto.download.java.rethrow.exception");
+    Property<Boolean> REQUIRE_EXACT_JAVA = bool("hmc.java.require.exact");
+    Property<String> JAVA_DISTRIBUTION = string("hmc.auto.java.distribution");
+    Property<Boolean> JAVA_ALWAYS_ADD_FILE_PERMISSIONS = bool("hmc.java.always.add.file.permissions");
 
 }
