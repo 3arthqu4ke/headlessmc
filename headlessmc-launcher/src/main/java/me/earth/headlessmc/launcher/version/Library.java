@@ -1,7 +1,7 @@
 package me.earth.headlessmc.launcher.version;
 
 import me.earth.headlessmc.api.HasName;
-import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 
 public interface Library extends HasName {

@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Library;
+import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;

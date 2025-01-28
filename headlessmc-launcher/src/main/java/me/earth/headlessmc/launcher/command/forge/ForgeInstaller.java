@@ -4,10 +4,10 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.ResourceExtractor;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 
@@ -38,7 +38,7 @@ public class ForgeInstaller {
         val installer = fileManager.create(fileName);
         downloadInstaller(version, installer);
 
-        val java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(8);
+        val java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(launcher, 8);
         if (java == null) {
             throw new IOException("No Java version found! Please configure hmc.java.versions.");
         }

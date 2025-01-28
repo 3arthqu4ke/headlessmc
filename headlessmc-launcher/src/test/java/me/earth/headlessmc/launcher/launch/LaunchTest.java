@@ -4,11 +4,11 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import me.earth.headlessmc.api.util.ResourceUtil;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherMock;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.LaunchContext;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import org.junit.jupiter.api.Test;
 

@@ -5,8 +5,8 @@ import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.files.ConfigService;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.util.IOUtil;
+import me.earth.headlessmc.os.OS;
 
 import java.io.BufferedReader;
 import java.io.IOException;

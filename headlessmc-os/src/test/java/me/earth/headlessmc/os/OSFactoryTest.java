@@ -1,8 +1,7 @@
-package me.earth.headlessmc.launcher.os;
+package me.earth.headlessmc.os;
 
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.config.ConfigImpl;
-import me.earth.headlessmc.launcher.LauncherProperties;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
@@ -14,17 +13,19 @@ public class OSFactoryTest {
     @Test
     public void testOSFactory() {
         Properties properties = new Properties();
-        properties.put(LauncherProperties.OS_ARCH.getName(), "true");
-        properties.put(LauncherProperties.OS_NAME.getName(), "win");
-        properties.put(LauncherProperties.OS_TYPE.getName(), "WINDOWS");
-        properties.put(LauncherProperties.OS_VERSION.getName(), "10");
+        properties.put(OsProperties.OS_ARCH.getName(), "true");
+        properties.put(OsProperties.OS_NAME.getName(), "win");
+        properties.put(OsProperties.OS_TYPE.getName(), "WINDOWS");
+        properties.put(OsProperties.OS_ARCHITECTURE.getName(), "AMD64");
+        properties.put(OsProperties.OS_VERSION.getName(), "10");
         Config config = new ConfigImpl(properties, "test", 0);
 
         OS os = OSFactory.detect(config);
         assertEquals("win", os.getName());
         assertEquals(OS.Type.WINDOWS, os.getType());
         assertEquals("10", os.getVersion());
-        assertTrue(os.isArch());
+        assertEquals("AMD64", os.getArchitecture());
+        assertTrue(os.is64bit());
     }
 
 }

@@ -1,7 +1,9 @@
-sourceSets {
-    java9stub
-    main {
-        compileClasspath += java9stub.compileClasspath + java9stub.output
+if (!hmc_graal_build.toBoolean()) {
+    sourceSets {
+        java9stub
+        main {
+            compileClasspath += java9stub.compileClasspath + java9stub.output
+        }
     }
 }
 

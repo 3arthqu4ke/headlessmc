@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadFactory;
  * Represents a blocking task that reads commands from a terminal, console or other InputStream.
  */
 @FunctionalInterface
-public interface CommandLineReader {
+public interface CommandLineReader extends ProgressBarProvider {
     /**
      * Every Thread produced by this ThreadFactory is a daemon thread and has the name "HeadlessMc-CommandLine".
      */
@@ -86,6 +86,7 @@ public interface CommandLineReader {
     /**
      * @return a Progressbar to display progress with.
      */
+    @Override
     default Progressbar displayProgressBar(Progressbar.Configuration configuration) {
         return Progressbar.dummy();
     }

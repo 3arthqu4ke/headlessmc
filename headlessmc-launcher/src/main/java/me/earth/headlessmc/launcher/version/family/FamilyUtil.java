@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -136,6 +137,20 @@ public class FamilyUtil {
                                           () -> false,
                                           c -> mem.add(c) ? null : true);
         return new Family<>(mem, circular);
+    }
+
+    public static <T extends HasParent<T>, S> boolean anyMemberMatches(T child, Predicate<T> action) {
+        T parent = child;
+        while (parent != null) {
+            boolean result = action.test(parent);
+            if (result) {
+                return true;
+            }
+
+            parent = parent.getParent();
+        }
+
+        return false;
     }
 
 }

@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
@@ -23,7 +24,7 @@ import static me.earth.headlessmc.api.command.CommandUtil.flag;
 import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS;
 
 @CustomLog
-public class LaunchCommand extends AbstractVersionCommand {
+public class LaunchCommand extends AbstractDownloadingVersionCommand {
     public LaunchCommand(Launcher launcher) {
         super(launcher, "launch", "Launches the game.");
         args.put("<version/id>", "Name or id of the version to launch. If you use the id you need to use the -id flag as well.");
@@ -36,6 +37,7 @@ public class LaunchCommand extends AbstractVersionCommand {
         args.put("-paulscode", "Removes some error messages from the PaulsCode library which may annoy you if you started the game with the -lwjgl flag.");
         args.put("-noout", "Doesn't print Minecrafts output to the console."); // TODO: is this really necessary?
         args.put("-quit", "Quit HeadlessMc after launching the game.");
+        args.put("-offline", "Launch Mc in offline mode.");
         args.put("--jvm", "Jvm args to use.");
         args.put("--retries", "The amount of times you want to retry running Minecraft.");
     }
@@ -54,7 +56,11 @@ public class LaunchCommand extends AbstractVersionCommand {
             status = runProcess(version, files, quit, prepare, args);
         } catch (LaunchException | AuthException e) {
             status = -1;
-            log.error(e);
+            // ignore this specific message for tests, because otherwise Intellij shows it as red which looks like something failed
+            if (!(e instanceof LaunchException && "Mock Factory".equals(e.getMessage()))) {
+                log.error(e);
+            }
+
             ctx.log(String.format("Couldn't launch %s: %s", version.getName(), e.getMessage()));
             if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
                 throw new IllegalStateException(e);
@@ -88,6 +94,10 @@ public class LaunchCommand extends AbstractVersionCommand {
     private int runProcess(Version version, FileManager files, boolean quit, boolean prepare, String... args)
             throws CommandException, LaunchException, AuthException {
         int status = 0;
+        if (CommandUtil.hasFlag("-offline", args)) {
+            ctx.getAccountManager().getOfflineChecker().setOffline(true);
+        }
+
         LaunchAccount account = getAccount();
         String retriesOption = CommandUtil.getOption("--retries", args);
         int retries = 0;

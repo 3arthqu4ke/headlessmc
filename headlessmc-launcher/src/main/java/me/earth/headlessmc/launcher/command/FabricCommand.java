@@ -5,10 +5,12 @@ import lombok.Getter;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.ParseUtil;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
+import me.earth.headlessmc.launcher.command.download.ModLauncherCommand;
 import me.earth.headlessmc.launcher.files.FileManager;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
 import me.earth.headlessmc.launcher.launch.SystemPropertyHelper;
 import me.earth.headlessmc.launcher.version.Version;
@@ -22,7 +24,7 @@ import java.util.*;
 
 @Getter
 @CustomLog
-public class FabricCommand extends AbstractVersionCommand {
+public class FabricCommand extends AbstractDownloadingVersionCommand implements ModLauncherCommand {
     private static final String LEGACY = "https://maven.legacyfabric.net/net/legacyfabric/fabric-installer/1.0.0/fabric-installer-1.0.0.jar";
     private static final String URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
 
@@ -85,9 +87,9 @@ public class FabricCommand extends AbstractVersionCommand {
         }
 
         boolean inMemory = CommandUtil.hasFlag("-inmemory", args) || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false);
-        Java java = inMemory ? ctx.getJavaService().getCurrent() : ctx.getJavaService().findBestVersion(bestVersion);
+        Java java = inMemory ? ctx.getJavaService().getCurrent() : ctx.getJavaService().findBestVersion(ctx, bestVersion, true);
         if (java == null) {
-            java = ctx.getJavaService().findBestVersion(8);
+            java = ctx.getJavaService().findBestVersion(ctx, 8);
             if (java == null) {
                 throw new CommandException("No Java version found! Please configure hmc.java.versions.");
             }

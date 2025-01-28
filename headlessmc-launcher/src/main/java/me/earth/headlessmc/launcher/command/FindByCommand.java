@@ -33,22 +33,34 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
         }
 
         try {
-            T t = byId
-                ? HasId.getById(args[1], getIterable())
-                : byRegex
-                    ? HasName.getByRegex(Pattern.compile(args[1]), getIterable())
-                    : HasName.getByName(args[1], getIterable());
-
+            T t = findObject(byId, byRegex, args[1], args);
             if (t == null) {
-                throw new CommandException("Couldn't find object for "
-                                               + (byId ? "id '" : "name '")
-                                               + args[1] + "'!");
+                onObjectNotFound(byId, byRegex, args[1], args);
+                return;
             }
 
             this.execute(t, args);
         } catch (PatternSyntaxException e) {
             throw new CommandException("Failed to parse regex " + args[1], e);
         }
+    }
+
+    default void onObjectNotFound(boolean byId, boolean byRegex, String objectArg, String... args) throws CommandException {
+        throw new CommandException("Couldn't find object for "
+                + (byId
+                    ? "id '"
+                    : (byRegex
+                        ? "regex '"
+                        : "name '"))
+                + objectArg + "'!");
+    }
+
+    default @Nullable T findObject(boolean byId, boolean byRegex, String versionArg, String... args) throws CommandException {
+        return byId
+                ? HasId.getById(versionArg, getIterable())
+                : byRegex
+                 ? HasName.getByRegex(Pattern.compile(versionArg), getIterable())
+                 : HasName.getByName(versionArg, getIterable());
     }
 
     @Override

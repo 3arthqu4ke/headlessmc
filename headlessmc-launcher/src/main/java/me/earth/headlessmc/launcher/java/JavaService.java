@@ -1,26 +1,46 @@
 package me.earth.headlessmc.launcher.java;
 
 import lombok.CustomLog;
-import lombok.RequiredArgsConstructor;
-import me.earth.headlessmc.api.config.HasConfig;
+import lombok.Getter;
+import me.earth.headlessmc.java.Java;
+import me.earth.headlessmc.java.JavaScanner;
+import me.earth.headlessmc.java.JavaVersionFinder;
+import me.earth.headlessmc.java.JavaVersionParser;
+import me.earth.headlessmc.java.download.JavaDownloadRequest;
+import me.earth.headlessmc.java.download.JavaDownloaderManager;
+import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.LazyService;
+import me.earth.headlessmc.launcher.files.ConfigService;
 import me.earth.headlessmc.launcher.util.PathUtil;
+import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-// TODO: This!
 @CustomLog
-@RequiredArgsConstructor
-public class JavaService extends LazyService<Java> {
-    private final JavaVersionParser parser = new JavaVersionParser();
-    private final HasConfig cfg;
-    private Java current;
+public class JavaService extends LazyService<Java> implements JavaScanner {
+    private final Object lock = new Object();
+    @Getter
+    private final JavaVersionParser parser;
+    private final ConfigService cfg;
+    private final OS os;
+
+    private volatile Java current;
+
+    public JavaService(ConfigService cfg, OS os) {
+        this.cfg = cfg;
+        this.os = os;
+        boolean addFilePermissions = os.getType() == OS.Type.LINUX || os.getType() == OS.Type.OSX;
+        addFilePermissions |= cfg.getConfig().get(LauncherProperties.JAVA_ALWAYS_ADD_FILE_PERMISSIONS, false);
+        this.parser = new JavaVersionParser(addFilePermissions);
+    }
 
     @Override
     protected Set<Java> update() {
@@ -34,6 +54,10 @@ public class JavaService extends LazyService<Java> {
             }
         }
 
+        JavaScanner javaScanner = JavaScanner.of(parser);
+        JavaVersionFinder javaVersionFinder = new JavaVersionFinder();
+        newVersions.addAll(javaVersionFinder.checkDirectory(javaScanner, cfg.getFileManager().getDir("java").toPath(), os));
+
         if (System.getenv("JAVA_HOME") != null) {
             try {
                 Java java = scanJava(PathUtil.stripQuotes(System.getenv("JAVA_HOME")).resolve("bin").resolve("java").toAbsolutePath().toString());
@@ -45,10 +69,23 @@ public class JavaService extends LazyService<Java> {
             }
         }
 
-        newVersions.add(getCurrent());
+        Java current = getCurrent();
+        if (current != null && !current.isInvalid() && cfg.getConfig().get(LauncherProperties.USE_CURRENT_JAVA, true)) {
+            newVersions.add(current);
+        }
+
         nanos = System.nanoTime() - nanos;
         log.debug("Java refresh took " + (nanos / 1_000_000.0) + "ms.");
         return newVersions;
+    }
+
+    public void refreshHeadlessMcJavaVersions() {
+        Set<Java> versions = new HashSet<>(contents);
+        boolean addFilePermissions = os.getType() == OS.Type.LINUX || os.getType() == OS.Type.OSX;
+        JavaScanner javaScanner = JavaScanner.of(new JavaVersionParser(addFilePermissions));
+        JavaVersionFinder javaVersionFinder = new JavaVersionFinder();
+        versions.addAll(javaVersionFinder.checkDirectory(javaScanner, cfg.getFileManager().getDir("java").toPath(), os, versions));
+        contents = versions;
     }
 
     public @Nullable Java scanJava(String path) {
@@ -70,10 +107,18 @@ public class JavaService extends LazyService<Java> {
     }
 
     public @Nullable Java findBestVersion(Integer version) {
+        return findBestVersion(null, version);
+    }
+
+    public @Nullable Java findBestVersion(@Nullable Launcher launcher, Integer version) {
+        return findBestVersion(launcher, version, false);
+    }
+
+    public @Nullable Java findBestVersion(@Nullable Launcher launcher, Integer version, boolean canFallbackToOtherVersion) {
         ensureInitialized();
         if (version == null) {
             log.error("Version was null, assuming Java 8 is needed!");
-            return findBestVersion(8);
+            return findBestVersion(launcher, 8, canFallbackToOtherVersion);
         }
 
         Java best = null;
@@ -86,16 +131,27 @@ public class JavaService extends LazyService<Java> {
                 return java;
             }
 
-            // uhhhhhhhhhhhhhhhhhhhh what?!?!?!
-            if (java.getVersion() > version && (best == null
-                || best.getVersion() - version > java.getVersion() - version)) {
+            if (java.getVersion() > version // find the one thats closest to the wanted version
+                    && (best == null || best.getVersion() > java.getVersion())) {
                 best = java;
             }
+        }
+
+        if (!canFallbackToOtherVersion && launcher != null && cfg.getConfig().get(LauncherProperties.AUTO_DOWNLOAD_JAVA, true)) {
+            Java java = download(launcher, version);
+            if (java != null) {
+                return java;
+            }
+        }
+
+        if (cfg.getConfig().get(LauncherProperties.REQUIRE_EXACT_JAVA, false)) { // TODO: false for legacy reasons
+            return null;
         }
 
         if (best == null) {
             log.error("Couldn't find a Java Version >= " + version + "!");
         } else {
+            // this is kinda dangerous, running mc with a higher java version?!
             log.warning("Couldn't find Java Version " + version
                             + " falling back to " + best.getVersion());
         }
@@ -103,18 +159,35 @@ public class JavaService extends LazyService<Java> {
         return best;
     }
 
-    public Java getCurrent() {
+    public @Nullable Java getCurrent() {
         if (current == null) {
-            String executable = PathUtil.stripQuotesAtStartAndEnd(System.getProperty("java.home", "current")).replace("\"", "").concat("/bin/java");
-            String version = System.getProperty("java.version");
-            if (version == null) {
-                if ("current".equals(executable)) {
-                    throw new IllegalStateException("Failed to parse current Java version!");
-                }
+            synchronized (lock) {
+                if (current == null) {
+                    String javaHome = System.getProperty("java.home");
+                    boolean javaHomeNull = false;
+                    if (javaHome == null) {
+                        javaHome = "current";
+                        javaHomeNull = true;
+                    }
 
-                current = scanJava(executable);
-            } else {
-                current = new Java(executable, parseSystemProperty(version));
+                    String executable = PathUtil.stripQuotesAtStartAndEnd(javaHome).replace("\"", "").concat("/bin/java");
+                    String version = System.getProperty("java.version");
+                    if (version == null) {
+                        if (javaHomeNull) {
+                            throw new IllegalStateException("Failed to parse current Java version!");
+                        }
+
+                        current = scanJava(executable);
+                    } else {
+                        if (!javaHomeNull) {
+                            current = scanJava(executable);
+                        }
+
+                        if (current == null) {
+                            current = new Java(executable, parseSystemProperty(version), true);
+                        }
+                    }
+                }
             }
         }
 
@@ -139,6 +212,36 @@ public class JavaService extends LazyService<Java> {
         }
 
         return Integer.parseInt(version);
+    }
+
+    private @Nullable Java download(Launcher launcher, int version) {
+        JavaDownloadRequest javaDownloadRequest = new JavaDownloadRequest(
+                launcher.getDownloadService(),
+                launcher.getCommandLine(),
+                version,
+                cfg.getConfig().get(LauncherProperties.JAVA_DISTRIBUTION, JavaDownloaderManager.DEFAULT_DISTRIBUTION),
+                launcher.getProcessFactory().getOs(),
+                false
+        );
+
+        try {
+            launcher.getJavaDownloaderManager().download(launcher.getFileManager().getBase().toPath().resolve("java"), javaDownloadRequest);
+            refreshHeadlessMcJavaVersions();
+            Java java = contents.stream().filter(j -> j.getVersion() == version).findFirst().orElse(null);
+            if (java == null) {
+                throw new IOException("Failed to download Java version " + version);
+            }
+
+            return java;
+        } catch (IOException e) {
+            if (cfg.getConfig().get(LauncherProperties.AUTO_DOWNLOAD_JAVA_THROW_EXCEPTION, true)) {
+                throw new IOError(e);
+            }
+
+            log.error("Failed to download Java " + version, e);
+        }
+
+        return null;
     }
 
 }

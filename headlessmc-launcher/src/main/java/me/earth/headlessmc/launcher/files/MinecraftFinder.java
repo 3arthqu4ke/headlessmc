@@ -3,7 +3,7 @@ package me.earth.headlessmc.launcher.files;
 import lombok.experimental.UtilityClass;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.os.OS;
+import me.earth.headlessmc.os.OS;
 
 import java.io.File;
 

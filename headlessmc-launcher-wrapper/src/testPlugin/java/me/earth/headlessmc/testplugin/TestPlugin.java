@@ -2,6 +2,7 @@ package me.earth.headlessmc.testplugin;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.api.command.line.DefaultCommandLineProvider;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.plugin.HeadlessMcPlugin;
@@ -54,7 +55,12 @@ public class TestPlugin implements HeadlessMcPlugin {
         launcher.getCommandLine().setCommandLineProvider(new DefaultCommandLineProvider(launcher.getCommandLine().getInAndOutProvider()));
 
         System.setProperty(LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS.getName(), "true");
-        LaunchTest.build(launcher.getJavaService().getCurrent(), launcher, in);
+        Java java = launcher.getJavaService().getCurrent();
+        if (java == null) {
+            java = new Java("unknown", launcher.getConfig().get(LauncherProperties.ASSUMED_JAVA_VERSION, 8L).intValue());
+        }
+
+        LaunchTest.build(java, launcher, in);
     }
 
     @Override

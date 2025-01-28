@@ -4,7 +4,7 @@ plugins {
 
 def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'
 application {
-    mainClass = MAIN_CLASS
+    mainClass.set(MAIN_CLASS)
 }
 
 run {
@@ -19,6 +19,8 @@ configurations {
 
 dependencies {
     jarLibsApi project(':headlessmc-api')
+    jarLibsApi project(':headlessmc-os')
+    jarLibsApi project(':headlessmc-java')
     jarLibsApi project(':headlessmc-logging')
     jarLibsApi project(':headlessmc-lwjgl')
     jarLibsApi project(':headlessmc-auth')
@@ -99,6 +101,7 @@ shadowJar {
     dependsOn shadowBugWorkaround
     from shadowBugWorkaround
 
+    // TODO: fix this, since it breaks graalvm, because the resource is not available!!!
     // ignore the forge-cli jar from processResources as it will get expanded
     // that the runtime and lwjgl jars get expanded isnt problematic
     processResources.exclude('forgecli*.jar')

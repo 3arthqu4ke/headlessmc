@@ -3,7 +3,6 @@ package me.earth.headlessmc.api.classloading;
 import lombok.Data;
 import me.earth.headlessmc.api.command.Command;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.util.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 

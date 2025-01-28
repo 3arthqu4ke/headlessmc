@@ -1,8 +1,8 @@
 package me.earth.headlessmc.testplugin;
 
 import me.earth.headlessmc.api.HasName;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
-import me.earth.headlessmc.launcher.java.Java;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.PrintStream;

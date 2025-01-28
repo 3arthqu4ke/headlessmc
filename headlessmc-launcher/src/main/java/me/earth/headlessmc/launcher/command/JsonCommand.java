@@ -5,13 +5,14 @@ import com.google.gson.JsonElement;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.File;
 import java.io.IOException;
 
-public class JsonCommand extends AbstractVersionCommand {
+public class JsonCommand extends AbstractDownloadingVersionCommand {
     public JsonCommand(Launcher launcher) {
         super(launcher, "json", "Dumps version.json files.");
         args.put("<version/file>", "The json file to dump.");

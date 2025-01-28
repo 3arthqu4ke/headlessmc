@@ -1,6 +1,5 @@
 package me.earth.headlessmc.launcher;
 
-import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

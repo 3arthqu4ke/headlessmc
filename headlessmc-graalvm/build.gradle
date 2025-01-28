@@ -1,0 +1,77 @@
+plugins {
+    id 'application'
+    id 'org.graalvm.buildtools.native' version '0.10.4'
+}
+
+def MAIN_CLASS = 'me.earth.headlessmc.graalvm.Main'
+application {
+    mainClass.set(MAIN_CLASS)
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+run {
+    standardInput = System.in
+}
+
+dependencies {
+    implementation project(':headlessmc-api')
+    implementation project(':headlessmc-os')
+    implementation project(':headlessmc-java')
+    implementation project(':headlessmc-jline')
+    implementation project(':headlessmc-launcher')
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+    implementation 'me.tongfei:progressbar:0.9.5'
+}
+
+processResources {
+    into('headlessmc') {
+        from project(':headlessmc-launcher-wrapper')['shadowJar']
+        rename 'headlessmc-launcher(.*).jar', 'headlessmc-launcher-wrapper.jar'
+    }
+}
+
+graalvmNative {
+    agent {
+        defaultMode = "standard"
+        // enabled = hmc_graal_build.toBoolean()
+    }
+    binaries {
+        main {
+            imageName = hmc_graal_executable
+            sharedLibrary = false
+            buildArgs.add('--enable-url-protocols=https')
+            buildArgs.add('-O4')
+        }
+    }
+}
+
+tasks.withType(JacocoReport) {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            def tree = fileTree(dir: it, exclude: [
+                    '**/headlessmc/headlessmc-launcher.jar',
+                    '**/headlessmc/headlessmc-runtime.jar',
+                    '**/headlessmc/headlessmc-lwjgl.jar',
+                    '**/headlessmc/forge-cli.jar',
+                    '**/org/objectweb/**',
+                    'me/earth/headlessmc/lwjgl/agent/**',
+                    'me/earth/headlessmc/web/**',
+                    'me/earth/headlessmc/web/**/*.*',
+                    'me/earth/headlessmc/web/cheerpj/**/*.*',
+                    'me/earth/headlessmc/web/cheerpj/plugin/**',
+                    'me/earth/headlessmc/web/cheerpj/plugin/*.*'
+            ])
+            // because 'me/earth/headlessmc/web/cheerpj/plugin/**' does not work
+            return tree.exclude { details ->
+                return details.file.canonicalPath.contains('headlessmc-web')
+                    || details.file.canonicalPath.contains('headlessmc-graalvm')
+            }
+        }))
+    }
+
+    reports {
+        xml.required.set(true)
+    }
+}

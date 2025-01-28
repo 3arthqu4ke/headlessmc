@@ -2,10 +2,10 @@ package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
 import lombok.val;
-import me.earth.headlessmc.launcher.os.OS;
 import me.earth.headlessmc.launcher.version.Argument;
 import me.earth.headlessmc.launcher.version.Features;
 import me.earth.headlessmc.launcher.version.Rule;
+import me.earth.headlessmc.os.OS;
 
 import java.util.ArrayList;
 import java.util.HashMap;

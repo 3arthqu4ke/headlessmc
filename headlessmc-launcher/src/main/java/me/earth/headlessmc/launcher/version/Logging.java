@@ -4,23 +4,38 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URL;
 
 @Data
+@RequiredArgsConstructor
 public class Logging {
     private final String argument;
     private final String type;
     private final File file;
 
+    @Deprecated
+    @SuppressWarnings("unused") // used by graalvm
+    private Logging() {
+        this(null, null, null);
+    }
+
     @Data
+    @RequiredArgsConstructor
     public static class File {
         private final String id;
         private final String sha1;
         private final Long size;
         private final URL url;
+
+        @Deprecated
+        @SuppressWarnings("unused") // used by graalvm
+        private File() {
+            this(null, null, 0L, null);
+        }
     }
 
     public static Logging fromJson(JsonElement element) {

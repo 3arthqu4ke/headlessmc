@@ -22,6 +22,15 @@ import java.util.function.Consumer;
  * For that the {@link ApiClassloadingHelper} exists.
  */
 public class HeadlessMcApi {
+    /**
+     * The current version of HeadlessMc.
+     */
+    public static final String VERSION = "2.5.0";
+    /**
+     * The string "HeadlessMC".
+     */
+    public static final String NAME = "HeadlessMC";
+
     private static final HmcInstanceHolder INSTANCE_HOLDER = new HmcInstanceHolder();
     /**
      * If this API supports {@link ClAgnosticCommandContext}s.
