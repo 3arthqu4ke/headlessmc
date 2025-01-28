@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
 import me.earth.headlessmc.launcher.command.FindByCommand;
 import me.earth.headlessmc.launcher.command.VersionTypeFilter;
+import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -22,10 +23,18 @@ import java.util.Map;
 @CustomLog
 public class DownloadCommand extends AbstractLauncherCommand
     implements FindByCommand<VersionInfo> {
+    private final AbstractDownloadingVersionCommand downloadCommand;
     private final VersionInfoCache cache = new VersionInfoCache();
 
     public DownloadCommand(Launcher ctx) {
         super(ctx, "download", "Downloads a version.");
+        this.downloadCommand = new AbstractDownloadingVersionCommand(ctx, "download", "Downloads a version.") {
+            @Override
+            public void execute(Version obj, String... args) {
+                // NOP
+            }
+        };
+
         args.put("<version/id>", "The name/id of the version to download." +
             " If you use the id you also need to use the -id flag.");
         args.put("-id", "If you specified the version via id you" +
@@ -40,8 +49,11 @@ public class DownloadCommand extends AbstractLauncherCommand
                                 + version.getName() + File.separator
                                 + version.getName() + ".json");
         if (file.exists()) {
-            ctx.log(version.getName() + " has already been downloaded," +
-                        " download anyways? (y/n)");
+            if (CommandUtil.hasFlag("-noredownload", args)) {
+                return;
+            }
+
+            ctx.log(version.getName() + " has already been downloaded, download anyways? (y/n)");
             YesNoContext.goBackAfter(ctx, r -> {
                 if (r) {
                     download(version, file);
@@ -99,6 +111,13 @@ public class DownloadCommand extends AbstractLauncherCommand
     }
 
     @Override
+    public void onObjectNotFound(boolean byId, boolean byRegex, String objectArg, String... args) throws CommandException {
+        if (downloadCommand.findObject(byId, byRegex, objectArg, args) == null) {
+            FindByCommand.super.onObjectNotFound(byId, byRegex, objectArg, args);
+        }
+    }
+
+    @Override
     public Iterable<VersionInfo> getIterable() {
         return cache;
     }
@@ -110,6 +129,11 @@ public class DownloadCommand extends AbstractLauncherCommand
         }
 
         FindByCommand.super.getCompletions(line, completions, args);
+    }
+
+    public void download(String version) throws CommandException {
+        // this is really bad...
+        execute("download " + version + " -noredownload -norecursivedownload", "download", version, "-noredownload -norecursivedownload");
     }
 
 }

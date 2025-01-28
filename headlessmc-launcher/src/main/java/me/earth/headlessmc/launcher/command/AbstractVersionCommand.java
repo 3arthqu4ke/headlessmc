@@ -10,6 +10,8 @@ import me.earth.headlessmc.launcher.version.family.FamilyUtil;
 import me.earth.headlessmc.launcher.version.family.HasParent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public abstract class AbstractVersionCommand extends AbstractLauncherCommand
     implements FindByCommand<Version> {
     public AbstractVersionCommand(Launcher ctx, String name, String desc) {
@@ -36,8 +38,10 @@ public abstract class AbstractVersionCommand extends AbstractLauncherCommand
 
     // for testing
     protected <V extends HasName & HasParent<V>> @Nullable V find(VersionArgument versionArgument, Iterable<V> versions) {
+        String mlVersion = versionArgument.getModLauncherVersion() == null ? null : versionArgument.getModLauncherVersion().toLowerCase(Locale.ENGLISH);
         for (V version : versions) {
             if (Modlauncher.getFromVersionName(version.getName()) == versionArgument.getModlauncher()
+                    && (mlVersion == null || version.getName().toLowerCase(Locale.ENGLISH).contains(mlVersion))
                     && (version.getName().equalsIgnoreCase(versionArgument.getName())
                     || FamilyUtil.anyMemberMatches(version, parent -> parent.getName().equalsIgnoreCase(versionArgument.getName())))) {
                 return version;

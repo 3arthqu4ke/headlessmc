@@ -8,6 +8,7 @@ import lombok.val;
 import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.util.JsonUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Collection;
@@ -24,6 +25,13 @@ public final class VersionService extends LazyService<Version> {
     private final LauncherConfig launcherConfig;
 
     private int retries = 0;
+
+    public @Nullable Version getVersionByName(String name) {
+        return stream()
+                .filter(v -> v.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
+    }
 
     @Override
     protected Collection<Version> update() {

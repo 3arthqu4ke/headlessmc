@@ -8,6 +8,8 @@ import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
+import me.earth.headlessmc.launcher.command.download.ModLauncherCommand;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
 import me.earth.headlessmc.launcher.launch.SystemPropertyHelper;
@@ -22,7 +24,7 @@ import java.util.*;
 
 @Getter
 @CustomLog
-public class FabricCommand extends AbstractVersionCommand {
+public class FabricCommand extends AbstractDownloadingVersionCommand implements ModLauncherCommand {
     private static final String LEGACY = "https://maven.legacyfabric.net/net/legacyfabric/fabric-installer/1.0.0/fabric-installer-1.0.0.jar";
     private static final String URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
 

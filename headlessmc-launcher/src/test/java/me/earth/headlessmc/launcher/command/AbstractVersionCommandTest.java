@@ -21,7 +21,7 @@ public class AbstractVersionCommandTest {
     public void testFindVersionArgument() {
         TestVersion vanilla = new TestVersion("1.12.2");
 
-        TestVersion forge = new TestVersion("forge-1.12.2");
+        TestVersion forge = new TestVersion("forge-1.12.2-26");
         forge.setParent(vanilla);
 
         List<TestVersion> testVersions = Arrays.asList(vanilla, forge);
@@ -32,12 +32,15 @@ public class AbstractVersionCommandTest {
             }
         };
 
-        assertEquals(vanilla, abstractVersionCommand.find(new VersionArgument(null, "1.12.2"), testVersions));
-        assertEquals(forge, abstractVersionCommand.find(new VersionArgument(Modlauncher.LEXFORGE, "1.12.2"), testVersions));
-        assertEquals(forge, abstractVersionCommand.find(new VersionArgument(Modlauncher.LEXFORGE, "forge-1.12.2"), testVersions));
+        assertEquals(vanilla, abstractVersionCommand.find(new VersionArgument(null, null, "1.12.2"), testVersions));
+        assertEquals(forge, abstractVersionCommand.find(new VersionArgument(Modlauncher.LEXFORGE, null, "1.12.2"), testVersions));
+        assertEquals(forge, abstractVersionCommand.find(new VersionArgument(Modlauncher.LEXFORGE, null, "forge-1.12.2-26"), testVersions));
+        assertEquals(forge, abstractVersionCommand.find(new VersionArgument(Modlauncher.LEXFORGE, "26", "forge-1.12.2-26"), testVersions));
 
-        assertNull(abstractVersionCommand.find(new VersionArgument(Modlauncher.NEOFORGE, "1.12.2"), testVersions));
-        assertNull(abstractVersionCommand.find(new VersionArgument(Modlauncher.FABRIC, "1.12.2"), testVersions));
+        assertNull(abstractVersionCommand.find(new VersionArgument(null, "26", "forge-1.12.2-26"), testVersions)); // not possible
+        assertNull(abstractVersionCommand.find(new VersionArgument(Modlauncher.LEXFORGE, "27", "1.12.2"), testVersions));
+        assertNull(abstractVersionCommand.find(new VersionArgument(Modlauncher.NEOFORGE, null, "1.12.2"), testVersions));
+        assertNull(abstractVersionCommand.find(new VersionArgument(Modlauncher.FABRIC, null, "1.12.2"), testVersions));
     }
 
     @Data

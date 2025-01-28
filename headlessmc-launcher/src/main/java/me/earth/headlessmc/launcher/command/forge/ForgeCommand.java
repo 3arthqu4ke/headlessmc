@@ -9,6 +9,8 @@ import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.AbstractVersionCommand;
+import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
+import me.earth.headlessmc.launcher.command.download.ModLauncherCommand;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.IOException;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @CustomLog
-public class ForgeCommand extends AbstractVersionCommand {
+public class ForgeCommand extends AbstractDownloadingVersionCommand implements ModLauncherCommand {
     private final ForgeInstaller installer;
     private final ForgeIndexCache cache;
 
@@ -49,6 +51,10 @@ public class ForgeCommand extends AbstractVersionCommand {
     @Override
     public void execute(Version ver, String... args) throws CommandException {
         val uid = CommandUtil.getOption("--uid", args);
+        if (cache.isEmpty() || CommandUtil.hasFlag("-norecursivedownload", args)) {
+            cache.refresh();
+        }
+
         val versions = cache.stream()
                             .filter(v -> v.getVersion().equals(ver.getName()))
                             .filter(v -> uid == null

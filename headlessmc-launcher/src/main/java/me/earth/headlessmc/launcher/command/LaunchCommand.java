@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
@@ -23,7 +24,7 @@ import static me.earth.headlessmc.api.command.CommandUtil.flag;
 import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS;
 
 @CustomLog
-public class LaunchCommand extends AbstractVersionCommand {
+public class LaunchCommand extends AbstractDownloadingVersionCommand {
     public LaunchCommand(Launcher launcher) {
         super(launcher, "launch", "Launches the game.");
         args.put("<version/id>", "Name or id of the version to launch. If you use the id you need to use the -id flag as well.");

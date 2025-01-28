@@ -95,4 +95,7 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> CHECK_XVFB = bool("hmc.check.xvfb");
 
+    Property<Boolean> AUTO_DOWNLOAD = bool("hmc.auto.download.versions");
+    Property<Boolean> AUTO_DOWNLOAD_JAVA = bool("hmc.auto.download.java");
+
 }
