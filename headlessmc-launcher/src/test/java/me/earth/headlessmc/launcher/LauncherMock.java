@@ -41,6 +41,7 @@ public class LauncherMock {
         val base = FileManager.forPath("build");
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
+        configs.refresh();
         val in = new CommandLine();
         LoggingService loggingService = new LoggingService();
         val hmc = new HeadlessMcImpl(configs, in, new ExitManager(), loggingService);
