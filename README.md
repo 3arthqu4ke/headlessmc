@@ -34,25 +34,13 @@ to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.co
 
 1. Download the `headlessmc-launcher.jar` from the releases tab and install a Java version &geq; 8.
     - If you want additional features such as plugins and launching the game inside the same JVM, use the `headlessmc-launcher-wrapper.jar` instead.
-2. Run the launcher with `java -jar headlessmc-launcher.jar` in your terminal. 
-You can also use the `hmc.sh/bat` scripts for convenience.
-3. You need to specify which Java installations HeadlessMc can use to run the game.
-Open the file `HeadlessMC/config.properties` and add a key called `hmc.java.versions`, 
-with a `;` seperated list of java versions HeadlessMc can use, like this:
-    ```properties
-    hmc.java.versions=C:/Program Files/Java/jre-<version>/bin/java;C:/Program Files/Java/jdk-<version>/bin/java
-    ```
-    On Windows Java versions in `Program Files/Java` will already get detected automatically.
-4. Execute `config -refresh` and then `java -refresh`, HeadlessMc should now know which Java versions to use.
-5. HeadlessMc will generally not allow you to start the game without an account.
+    - You do not need to install java if you download one of the GraalVM executables instead.
+2. Run the launcher with `java -jar headlessmc-launcher.jar` in your terminal.
+    - Or e.g. `./headlessmc-launcher-linux` if you use a GraalVM executable.
+3. HeadlessMc will generally not allow you to start the game without an account. 
 Login to your Minecraft account by executing the `login` command and follow the instructions.
-6. You can download Minecraft Vanilla versions with the download command, e.g. `download 1.21`.
-7. After downloading a Vanilla version you can also install modloaders
-with the `forge`, `fabric`, and `neoforge` commands, e.g. `fabric 1.21`.
-8. With `versions` you can list your downloaded Minecraft versions.
-9. With `help` you can list other available commands.
-10. If you are ready to launch the game execute `launch <version>`.
-If you want to start the game in headless mode add the `-lwjgl` flag.
+4. Launch the game with `launch <modloader>:<version>`, e.g. `launch fabric:1.21.4 -lwjgl`.
+The `lwjgl` flag will make the game run in headless mode.
 
 ### HeadlessMc-Specifics
 
@@ -106,9 +94,18 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 [Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml).
 
 ### Configuring HeadlessMc
+- HeadlessMc stores its configuration in `HeadlessMC/config.properties`.
+- On Windows and Linux Java versions in certain folders get detected automatically
+  and HeadlessMc can download missing Java distributions.
+  But you can also specify which Java installations HeadlessMc can use to run the game.
+  Open the file `HeadlessMC/config.properties` and add a key called `hmc.java.versions`,
+  with a `;` seperated list of java versions HeadlessMc can use, like this:
+    ```properties
+    hmc.java.versions=C:/Program Files/Java/jre-<version>/bin/java;C:/Program Files/Java/jdk-<version>/bin/java
+    ```
+- Restart HeadlessMc or use `config -refresh` and then `java -refresh`, HeadlessMc should now know which Java versions to use.
 
-HeadlessMc can be configured using properties. These can be passed as SystemProperties from the command line or via the
-`HeadlessMc/config.properties` file.
+Properties can also be passed as SystemProperties from the command line.
 For available properties see the [HmcProperties](headlessmc-api/src/main/java/me/earth/headlessmc/api/config/HmcProperties.java), the
 [LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
 [JLineProperties](headlessmc-jline/src/main/java/me/earth/headlessmc/jline/JLineProperties.java), the
@@ -117,6 +114,20 @@ For available properties see the [HmcProperties](headlessmc-api/src/main/java/me
 [LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
 
 You can e.g. set `hmc.gamedir` to run the game inside another directory.
+
+### In-Memory launching and GraalVM
+
+With the `-inmemory` flag HeadlessMc can even launch the game inside the same
+JVM that is running HeadlessMc itself.
+Making it possible to really run Minecraft anywhere, where a JVM can run.
+
+This is not possible on GraalVM.
+Additionally, HeadlessMc's plugin system and instrumentation process
+are also difficult to realize in GraalVM.
+
+But we provide GraalVM images, that are basically a launcher for HeadlessMc itself:
+They find/download a suitable Java distribution and run HeadlessMc on it,
+without the user having to install Java.
 
 ### A Note on command arguments
 
