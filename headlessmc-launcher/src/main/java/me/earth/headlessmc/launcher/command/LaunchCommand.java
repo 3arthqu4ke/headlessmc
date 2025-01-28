@@ -37,6 +37,7 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
         args.put("-paulscode", "Removes some error messages from the PaulsCode library which may annoy you if you started the game with the -lwjgl flag.");
         args.put("-noout", "Doesn't print Minecrafts output to the console."); // TODO: is this really necessary?
         args.put("-quit", "Quit HeadlessMc after launching the game.");
+        args.put("-offline", "Launch Mc in offline mode.");
         args.put("--jvm", "Jvm args to use.");
         args.put("--retries", "The amount of times you want to retry running Minecraft.");
     }
@@ -93,6 +94,10 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
     private int runProcess(Version version, FileManager files, boolean quit, boolean prepare, String... args)
             throws CommandException, LaunchException, AuthException {
         int status = 0;
+        if (CommandUtil.hasFlag("-offline", args)) {
+            ctx.getAccountManager().getOfflineChecker().setOffline(true);
+        }
+
         LaunchAccount account = getAccount();
         String retriesOption = CommandUtil.getOption("--retries", args);
         int retries = 0;
