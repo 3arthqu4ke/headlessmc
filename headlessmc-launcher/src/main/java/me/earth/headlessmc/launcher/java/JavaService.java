@@ -38,7 +38,7 @@ public class JavaService extends LazyService<Java> implements JavaScanner {
         this.cfg = cfg;
         this.os = os;
         boolean addFilePermissions = os.getType() == OS.Type.LINUX || os.getType() == OS.Type.OSX;
-        addFilePermissions |= cfg.getConfig().get(LauncherProperties.JAVA_ALWAYS_ADD_FILE_PERMISSIONS, false);
+        addFilePermissions &= cfg.getConfig().get(LauncherProperties.JAVA_ALWAYS_ADD_FILE_PERMISSIONS, false);
         this.parser = new JavaVersionParser(addFilePermissions);
     }
 
