@@ -94,5 +94,5 @@ jobs:
             ./merged-artifacts/headlessmc-scripts/hmc
             ./merged-artifacts/headlessmc-scripts/hmc.bat
             ./merged-artifacts/headlessmc-launcher-linux-x64
-            ./merged-artifacts/headlessmc-launcher-windows-x64
+            ./merged-artifacts/headlessmc-launcher-windows-x64.exe
             ./merged-artifacts/headlessmc-launcher-macos-x64
