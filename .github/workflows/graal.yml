@@ -2,6 +2,7 @@ name: Build Graal Native Image
 
 on:
   workflow_dispatch:
+  workflow_call:
   push:
   pull_request:
     types: [opened, reopened]
@@ -42,6 +43,6 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HeadlessMc Native image files
+          name: HeadlessMc Native Image ${{ matrix.os }}
           path: |
             ./headlessmc-graalvm/build/native/nativeCompile/*
