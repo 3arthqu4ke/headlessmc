@@ -29,7 +29,7 @@ jobs:
           native-image --version
 
       - name: Grant execute permission for gradlew
-        if: 'windows-latest' != ${{ matrix.os }}
+        if: runner.os != 'Windows'
         run: chmod +x gradlew
 
       - name: Build with Gradle
