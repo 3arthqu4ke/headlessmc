@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os.os }}
     strategy:
       matrix:
         os:
@@ -39,7 +39,7 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          ./gradlew -Phmc_graal_executable=${{ matrix.name }} -Phmc_graal_build=true headlessmc-graalvm:nativeCompile
+          ./gradlew -Phmc_graal_executable=${{ matrix.os.name }} -Phmc_graal_build=true headlessmc-graalvm:nativeCompile
 
       - name: List files
         run: ls headlessmc-graalvm/build/native/nativeCompile
@@ -47,6 +47,6 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HeadlessMc Native Image ${{ matrix.os }}
+          name: HeadlessMc Native Image ${{ matrix.os.name }}
           path: |
             ./headlessmc-graalvm/build/native/nativeCompile/*
