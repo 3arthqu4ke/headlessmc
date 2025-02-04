@@ -24,10 +24,15 @@ import java.util.Map;
 public class DownloadCommand extends AbstractLauncherCommand
     implements FindByCommand<VersionInfo> {
     private final AbstractDownloadingVersionCommand downloadCommand;
-    private final VersionInfoCache cache = new VersionInfoCache();
+    private final VersionInfoCache cache;
 
     public DownloadCommand(Launcher ctx) {
+        this(ctx, new VersionInfoCache());
+    }
+
+    public DownloadCommand(Launcher ctx, VersionInfoCache versionInfoCache) {
         super(ctx, "download", "Downloads a version.");
+        this.cache = versionInfoCache;
         this.downloadCommand = new AbstractDownloadingVersionCommand(ctx, "download", "Downloads a version.") {
             @Override
             public void execute(Version obj, String... args) {
@@ -36,9 +41,9 @@ public class DownloadCommand extends AbstractLauncherCommand
         };
 
         args.put("<version/id>", "The name/id of the version to download." +
-            " If you use the id you also need to use the -id flag.");
+                " If you use the id you also need to use the -id flag.");
         args.put("-id", "If you specified the version via id you" +
-            " need to add this flag.");
+                " need to add this flag.");
         args.putAll(VersionTypeFilter.getArgs());
     }
 
@@ -112,7 +117,7 @@ public class DownloadCommand extends AbstractLauncherCommand
 
     @Override
     public void onObjectNotFound(boolean byId, boolean byRegex, String objectArg, String... args) throws CommandException {
-        if (downloadCommand.findObject(byId, byRegex, objectArg, args) == null) {
+        if (CommandUtil.hasFlag("-norecursivedownload", args) || downloadCommand.findObject(byId, byRegex, objectArg, args) == null) {
             FindByCommand.super.onObjectNotFound(byId, byRegex, objectArg, args);
         }
     }
@@ -133,7 +138,7 @@ public class DownloadCommand extends AbstractLauncherCommand
 
     public void download(String version) throws CommandException {
         // this is really bad...
-        execute("download " + version + " -noredownload -norecursivedownload", "download", version, "-noredownload -norecursivedownload");
+        execute("download " + version + " -noredownload -norecursivedownload", "download", version, "-noredownload", "-norecursivedownload");
     }
 
 }

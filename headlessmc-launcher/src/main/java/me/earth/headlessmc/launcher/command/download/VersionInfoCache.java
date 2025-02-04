@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 @CustomLog
-class VersionInfoCache implements Collection<VersionInfo> {
+public class VersionInfoCache implements Collection<VersionInfo> {
     private static final List<VersionInfo> EMPTY = new ArrayList<>(0);
     private static final URL URL = URLs.url("https://launchermeta.mojang.com/mc/game/version_manifest.json");
     @Delegate
