@@ -187,7 +187,9 @@ public class ProcessFactory {
         }
 
         libPaths.clear();
-        try (Progressbar progressbar = options.getLauncher().getCommandLine().displayProgressBar(new Progressbar.Configuration("Downloading Libraries", librariesTODownload))) {
+        try (Progressbar progressbar = librariesTODownload == 0
+                ? Progressbar.dummy()
+                : options.getLauncher().getCommandLine().displayProgressBar(new Progressbar.Configuration("Downloading Libraries", librariesTODownload))) {
             libraryDownloader.setShouldLog(progressbar.isDummy());
             for (val library : version.getLibraries()) {
                 if (library.getRule().apply(os, features) == Rule.Action.ALLOW) {
