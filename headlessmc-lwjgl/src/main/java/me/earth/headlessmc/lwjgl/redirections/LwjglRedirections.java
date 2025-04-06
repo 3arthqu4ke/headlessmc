@@ -15,6 +15,9 @@ import static me.earth.headlessmc.lwjgl.api.Redirection.of;
 // TODO: redirect Keyboard and Mouse?
 @UtilityClass
 public class LwjglRedirections {
+    public static final int GL_TEXTURE_INTERNAL_FORMAT_CONST = 4099;
+    public static final int GL_TEXTURE_INTERNAL_FORMAT = Integer.parseInt(
+        System.getProperty(LwjglProperties.GL_TEXTURE_INTERNAL_FORMAT, "32856")); //RGBA8
     public static final int TEXTURE_SIZE = Integer.parseInt(
         System.getProperty(LwjglProperties.TEXTURE_SIZE, "1024"));
     public static final boolean FULLSCREEN = Boolean.parseBoolean(
@@ -110,7 +113,16 @@ public class LwjglRedirections {
             -> System.nanoTime() / 1000000L);
 
         manager.redirect("Lorg/lwjgl/opengl/GL11;glGetTexLevelParameteri(III)I",
-                         of(TEXTURE_SIZE));
+                (obj, desc, type, args) -> {
+                    if ((int) args[2] == GL_TEXTURE_INTERNAL_FORMAT_CONST) {
+                        // Neoforge 1.21.5
+                        // Couldn't find a matching vanilla TextureFormat for OpenGL internal format id
+                        // com.mojang.blaze3d.opengl.GlDevice
+                        return GL_TEXTURE_INTERNAL_FORMAT;
+                    }
+
+                    return TEXTURE_SIZE;
+                });
         manager.redirect("Lorg/lwjgl/opengl/GL11;glGenLists(I)I", of(-1));
 
         manager.redirect(
@@ -277,6 +289,17 @@ public class LwjglRedirections {
 
         // 1.20.4 (3?)
         MemReallocRedirections.redirect(manager);
+
+        // 1.21.5
+        manager.redirect(
+            "Lorg/lwjgl/opengl/GL30;glMapBufferRange(IJJI)Ljava/nio/ByteBuffer;",
+            (obj, desc, type, args) -> ByteBuffer.wrap(new byte[(int) ((long) args[2])])
+        );
+
+        manager.redirect(
+            "Lorg/lwjgl/system/MemoryUtil;memByteBufferSafe(JI)Ljava/nio/ByteBuffer;",
+            (obj, desc, type, args) -> ByteBuffer.wrap(new byte[(int) args[1]])
+        );
 
         // Embeddium
         // https://github.com/3arthqu4ke/headlessmc/issues/208
