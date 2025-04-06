@@ -2,6 +2,7 @@ package me.earth.headlessmc.lwjgl;
 
 public interface LwjglProperties {
     String DISPLAY_UPDATE = "hmc.lwjgl.update_sleep";
+    String GL_TEXTURE_INTERNAL_FORMAT = "hmc.lwjgl.gltextureinternalformat";
     String TEXTURE_SIZE = "hmc.lwjgl.texturesize";
     String FULLSCREEN = "hmc.lwjgl.fullscreen";
     String SCREEN_WIDTH = "hmc.lwjgl.screenwidth";
