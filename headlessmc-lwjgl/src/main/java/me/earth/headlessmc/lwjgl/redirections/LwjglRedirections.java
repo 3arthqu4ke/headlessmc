@@ -15,6 +15,7 @@ import static me.earth.headlessmc.lwjgl.api.Redirection.of;
 // TODO: redirect Keyboard and Mouse?
 @UtilityClass
 public class LwjglRedirections {
+    public static final int GL_TEXTURE_WIDTH = 4096;
     public static final int GL_TEXTURE_INTERNAL_FORMAT_CONST = 4099;
     public static final int GL_TEXTURE_INTERNAL_FORMAT = Integer.parseInt(
         System.getProperty(LwjglProperties.GL_TEXTURE_INTERNAL_FORMAT, "32856")); //RGBA8
@@ -119,6 +120,8 @@ public class LwjglRedirections {
                         // Couldn't find a matching vanilla TextureFormat for OpenGL internal format id
                         // com.mojang.blaze3d.opengl.GlDevice
                         return GL_TEXTURE_INTERNAL_FORMAT;
+                    } else if ((int) args[2] == GL_TEXTURE_WIDTH && (int) args[1]/*level*/ > 0) {
+                        return 0; // otherwise Neoforge 1.21.5 gets caught in an endless loop of checking width != 0; for higher levels
                     }
 
                     return TEXTURE_SIZE;
