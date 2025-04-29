@@ -14,10 +14,14 @@ import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionC
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
+import me.earth.headlessmc.launcher.test.CrashReportWatcher;
 import me.earth.headlessmc.launcher.version.Version;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
 import static me.earth.headlessmc.api.command.CommandUtil.flag;
@@ -111,7 +115,25 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
                 log.warn("Retrying to launch Minecraft: " + i);
             }
 
+            CrashReportWatcher crashReportWatcher = null;
             try {
+                AtomicReference<Process> processRef = new AtomicReference<>();
+                AtomicReference<Path> crashReport = new AtomicReference<>();
+                if (ctx.getConfig().get(LauncherProperties.CRASH_REPORT_WATCHER, false)) {
+                    Path gameDir = new File(ctx.getConfig().get(LauncherProperties.GAME_DIR, ctx.getGameDir(version).getPath())).toPath();
+                    log.info("Initializing Crash Report Watcher for " + gameDir);
+                    crashReportWatcher = CrashReportWatcher.forGameDir(gameDir);
+                    crashReportWatcher.addListener(reportPath -> {
+                        log.error("Crash Report created at :" + reportPath);
+                        crashReport.set(reportPath);
+                        if (processRef.get() != null) {
+                            processRef.get().destroy();
+                        }
+                    });
+
+                    crashReportWatcher.waitForStart();
+                }
+
                 Process process = ctx.getProcessFactory().run(
                         LaunchOptions.builder()
                                 .account(account)
@@ -124,6 +146,7 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
                                 .build()
                 );
 
+                processRef.set(process);
                 if (prepare) {
                     return 0;
                 }
@@ -133,6 +156,10 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
                 }
 
                 if (quit || process == null) {
+                    if (crashReport.get() != null) {
+                        throw new LaunchException("CrashReport detected " + crashReport.get());
+                    }
+
                     cleanup(files, args);
                     ctx.getExitManager().exit(0);
                     return 0;
@@ -147,6 +174,10 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
                 }
 
                 if (status == 0) {
+                    if (crashReport.get() != null) {
+                        throw new LaunchException("CrashReport detected " + crashReport.get());
+                    }
+
                     break;
                 }
             } catch (Throwable t) {
@@ -157,12 +188,24 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
                 } else {
                     throwable.addSuppressed(t);
                 }
+            } finally {
+                if (crashReportWatcher != null) {
+                    try {
+                        crashReportWatcher.close();
+                    } catch (IOException e) {
+                        log.error("Failed to close CrashReportWatcher", e);
+                    }
+                }
             }
         }
 
         if (status != 0 && throwable != null) {
             if (throwable instanceof RuntimeException) {
                 throw (RuntimeException) throwable;
+            }
+
+            if (throwable instanceof LaunchException) {
+                throw (LaunchException) throwable;
             }
 
             throw new LaunchException(throwable);

@@ -104,4 +104,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> JAVA_DISTRIBUTION = string("hmc.auto.java.distribution");
     Property<Boolean> JAVA_ALWAYS_ADD_FILE_PERMISSIONS = bool("hmc.java.always.add.file.permissions");
 
+    Property<Boolean> CRASH_REPORT_WATCHER = bool("hmc.crash.report.watcher");
+
 }
