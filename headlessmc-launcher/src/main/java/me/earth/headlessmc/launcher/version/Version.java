@@ -39,12 +39,9 @@ public interface Version extends HasName, HasId, HasParent<Version> {
 
     boolean isNewArgumentFormat();
 
-    // TODO: instead the entire downloads, with client, client_mappings, server and server_mappings?
-    String getClientDownload();
+    @Nullable VersionExecutable getClientDownload();
 
-    @Nullable String getClientSha1();
-
-    @Nullable Long getClientSize();
+    @Nullable VersionExecutable getServerDownload();
 
     @Nullable Logging getLogging();
 

@@ -1,0 +1,227 @@
+package me.earth.headlessmc.launcher.command;
+
+import lombok.CustomLog;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import me.earth.headlessmc.api.HasName;
+import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.ParseUtil;
+import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.launch.LaunchException;
+import me.earth.headlessmc.launcher.server.commands.LaunchServerCommand;
+import me.earth.headlessmc.launcher.test.CrashReportWatcher;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+
+import static me.earth.headlessmc.api.command.CommandUtil.flag;
+import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS;
+
+/**
+ * This class handles the lifecycle of launching and running a Process.
+ * It also handles retries and what we do after the process has shutdown.
+ *
+ * @see LaunchCommand
+ * @see LaunchServerCommand
+ */
+@CustomLog
+@RequiredArgsConstructor
+public abstract class AbstractLaunchProcessLifecycle {
+    protected final Launcher ctx;
+
+    protected FileManager files;
+    protected boolean quit;
+    protected boolean prepare;
+    protected String[] args;
+
+    protected abstract Path getGameDir();
+
+    protected abstract Process createProcess() throws LaunchException, AuthException, IOException;
+
+    public void run(HasName version, String... args) throws CommandException {
+        this.args = args;
+        prepare = CommandUtil.hasFlag("-prepare", args);
+        val uuid = UUID.fromString(ctx.getConfig().get(LauncherProperties.EXTRACTED_FILE_CACHE_UUID, UUID.randomUUID().toString()));
+        ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
+        ctx.getLoggingService().setLevel(Level.INFO, true);
+        files = ctx.getFileManager().createRelative(uuid.toString());
+
+        quit = flag(ctx, "-quit", LauncherProperties.INVERT_QUIT_FLAG, LauncherProperties.ALWAYS_QUIT_FLAG, args);
+        int status = 0;
+        try {
+            status = runProcess();
+        } catch (LaunchException | AuthException e) {
+            status = -1;
+            // ignore this specific message for tests, because otherwise Intellij shows it as red which looks like something failed
+            if (!(e instanceof LaunchException && "Mock Factory".equals(e.getMessage()))) {
+                log.error(e);
+            }
+
+            ctx.log(String.format("Couldn't launch %s: %s", version.getName(), e.getMessage()));
+            if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
+                throw new IllegalStateException(e);
+            }
+        } catch (Throwable t) {
+            status = -1;
+            val msg = String.format("Couldn't launch %s: %s", version.getName(), t.getMessage());
+            log.error(msg, t);
+            ctx.log(msg);
+            throw t;
+        } finally {
+            cleanup(files, args);
+            if (!prepare && !CommandUtil.hasFlag("-stay", args)) {
+                ctx.getExitManager().exit(status);
+            }
+        }
+
+        if (status != 0 && ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
+            throw new IllegalStateException("Minecraft exited with code " + status);
+        }
+
+        if (!prepare) {
+            try {
+                ctx.getCommandLine().open(ctx);
+            } catch (IOException ioException) {
+                throw new IllegalStateException("Failed to reopen HeadlessMc CommandLineReader", ioException);
+            }
+        }
+    }
+
+    /**
+     * Hook in {@link #runProcess} to notify {@link LaunchCommand} to check if we are logged in.
+     *
+     * @see LaunchCommand
+     * @throws CommandException if we cannot log in.
+     */
+    protected void getAccount() throws CommandException {
+        // to be implemented by subclasses
+    }
+
+    private int runProcess() throws CommandException, LaunchException, AuthException {
+        int status = 0;
+        if (CommandUtil.hasFlag("-offline", args)) {
+            ctx.getAccountManager().getOfflineChecker().setOffline(true);
+        }
+
+        getAccount();
+        String retriesOption = CommandUtil.getOption("--retries", args);
+        int retries = 0;
+        if (retriesOption != null) {
+            retries = ParseUtil.parseI(retriesOption);
+        }
+
+        Throwable throwable = null;
+        for (int i = 0; i < retries + 1; i++) {
+            if (i > 0) {
+                log.warn("Retrying to launch Minecraft: " + i);
+            }
+
+            CrashReportWatcher crashReportWatcher = null;
+            try {
+                AtomicReference<Process> processRef = new AtomicReference<>();
+                AtomicReference<Path> crashReport = new AtomicReference<>();
+                if (ctx.getConfig().get(LauncherProperties.CRASH_REPORT_WATCHER, false)) {
+                    Path gameDir = getGameDir();
+                    log.info("Initializing Crash Report Watcher for " + gameDir);
+                    crashReportWatcher = CrashReportWatcher.forGameDir(gameDir);
+                    crashReportWatcher.addListener(reportPath -> {
+                        log.error("Crash Report created at :" + reportPath);
+                        crashReport.set(reportPath);
+                        if (processRef.get() != null) {
+                            processRef.get().destroy();
+                        }
+                    });
+
+                    crashReportWatcher.waitForStart();
+                }
+
+                Process process = createProcess();
+                processRef.set(process);
+                if (prepare) {
+                    return 0;
+                }
+
+                if (process == null) {
+                    ctx.log("InMemory main thread ended.");
+                }
+
+                if (quit || process == null) {
+                    if (crashReport.get() != null) {
+                        throw new LaunchException("CrashReport detected " + crashReport.get());
+                    }
+
+                    cleanup(files, args);
+                    ctx.getExitManager().exit(0);
+                    return 0;
+                }
+
+                try {
+                    status = process.waitFor();
+                    ctx.log("Minecraft exited with code: " + status);
+                } catch (InterruptedException ie) {
+                    ctx.log("Launcher has been interrupted...");
+                    Thread.currentThread().interrupt();
+                }
+
+                if (status == 0) {
+                    if (crashReport.get() != null) {
+                        throw new LaunchException("CrashReport detected " + crashReport.get());
+                    }
+
+                    break;
+                }
+            } catch (Throwable t) {
+                status = -1;
+                log.error("Failed to start Minecraft on try " + i, t);
+                if (throwable == null) {
+                    throwable = t;
+                } else {
+                    throwable.addSuppressed(t);
+                }
+            } finally {
+                if (crashReportWatcher != null) {
+                    try {
+                        crashReportWatcher.close();
+                    } catch (IOException e) {
+                        log.error("Failed to close CrashReportWatcher", e);
+                    }
+                }
+            }
+        }
+
+        if (status != 0 && throwable != null) {
+            if (throwable instanceof RuntimeException) {
+                throw (RuntimeException) throwable;
+            }
+
+            if (throwable instanceof LaunchException) {
+                throw (LaunchException) throwable;
+            }
+
+            throw new LaunchException(throwable);
+        }
+
+        return status;
+    }
+
+    private void cleanup(FileManager files, String... args) {
+        // for some reason both ShutdownHooks and File.deleteOnExit are
+        // not really working, that's why we Main.deleteOldFiles, too.
+        if (!CommandUtil.hasFlag("-keep", args) && !ctx.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
+            try {
+                log.info("Deleting " + files.getBase().getName());
+                ctx.getFileManager().delete(files.getBase());
+            } catch (IOException e) {
+                log.error("Couldn't delete files of game " + files.getBase().getName(), e);
+            }
+        }
+    }
+
+}

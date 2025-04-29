@@ -106,4 +106,7 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> CRASH_REPORT_WATCHER = bool("hmc.crash.report.watcher");
 
+    Property<Boolean> SERVER_LAUNCH_FOR_EULA = bool("hmc.server.launch.for.eula");
+    Property<Boolean> SERVER_ACCEPT_EULA = bool("hmc.server.accept.eula");
+
 }

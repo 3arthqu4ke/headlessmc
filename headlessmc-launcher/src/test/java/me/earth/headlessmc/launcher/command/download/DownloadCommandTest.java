@@ -10,9 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DownloadCommandTest {
     @Test
     public void testDownloadCommand() {
-        Launcher launcher = LauncherMock.INSTANCE;
+        Launcher launcher = LauncherMock.create();
         DummyVersionInfoCache cache = new DummyVersionInfoCache();
-        DownloadCommand downloadCommand = new DownloadCommand(launcher, cache);
+        launcher.setVersionInfoCache(cache);
+        DownloadCommand downloadCommand = new DownloadCommand(launcher);
         assertThrows(CommandException.class, () -> downloadCommand.download("0"));
     }
 

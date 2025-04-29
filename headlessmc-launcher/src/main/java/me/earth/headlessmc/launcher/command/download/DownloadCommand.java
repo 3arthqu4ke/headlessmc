@@ -24,15 +24,9 @@ import java.util.Map;
 public class DownloadCommand extends AbstractLauncherCommand
     implements FindByCommand<VersionInfo> {
     private final AbstractDownloadingVersionCommand downloadCommand;
-    private final VersionInfoCache cache;
 
     public DownloadCommand(Launcher ctx) {
-        this(ctx, new VersionInfoCache());
-    }
-
-    public DownloadCommand(Launcher ctx, VersionInfoCache versionInfoCache) {
         super(ctx, "download", "Downloads a version.");
-        this.cache = versionInfoCache;
         this.downloadCommand = new AbstractDownloadingVersionCommand(ctx, "download", "Downloads a version.") {
             @Override
             public void execute(Version obj, String... args) {
@@ -45,6 +39,12 @@ public class DownloadCommand extends AbstractLauncherCommand
         args.put("-id", "If you specified the version via id you" +
                 " need to add this flag.");
         args.putAll(VersionTypeFilter.getArgs());
+    }
+
+    @Deprecated
+    @SuppressWarnings("unused")
+    public DownloadCommand(Launcher ctx, VersionInfoCache versionInfoCache) {
+        this(ctx);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DownloadCommand extends AbstractLauncherCommand
             !!!
          */
         Collection<VersionInfo> versions =
-            cache.cache(CommandUtil.hasFlag("-refresh", args));
+            ctx.getVersionInfoCache().cache(CommandUtil.hasFlag("-refresh", args));
         if (args.length < 2 || super.args.containsKey(args[1].toLowerCase(Locale.ENGLISH))) {
             Collection<VersionInfo> filtered =
                 new VersionTypeFilter<>(VersionInfo::getType)
@@ -124,13 +124,13 @@ public class DownloadCommand extends AbstractLauncherCommand
 
     @Override
     public Iterable<VersionInfo> getIterable() {
-        return cache;
+        return ctx.getVersionInfoCache();
     }
 
     @Override
     public void getCompletions(String line, List<Map.Entry<String, @Nullable String>> completions, String... args) {
-        if (args.length == 2 && !cache.isCached()) {
-            cache.cache(false);
+        if (args.length == 2 && !ctx.getVersionInfoCache().isCached()) {
+            ctx.getVersionInfoCache().cache(false);
         }
 
         FindByCommand.super.getCompletions(line, completions, args);

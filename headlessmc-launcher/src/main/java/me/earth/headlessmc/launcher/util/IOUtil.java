@@ -32,8 +32,18 @@ public class IOUtil {
     }
 
     public static String read(BufferedReader br) throws IOException {
+        return read(br, false);
+    }
+
+    public static String read(BufferedReader br, boolean appendNewLine) throws IOException {
         val sb = new StringBuilder();
-        read(br, sb::append);
+        read(br, line -> {
+            sb.append(line);
+            if (appendNewLine) {
+                sb.append(System.lineSeparator());
+            }
+        });
+
         return sb.toString();
     }
 

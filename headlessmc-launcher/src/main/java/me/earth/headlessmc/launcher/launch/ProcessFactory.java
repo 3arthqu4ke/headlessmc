@@ -18,6 +18,7 @@ import me.earth.headlessmc.launcher.instrumentation.Target;
 import me.earth.headlessmc.launcher.version.Features;
 import me.earth.headlessmc.launcher.version.Rule;
 import me.earth.headlessmc.launcher.version.Version;
+import me.earth.headlessmc.launcher.version.VersionExecutable;
 import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 
@@ -148,8 +149,13 @@ public class ProcessFactory {
         log.debug("GameJar: " + gameJar.getAbsolutePath());
         if (!gameJar.exists() || !checkZipIntact(gameJar) && gameJar.delete()) {
             LibraryDownloader downloader = new LibraryDownloader(downloadService, config.getConfig(), os);
-            log.info("Downloading " + version.getName() + " from " + version.getClientDownload());
-            downloader.download(version.getClientDownload(), gameJar.toPath().toAbsolutePath(), version.getClientSha1(), version.getClientSize());
+            VersionExecutable clientDownload = version.getClientDownload();
+            if (clientDownload == null) {
+                throw new IOException("Failed find client download in version " + version.getName());
+            }
+
+            log.info("Downloading " + version.getName() + " from " + clientDownload.getUrl());
+            downloader.download(clientDownload.getUrl(), gameJar.toPath().toAbsolutePath(), clientDownload.getSha1(), clientDownload.getSize());
         }
 
         targets.add(new Target(true, gameJar.getAbsolutePath()));

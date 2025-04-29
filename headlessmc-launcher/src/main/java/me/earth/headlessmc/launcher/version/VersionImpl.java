@@ -23,9 +23,8 @@ public class VersionImpl implements Version {
     private final String mainClass;
     private final List<Library> libraries;
     private final List<Argument> arguments;
-    private final String clientDownload;
-    private final @Nullable String clientSha1;
-    private final @Nullable Long clientSize;
+    private final VersionExecutable clientDownload;
+    private final VersionExecutable serverDownload;
     private final boolean newArgumentFormat;
     private final @Nullable Logging logging;
     private Version parent;

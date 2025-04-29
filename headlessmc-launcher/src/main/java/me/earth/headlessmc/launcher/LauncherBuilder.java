@@ -16,12 +16,14 @@ import me.earth.headlessmc.jline.JLineCommandLineReader;
 import me.earth.headlessmc.jline.JLineProperties;
 import me.earth.headlessmc.launcher.auth.*;
 import me.earth.headlessmc.launcher.command.LaunchContext;
+import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.*;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
+import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
@@ -53,6 +55,7 @@ public class LauncherBuilder {
     private ExitManager exitManager = new ExitManager();
     private CommandLine commandLine = new CommandLine();
     private PluginManager pluginManager = new PluginManager();
+    private VersionInfoCache versionInfoCache = new VersionInfoCache();
 
     private LauncherConfig launcherConfig;
     private FileManager fileManager;
@@ -65,6 +68,7 @@ public class LauncherBuilder {
     private AccountManager accountManager;
     private VersionSpecificModManager versionSpecificModManager;
     private JavaDownloaderManager javaDownloaderManager;
+    private ServerManager serverManager;
 
     private OS os;
 
@@ -113,7 +117,8 @@ public class LauncherBuilder {
                     return new LauncherConfig(configService, mcFiles, gameDir);
                 })
                 .ifNull(LauncherBuilder::versionService, LauncherBuilder::versionService, () -> new VersionService(requireNonNull(launcherConfig(), "LauncherConfig!")))
-                .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService(), os()));
+                .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService(), os()))
+                .ifNull(LauncherBuilder::serverManager, LauncherBuilder::serverManager, () -> ServerManager.create(downloadService(), versionInfoCache(), versionService(), fileManager()));
     }
 
     public LauncherBuilder initAccountManager() throws AuthException {
@@ -233,7 +238,9 @@ public class LauncherBuilder {
                 requireNonNull(accountManager, "AccountManager was null!"),
                 requireNonNull(versionSpecificModManager, "VersionSpecificModManager was null!"),
                 requireNonNull(pluginManager, "PluginManager was null!"),
-                requireNonNull(javaDownloaderManager, "JavaDownloaderManager was null!")
+                requireNonNull(javaDownloaderManager, "JavaDownloaderManager was null!"),
+                requireNonNull(serverManager, "ServerManager was null!"),
+                requireNonNull(versionInfoCache, "VersionInfoCache was null!")
         );
     }
 

@@ -8,6 +8,7 @@ import lombok.experimental.Delegate;
 import lombok.val;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 import me.earth.headlessmc.launcher.util.URLs;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,6 +49,14 @@ public class VersionInfoCache implements Collection<VersionInfo> {
         }
 
         return infos;
+    }
+
+    public @Nullable VersionInfo getByName(String name) {
+        return cache(false)
+                .stream()
+                .filter(v -> v.getName().equals(name))
+                .findFirst()
+                .orElse(null);
     }
 
     public void read(JsonObject jo) throws IOException {

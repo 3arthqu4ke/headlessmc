@@ -24,6 +24,7 @@ import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.auth.OfflineChecker;
 import me.earth.headlessmc.launcher.command.LaunchContext;
+import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
@@ -32,6 +33,7 @@ import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
+import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.util.UuidUtil;
@@ -158,10 +160,12 @@ public class CheerpJLauncher {
         versionSpecificModManager.addRepository(VersionSpecificMods.MC_RUNTIME_TEST);
         versionSpecificModManager.addRepository(VersionSpecificMods.HMC_OPTIMIZATIONS);
 
+        VersionInfoCache versionInfoCache = new VersionInfoCache();
         val launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), downloadService,
                 new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
-                javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault());
+                javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault(),
+                ServerManager.create(downloadService, versionInfoCache, versions, files), versionInfoCache);
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");

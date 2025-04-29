@@ -2,10 +2,7 @@ package me.earth.headlessmc.launcher.launch;
 
 import lombok.CustomLog;
 import me.earth.headlessmc.launcher.util.Pair;
-import me.earth.headlessmc.launcher.version.Argument;
-import me.earth.headlessmc.launcher.version.Library;
-import me.earth.headlessmc.launcher.version.Logging;
-import me.earth.headlessmc.launcher.version.Version;
+import me.earth.headlessmc.launcher.version.*;
 import me.earth.headlessmc.launcher.version.family.FamilyUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,18 +57,13 @@ class VersionMerger extends DelegatingVersion {
     }
 
     @Override
-    public String getClientDownload() {
+    public VersionExecutable getClientDownload() {
         return get(Version::getClientDownload);
     }
 
     @Override
-    public @Nullable Long getClientSize() {
-        return get(Version::getClientSize);
-    }
-
-    @Override
-    public @Nullable String getClientSha1() {
-        return get(Version::getClientSha1);
+    public VersionExecutable getServerDownload() {
+        return get(Version::getServerDownload);
     }
 
     @Override
