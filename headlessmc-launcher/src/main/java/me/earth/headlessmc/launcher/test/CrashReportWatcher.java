@@ -45,7 +45,7 @@ public class CrashReportWatcher implements AutoCloseable {
                     }
 
                     for (WatchEvent<?> event : key.pollEvents()) {
-                        if (event.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
+                        if (StandardWatchEventKinds.ENTRY_CREATE.equals(event.kind())) {
                             Path path = (Path) event.context();
                             for (Consumer<Path> listener : listeners) {
                                 listener.accept(path);
