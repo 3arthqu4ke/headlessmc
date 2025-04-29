@@ -55,7 +55,9 @@ public class CrashReportWatcher implements AutoCloseable {
 
                     key.reset();
                 }
-            } catch (IOException e) {
+            } catch (ClosedWatchServiceException ignored) {
+                log.debug("WatchService closed");
+            } catch (Exception e) {
                 log.error("CrashReport Watcher encountered Exception", e);
             }
         });
