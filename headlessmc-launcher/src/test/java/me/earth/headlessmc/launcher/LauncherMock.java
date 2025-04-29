@@ -1,5 +1,6 @@
 package me.earth.headlessmc.launcher;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import me.earth.headlessmc.api.HeadlessMcImpl;
@@ -26,6 +27,8 @@ import me.earth.headlessmc.logging.LoggingService;
 import me.earth.headlessmc.os.OS;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +40,10 @@ public class LauncherMock {
         INSTANCE = create();
     }
 
+    @SneakyThrows
     public static Launcher create() {
-        val base = FileManager.forPath("build");
+        Path tempDir = Files.createTempDirectory("hmc-launcher-test");
+        val base = FileManager.forPath(tempDir.toAbsolutePath().toString());
         val fileManager = base.createRelative("fileManager");
         val configs = new ConfigService(fileManager);
         configs.refresh();

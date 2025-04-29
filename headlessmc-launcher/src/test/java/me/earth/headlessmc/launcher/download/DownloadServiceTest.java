@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.download;
 
 import me.earth.headlessmc.jline.JlineProgressbarProvider;
+import me.earth.headlessmc.launcher.LauncherMock;
 import net.lenni0451.commons.httpclient.HttpResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class DownloadServiceTest {
         };
 
         DownloadService finalDownloadService = downloadService;
-        assertThrows(IOException.class, () -> finalDownloadService.download("http://example.com", Paths.get("build").resolve("test")));
+        assertThrows(IOException.class, () -> finalDownloadService.download("http://example.com", LauncherMock.INSTANCE.getFileManager().getBase().toPath().resolve("test")));
         byte[] bytes = { 1, 2, 3, 4};
         downloadService = new DownloadService() {
             @Override
@@ -34,7 +35,7 @@ public class DownloadServiceTest {
 
         String sha1 = "12dada1fff4d4787ade3333147202c3b443e376f";
         assertEquals(sha1, downloadService.getChecksumService().hash(bytes));
-        assertThrows(IOException.class, () -> finalDownloadService.download("http://example.com", Paths.get("build").resolve("test"), null, "wronghash"));
+        assertThrows(IOException.class, () -> finalDownloadService.download("http://example.com", LauncherMock.INSTANCE.getFileManager().getBase().toPath().resolve("test"), null, "wronghash"));
         assertSame(bytes, downloadService.download(new URL("http://example.com"), null, sha1));
         assertSame(bytes, downloadService.download(new URL("http://example.com"), null, null));
         assertSame(bytes, downloadService.download(new URL("http://example.com"), 4L, null));
