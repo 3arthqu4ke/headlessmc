@@ -8,10 +8,10 @@ import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
-import me.earth.headlessmc.launcher.command.AbstractVersionCommand;
 import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
 import me.earth.headlessmc.launcher.command.download.ModLauncherCommand;
 import me.earth.headlessmc.launcher.version.Version;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @CustomLog
 public class ForgeCommand extends AbstractDownloadingVersionCommand implements ModLauncherCommand {
+    // TODO: IndexCache should be available outside of ForgeCommand, we need it for other stuff
     private final ForgeInstaller installer;
     private final ForgeIndexCache cache;
 
@@ -48,38 +49,60 @@ public class ForgeCommand extends AbstractDownloadingVersionCommand implements M
         }
     }
 
-    @Override
-    public void execute(Version ver, String... args) throws CommandException {
-        val uid = CommandUtil.getOption("--uid", args);
-        if (cache.isEmpty() || CommandUtil.hasFlag("-norecursivedownload", args)) {
+    public @Nullable ForgeVersion getVersion(Version ver, boolean list, @Nullable String uid, boolean refresh) throws CommandException {
+        if (refresh && cache.isEmpty()) {
             cache.refresh();
         }
 
         val versions = cache.stream()
-                            .filter(v -> v.getVersion().equals(ver.getName()))
-                            .filter(v -> uid == null
-                                || uid.equalsIgnoreCase(v.getName()))
-                            .collect(Collectors.toList());
+                .filter(v -> v.getVersion().equals(ver.getName()))
+                .filter(v -> uid == null || uid.equalsIgnoreCase(v.getName()))
+                .collect(Collectors.toList());
 
-        if (CommandUtil.hasFlag("-list", args)) {
+        if (list) {
             logTable(versions);
+            return null;
+        }
+
+        return versions.stream()
+                .findFirst()
+                .orElseThrow(() -> new CommandException(
+                        "Couldn't find Forge for version "
+                                + ver.getName() + (uid == null
+                                ? "!"
+                                : " and uid " + uid + "!")));
+    }
+
+    @Override
+    public void execute(Version ver, String... args) throws CommandException {
+        String uid = CommandUtil.getOption("--uid", args);
+        if (cache.isEmpty() || CommandUtil.hasFlag("-norecursivedownload", args)) {
+            cache.refresh();
+        }
+
+        ForgeVersion version = getVersion(ver, CommandUtil.hasFlag("-list", args), uid, false);
+        if (version == null) { // logged
             return;
         }
 
-        val version = versions.stream()
-                              .findFirst()
-                              .orElseThrow(() -> new CommandException(
-                                  "Couldn't find Forge for version "
-                                      + ver.getName() + (uid == null
-                                      ? "!"
-                                      : " and uid " + uid + "!")));
+        boolean server = CommandUtil.hasFlag("-server", args);
+        if (server) {
+            ctx.log("Installing Forge Server " + version.getFullName());
+        } else {
+            ctx.log("Installing Forge " + version.getFullName());
+        }
 
-        ctx.log("Installing Forge " + version.getFullName());
         val uuid = UUID.randomUUID();
         val fm = ctx.getFileManager().createRelative(uuid.toString());
         try {
-            installer.install(version, fm, CommandUtil.hasFlag("-inmemory", args) || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false));
-            ctx.getVersionService().refresh();
+            boolean inMemory = CommandUtil.hasFlag("-inmemory", args)
+                    || ctx.getConfig().get(LauncherProperties.ALWAYS_IN_MEMORY, false);
+            if (server) {
+                installer.installServer(version, fm, CommandUtil.getOption("--dir", args), inMemory);
+            } else {
+                installer.install(version, fm, inMemory);
+                ctx.getVersionService().refresh();
+            }
         } catch (IOException e) {
             val message = "Failed to install forge for version " + ver.getName()
                 + ": " + e.getMessage();

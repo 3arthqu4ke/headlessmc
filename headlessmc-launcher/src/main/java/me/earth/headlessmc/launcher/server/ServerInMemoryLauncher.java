@@ -1,6 +1,5 @@
 package me.earth.headlessmc.launcher.server;
 
-import lombok.SneakyThrows;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.launch.AbstractInMemoryGameProcessLauncher;
@@ -13,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 public class ServerInMemoryLauncher extends AbstractInMemoryGameProcessLauncher {
     private final Server server;
@@ -29,14 +25,7 @@ public class ServerInMemoryLauncher extends AbstractInMemoryGameProcessLauncher 
     @Override
     protected String getMainClassName() throws IOException {
         if (mainClassName == null) {
-            try (JarFile jarFile = new JarFile(server.getJar().toFile())) {
-                Manifest manifest = jarFile.getManifest();
-                if (manifest != null) {
-                    Attributes mainAttributes = manifest.getMainAttributes();
-                    mainClassName = mainAttributes.getValue(Attributes.Name.MAIN_CLASS);
-                }
-            }
-
+            mainClassName = getMainClassFromJar(server.getJar().toFile());
             if (mainClassName == null) {
                 throw new IOException("Failed to read Main class attribute of " + server.getJar());
             }

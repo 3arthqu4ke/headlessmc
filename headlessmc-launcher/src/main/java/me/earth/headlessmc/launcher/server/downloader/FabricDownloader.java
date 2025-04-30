@@ -19,8 +19,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class FabricDownloader implements ServerTypeDownloader {
@@ -62,9 +64,12 @@ public class FabricDownloader implements ServerTypeDownloader {
                 commandArgs.add(typeVersion);
             }
 
+            commandArgs.addAll(Arrays.stream(args)
+                    .filter(arg -> !"-list".equalsIgnoreCase(arg))
+                    .collect(Collectors.toList()));
             try {
                 Files.createDirectories(directory);
-                fabricCommand.execute(version, commandArgs.toArray(new String[0]));
+                fabricCommand.execute(parsedVersion, commandArgs.toArray(new String[0]));
             } catch (CommandException e) {
                 throw new IOException(e);
             }
@@ -73,17 +78,6 @@ public class FabricDownloader implements ServerTypeDownloader {
             vanillaDownloader.download(launcher, version, null).download(ignored -> directory);
             return directory;
         };
-    }
-
-    private BuildData findLatestBuild(List<BuildData> builds) {
-        BuildData latestBuild = null;
-        for (BuildData build : builds) {
-            if (latestBuild == null || build.build > latestBuild.build) {
-                latestBuild = build;
-            }
-        }
-
-        return latestBuild;
     }
 
     @Getter
