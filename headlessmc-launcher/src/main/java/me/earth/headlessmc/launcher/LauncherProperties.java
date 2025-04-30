@@ -110,5 +110,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> SERVER_LAUNCH_FOR_EULA = bool("hmc.server.launch.for.eula");
     Property<Boolean> SERVER_ACCEPT_EULA = bool("hmc.server.accept.eula");
     Property<Boolean> SERVER_TEST = bool("hmc.server.test");
+    Property<String[]> SERVER_ARGS = array("hmc.server.args", " ");
 
 }

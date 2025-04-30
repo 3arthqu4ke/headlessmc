@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -160,6 +161,7 @@ public class ServerLauncher {
         List<String> command = new ArrayList<>();
         if (isJar) {
             command.add(java.getExecutable());
+            command.addAll(options.getAdditionalJvmArgs());
             // TODO: add jvm args
             command.add("-jar");
             command.add(serverExecutable.toAbsolutePath().toString());
@@ -174,6 +176,13 @@ public class ServerLauncher {
 
             command.add(serverExecutable.toAbsolutePath().toString());
         }
+
+        String[] defaultServerArgs = launcher.getConfig().get(
+                LauncherProperties.SERVER_ARGS,
+                new String[] { "nogui" }
+        );
+
+        command.addAll(Arrays.asList(defaultServerArgs));
 
         log.debug("Launching server " + command);
         boolean pipeOut = serverTest || options.isNoOut();
