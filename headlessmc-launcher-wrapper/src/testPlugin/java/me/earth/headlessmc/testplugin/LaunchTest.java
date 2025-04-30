@@ -3,6 +3,7 @@ package me.earth.headlessmc.testplugin;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.PrintStream;
@@ -20,6 +21,11 @@ public class LaunchTest {
         String modlauncher = java.getVersion() <= 8 ? "forge" : "neoforge";
         boolean inMemory = Boolean.parseBoolean(System.getProperty("integrationTestRunInMemory", "false"));
         String inMemoryFlag = inMemory ? "-inmemory" : "";
+
+        if (Boolean.parseBoolean(System.getProperty("integrationTestRunServer", "false"))) {
+            serverTest(launcher, is, vanilla, modlauncher);
+            return;
+        }
 
         is.add("help");
 
@@ -120,6 +126,50 @@ public class LaunchTest {
 
         is.add(ps -> returnedFromLaunching.set(true));
         is.add(ps -> ExitTrap.remove());
+    }
+
+    private static void serverTest(Launcher launcher,
+                                   TestInputStream is,
+                                   String vanilla,
+                                   String modlauncher) {
+        System.setProperty(LauncherProperties.SERVER_ACCEPT_EULA.getName(), "true");
+        System.setProperty(LauncherProperties.SERVER_LAUNCH_FOR_EULA.getName(), "true");
+        System.setProperty(LauncherProperties.SERVER_TEST.getName(), "true");
+
+        is.add("server");
+
+        is.add("server add vanilla " + vanilla);
+        is.add("server list");
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("vanilla"))));
+
+        is.add("server remove 0 -id");
+
+        is.add("server add fabric " + vanilla);
+        is.add("server list");
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("fabric"))));
+
+        is.add("server remove 0 -id");
+
+        is.add("server add " + modlauncher + " " + vanilla);
+        is.add("server list");
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals(modlauncher))));
+
+        is.add("server remove 0 -id");
+
+        is.add("server add paper " + vanilla);
+        is.add("server list");
+
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("paper"))));
+
+        is.add("server launch 0 -id");
     }
 
 }

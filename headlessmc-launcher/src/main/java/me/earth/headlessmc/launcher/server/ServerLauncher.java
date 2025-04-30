@@ -16,6 +16,7 @@ import me.earth.headlessmc.launcher.command.download.VersionInfoUtil;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
+import me.earth.headlessmc.launcher.test.ServerTest;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +101,7 @@ public class ServerLauncher {
     }
 
     private @Nullable Process launch0(boolean eula) throws CommandException, LaunchException, IOException {
+        boolean serverTest = launcher.getConfig().get(LauncherProperties.SERVER_TEST, false);
         Path serverExecutable = server.getExecutable(launcher.getProcessFactory().getOs());
         boolean isJar = serverExecutable.toString().endsWith(".jar");
         if (!Files.exists(serverExecutable)) {
@@ -137,6 +140,10 @@ public class ServerLauncher {
                         + " is currently not supported for in-memory launching as it does not use a Jar.");
             }
 
+            if (serverTest) {
+                throw new LaunchException("Server Test not supported for in-memory launching");
+            }
+
             System.setProperty("log4j.shutdownHookEnabled", "false");
 
             try {
@@ -169,16 +176,18 @@ public class ServerLauncher {
         }
 
         log.debug("Launching server " + command);
+        boolean pipeOut = serverTest || options.isNoOut();
+        boolean pipeIn = serverTest || options.isNoIn();
         ProcessBuilder processBuilder = new ProcessBuilder()
                 .command(command)
                 .directory(server.getPath().toFile())
-                .redirectError(options.isNoOut()
+                .redirectError(pipeOut
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT)
-                .redirectOutput(options.isNoOut()
+                .redirectOutput(pipeOut
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT)
-                .redirectInput(options.isNoIn()
+                .redirectInput(pipeIn
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT);
         if (!isJar) {
@@ -193,7 +202,31 @@ public class ServerLauncher {
             }
         }
 
-        return processBuilder.start();
+        Process process = processBuilder.start();
+        if (!eula && serverTest) {
+            runServerTest(process);
+        }
+
+        return process;
+    }
+
+    private void runServerTest(Process process) throws LaunchException, IOException {
+        ServerTest test = new ServerTest(process);
+        Thread testThread = test.start();
+        try {
+            testThread.join(Duration.ofMinutes(5).toMillis());
+            test.stop();
+            test.awaitExitOrKill();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new LaunchException(e);
+        }
+
+        if (!test.wasSuccessful()) {
+            throw new LaunchException("Server Test unsuccessful");
+        }
+
+        log.info("Server Test successful");
     }
 
     // Forge .bat ends with pause so the program always ends with "Press any key to continue..."

@@ -1,5 +1,6 @@
 package me.earth.headlessmc.test;
 
+import com.sun.tools.javac.resources.LauncherProperties;
 import lombok.extern.java.Log;
 import me.earth.headlessmc.wrapper.HeadlessMcWrapper;
 import me.earth.headlessmc.wrapper.Main;
@@ -64,6 +65,16 @@ public class IntegrationTest {
 
         prepareTest();
         System.setProperty("integrationTestRunInMemory", "true");
+        Main.main(new String[0]);
+    }
+
+    @Test
+    public void runServerIntegrationTest() throws Exception {// set the property in gradle.properties
+        assertNotNull(System.getProperty("hmc.integration.test.enabled"));
+        Assumptions.assumeTrue(Boolean.parseBoolean(System.getProperty("hmc.integration.test.enabled")));
+
+        prepareTest();
+        System.setProperty("integrationTestRunServer", "true");
         Main.main(new String[0]);
     }
 
