@@ -38,16 +38,16 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
 
     @Override
     public void execute(Version version, String... args) throws CommandException {
-        ClientLaunchProcessLifecycle lifecycle = new ClientLaunchProcessLifecycle(version);
-        lifecycle.run(version, args);
+        ClientLaunchProcessLifecycle lifecycle = new ClientLaunchProcessLifecycle(version, args);
+        lifecycle.run(version);
     }
 
     private class ClientLaunchProcessLifecycle extends AbstractLaunchProcessLifecycle {
         private final Version version;
         private @Nullable LaunchAccount account;
 
-        public ClientLaunchProcessLifecycle(Version version) {
-            super(LaunchCommand.this.ctx);
+        public ClientLaunchProcessLifecycle(Version version, String[] args) {
+            super(LaunchCommand.this.ctx, args);
             this.version = version;
         }
 
@@ -62,7 +62,7 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
         }
 
         @Override
-        protected Process createProcess() throws LaunchException, AuthException, IOException {
+        protected @Nullable Process createProcess() throws LaunchException, AuthException, IOException {
             return ctx.getProcessFactory().run(
                     LaunchOptions.builder()
                             .account(account)

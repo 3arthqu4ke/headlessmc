@@ -37,7 +37,7 @@ public class AddServerCommand extends AbstractLauncherCommand {
         String name = args.length > 3 ? args[3] : null;
         String typeVersion = args.length > 4 ? args[4] : null;
         try {
-            Path serverPath = ctx.getServerManager().add(serverType, name, version, typeVersion);
+            Path serverPath = ctx.getServerManager().add(ctx, serverType, name, version, typeVersion);
             ctx.log("Added " + serverType.getName() + " server: " + serverPath.getFileName().toString() + ".");
         } catch (IOException e) {
             log.info(e);

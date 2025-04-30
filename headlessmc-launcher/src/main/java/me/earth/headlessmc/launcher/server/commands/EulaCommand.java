@@ -6,6 +6,7 @@ import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
 import me.earth.headlessmc.launcher.command.FindByCommand;
+import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.server.Server;
 import me.earth.headlessmc.launcher.server.ServerLauncher;
 
@@ -21,10 +22,10 @@ public class EulaCommand extends AbstractLauncherCommand implements FindByComman
 
     @Override
     public void execute(Server server, String... args) throws CommandException {
-        ServerLauncher serverLauncher = new ServerLauncher(ctx, server);
-        serverLauncher.eulaLaunch();
-
         try {
+            ServerLauncher serverLauncher = new ServerLauncher(ctx, server, args);
+            serverLauncher.eulaLaunch();
+
             if (args.length > 1 && (
                     CommandUtil.hasFlag("accept", args)
                         || CommandUtil.hasFlag("-accept", args)
@@ -34,7 +35,7 @@ public class EulaCommand extends AbstractLauncherCommand implements FindByComman
             } else {
                 ctx.log(serverLauncher.readEula());
             }
-        } catch (IOException e) {
+        } catch (IOException | LaunchException e) {
             log.error(e);
             throw new CommandException("Failed to read EULA of server " + server.getName(), e);
         }

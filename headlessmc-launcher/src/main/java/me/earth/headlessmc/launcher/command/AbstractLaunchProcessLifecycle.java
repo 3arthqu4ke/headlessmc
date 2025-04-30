@@ -14,6 +14,7 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.server.commands.LaunchServerCommand;
 import me.earth.headlessmc.launcher.test.CrashReportWatcher;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,18 +36,17 @@ import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EX
 @RequiredArgsConstructor
 public abstract class AbstractLaunchProcessLifecycle {
     protected final Launcher ctx;
+    protected final String[] args;
 
     protected FileManager files;
     protected boolean quit;
     protected boolean prepare;
-    protected String[] args;
 
     protected abstract Path getGameDir();
 
-    protected abstract Process createProcess() throws LaunchException, AuthException, IOException;
+    protected abstract @Nullable Process createProcess() throws LaunchException, AuthException, IOException, CommandException;
 
-    public void run(HasName version, String... args) throws CommandException {
-        this.args = args;
+    public void run(HasName version) throws CommandException {
         prepare = CommandUtil.hasFlag("-prepare", args);
         val uuid = UUID.fromString(ctx.getConfig().get(LauncherProperties.EXTRACTED_FILE_CACHE_UUID, UUID.randomUUID().toString()));
         ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
@@ -127,20 +127,7 @@ public abstract class AbstractLaunchProcessLifecycle {
             try {
                 AtomicReference<Process> processRef = new AtomicReference<>();
                 AtomicReference<Path> crashReport = new AtomicReference<>();
-                if (ctx.getConfig().get(LauncherProperties.CRASH_REPORT_WATCHER, false)) {
-                    Path gameDir = getGameDir();
-                    log.info("Initializing Crash Report Watcher for " + gameDir);
-                    crashReportWatcher = CrashReportWatcher.forGameDir(gameDir);
-                    crashReportWatcher.addListener(reportPath -> {
-                        log.error("Crash Report created at :" + reportPath);
-                        crashReport.set(reportPath);
-                        if (processRef.get() != null) {
-                            processRef.get().destroy();
-                        }
-                    });
-
-                    crashReportWatcher.waitForStart();
-                }
+                crashReportWatcher = createCrashReportWatcher(processRef, crashReport);
 
                 Process process = createProcess();
                 processRef.set(process);
@@ -196,6 +183,10 @@ public abstract class AbstractLaunchProcessLifecycle {
             }
         }
 
+        return handleLaunchException(status, throwable);
+    }
+
+    private int handleLaunchException(int status, Throwable throwable) throws LaunchException {
         if (status != 0 && throwable != null) {
             if (throwable instanceof RuntimeException) {
                 throw (RuntimeException) throwable;
@@ -209,6 +200,33 @@ public abstract class AbstractLaunchProcessLifecycle {
         }
 
         return status;
+    }
+
+    private @Nullable CrashReportWatcher createCrashReportWatcher(
+            AtomicReference<Process> processRef,
+            AtomicReference<Path> crashReport) throws IOException, InterruptedException
+    {
+        CrashReportWatcher crashReportWatcher = null;
+        if (ctx.getConfig().get(LauncherProperties.CRASH_REPORT_WATCHER, false)) {
+            Path gameDir = getGameDir();
+            log.info("Initializing Crash Report Watcher for " + gameDir);
+            crashReportWatcher = CrashReportWatcher.forGameDir(gameDir);
+            crashReportWatcher.addListener(reportPath -> {
+                log.error("Crash Report created at :" + reportPath);
+                crashReport.set(reportPath);
+                if (processRef.get() != null) {
+                    processRef.get().destroy();
+                } else if (ctx.getConfig().get(LauncherProperties.CRASH_REPORT_WATCHER_EXIT, true)) {
+                    System.exit(-1);
+                } else {
+                    log.info("Crash Report Watcher cannot exit.");
+                }
+            });
+
+            crashReportWatcher.waitForStart();
+        }
+
+        return crashReportWatcher;
     }
 
     private void cleanup(FileManager files, String... args) {

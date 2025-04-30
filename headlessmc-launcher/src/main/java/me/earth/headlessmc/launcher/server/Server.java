@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Data
 public class Server implements HasName, HasId {
@@ -15,12 +16,14 @@ public class Server implements HasName, HasId {
     private final ServerVersion version;
     private final int id;
 
-    public Path getEula() {
-        return path.resolve("eula.txt");
+    public Path getEula(boolean inMemory) {
+        return inMemory
+                ? Paths.get("eula.txt") // if we launch in memory the working dir is here
+                : path.resolve("eula.txt");
     }
 
-    public boolean hasEula() {
-        return Files.exists(getEula());
+    public boolean hasEula(boolean inMemory) {
+        return Files.exists(getEula(inMemory));
     }
 
     public Path getJar() {

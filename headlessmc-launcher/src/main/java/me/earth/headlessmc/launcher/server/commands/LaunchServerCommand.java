@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.server.Server;
 import me.earth.headlessmc.launcher.server.ServerLauncher;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
 @CustomLog
@@ -20,8 +21,8 @@ public class LaunchServerCommand extends AbstractLauncherCommand implements Find
 
     @Override
     public void execute(Server server, String... args) throws CommandException {
-        ServerLaunchProcessLifecycle lifecycle = new ServerLaunchProcessLifecycle(server);
-        lifecycle.run(server, args);
+        ServerLaunchProcessLifecycle lifecycle = new ServerLaunchProcessLifecycle(server, args);
+        lifecycle.run(server);
     }
 
     @Override
@@ -33,9 +34,9 @@ public class LaunchServerCommand extends AbstractLauncherCommand implements Find
         private final ServerLauncher serverLauncher;
         private final Server server;
 
-        public ServerLaunchProcessLifecycle(Server server) {
-            super(LaunchServerCommand.this.ctx);
-            this.serverLauncher = new ServerLauncher(ctx, server);
+        public ServerLaunchProcessLifecycle(Server server, String[] args) {
+            super(LaunchServerCommand.this.ctx, args);
+            this.serverLauncher = new ServerLauncher(ctx, server, args);
             this.server = server;
         }
 
@@ -45,12 +46,10 @@ public class LaunchServerCommand extends AbstractLauncherCommand implements Find
         }
 
         @Override
-        protected Process createProcess() throws LaunchException {
-            try {
-                return serverLauncher.launch();
-            } catch (CommandException e) {
-                throw new LaunchException(e);
-            }
+        protected Process createProcess() throws LaunchException, CommandException, IOException {
+            serverLauncher.setPrepare(prepare);
+            serverLauncher.setQuit(quit);
+            return serverLauncher.launch();
         }
     }
 

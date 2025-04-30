@@ -105,6 +105,7 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> JAVA_ALWAYS_ADD_FILE_PERMISSIONS = bool("hmc.java.always.add.file.permissions");
 
     Property<Boolean> CRASH_REPORT_WATCHER = bool("hmc.crash.report.watcher");
+    Property<Boolean> CRASH_REPORT_WATCHER_EXIT = bool("hmc.crash.report.watcher.exit");
 
     Property<Boolean> SERVER_LAUNCH_FOR_EULA = bool("hmc.server.launch.for.eula");
     Property<Boolean> SERVER_ACCEPT_EULA = bool("hmc.server.accept.eula");

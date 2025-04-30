@@ -5,11 +5,17 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.command.download.VersionInfo;
 import me.earth.headlessmc.launcher.command.download.VersionInfoUtil;
+import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.launch.LaunchException;
+import me.earth.headlessmc.launcher.launch.LaunchOptions;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static me.earth.headlessmc.launcher.LauncherProperties.ALWAYS_IN_MEMORY;
+
 @Getter
 @Setter
 @CustomLog
@@ -27,13 +35,14 @@ import java.nio.file.Path;
 public class ServerLauncher {
     private final Launcher launcher;
     private final Server server;
+    private final String[] args;
 
-    private boolean noOut = false;
-    private boolean noIn = false;
+    private boolean prepare = false;
+    private boolean quit = false;
     private @Nullable String eula;
 
     public String readEula() throws IOException {
-        try (BufferedReader br = IOUtil.reader(Files.newInputStream(server.getEula()))) {
+        try (BufferedReader br = IOUtil.reader(Files.newInputStream(server.getEula(isInMemory())))) {
             eula = IOUtil.read(br, true);
             return eula;
         }
@@ -45,42 +54,45 @@ public class ServerLauncher {
         }
 
         eula = eula.replace("eula=false", "eula=true");
-        Files.write(server.getEula(), eula.getBytes(StandardCharsets.UTF_8));
+        Files.write(server.getEula(isInMemory()), eula.getBytes(StandardCharsets.UTF_8));
     }
 
-    public void eulaLaunch() throws CommandException {
-        if (!server.hasEula()) {
+    // TODO: check if necessary, or if we could also just create a file containing eula=true
+    public void eulaLaunch() throws CommandException, LaunchException, IOException {
+        if (!server.hasEula(isInMemory())) {
             if (launcher.getConfig().get(LauncherProperties.SERVER_LAUNCH_FOR_EULA, true)) {
                 log.info("Launching server to create EULA...");
-                Process process = launch0();
+                Process process = launch0(true);
                 try {
-                    process.waitFor();
+                    if (process != null) {
+                        process.waitFor();
+                    }
                 } catch (InterruptedException e) {
                     throw new CommandException(e);
                 }
             }
 
-            if (!server.hasEula()) {
+            if (!server.hasEula(isInMemory())) {
                 throw new CommandException("EULA could not be found for server " + server.getName());
             }
         }
     }
 
-    public Process launch() throws CommandException {
+    public @Nullable Process launch() throws CommandException, LaunchException, IOException {
         eulaLaunch();
         if (launcher.getConfig().get(LauncherProperties.SERVER_ACCEPT_EULA, false)) {
             try {
                 log.info("Accepting EULA...");
                 acceptEula();
             } catch (IOException e) {
-                throw new CommandException("EULA could not be accepted for server " + server.getName(), e);
+                throw new LaunchException("EULA could not be accepted for server " + server.getName(), e);
             }
         }
 
-        return launch0();
+        return launch0(false);
     }
 
-    private Process launch0() throws CommandException {
+    private @Nullable Process launch0(boolean eula) throws CommandException, LaunchException, IOException {
         Path serverJar = server.getPath().resolve("server.jar");
         if (!Files.exists(serverJar)) {
             try {
@@ -92,27 +104,79 @@ public class ServerLauncher {
             throw new CommandException("Server " + server.getName() + " has no valid server jar!");
         }
 
-        Java java = getJava(server);
+        Version version = getVersion(server);
+        Java java = getJava(version);
+        LaunchOptions options = LaunchOptions.builder()
+                .account(new LaunchAccount("", "", "", "", ""))
+                .version(version)
+                .launcher(launcher)
+                .files(new FileManager(server.getPath().toAbsolutePath().toString()))
+                .closeCommandLine(!prepare)
+                .parseFlags(launcher, quit, args)
+                .prepare(prepare)
+                .build();
+
+        if (options.isPrepare()) {
+            return null; // TODO: this should accept EULA maybe?
+        }
+
+        if (!eula && (options.isCloseCommandLine() || options.isInMemory())) {
+            launcher.getCommandLine().close();
+        }
+
+        if (options.isInMemory()) {
+            System.setProperty("log4j.shutdownHookEnabled", "false");
+
+            try {
+                new ServerInMemoryLauncher(options, launcher.getJavaService().getCurrent(), server).launch();
+            } catch (AuthException e) {
+                throw new IllegalStateException(e);
+            }
+
+            joinThread("ServerMain");
+            joinThread("Server thread");
+            return null;
+        }
+
         ProcessBuilder processBuilder = new ProcessBuilder()
                 .command(java.getExecutable(), "-jar", serverJar.toAbsolutePath().toString())
                 .directory(server.getPath().toFile())
-                .redirectError(noOut
+                .redirectError(options.isNoOut()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT)
-                .redirectOutput(noOut
+                .redirectOutput(options.isNoOut()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT)
-                .redirectInput(noIn
+                .redirectInput(options.isNoIn()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT);
+
+        return processBuilder.start();
+    }
+
+    private void joinThread(String name) throws LaunchException {
         try {
-            return processBuilder.start();
-        } catch (IOException e) {
-            throw new CommandException(e);
+            Thread.sleep(1_000); // ensure Thread has started.
+            // The ServerBundler and Server start the Server on another Thread
+            // TODO: is it better to use getAllStackTraces or iterate ThreadGroups?
+            Thread thread = Thread.getAllStackTraces()
+                    .keySet()
+                    .stream()
+                    .filter(t -> name.equals(t.getName()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (thread != null) {
+                log.info("Joining " + name + " Thread.");
+                thread.join();
+                log.info(name + " Thread ended.");
+            }
+        } catch (InterruptedException e) {
+            throw new LaunchException(e);
         }
     }
 
-    private Java getJava(Server server) throws CommandException {
+    private Version getVersion(Server server) throws CommandException {
         VersionInfo versionInfo = launcher.getVersionInfoCache().getByName(server.getVersion().getVersion());
         if (versionInfo == null) {
             throw new CommandException("Failed to find version '" + server.getVersion().getVersion() + "'!");
@@ -125,13 +189,22 @@ public class ServerLauncher {
             throw new CommandException("Failed to read Version " + versionInfo.getName(), e);
         }
 
+        return version;
+    }
+
+    private Java getJava(Version version) throws CommandException {
         Java java = launcher.getJavaService().findBestVersion(launcher, version.getJava());
         if (java == null) {
             throw new CommandException("Failed to find Java version for "
-                    + versionInfo.getName() + ", required: " + version.getJava());
+                    + version.getName() + ", required: " + version.getJava());
         }
 
         return java;
+    }
+
+    private boolean isInMemory() {
+        return CommandUtil.hasFlag("-inmemory", args)
+                || launcher.getConfig().get(ALWAYS_IN_MEMORY, false);
     }
 
 }

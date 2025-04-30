@@ -1,10 +1,12 @@
 package me.earth.headlessmc.launcher.server;
 
 import lombok.*;
+import me.earth.headlessmc.api.LogsMessages;
 import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.server.downloader.PaperDownloader;
 import me.earth.headlessmc.launcher.server.downloader.VanillaDownloader;
 import me.earth.headlessmc.launcher.version.VersionService;
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +71,8 @@ public class ServerManager extends LazyService<Server> {
                 .orElse(null);
     }
 
-    public Path add(ServerType type,
+    public Path add(LogsMessages log,
+                    ServerType type,
                     @Nullable String nameIn,
                     @Nullable String versionIn,
                     @Nullable String typeVersionIn) throws IOException {
@@ -86,6 +89,7 @@ public class ServerManager extends LazyService<Server> {
             version = versionIn;
         }
 
+        log.log("Adding " + type.getName() + " server for " + version);
         ServerTypeDownloader.DownloadHandler downloadHandler = type.getDownloader().download(version, typeVersionIn);
         Path result = downloadHandler.download(typeVersion -> {
             String name = nameIn;
@@ -136,12 +140,15 @@ public class ServerManager extends LazyService<Server> {
                                        FileManager launcherFileManager) {
         Path serversDir = launcherFileManager.createRelative("servers").getBase().toPath();
         ServerManager serverManager = new ServerManager(versionInfoCache, serversDir);
-        serverManager.getServerTypes().add(
-                new ServerType(
-                        "vanilla",
-                        new VanillaDownloader(downloadService, versionInfoCache, versionService)
-                )
-        );
+        serverManager.getServerTypes().add(new ServerType(
+                "paper",
+                new PaperDownloader(downloadService)
+        ));
+
+        serverManager.getServerTypes().add(new ServerType(
+                "vanilla",
+                new VanillaDownloader(downloadService, versionInfoCache, versionService)
+        ));
 
         return serverManager;
     }
