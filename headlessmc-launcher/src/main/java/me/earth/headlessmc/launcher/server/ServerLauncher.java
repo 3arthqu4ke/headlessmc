@@ -162,7 +162,6 @@ public class ServerLauncher {
         if (isJar) {
             command.add(java.getExecutable());
             command.addAll(options.getAdditionalJvmArgs());
-            // TODO: add jvm args
             command.add("-jar");
             command.add(serverExecutable.toAbsolutePath().toString());
         } else {
@@ -177,6 +176,7 @@ public class ServerLauncher {
             command.add(serverExecutable.toAbsolutePath().toString());
         }
 
+        // TODO: specify server args in launch command
         String[] defaultServerArgs = launcher.getConfig().get(
                 LauncherProperties.SERVER_ARGS,
                 new String[] { "nogui" }
