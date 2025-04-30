@@ -21,10 +21,16 @@ import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static me.earth.headlessmc.launcher.LauncherProperties.ALWAYS_IN_MEMORY;
 
@@ -79,8 +85,8 @@ public class ServerLauncher {
     }
 
     public @Nullable Process launch() throws CommandException, LaunchException, IOException {
-        eulaLaunch();
         if (launcher.getConfig().get(LauncherProperties.SERVER_ACCEPT_EULA, false)) {
+            eulaLaunch();
             try {
                 log.info("Accepting EULA...");
                 acceptEula();
@@ -93,8 +99,9 @@ public class ServerLauncher {
     }
 
     private @Nullable Process launch0(boolean eula) throws CommandException, LaunchException, IOException {
-        Path serverJar = server.getJar();
-        if (!Files.exists(serverJar)) {
+        Path serverExecutable = server.getExecutable(launcher.getProcessFactory().getOs());
+        boolean isJar = serverExecutable.toString().endsWith(".jar");
+        if (!Files.exists(serverExecutable)) {
             try {
                 launcher.getServerManager().remove(server);
             } catch (IOException e) {
@@ -125,6 +132,11 @@ public class ServerLauncher {
         }
 
         if (options.isInMemory()) {
+            if (!isJar) {
+                throw new LaunchException("Server " + server.getName()
+                        + " is currently not supported for in-memory launching as it does not use a Jar.");
+            }
+
             System.setProperty("log4j.shutdownHookEnabled", "false");
 
             try {
@@ -138,8 +150,27 @@ public class ServerLauncher {
             return null;
         }
 
+        List<String> command = new ArrayList<>();
+        if (isJar) {
+            command.add(java.getExecutable());
+            // TODO: add jvm args
+            command.add("-jar");
+            command.add(serverExecutable.toAbsolutePath().toString());
+        } else {
+            if (serverExecutable.toString().endsWith(".bat")) {
+                serverExecutable = createNonPausingBatFile(serverExecutable);
+                command.add("cmd.exe");
+                command.add("/c");
+            } else if (!serverExecutable.toString().endsWith(".sh")) {
+                throw new LaunchException("Cannot start server executable " + serverExecutable);
+            }
+
+            command.add(serverExecutable.toAbsolutePath().toString());
+        }
+
+        log.debug("Launching server " + command);
         ProcessBuilder processBuilder = new ProcessBuilder()
-                .command(java.getExecutable(), "-jar", serverJar.toAbsolutePath().toString())
+                .command(command)
                 .directory(server.getPath().toFile())
                 .redirectError(options.isNoOut()
                         ? ProcessBuilder.Redirect.PIPE
@@ -150,8 +181,31 @@ public class ServerLauncher {
                 .redirectInput(options.isNoIn()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT);
+        if (!isJar) {
+            Map<String, String> environment = processBuilder.environment();
+            String path = environment.get("PATH");
+            if (path != null) {
+                environment.put("PATH",
+                        Paths.get(java.getPath()).resolve("bin") + File.pathSeparator + path);
+            } else {
+                environment.put("PATH",
+                        Paths.get(java.getPath()).resolve("bin").toString());
+            }
+        }
 
         return processBuilder.start();
+    }
+
+    // Forge .bat ends with pause so the program always ends with "Press any key to continue..."
+    private Path createNonPausingBatFile(Path bat) throws IOException {
+        List<String> lines = Files.readAllLines(bat);
+        List<String> filteredLines = lines.stream()
+                .filter(line -> !line.trim().toLowerCase().contains("pause"))
+                .collect(Collectors.toList());
+
+        Path result = bat.getParent().resolve("hmc_run_server.bat");
+        Files.write(result, filteredLines);
+        return result;
     }
 
     private void joinThread(String name) throws LaunchException {

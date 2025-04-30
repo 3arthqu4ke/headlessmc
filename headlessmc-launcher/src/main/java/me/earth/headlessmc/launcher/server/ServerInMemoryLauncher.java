@@ -5,6 +5,7 @@ import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.launch.AbstractInMemoryGameProcessLauncher;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
+import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -15,19 +16,21 @@ import java.util.List;
 
 public class ServerInMemoryLauncher extends AbstractInMemoryGameProcessLauncher {
     private final Server server;
+    private final OS os;
     private String mainClassName;
 
     public ServerInMemoryLauncher(LaunchOptions options, @Nullable Java java, Server server) {
         super(options, java);
         this.server = server;
+        this.os = options.getLauncher().getProcessFactory().getOs();
     }
 
     @Override
     protected String getMainClassName() throws IOException {
         if (mainClassName == null) {
-            mainClassName = getMainClassFromJar(server.getJar().toFile());
+            mainClassName = getMainClassFromJar(server.getExecutable(os).toFile());
             if (mainClassName == null) {
-                throw new IOException("Failed to read Main class attribute of " + server.getJar());
+                throw new IOException("Failed to read Main class attribute of " + server.getExecutable(os));
             }
         }
 
@@ -36,7 +39,7 @@ public class ServerInMemoryLauncher extends AbstractInMemoryGameProcessLauncher 
 
     @Override
     protected List<String> getClasspath() {
-        return new ArrayList<>(Collections.singletonList(server.getJar().toAbsolutePath().toString()));
+        return new ArrayList<>(Collections.singletonList(server.getExecutable(os).toAbsolutePath().toString()));
     }
 
     @Override

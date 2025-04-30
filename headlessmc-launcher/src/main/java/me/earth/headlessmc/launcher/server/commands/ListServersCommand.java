@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.server.commands;
 
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
@@ -14,6 +15,10 @@ public class ListServersCommand extends AbstractLauncherCommand {
 
     @Override
     public void execute(String line, String... args) throws CommandException {
+        if (CommandUtil.hasFlag("-refresh", args)) {
+            ctx.getServerManager().refresh();
+        }
+
         ctx.log(
             new Table<Server>()
                     .withColumn("id", server -> String.valueOf(server.getId()))

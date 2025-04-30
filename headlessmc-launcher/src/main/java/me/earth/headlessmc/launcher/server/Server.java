@@ -1,15 +1,21 @@
 package me.earth.headlessmc.launcher.server;
 
+import lombok.CustomLog;
 import lombok.Data;
 import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
+import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
+import java.util.stream.Stream;
 
 @Data
+@CustomLog
 public class Server implements HasName, HasId {
     public static final String DEFAULT_JAR = "server.jar";
 
@@ -28,10 +34,34 @@ public class Server implements HasName, HasId {
         return Files.exists(getEula(inMemory));
     }
 
-    public Path getJar() {
+    public Path getExecutable(OS os) {
         Path jar = path.resolve(DEFAULT_JAR);
-        if (!Files.exists(jar) && "fabric".equalsIgnoreCase(version.getServerType().getName())) {
-            jar = path.resolve("fabric-server-launch.jar");
+        if (!Files.exists(jar)) {
+            if ("fabric".equalsIgnoreCase(version.getServerType().getName())) {
+                jar = path.resolve("fabric-server-launch.jar");
+            } else if (version.getServerType().getName().toLowerCase(Locale.ENGLISH).contains("forge")) {
+                Path runFile = os.getType() == OS.Type.WINDOWS
+                        ? path.resolve("run.bat")
+                        : path.resolve("run.sh");
+                if (Files.exists(runFile)) {
+                    return runFile;
+                }
+
+                String name = getName(version.getServerType(), version.getVersion(), version.getTypeVersion())
+                        .substring(1); // prevents capitalization issues like Forge vs forge
+                try (Stream<Path> files = Files.list(path)) {
+                    Path path = files.filter(f -> f.toString().endsWith(".jar"))
+                            .filter(f -> f.getFileName().toString().contains(name))
+                            .findFirst()
+                            .orElse(null);
+                    if (path != null) {
+                        return path;
+                    }
+                } catch (IOException e) {
+                    log.error(e);
+                    return path.resolve(DEFAULT_JAR);
+                }
+            }
         }
 
         return jar;
