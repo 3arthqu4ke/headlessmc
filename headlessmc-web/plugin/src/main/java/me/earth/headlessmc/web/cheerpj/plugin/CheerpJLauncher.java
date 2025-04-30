@@ -165,7 +165,7 @@ public class CheerpJLauncher {
                 new ChecksumService(), downloadService,
                 new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault(),
-                ServerManager.create(downloadService, versionInfoCache, versions, files), versionInfoCache);
+                ServerManager.create(files), versionInfoCache);
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");

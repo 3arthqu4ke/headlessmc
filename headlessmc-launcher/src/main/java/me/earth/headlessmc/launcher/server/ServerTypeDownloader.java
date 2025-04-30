@@ -1,6 +1,7 @@
 package me.earth.headlessmc.launcher.server;
 
 import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public interface ServerTypeDownloader {
-    DownloadHandler download(String version, @Nullable String typeVersion) throws IOException;
+    DownloadHandler download(Launcher launcher, String version, @Nullable String typeVersion, String... args) throws IOException;
 
     interface DownloadHandler {
         Path download(TypeVersionToDownloadPathResolve typeVersionToDownloadPathResolve) throws IOException;
@@ -30,7 +31,7 @@ public interface ServerTypeDownloader {
         public Path download(TypeVersionToDownloadPathResolve typeVersionToDownloadPathResolve) throws IOException {
             Path path = typeVersionToDownloadPathResolve.resolve(typeVersion);
             Files.createDirectories(path);
-            downloadService.download(url, path.resolve("server.jar"));
+            downloadService.download(url, path.resolve(Server.DEFAULT_JAR));
             return path;
         }
     }

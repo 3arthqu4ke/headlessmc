@@ -1,11 +1,14 @@
 package me.earth.headlessmc.launcher.server;
 
-import lombok.*;
-import me.earth.headlessmc.api.LogsMessages;
+import lombok.Cleanup;
+import lombok.CustomLog;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
-import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.server.downloader.FabricDownloader;
 import me.earth.headlessmc.launcher.server.downloader.PaperDownloader;
 import me.earth.headlessmc.launcher.server.downloader.VanillaDownloader;
 import me.earth.headlessmc.launcher.version.VersionService;
@@ -14,7 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Getter
@@ -22,7 +27,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ServerManager extends LazyService<Server> {
     private final List<ServerType> serverTypes = new ArrayList<>();
-    private final VersionInfoCache versionInfoCache;
     private final Path serversDir;
 
     @Override
@@ -71,14 +75,16 @@ public class ServerManager extends LazyService<Server> {
                 .orElse(null);
     }
 
-    public Path add(LogsMessages log,
+    public Path add(Launcher launcher,
                     ServerType type,
                     @Nullable String nameIn,
                     @Nullable String versionIn,
-                    @Nullable String typeVersionIn) throws IOException {
+                    @Nullable String typeVersionIn,
+                    String... args) throws IOException {
         String version;
         if (versionIn == null) {
-            version = versionInfoCache
+            version = launcher
+                    .getVersionInfoCache()
                     .cache(false)
                     .stream()
                     .filter(v -> "release".equalsIgnoreCase(v.getType()))
@@ -89,8 +95,9 @@ public class ServerManager extends LazyService<Server> {
             version = versionIn;
         }
 
-        log.log("Adding " + type.getName() + " server for " + version);
-        ServerTypeDownloader.DownloadHandler downloadHandler = type.getDownloader().download(version, typeVersionIn);
+        launcher.log("Adding " + type.getName() + " server for " + version);
+        ServerTypeDownloader.DownloadHandler downloadHandler =
+                type.getDownloader().download(launcher, version, typeVersionIn, args);
         Path result = downloadHandler.download(typeVersion -> {
             String name = nameIn;
             if (name == null) {
@@ -134,22 +141,12 @@ public class ServerManager extends LazyService<Server> {
         return null;
     }
 
-    public static ServerManager create(DownloadService downloadService,
-                                       VersionInfoCache versionInfoCache,
-                                       VersionService versionService,
-                                       FileManager launcherFileManager) {
+    public static ServerManager create(FileManager launcherFileManager) {
         Path serversDir = launcherFileManager.createRelative("servers").getBase().toPath();
-        ServerManager serverManager = new ServerManager(versionInfoCache, serversDir);
-        serverManager.getServerTypes().add(new ServerType(
-                "paper",
-                new PaperDownloader(downloadService)
-        ));
-
-        serverManager.getServerTypes().add(new ServerType(
-                "vanilla",
-                new VanillaDownloader(downloadService, versionInfoCache, versionService)
-        ));
-
+        ServerManager serverManager = new ServerManager(serversDir);
+        serverManager.getServerTypes().add(new ServerType("paper", new PaperDownloader()));
+        serverManager.getServerTypes().add(new ServerType("fabric", new FabricDownloader(new VanillaDownloader())));
+        serverManager.getServerTypes().add(new ServerType("vanilla", new VanillaDownloader()));
         return serverManager;
     }
 

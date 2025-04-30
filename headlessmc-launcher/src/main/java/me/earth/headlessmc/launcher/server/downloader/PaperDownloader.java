@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import lombok.CustomLog;
 import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.server.ServerTypeDownloader;
 import me.earth.headlessmc.launcher.util.JsonUtil;
@@ -20,18 +21,16 @@ import java.net.URL;
 public class PaperDownloader implements ServerTypeDownloader {
     private static final URL URL = URLs.url("https://api.papermc.io/v2/projects/paper/versions/");
 
-    private final DownloadService downloadService;
-
     @Override
-    public DownloadHandler download(String version, @Nullable String typeVersionIn) throws IOException {
-        String build = getBuild(version, typeVersionIn);
+    public DownloadHandler download(Launcher launcher, String version, @Nullable String typeVersionIn, String... args) throws IOException {
+        String build = getBuild(launcher.getDownloadService(), version, typeVersionIn);
         URL url = new URL(String.format("%s%s/builds/%s/downloads/paper-%s-%s.jar",
                 URL, version, build, version, build));
         log.debug("Downloading paper from " + url);
-        return new UrlJarDownloadHandler(downloadService, url.toString(), build);
+        return new UrlJarDownloadHandler(launcher.getDownloadService(), url.toString(), build);
     }
 
-    private String getBuild(String version, @Nullable String typeVersionIn) throws IOException {
+    private String getBuild(DownloadService downloadService, String version, @Nullable String typeVersionIn) throws IOException {
         String build = typeVersionIn;
         if (build == null) {
             HttpResponse response = downloadService.download(new URL(URL + version + "/"));

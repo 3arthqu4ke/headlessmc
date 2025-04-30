@@ -26,7 +26,7 @@ import java.util.*;
 @CustomLog
 public class FabricCommand extends AbstractDownloadingVersionCommand implements ModLauncherCommand {
     private static final String LEGACY = "https://maven.legacyfabric.net/net/legacyfabric/fabric-installer/1.0.0/fabric-installer-1.0.0.jar";
-    private static final String URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/0.11.0/fabric-installer-0.11.0.jar";
+    private static final String URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.0.3/fabric-installer-1.0.3.jar";
 
     private final SimpleInMemoryLauncher inMemoryLauncher = new SimpleInMemoryLauncher();
 
@@ -165,8 +165,13 @@ public class FabricCommand extends AbstractDownloadingVersionCommand implements 
             command.add(jar.getAbsolutePath());
         }
 
-        command.add("client");
-        command.add("-noprofile");
+        if (CommandUtil.hasFlag("-server", args)) {
+            command.add("server");
+        } else {
+            command.add("client");
+            command.add("-noprofile");
+        }
+
         command.add("-mcversion");
         command.add(version.getName());
         String uid = CommandUtil.getOption("--uid", args);
@@ -177,7 +182,12 @@ public class FabricCommand extends AbstractDownloadingVersionCommand implements 
         }
 
         command.add("-dir");
-        command.add(ctx.getMcFiles().getBase().toPath().toAbsolutePath().toString());
+        String dir = CommandUtil.getOption("--dir", args);
+        if (dir == null) {
+            dir = ctx.getMcFiles().getBase().toPath().toAbsolutePath().toString();
+        }
+
+        command.add(dir);
         return command;
     }
 

@@ -69,7 +69,7 @@ public class LauncherMock {
                 new ChecksumService(), new MockDownloadService(),
                 new MockProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager(), new JavaDownloaderManager(),
-                ServerManager.create(downloadService, versionInfoCache, versions, fileManager), versionInfoCache);
+                ServerManager.create(fileManager), versionInfoCache);
 
         launcher.getConfigService().setConfig(ConfigImpl.empty());
 

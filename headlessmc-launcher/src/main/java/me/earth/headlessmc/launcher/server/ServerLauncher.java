@@ -93,7 +93,7 @@ public class ServerLauncher {
     }
 
     private @Nullable Process launch0(boolean eula) throws CommandException, LaunchException, IOException {
-        Path serverJar = server.getPath().resolve("server.jar");
+        Path serverJar = server.getJar();
         if (!Files.exists(serverJar)) {
             try {
                 launcher.getServerManager().remove(server);

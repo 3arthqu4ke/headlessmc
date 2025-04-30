@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 
 @Data
 public class Server implements HasName, HasId {
+    public static final String DEFAULT_JAR = "server.jar";
+
     private final Path path;
     private final String name;
     private final ServerVersion version;
@@ -27,7 +29,12 @@ public class Server implements HasName, HasId {
     }
 
     public Path getJar() {
-        return path.resolve("server.jar");
+        Path jar = path.resolve(DEFAULT_JAR);
+        if (!Files.exists(jar) && "fabric".equalsIgnoreCase(version.getServerType().getName())) {
+            jar = path.resolve("fabric-server-launch.jar");
+        }
+
+        return jar;
     }
 
     public boolean hasCustomName() {
