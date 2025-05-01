@@ -118,6 +118,7 @@ public class ServerLauncher {
         Version version = getVersion(server);
         Java java = getJava(version);
         LaunchOptions options = LaunchOptions.builder()
+                .server(true)
                 .account(new LaunchAccount("", "", "", "", ""))
                 .version(version)
                 .launcher(launcher)
