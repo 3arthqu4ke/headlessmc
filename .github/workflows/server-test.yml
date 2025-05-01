@@ -77,7 +77,7 @@ jobs:
           EOF
         shell: bash
       - name: Download server
-        run: java -jar headlessmc-launcher-0.0.0.jar --command server download ${{ matrix.version.type }} ${{ matrix.version.mc }}
+        run: java -jar headlessmc-launcher-0.0.0.jar --command server add ${{ matrix.version.type }} ${{ matrix.version.mc }}
         shell: bash
       - name: List servers
         run: java -jar headlessmc-launcher-0.0.0.jar --command server list
