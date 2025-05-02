@@ -42,6 +42,7 @@ public class IntegrationTest {
         assertNotNull(System.getProperty("hmc.integration.test.enabled"));
         Assumptions.assumeTrue(Boolean.parseBoolean(System.getProperty("hmc.integration.test.enabled")));
 
+        System.setProperty("integrationTestRunServer", "false");
         // assertFalse(Files.exists(Paths.get("HeadlessMC")), "HeadlessMC directory should be deleted!");
 
         prepareTest();
@@ -74,6 +75,7 @@ public class IntegrationTest {
         assertNotNull(System.getProperty("hmc.integration.test.enabled"));
         Assumptions.assumeTrue(Boolean.parseBoolean(System.getProperty("hmc.integration.test.enabled")));
 
+        System.setProperty("integrationTestRunServer", "false");
         prepareTest();
         System.setProperty("integrationTestRunInMemory", "true");
         Main.main(new String[0]);
