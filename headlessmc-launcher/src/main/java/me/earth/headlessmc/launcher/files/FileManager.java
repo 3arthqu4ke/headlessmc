@@ -7,8 +7,10 @@ import me.earth.headlessmc.launcher.util.IOConsumer;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 // TODO: move to Paths?!?!?!?!?!?!
 // TODO: Why were we using Files in the first place?
@@ -145,6 +147,20 @@ public class FileManager {
         }
 
         action.accept(file);
+    }
+
+    public static void copyDirectory(Path src, Path dest) throws IOException {
+        try (Stream<Path> stream = Files.walk(src)) {
+            stream.forEach(file -> {
+                Path destination = dest.resolve(src.relativize(file));
+                try {
+                    Files.createDirectories(destination.getParent());
+                    Files.copy(file, destination);
+                } catch (IOException e) {
+                    log.error("Failed to copy file " + file + " to " + destination, e);
+                }
+            });
+        }
     }
 
 }

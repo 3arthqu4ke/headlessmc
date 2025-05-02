@@ -5,6 +5,7 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.modlauncher.Modlauncher;
@@ -95,31 +96,17 @@ public class ServerManager extends LazyService<Server> {
             version = versionIn;
         }
 
+        Path cachedServer = checkCachedServers(launcher, type, version, typeVersionIn, nameIn);
+        if (cachedServer != null) {
+            return cachedServer;
+        }
+
         launcher.log("Adding " + type.getName() + " server for " + version);
         ServerTypeDownloader.DownloadHandler downloadHandler =
                 type.getDownloader().download(launcher, version, typeVersionIn, args);
-        Path result = downloadHandler.download(typeVersion -> {
-            String name = nameIn;
-            if (name == null) {
-                name = type.getName() + "-" + version + (typeVersion == null ? "" : "-" + typeVersion);
-                int i = 1;
-                while (getServer(name) != null) {
-                    name = type.getName() + "-" + version + (typeVersion == null ? "" : "-" + typeVersion) + i++;
-                }
-            }
 
-            Server server = getServer(name);
-            if (server != null) {
-                throw new IOException(String.format("Server %s already exists", name));
-            }
-
-            return serversDir
-                    .resolve(type.getName())
-                    .resolve(version)
-                    .resolve(typeVersion == null ? "latest" : typeVersion)
-                    .resolve(name);
-        });
-
+        Path result = downloadHandler.download(typeVersion ->
+                resolveServerPath(serversDir, type, version, typeVersion, nameIn));
         refresh();
         return result;
     }
@@ -154,6 +141,73 @@ public class ServerManager extends LazyService<Server> {
 
     private <T> Iterable<T> itr(Stream<T> stream) {
         return stream::iterator;
+    }
+
+    private @Nullable Path checkCachedServers(Launcher launcher,
+                                              ServerType type,
+                                              String version,
+                                              @Nullable String typeVersion,
+                                              @Nullable String nameIn) throws IOException {
+
+        if (launcher.getConfig().get(LauncherProperties.SERVER_TEST, false)
+                && launcher.getConfig().get(LauncherProperties.SERVER_TEST_CACHE, false)) {
+            Path serverCacheDir = getServerCacheDir(launcher);
+            ServerManager cache = new ServerManager(serverCacheDir);
+            cache.getServerTypes().add(type);
+            cache.refresh();
+
+            Server server = cache.stream()
+                    .filter(s -> s.getVersion().getServerType().equals(type))
+                    .filter(s -> s.getVersion().getVersion().equals(version))
+                    .filter(s -> typeVersion == null
+                            || s.getVersion().getTypeVersion().equals(typeVersion))
+                    .findFirst()
+                    .orElse(null);
+            if (server != null) {
+                log.info("Restoring server cache " + server.getPath());
+                Path path = resolveServerPath(serversDir, type, version, server.getVersion().getTypeVersion(), nameIn);
+                FileManager.copyDirectory(server.getPath(), path);
+                return path;
+            }
+        }
+
+        return null;
+    }
+
+    private Path getServerCacheDir(Launcher launcher) {
+        if (launcher.getConfig().get(LauncherProperties.SERVER_TEST_CACHE_USE_MC_DIR, false)) {
+            return launcher.getMcFiles().getBase().toPath().resolve("servers");
+        }
+
+        return launcher.getFileManager().relative("servercache").getBase().toPath();
+    }
+
+    private String getNewServerName(ServerType type, String version, @Nullable String typeVersion) {
+        String name = Server.getName(type, version, typeVersion);
+        int i = 1;
+        while (getServer(name) != null) {
+            name = Server.getName(type, version, typeVersion) + "-" + i++;
+        }
+
+        return name;
+    }
+
+    private Path resolveServerPath(Path serversDir, ServerType type, String version, String typeVersion, String nameIn) throws IOException {
+        String name = nameIn;
+        if (name == null) {
+            name = getNewServerName(type, version, typeVersion);
+        }
+
+        Server server = getServer(name);
+        if (server != null) {
+            throw new IOException(String.format("Server %s already exists", name));
+        }
+
+        return serversDir
+                .resolve(type.getName())
+                .resolve(version)
+                .resolve(typeVersion == null ? "latest" : typeVersion)
+                .resolve(name);
     }
 
 }

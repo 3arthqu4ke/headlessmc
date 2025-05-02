@@ -59,7 +59,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> OFFLINE_UUID = string("hmc.offline.uuid");
     Property<String> OFFLINE_TOKEN = string("hmc.offline.token");
 
-    // TODO: also check hashes for the libraries?
     Property<Long> ASSETS_DELAY = number("hmc.assets.delay");
     Property<Long> ASSETS_RETRIES = number("hmc.assets.retries");
     Property<Boolean> ASSETS_PARALLEL = bool("hmc.assets.parallel");
@@ -109,7 +108,10 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> SERVER_LAUNCH_FOR_EULA = bool("hmc.server.launch.for.eula");
     Property<Boolean> SERVER_ACCEPT_EULA = bool("hmc.server.accept.eula");
-    Property<Boolean> SERVER_TEST = bool("hmc.server.test");
     Property<String[]> SERVER_ARGS = array("hmc.server.args", " ");
+
+    Property<Boolean> SERVER_TEST = bool("hmc.server.test");
+    Property<Boolean> SERVER_TEST_CACHE = bool("hmc.server.test.cache");
+    Property<Boolean> SERVER_TEST_CACHE_USE_MC_DIR = bool("hmc.server.test.cache.use.mc.dir");
 
 }

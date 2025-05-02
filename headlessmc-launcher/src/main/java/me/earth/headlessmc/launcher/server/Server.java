@@ -72,7 +72,7 @@ public class Server implements HasName, HasId {
     }
 
     public static String getName(ServerType type, String version, @Nullable String typeVersion) {
-        return type.getName() + "-" + version + (version == null ? "" : "-" + typeVersion);
+        return type.getName() + "-" + version + (typeVersion == null ? "" : "-" + typeVersion);
     }
 
 }
