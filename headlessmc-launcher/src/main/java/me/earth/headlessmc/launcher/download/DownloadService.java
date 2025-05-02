@@ -42,17 +42,22 @@ public class DownloadService extends IOService implements DownloadClient {
     }
 
     public void download(URL from, @Nullable Long size, @Nullable String hash, IOConsumer<byte[]> action) throws IOException {
-        HttpResponse httpResponse = get(from);
-        if (httpResponse.getStatusCode() > 299 || httpResponse.getStatusCode() < 200) {
-            throw new IOException("Failed to download " + from + ", response " + httpResponse.getStatusCode() + ": " + httpResponse.getContentAsString());
-        }
-
-        byte[] bytes = httpResponse.getContent();
+        HttpResponse response = download(from);
+        byte[] bytes = response.getContent();
         if (!checksumService.checkIntegrity(bytes, size, hash)) {
             throw new IOException("Failed to verify checksum! " + hash + " vs " + checksumService.hash(bytes));
         }
 
         action.accept(bytes);
+    }
+
+    public HttpResponse download(URL from) throws IOException {
+        HttpResponse httpResponse = get(from);
+        if (httpResponse.getStatusCode() > 299 || httpResponse.getStatusCode() < 200) {
+            throw new IOException("Failed to download " + from + ", response " + httpResponse.getStatusCode() + ": " + httpResponse.getContentAsString());
+        }
+
+        return httpResponse;
     }
 
     public byte[] download(URL from, @Nullable Long size, @Nullable String hash) throws IOException {

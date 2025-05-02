@@ -8,6 +8,8 @@ import me.earth.headlessmc.api.HeadlessMc;
 import me.earth.headlessmc.api.HeadlessMcApi;
 import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.launcher.auth.AccountManager;
+import me.earth.headlessmc.launcher.command.download.VersionInfo;
+import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.files.ConfigService;
@@ -16,6 +18,7 @@ import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
+import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.version.Version;
 import me.earth.headlessmc.launcher.version.VersionService;
@@ -81,6 +84,14 @@ public class Launcher implements HeadlessMc {
      * Manages the downloading of Java.
      */
     private JavaDownloaderManager javaDownloaderManager;
+    /**
+     * Manages Servers.
+     */
+    private ServerManager serverManager;
+    /**
+     * Cache for vanilla {@link VersionInfo}s.
+     */
+    private VersionInfoCache versionInfoCache = new VersionInfoCache();
 
     /**
      * The FileManager managing the HeadlessMc config, log and other files.

@@ -31,6 +31,10 @@ public class InstallerService {
                 c -> "neoforge".equalsIgnoreCase(c.getName())));
     }
 
+    public @Nullable ModLauncherCommand getModLauncherCommand(Modlauncher modlauncher) {
+        return modLauncherCommands.get(modlauncher);
+    }
+
     public void install(VersionArgument versionArgument, String... args) throws CommandException {
         Version vanilla = launcher.getVersionService().getVersionByName(versionArgument.getName());
         if (vanilla == null) {

@@ -16,26 +16,34 @@ public class ExitTrap {
     }
 
     public static void trapExit() {
-        SecurityManager securityManager = new SecurityManager() {
-            @Override
-            public void checkPermission(Permission perm) {
-                if ("setSecurityManager".equals(perm.getName())) {
-                    log.warn("Someone is setting a SecurityManager", new Exception("Stacktrace"));
+        try {
+            SecurityManager securityManager = new SecurityManager() {
+                @Override
+                public void checkPermission(Permission perm) {
+                    if ("setSecurityManager".equals(perm.getName())) {
+                        log.warn("Someone is setting a SecurityManager", new Exception("Stacktrace"));
+                    }
                 }
-            }
 
-            @Override
-            public void checkExit(int status) {
-                log.info("Preventing System.exit: " + status);
-                throw new ExitTrappedException(status);
-            }
-        };
+                @Override
+                public void checkExit(int status) {
+                    log.info("Preventing System.exit: " + status);
+                    throw new ExitTrappedException(status);
+                }
+            };
 
-        System.setSecurityManager(securityManager);
+            System.setSecurityManager(securityManager);
+        } catch (Throwable throwable) {
+            log.error("Failed to set SecurityManager", throwable);
+        }
     }
 
     public static void remove() {
-        System.setSecurityManager(null);
+        try {
+            System.setSecurityManager(null);
+        } catch (Throwable throwable) {
+            log.error("Failed to remove SecurityManager", throwable);
+        }
     }
 
 }

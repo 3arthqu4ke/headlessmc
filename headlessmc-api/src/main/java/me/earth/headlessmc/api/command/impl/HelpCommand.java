@@ -55,7 +55,7 @@ public class HelpCommand extends AbstractCommand {
                 new Table<Command>()
                     .withColumn("command", HasName::getName)
                     .withColumn("description", HasDescription::getDescription)
-                    .withColumn("args", this::argsToString)
+                    .withColumn("args", HelpCommand::argsToString)
                     .addAll(ctx.getCommandLine().getCommandContext())
                     .build()
             );
@@ -72,7 +72,7 @@ public class HelpCommand extends AbstractCommand {
         return null;
     }
 
-    private String argsToString(Command command) {
+    public static String argsToString(Command command) {
         StringBuilder sb = new StringBuilder();
         for (String arg : command.getArgs()) {
             sb.append(arg).append(" ");

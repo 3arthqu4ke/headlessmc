@@ -3,19 +3,20 @@ package me.earth.headlessmc.launcher.command.forge;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.instrumentation.ResourceExtractor;
 import me.earth.headlessmc.launcher.launch.SimpleInMemoryLauncher;
 import me.earth.headlessmc.launcher.util.JsonUtil;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,37 +33,53 @@ public class ForgeInstaller {
     private final String baseUrl;
 
     public void install(ForgeVersion version, FileManager fileManager, boolean inMemory) throws IOException {
-        val cli = new ResourceExtractor(fileManager, FORGE_CLI).extract();
-        val fileName = repoFormat.getFileName(version);
-        // TODO: delete installer?
-        val installer = fileManager.create(fileName);
+        install(version, fileManager, launcher.getMcFiles(), inMemory, false);
+    }
+
+    public void installServer(ForgeVersion version, FileManager fileManager, @Nullable String dir, boolean inMemory) throws IOException {
+        FileManager installDir = dir == null ? fileManager : new FileManager(dir);
+        install(version, fileManager, installDir, inMemory, true);
+    }
+
+    public void install(ForgeVersion version, FileManager fileManager, FileManager installDir, boolean inMemory, boolean server) throws IOException {
+        String fileName = repoFormat.getFileName(version);
+        File installer = fileManager.create(fileName);
         downloadInstaller(version, installer);
 
-        val java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(launcher, 8);
+        Java java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(launcher, 8);
         if (java == null) {
             throw new IOException("No Java version found! Please configure hmc.java.versions.");
         }
 
-        val mc = launcher.getMcFiles();
-        val command = getCommand(java, mc.getBase(), cli, installer, inMemory);
+        if (server) {
+            List<String> command = getCommand(java, installDir.getBase(), installer, installer, inMemory, true);
+            launch(version, installer.toPath(), installDir.getBase().toPath(), command, inMemory);
+        } else {
+            File cli = new ResourceExtractor(fileManager, FORGE_CLI).extract();
+            List<String> command = getCommand(java, installDir.getBase(), cli, installer, inMemory, false);
 
-        ensureJsonExists("launcher_profiles.json", mc);
-        ensureJsonExists("launcher_profiles_microsoft_store.json", mc);
+            ensureJsonExists("launcher_profiles.json", installDir);
+            ensureJsonExists("launcher_profiles_microsoft_store.json", installDir);
 
+            launch(version, cli.toPath(), fileManager.getBase().toPath(), command, inMemory);
+        }
+    }
+
+    private void launch(ForgeVersion version, Path jar, Path installDir, List<String> command, boolean inMemory) throws IOException {
         if (inMemory) {
             try {
                 // Our ForgeCLI does the following:
                 // try (URLClassLoader ucl = new InstallerClassLoader(new URL[]{
                 //                Main.class.getProtectionDomain().getCodeSource().getLocation(),
                 // When running inside an IDE Main.class.getProtectionDomain().getCodeSource().getLocation() is null!
-                inMemoryLauncher.simpleLaunch(new URL[] { cli.toURI().toURL() }, inMemoryLauncher.getMainClassFromJar(cli), command);
+                inMemoryLauncher.simpleLaunch(new URL[] { jar.toFile().toURI().toURL() }, inMemoryLauncher.getMainClassFromJar(jar.toFile()), command);
                 launcher.log(String.format("%s %s installed successfully!", forgeName, version.getFullName()));
             } catch (Throwable t) {
                 throw new IOException(t);
             }
         } else {
             Process process = new ProcessBuilder()
-                    .directory(fileManager.getBase())
+                    .directory(installDir.toFile())
                     .command(command)
                     .inheritIO()
                     .start();
@@ -81,18 +98,24 @@ public class ForgeInstaller {
         }
     }
 
-    protected List<String> getCommand(Java java, File mc, File cli, File fml, boolean inMemory) {
-        val command = new ArrayList<String>();
+    protected List<String> getCommand(Java java, File installDir, File jar, File fml, boolean inMemory, boolean server) {
+        List<String> command = new ArrayList<>();
         if (!inMemory) {
             command.add(java.getExecutable());
             command.add("-jar");
-            command.add(cli.getAbsolutePath());
+            command.add(jar.getAbsolutePath());
         }
 
-        command.add("--installer");
-        command.add(fml.getAbsolutePath());
-        command.add("--target");
-        command.add(mc.getAbsolutePath());
+        if (server) {
+            command.add("--installServer");
+            command.add(installDir.getAbsolutePath());
+        } else {
+            command.add("--installer");
+            command.add(fml.getAbsolutePath());
+            command.add("--target");
+            command.add(installDir.getAbsolutePath());
+        }
+
         return command;
     }
 
@@ -112,7 +135,7 @@ public class ForgeInstaller {
     }
 
     private void ensureJsonExists(String name, FileManager mcFiles) throws IOException {
-        val file = mcFiles.create(name);
+        File file = mcFiles.create(name);
         try {
             if (!JsonUtil.fromFile(file).isJsonObject()) {
                 throw new IOException("Not a JsonObject!");

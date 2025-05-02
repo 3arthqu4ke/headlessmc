@@ -32,9 +32,21 @@ class VersionFactory {
         }
 
         val assetsUrl = JsonUtil.getString(json, "assetIndex", "url");
+
         val clientUrl = JsonUtil.getString(json, "downloads", "client", "url");
         val clientSha1 = JsonUtil.getString(json, "downloads", "client", "sha1");
         val clientSize = JsonUtil.getLong(json, "downloads", "client", "size");
+        VersionExecutable clientDownload = clientUrl == null
+                ? null
+                : new VersionExecutable(clientUrl, clientSha1, clientSize);
+
+        val serverUrl = JsonUtil.getString(json, "downloads", "server", "url");
+        val serverSha1 = JsonUtil.getString(json, "downloads", "server", "sha1");
+        val serverSize = JsonUtil.getLong(json, "downloads", "server", "size");
+        VersionExecutable serverDownload = serverUrl == null
+                ? null
+                : new VersionExecutable(serverUrl, serverSha1, serverSize);
+
         val logging = Logging.getFromVersion(json);
         val newFormat = new AtomicBoolean();
         val arguments = argumentFactory.parse(argumentElement, newFormat::set);
@@ -53,9 +65,8 @@ class VersionFactory {
                 .mainClass(mainClass)
                 .newArgumentFormat(newFormat.get())
                 .libraries(libraries)
-                .clientDownload(clientUrl)
-                .clientSha1(clientSha1)
-                .clientSize(clientSize)
+                .clientDownload(clientDownload)
+                .serverDownload(serverDownload)
                 .logging(logging)
                 .build();
     }

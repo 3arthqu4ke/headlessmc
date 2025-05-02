@@ -117,6 +117,11 @@ tasks.withType(Test).configureEach {
     dependsOn testPluginJar
     project.logger.info("Enabling integration test: ${hmc_integration_test_enabled}")
     systemProperties["hmc.integration.test.enabled"] = "${hmc_integration_test_enabled}"
+    if (JavaVersion.current() >= JavaVersion.VERSION_21
+        && "${hmc_integration_test_enabled}".toBoolean()) {
+        systemProperties["java.security.manager"] = "allow"
+    }
+
     testLogging {
         showStandardStreams = true
     }

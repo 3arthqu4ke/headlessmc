@@ -12,6 +12,7 @@ import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;
 import me.earth.headlessmc.launcher.download.MockDownloadService;
@@ -21,6 +22,7 @@ import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.MockProcessFactory;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
+import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
 import me.earth.headlessmc.launcher.version.VersionService;
 import me.earth.headlessmc.logging.LoggingService;
@@ -62,10 +64,12 @@ public class LauncherMock {
 
         DownloadService downloadService = new MockDownloadService();
         val versionSpecificModManager = new VersionSpecificModManager(downloadService, launcherConfig);
+        VersionInfoCache versionInfoCache = new VersionInfoCache();
         Launcher launcher = new Launcher(hmc, versions, launcherConfig,
                 new ChecksumService(), new MockDownloadService(),
                 new MockProcessFactory(downloadService, launcherConfig, os), configs,
-                javas, accounts, versionSpecificModManager, new PluginManager(), new JavaDownloaderManager());
+                javas, accounts, versionSpecificModManager, new PluginManager(), new JavaDownloaderManager(),
+                ServerManager.create(hmc, fileManager), versionInfoCache);
 
         launcher.getConfigService().setConfig(ConfigImpl.empty());
 

@@ -1,31 +1,21 @@
 package me.earth.headlessmc.launcher.command;
 
 import lombok.CustomLog;
-import lombok.val;
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.api.command.ParseUtil;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
-import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
-import me.earth.headlessmc.launcher.test.CrashReportWatcher;
 import me.earth.headlessmc.launcher.version.Version;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-
-import static me.earth.headlessmc.api.command.CommandUtil.flag;
-import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EXCEPTIONS;
+import java.nio.file.Paths;
 
 @CustomLog
 public class LaunchCommand extends AbstractDownloadingVersionCommand {
@@ -48,182 +38,42 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
 
     @Override
     public void execute(Version version, String... args) throws CommandException {
-        boolean prepare = CommandUtil.hasFlag("-prepare", args);
-        val uuid = UUID.fromString(ctx.getConfig().get(LauncherProperties.EXTRACTED_FILE_CACHE_UUID, UUID.randomUUID().toString()));
-        ctx.log((prepare ? "Preparing" : "Launching") + " version " + version.getName() + ", " + uuid);
-        ctx.getLoggingService().setLevel(Level.INFO, true);
-        val files = ctx.getFileManager().createRelative(uuid.toString());
-
-        boolean quit = flag(ctx, "-quit", LauncherProperties.INVERT_QUIT_FLAG, LauncherProperties.ALWAYS_QUIT_FLAG, args);
-        int status = 0;
-        try {
-            status = runProcess(version, files, quit, prepare, args);
-        } catch (LaunchException | AuthException e) {
-            status = -1;
-            // ignore this specific message for tests, because otherwise Intellij shows it as red which looks like something failed
-            if (!(e instanceof LaunchException && "Mock Factory".equals(e.getMessage()))) {
-                log.error(e);
-            }
-
-            ctx.log(String.format("Couldn't launch %s: %s", version.getName(), e.getMessage()));
-            if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
-                throw new IllegalStateException(e);
-            }
-        } catch (Throwable t) {
-            status = -1;
-            val msg = String.format("Couldn't launch %s: %s", version.getName(), t.getMessage());
-            log.error(msg, t);
-            ctx.log(msg);
-            throw t;
-        } finally {
-            cleanup(files, args);
-            if (!prepare && !CommandUtil.hasFlag("-stay", args)) {
-                ctx.getExitManager().exit(status);
-            }
-        }
-
-        if (status != 0 && ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
-            throw new IllegalStateException("Minecraft exited with code " + status);
-        }
-
-        if (!prepare) {
-            try {
-                ctx.getCommandLine().open(ctx);
-            } catch (IOException ioException) {
-                throw new IllegalStateException("Failed to reopen HeadlessMc CommandLineReader", ioException);
-            }
-        }
+        ClientLaunchProcessLifecycle lifecycle = new ClientLaunchProcessLifecycle(version, args);
+        lifecycle.run(version);
     }
 
-    private int runProcess(Version version, FileManager files, boolean quit, boolean prepare, String... args)
-            throws CommandException, LaunchException, AuthException {
-        int status = 0;
-        if (CommandUtil.hasFlag("-offline", args)) {
-            ctx.getAccountManager().getOfflineChecker().setOffline(true);
+    private class ClientLaunchProcessLifecycle extends AbstractLaunchProcessLifecycle {
+        private final Version version;
+        private @Nullable LaunchAccount account;
+
+        public ClientLaunchProcessLifecycle(Version version, String[] args) {
+            super(LaunchCommand.this.ctx, args);
+            this.version = version;
         }
 
-        LaunchAccount account = getAccount();
-        String retriesOption = CommandUtil.getOption("--retries", args);
-        int retries = 0;
-        if (retriesOption != null) {
-            retries = ParseUtil.parseI(retriesOption);
+        @Override
+        protected void getAccount() throws CommandException {
+            this.account = LaunchCommand.this.getAccount();
         }
 
-        Throwable throwable = null;
-        for (int i = 0; i < retries + 1; i++) {
-            if (i > 0) {
-                log.warn("Retrying to launch Minecraft: " + i);
-            }
-
-            CrashReportWatcher crashReportWatcher = null;
-            try {
-                AtomicReference<Process> processRef = new AtomicReference<>();
-                AtomicReference<Path> crashReport = new AtomicReference<>();
-                if (ctx.getConfig().get(LauncherProperties.CRASH_REPORT_WATCHER, false)) {
-                    Path gameDir = new File(ctx.getConfig().get(LauncherProperties.GAME_DIR, ctx.getGameDir(version).getPath())).toPath();
-                    log.info("Initializing Crash Report Watcher for " + gameDir);
-                    crashReportWatcher = CrashReportWatcher.forGameDir(gameDir);
-                    crashReportWatcher.addListener(reportPath -> {
-                        log.error("Crash Report created at :" + reportPath);
-                        crashReport.set(reportPath);
-                        if (processRef.get() != null) {
-                            processRef.get().destroy();
-                        }
-                    });
-
-                    crashReportWatcher.waitForStart();
-                }
-
-                Process process = ctx.getProcessFactory().run(
-                        LaunchOptions.builder()
-                                .account(account)
-                                .version(version)
-                                .launcher(ctx)
-                                .files(files)
-                                .closeCommandLine(!prepare)
-                                .parseFlags(ctx, quit, args)
-                                .prepare(prepare)
-                                .build()
-                );
-
-                processRef.set(process);
-                if (prepare) {
-                    return 0;
-                }
-
-                if (process == null) {
-                    ctx.log("InMemory main thread ended.");
-                }
-
-                if (quit || process == null) {
-                    if (crashReport.get() != null) {
-                        throw new LaunchException("CrashReport detected " + crashReport.get());
-                    }
-
-                    cleanup(files, args);
-                    ctx.getExitManager().exit(0);
-                    return 0;
-                }
-
-                try {
-                    status = process.waitFor();
-                    ctx.log("Minecraft exited with code: " + status);
-                } catch (InterruptedException ie) {
-                    ctx.log("Launcher has been interrupted...");
-                    Thread.currentThread().interrupt();
-                }
-
-                if (status == 0) {
-                    if (crashReport.get() != null) {
-                        throw new LaunchException("CrashReport detected " + crashReport.get());
-                    }
-
-                    break;
-                }
-            } catch (Throwable t) {
-                status = -1;
-                log.error("Failed to start Minecraft on try " + i, t);
-                if (throwable == null) {
-                    throwable = t;
-                } else {
-                    throwable.addSuppressed(t);
-                }
-            } finally {
-                if (crashReportWatcher != null) {
-                    try {
-                        crashReportWatcher.close();
-                    } catch (IOException e) {
-                        log.error("Failed to close CrashReportWatcher", e);
-                    }
-                }
-            }
+        @Override
+        protected Path getGameDir() {
+            return Paths.get(ctx.getConfig().get(LauncherProperties.GAME_DIR, ctx.getGameDir(version).getPath())).toAbsolutePath();
         }
 
-        if (status != 0 && throwable != null) {
-            if (throwable instanceof RuntimeException) {
-                throw (RuntimeException) throwable;
-            }
-
-            if (throwable instanceof LaunchException) {
-                throw (LaunchException) throwable;
-            }
-
-            throw new LaunchException(throwable);
-        }
-
-        return status;
-    }
-
-    private void cleanup(FileManager files, String... args) {
-        // for some reason both ShutdownHooks and File.deleteOnExit are
-        // not really working, that's why we Main.deleteOldFiles, too.
-        if (!CommandUtil.hasFlag("-keep", args) && !ctx.getConfig().get(LauncherProperties.KEEP_FILES, false)) {
-            try {
-                log.info("Deleting " + files.getBase().getName());
-                ctx.getFileManager().delete(files.getBase());
-            } catch (IOException e) {
-                log.error("Couldn't delete files of game " + files.getBase().getName(), e);
-            }
+        @Override
+        protected @Nullable Process createProcess() throws LaunchException, AuthException, IOException {
+            return ctx.getProcessFactory().run(
+                    LaunchOptions.builder()
+                            .account(account)
+                            .version(version)
+                            .launcher(ctx)
+                            .files(files)
+                            .closeCommandLine(!prepare)
+                            .parseFlags(ctx, quit, args)
+                            .prepare(prepare)
+                            .build()
+            );
         }
     }
 

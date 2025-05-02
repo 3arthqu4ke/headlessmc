@@ -3,6 +3,7 @@ package me.earth.headlessmc.testplugin;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.version.Version;
 
 import java.io.PrintStream;
@@ -10,8 +11,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LaunchTest {
@@ -20,6 +23,11 @@ public class LaunchTest {
         String modlauncher = java.getVersion() <= 8 ? "forge" : "neoforge";
         boolean inMemory = Boolean.parseBoolean(System.getProperty("integrationTestRunInMemory", "false"));
         String inMemoryFlag = inMemory ? "-inmemory" : "";
+
+        if (Boolean.parseBoolean(System.getProperty("integrationTestRunServer", "false"))) {
+            serverTest(launcher, is, vanilla, modlauncher);
+            return;
+        }
 
         is.add("help");
 
@@ -79,7 +87,7 @@ public class LaunchTest {
             Optional<Version> version = launcher
                 .getVersionService()
                 .stream()
-                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && v.getParentName().equals(vanilla)).findFirst();
+                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && vanilla.equals(v.getParentName())).findFirst();
 
             assertTrue(version.isPresent(), "Failed to find a version with name containing " + modlauncher + " in "
                 + launcher.getVersionService().stream().map(HasName::getName).collect(Collectors.toList()));
@@ -91,7 +99,7 @@ public class LaunchTest {
             Optional<Version> version = launcher
                 .getVersionService()
                 .stream()
-                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && v.getParentName().equals(vanilla)).findFirst();
+                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && vanilla.equals(v.getParentName())).findFirst();
 
             assertTrue(version.isPresent());
             Thread timeOutThread = new Thread(() -> {
@@ -120,6 +128,81 @@ public class LaunchTest {
 
         is.add(ps -> returnedFromLaunching.set(true));
         is.add(ps -> ExitTrap.remove());
+    }
+
+    private static void serverTest(Launcher launcher,
+                                   TestInputStream is,
+                                   String vanilla,
+                                   String modlauncher) {
+        System.setProperty(LauncherProperties.SERVER_ACCEPT_EULA.getName(), "true");
+        System.setProperty(LauncherProperties.SERVER_LAUNCH_FOR_EULA.getName(), "true");
+        System.setProperty(LauncherProperties.SERVER_TEST.getName(), "true");
+
+        launcher.getLoggingService().setLevel(Level.FINE);
+
+        is.add("server");
+        is.add(ps -> assertFalse(launcher.getServerManager().stream().findAny().isPresent()));
+
+        is.add("server add vanilla " + vanilla);
+        is.add("server list");
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("vanilla"))));
+
+        is.add("server remove 0 -id");
+
+        is.add("server add fabric " + vanilla);
+        is.add("server list");
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("fabric"))));
+
+        is.add("server remove 0 -id");
+
+        is.add("server add " + modlauncher + " " + vanilla);
+        is.add("server list");
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals(modlauncher))));
+
+        is.add("server remove 0 -id");
+
+        is.add("server add paper " + vanilla);
+        is.add("server list");
+
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("paper"))));
+
+        is.add("server eula 0 -id accept");
+
+        is.add("server cache 0 -id");
+
+        is.add("server remove 0 -id");
+
+        is.add("server list");
+
+        is.add(ps -> assertFalse(launcher.getServerManager().stream().findAny().isPresent()));
+
+        is.add(ps -> {
+            System.setProperty(
+                    LauncherProperties.SERVER_TEST_DIR.getName(),
+                    launcher.getFileManager().getDir("servertest").getAbsolutePath()
+            );
+            System.setProperty(LauncherProperties.SERVER_TEST_NAME.getName(), "test");
+            System.setProperty(LauncherProperties.SERVER_TEST_TYPE.getName(), "paper");
+            System.setProperty(LauncherProperties.SERVER_TEST_VERSION.getName(), vanilla);
+        });
+
+        is.add("server add paper " + vanilla);
+        is.add("server list");
+
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .filter(s -> "test".equals(s.getName()))
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("paper"))));
+
+        is.add("server launch test");
     }
 
 }
