@@ -5,6 +5,7 @@ import me.earth.headlessmc.api.command.CommandContextImpl;
 import me.earth.headlessmc.api.command.impl.HelpCommand;
 import me.earth.headlessmc.api.command.impl.QuitCommand;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
 
 import java.util.Locale;
@@ -17,6 +18,10 @@ public class ServerCommandContext extends CommandContextImpl {
         add(new RemoveServerCommand(launcher));
         add(new ListServersCommand(launcher));
         add(new EulaCommand(launcher));
+        if (launcher.getConfig().get(LauncherProperties.SERVER_TEST_CACHE, false)) {
+            add(new CacheServerCommand(launcher));
+        }
+
         if (serverMode) {
             add(new HelpCommand(launcher));
             add(new QuitCommand(launcher));

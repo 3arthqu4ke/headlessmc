@@ -4,6 +4,7 @@ import lombok.Cleanup;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.LazyService;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,11 +30,18 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ServerManager extends LazyService<Server> {
     private final List<ServerType> serverTypes = new ArrayList<>();
+    private final HasConfig config;
     private final Path serversDir;
+    private final boolean cache;
 
     @Override
     protected Collection<Server> update() {
         List<Server> servers = new ArrayList<>();
+        Server testServer = getTestServer();
+        if (testServer != null) {
+            servers.add(testServer);
+        }
+
         for (ServerType type : serverTypes) {
             Path typeDir = serversDir.resolve(type.getName());
             if (!Files.exists(typeDir)) {
@@ -76,6 +85,19 @@ public class ServerManager extends LazyService<Server> {
                 .orElse(null);
     }
 
+    public void cache(Launcher launcher, Server server) throws IOException {
+        Path cacheDir = getServerCacheDir(launcher);
+        ServerVersion version = server.getVersion();
+        Server cachedServer = findCachedServer(cacheDir, version.getServerType(), version.getVersion(), version.getTypeVersion());
+        if (cachedServer != null) {
+            log.info("Already cached server similar to server " + server.getName());
+            return;
+        }
+
+        Path path = resolveServerPath(cacheDir, version.getServerType(), version.getVersion(), version.getTypeVersion(), null);
+        FileManager.copyDirectory(server.getPath(), path);
+    }
+
     public Path add(Launcher launcher,
                     ServerType type,
                     @Nullable String nameIn,
@@ -98,6 +120,7 @@ public class ServerManager extends LazyService<Server> {
 
         Path cachedServer = checkCachedServers(launcher, type, version, typeVersionIn, nameIn);
         if (cachedServer != null) {
+            refresh();
             return cachedServer;
         }
 
@@ -128,9 +151,9 @@ public class ServerManager extends LazyService<Server> {
         return null;
     }
 
-    public static ServerManager create(FileManager launcherFileManager) {
+    public static ServerManager create(HasConfig config, FileManager launcherFileManager) {
         Path serversDir = launcherFileManager.createRelative("servers").getBase().toPath();
-        ServerManager serverManager = new ServerManager(serversDir);
+        ServerManager serverManager = new ServerManager(config, serversDir, false);
         serverManager.getServerTypes().add(new ServerType("paper", new PaperDownloader()));
         serverManager.getServerTypes().add(new ServerType("fabric", new FabricDownloader(new VanillaDownloader())));
         serverManager.getServerTypes().add(new ServerType("vanilla", new VanillaDownloader()));
@@ -148,21 +171,11 @@ public class ServerManager extends LazyService<Server> {
                                               String version,
                                               @Nullable String typeVersion,
                                               @Nullable String nameIn) throws IOException {
-
-        if (launcher.getConfig().get(LauncherProperties.SERVER_TEST, false)
+        if (!cache
+                && launcher.getConfig().get(LauncherProperties.SERVER_TEST, false)
                 && launcher.getConfig().get(LauncherProperties.SERVER_TEST_CACHE, false)) {
             Path serverCacheDir = getServerCacheDir(launcher);
-            ServerManager cache = new ServerManager(serverCacheDir);
-            cache.getServerTypes().add(type);
-            cache.refresh();
-
-            Server server = cache.stream()
-                    .filter(s -> s.getVersion().getServerType().equals(type))
-                    .filter(s -> s.getVersion().getVersion().equals(version))
-                    .filter(s -> typeVersion == null
-                            || s.getVersion().getTypeVersion().equals(typeVersion))
-                    .findFirst()
-                    .orElse(null);
+            Server server = findCachedServer(serverCacheDir, type, version, typeVersion);
             if (server != null) {
                 log.info("Restoring server cache " + server.getPath());
                 Path path = resolveServerPath(serversDir, type, version, server.getVersion().getTypeVersion(), nameIn);
@@ -172,6 +185,23 @@ public class ServerManager extends LazyService<Server> {
         }
 
         return null;
+    }
+
+    private @Nullable Server findCachedServer(Path cacheDir,
+                                              ServerType type,
+                                              String version,
+                                              @Nullable String typeVersion) {
+        ServerManager cache = new ServerManager(config, cacheDir, true);
+        cache.getServerTypes().add(type);
+        cache.refresh();
+
+        return cache.stream()
+                .filter(s -> s.getVersion().getServerType().equals(type))
+                .filter(s -> s.getVersion().getVersion().equals(version))
+                .filter(s -> typeVersion == null
+                        || s.getVersion().getTypeVersion().equals(typeVersion))
+                .findFirst()
+                .orElse(null);
     }
 
     private Path getServerCacheDir(Launcher launcher) {
@@ -192,7 +222,16 @@ public class ServerManager extends LazyService<Server> {
         return name;
     }
 
-    private Path resolveServerPath(Path serversDir, ServerType type, String version, String typeVersion, String nameIn) throws IOException {
+    private Path resolveServerPath(Path serversDir,
+                                   ServerType type,
+                                   String version,
+                                   String typeVersion,
+                                   String nameIn) throws IOException {
+        String testDir = config.getConfig().get(LauncherProperties.SERVER_TEST_DIR, null);
+        if (!cache && testDir != null) {
+            return Paths.get(testDir);
+        }
+
         String name = nameIn;
         if (name == null) {
             name = getNewServerName(type, version, typeVersion);
@@ -208,6 +247,38 @@ public class ServerManager extends LazyService<Server> {
                 .resolve(version)
                 .resolve(typeVersion == null ? "latest" : typeVersion)
                 .resolve(name);
+    }
+
+    private @Nullable Server getTestServer() {
+        if (cache) {
+            return null;
+        }
+
+        String testDir = config.getConfig().get(LauncherProperties.SERVER_TEST_DIR, null);
+        if (testDir == null) {
+            return null;
+        }
+
+        Path testPath = Paths.get(testDir);
+        if (!Files.isDirectory(testPath)) {
+            return null;
+        }
+
+        String testTypeName = config.getConfig().get(LauncherProperties.SERVER_TEST_TYPE, null);
+        String testVersion = config.getConfig().get(LauncherProperties.SERVER_TEST_VERSION, null);
+        ServerType testType;
+        if (testTypeName == null || testVersion == null || (testType = getServerType(testTypeName)) == null) {
+            throw new IllegalArgumentException("Please specify override type and version: " + testTypeName);
+        }
+
+        String testName = config.getConfig().get(LauncherProperties.SERVER_TEST_NAME, testPath.getFileName().toString());
+        String testBuild = config.getConfig().get(LauncherProperties.SERVER_TEST_BUILD, "latest");
+        return new Server(
+                testPath,
+                testName,
+                new ServerVersion(testType, testVersion, testBuild),
+                0
+        );
     }
 
 }

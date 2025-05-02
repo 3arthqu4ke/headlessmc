@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @RequiredArgsConstructor
 public class ServerTest {
     private final AtomicBoolean successful = new AtomicBoolean(false);
+    private final AtomicBoolean stopSent = new AtomicBoolean(false);
     private final Process process;
 
     public Thread start() {
@@ -45,9 +46,14 @@ public class ServerTest {
     }
 
     public void stop() throws IOException {
-        log.info("Stopping Server!");
-        process.getOutputStream().write(("stop" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
-        process.getOutputStream().flush();
+        synchronized (stopSent) {
+            if (!stopSent.get()) {
+                stopSent.set(true);
+                log.info("Stopping Server!");
+                process.getOutputStream().write(("stop" + System.lineSeparator()).getBytes(StandardCharsets.UTF_8));
+                process.getOutputStream().flush();
+            }
+        }
     }
 
     public void awaitExitOrKill() throws InterruptedException {

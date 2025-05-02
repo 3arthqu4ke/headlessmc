@@ -114,4 +114,10 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> SERVER_TEST_CACHE = bool("hmc.server.test.cache");
     Property<Boolean> SERVER_TEST_CACHE_USE_MC_DIR = bool("hmc.server.test.cache.use.mc.dir");
 
+    Property<String> SERVER_TEST_DIR = string("hmc.server.test.dir");
+    Property<String> SERVER_TEST_NAME = string("hmc.server.test.name");
+    Property<String> SERVER_TEST_TYPE = string("hmc.server.test.type");
+    Property<String> SERVER_TEST_VERSION = string("hmc.server.test.version");
+    Property<String> SERVER_TEST_BUILD = string("hmc.server.test.build");
+
 }

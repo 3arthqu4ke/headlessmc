@@ -11,8 +11,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LaunchTest {
@@ -85,7 +87,7 @@ public class LaunchTest {
             Optional<Version> version = launcher
                 .getVersionService()
                 .stream()
-                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && v.getParentName().equals(vanilla)).findFirst();
+                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && vanilla.equals(v.getParentName())).findFirst();
 
             assertTrue(version.isPresent(), "Failed to find a version with name containing " + modlauncher + " in "
                 + launcher.getVersionService().stream().map(HasName::getName).collect(Collectors.toList()));
@@ -97,7 +99,7 @@ public class LaunchTest {
             Optional<Version> version = launcher
                 .getVersionService()
                 .stream()
-                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && v.getParentName().equals(vanilla)).findFirst();
+                .filter(v -> v.getName().toLowerCase(Locale.ENGLISH).contains(modlauncher) && vanilla.equals(v.getParentName())).findFirst();
 
             assertTrue(version.isPresent());
             Thread timeOutThread = new Thread(() -> {
@@ -136,7 +138,10 @@ public class LaunchTest {
         System.setProperty(LauncherProperties.SERVER_LAUNCH_FOR_EULA.getName(), "true");
         System.setProperty(LauncherProperties.SERVER_TEST.getName(), "true");
 
+        launcher.getLoggingService().setLevel(Level.FINE);
+
         is.add("server");
+        is.add(ps -> assertFalse(launcher.getServerManager().stream().findAny().isPresent()));
 
         is.add("server add vanilla " + vanilla);
         is.add("server list");
@@ -169,7 +174,35 @@ public class LaunchTest {
                 .stream()
                 .anyMatch(s -> s.getVersion().getServerType().getName().equals("paper"))));
 
-        is.add("server launch 0 -id");
+        is.add("server eula 0 -id accept");
+
+        is.add("server cache 0 -id");
+
+        is.add("server remove 0 -id");
+
+        is.add("server list");
+
+        is.add(ps -> assertFalse(launcher.getServerManager().stream().findAny().isPresent()));
+
+        is.add(ps -> {
+            System.setProperty(
+                    LauncherProperties.SERVER_TEST_DIR.getName(),
+                    launcher.getFileManager().getDir("servertest").getAbsolutePath()
+            );
+            System.setProperty(LauncherProperties.SERVER_TEST_NAME.getName(), "test");
+            System.setProperty(LauncherProperties.SERVER_TEST_TYPE.getName(), "paper");
+            System.setProperty(LauncherProperties.SERVER_TEST_VERSION.getName(), vanilla);
+        });
+
+        is.add("server add paper " + vanilla);
+        is.add("server list");
+
+        is.add(ps -> assertTrue(launcher.getServerManager()
+                .stream()
+                .filter(s -> "test".equals(s.getName()))
+                .anyMatch(s -> s.getVersion().getServerType().getName().equals("paper"))));
+
+        is.add("server launch test");
     }
 
 }

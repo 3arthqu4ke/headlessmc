@@ -154,6 +154,7 @@ public class FileManager {
             stream.forEach(file -> {
                 Path destination = dest.resolve(src.relativize(file));
                 try {
+                    log.debug("Copying file from " + file + " to " + destination);
                     Files.createDirectories(destination.getParent());
                     Files.copy(file, destination);
                 } catch (IOException e) {

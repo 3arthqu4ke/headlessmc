@@ -118,7 +118,7 @@ public class LauncherBuilder {
                 })
                 .ifNull(LauncherBuilder::versionService, LauncherBuilder::versionService, () -> new VersionService(requireNonNull(launcherConfig(), "LauncherConfig!")))
                 .ifNull(LauncherBuilder::javaService, LauncherBuilder::javaService, () -> new JavaService(configService(), os()))
-                .ifNull(LauncherBuilder::serverManager, LauncherBuilder::serverManager, () -> ServerManager.create(fileManager()));
+                .ifNull(LauncherBuilder::serverManager, LauncherBuilder::serverManager, () -> ServerManager.create(configService(), fileManager()));
     }
 
     public LauncherBuilder initAccountManager() throws AuthException {

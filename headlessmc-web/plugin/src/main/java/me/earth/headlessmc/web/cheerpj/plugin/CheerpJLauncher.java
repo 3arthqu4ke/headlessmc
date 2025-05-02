@@ -108,6 +108,7 @@ public class CheerpJLauncher {
             commandLine.setAllContexts(commands);
         }
 
+        @SuppressWarnings("resource") // uses daemon thread factory and thread has lifetime of program
         ExecutorService service = Executors.newSingleThreadExecutor(CommandLineReader.DEFAULT_THREAD_FACTORY);
         gui.getCommandHandler().set(str -> service.submit(() -> {
             try {
@@ -165,7 +166,7 @@ public class CheerpJLauncher {
                 new ChecksumService(), downloadService,
                 new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault(),
-                ServerManager.create(files), versionInfoCache);
+                ServerManager.create(hmc, files), versionInfoCache);
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");
