@@ -124,4 +124,6 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> LEAVE_AFTER_TEST = bool("hmc.test.leave.after");
     Property<Boolean> NO_TEST_TIMEOUT = bool("hmc.test.no.timeout");
 
+    Property<Boolean> AUTO_DOWNLOAD_SPECIFICS = bool("hmc.auto.download.specifics");
+
 }

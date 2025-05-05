@@ -15,6 +15,11 @@ import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.instrumentation.Instrumentation;
 import me.earth.headlessmc.launcher.instrumentation.InstrumentationHelper;
 import me.earth.headlessmc.launcher.instrumentation.Target;
+import me.earth.headlessmc.launcher.modlauncher.Modlauncher;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificException;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificModRepository;
+import me.earth.headlessmc.launcher.specifics.VersionSpecificMods;
 import me.earth.headlessmc.launcher.version.Features;
 import me.earth.headlessmc.launcher.version.Rule;
 import me.earth.headlessmc.launcher.version.Version;
@@ -25,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -76,6 +82,7 @@ public class ProcessFactory {
         log.info("Game will run in " + dir);
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
+        autoDownloadSpecifics(options, version, dir.toPath());
         if (options.isPrepare()) {
             return null;
         }
@@ -273,6 +280,25 @@ public class ProcessFactory {
         }
 
         log.debug(commandDebugBuilder.toString());
+    }
+
+    private void autoDownloadSpecifics(LaunchOptions options, Version version, Path gameDir) throws IOException {
+        if (options.isSpecifics()) {
+            if (Modlauncher.getFromVersionName(version.getName()) == null) {
+                return;
+            }
+
+            VersionSpecificModRepository repo = VersionSpecificMods.HMC_SPECIFICS;
+            VersionSpecificModManager modManager = options.getLauncher().getVersionSpecificModManager();
+            log.info("Automatically downloading Hmc-Specifics " + repo.getVersion());
+            try {
+                modManager.download(version, repo);
+                modManager.deleteSpecificsOfOtherVersions(version, repo, gameDir.resolve("mods"));
+                modManager.install(version, repo, gameDir.resolve("mods"));
+            } catch (VersionSpecificException e) {
+                throw new IOException(e);
+            }
+        }
     }
 
 }

@@ -5,6 +5,7 @@ import lombok.CustomLog;
 import lombok.Data;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.launcher.Launcher;
+import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.version.Version;
@@ -39,6 +40,7 @@ public class LaunchOptions {
     private final boolean forceBoot;
     private final boolean xvfb;
     private final boolean prepare;
+    private final boolean specifics;
     private final boolean closeCommandLine;
 
     @SuppressWarnings("unused")
@@ -73,8 +75,12 @@ public class LaunchOptions {
                 noIn = true;
             }
 
+            boolean specifics = CommandUtil.hasFlag("-specifics", args)
+                    || launcher.getConfig().get(AUTO_DOWNLOAD_SPECIFICS, false);
+
             return this
                 .runtime(CommandUtil.hasFlag("-commands", args))
+                .specifics(specifics)
                 .lwjgl(lwjgl)
                 .inMemory(CommandUtil.hasFlag("-inmemory", args) || launcher.getConfig().get(ALWAYS_IN_MEMORY, false))
                 .jndi(flag(ctx, true, "-jndi", INVERT_JNDI_FLAG, ALWAYS_JNDI_FLAG, args))
