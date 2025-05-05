@@ -67,9 +67,27 @@ public class TestCaseRunner {
             }
 
             updateTimeout();
+            // check the next action,
+            // otherwise if we want to send a command right after we would have to wait for next message...
+            TestCase.Result nextResult = checkNextAction(process);
+            if (nextResult != TestCase.Result.PASS && nextResult != TestCase.Result.MATCH) {
+                return nextResult;
+            }
         }
 
         return evaluationResult.result;
+    }
+
+    private TestCase.Result checkNextAction(Process process) throws IOException {
+        Frame nextFrame = getFrame();
+        if (nextFrame != null) {
+            TestCase.Action action = nextFrame.actions.get(nextFrame.index);
+            if (!action.getType().isCondition()) {
+                return runStep(process, null);
+            }
+        }
+
+        return TestCase.Result.PASS;
     }
 
     private @Nullable Frame getFrame() {
