@@ -133,7 +133,7 @@ public class TestCase implements HasName {
                 try {
                     Thread.sleep(TimeUnit.SECONDS.toMillis(action.getTimeout()));
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    throw new TestException(e);
                 }
 
                 return Result.MATCH;

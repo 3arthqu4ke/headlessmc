@@ -100,7 +100,7 @@ public class CommandTest implements AutoCloseable {
             }
         } catch (InterruptedException e) {
             if (!stopped.get()) {
-                throw new RuntimeException("Unexpected Interrupt", e);
+                throw new TestException("Unexpected Interrupt", e);
             }
         }
     }

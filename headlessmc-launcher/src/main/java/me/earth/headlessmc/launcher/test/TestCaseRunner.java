@@ -161,14 +161,12 @@ public class TestCaseRunner {
         private @Nullable TestCase.Action thenAction;
 
         public void setThen(TestCase.Action thenAction) {
-            if (thenAction != null) {
-                if (thenAction.getThen() != null) {
-                    if (this.thenAction == null) {
-                        this.thenAction = thenAction;
-                    } else {
-                        throw new IllegalArgumentException(
-                                "Invalid Test, two then paths: " + this.thenAction + ", " + thenAction);
-                    }
+            if (thenAction != null && thenAction.getThen() != null) {
+                if (this.thenAction == null) {
+                    this.thenAction = thenAction;
+                } else {
+                    throw new IllegalArgumentException(
+                            "Invalid Test, two then paths: " + this.thenAction + ", " + thenAction);
                 }
             }
         }
