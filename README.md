@@ -83,6 +83,21 @@ to WebAssembly and the run it inside the browser, but this is extremely slow.
 HeadlessMc also has support for Minecraft servers.
 It can install and run Paper, Fabric, Vanilla, Forge and Neoforge servers.
 Instrumentation for servers is currently not supported.
+Use the following commands:
+```
+> server add paper 1.21.5
+Added paper server: paper-1.21.5-54.
+
+> server list
+id   type    version   name
+0    paper   1.21.5    paper-1.21.5-54
+
+> server eula paper-1.21.5-54 -accept
+...
+
+> server launch paper-1.21.5-54 --jvm "-Xmx10G -XX:+UseG1GC <...>"
+...
+```
 
 ### Testing
 
@@ -110,6 +125,7 @@ As an example, the workflow to test if **any** Minecraft server boots successful
 ```
 It checks for a log message that ends with `For help, type "help"`, 
 something all versions of the Minecraft server output upon successful launch.
+It then stops the server by sending the stop command to it.
 You can write your own test and even run it against the client instead of the server,
 provided the client has command support, e.g. via the [hmc-specifics](https://github.com/3arthqu4ke/hmc-specifics).
 Just specify the location of your test file in the config with the key

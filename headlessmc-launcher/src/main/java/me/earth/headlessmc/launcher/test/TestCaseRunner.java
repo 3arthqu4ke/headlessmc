@@ -54,6 +54,7 @@ public class TestCaseRunner {
         }
 
         TestCase.Action action = frame.actions.get(frame.index);
+        log.debug("Evaluating " + message + " with action " + action);
         EvaluationResult evaluationResult = evaluate(process, action, message);
         if (evaluationResult.result == TestCase.Result.MATCH) {
             frame.index++;

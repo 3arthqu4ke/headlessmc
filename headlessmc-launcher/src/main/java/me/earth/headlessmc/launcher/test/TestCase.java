@@ -1,9 +1,8 @@
 package me.earth.headlessmc.launcher.test;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
+import lombok.CustomLog;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import java.util.regex.Pattern;
 import static java.util.Objects.requireNonNull;
 
 @Data
+@CustomLog
 public class TestCase implements HasName {
     @SerializedName("steps")
     private final List<Action> steps;
@@ -78,6 +78,7 @@ public class TestCase implements HasName {
              */
             SEND((process, action, message) -> {
                 requireNonNull(action.getMessage(), "Message of action was null!");
+                log.info("Sending command: " + action.getMessage());
                 process.getOutputStream().write(
                         (action.getMessage() + System.lineSeparator())
                                 .getBytes(StandardCharsets.UTF_8));
