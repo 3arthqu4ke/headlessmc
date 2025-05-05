@@ -13,6 +13,7 @@ import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.server.commands.LaunchServerCommand;
+import me.earth.headlessmc.launcher.test.CommandTest;
 import me.earth.headlessmc.launcher.test.CrashReportWatcher;
 import org.jetbrains.annotations.Nullable;
 
@@ -139,6 +140,7 @@ public abstract class AbstractLaunchProcessLifecycle {
                     ctx.log("InMemory main thread ended.");
                 }
 
+                runTest(process);
                 if (quit || process == null) {
                     if (crashReport.get() != null) {
                         throw new LaunchException("CrashReport detected " + crashReport.get());
@@ -184,6 +186,32 @@ public abstract class AbstractLaunchProcessLifecycle {
         }
 
         return handleLaunchException(status, throwable);
+    }
+
+    private void runTest(@Nullable Process process) throws Exception {
+        try (CommandTest commandTest = CommandTest.create(process, ctx)) {
+            if (commandTest == null) {
+                return;
+            }
+
+            log.info("Running CommandTest");
+            commandTest.run();
+            if (commandTest.wasSuccessful()) {
+                log.info("CommandTest was successful.");
+            } else {
+                log.error("CommandTest failed!");
+                log.error("Message: " + commandTest.getMessage());
+            }
+
+            if (!commandTest.wasSuccessful()
+                || ctx.getConfig().get(LauncherProperties.LEAVE_AFTER_TEST, true)) {
+                commandTest.awaitExitOrKill();
+            }
+
+            if (!commandTest.wasSuccessful()) {
+                throw new LaunchException("CommandTest failed");
+            }
+        }
     }
 
     private int handleLaunchException(int status, Throwable throwable) throws LaunchException {

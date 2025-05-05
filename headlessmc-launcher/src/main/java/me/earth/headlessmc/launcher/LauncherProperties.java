@@ -120,4 +120,8 @@ public interface LauncherProperties extends HmcProperties {
     Property<String> SERVER_TEST_VERSION = string("hmc.server.test.version");
     Property<String> SERVER_TEST_BUILD = string("hmc.server.test.build");
 
+    Property<String> TEST_FILE = string("hmc.test.filename");
+    Property<Boolean> LEAVE_AFTER_TEST = bool("hmc.test.leave.after");
+    Property<Boolean> NO_TEST_TIMEOUT = bool("hmc.test.no.timeout");
+
 }

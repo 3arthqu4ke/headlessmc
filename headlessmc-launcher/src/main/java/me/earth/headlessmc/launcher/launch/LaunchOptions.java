@@ -65,6 +65,14 @@ public class LaunchOptions {
                 }
             }
 
+            boolean noOut = quit || CommandUtil.hasFlag("-noout", args);
+            boolean noIn = quit;
+            if (launcher.getConfig().get(SERVER_TEST, false)
+                || launcher.getConfig().get(TEST_FILE, null) != null) {
+                noOut = true;
+                noIn = true;
+            }
+
             return this
                 .runtime(CommandUtil.hasFlag("-commands", args))
                 .lwjgl(lwjgl)
@@ -72,12 +80,12 @@ public class LaunchOptions {
                 .jndi(flag(ctx, true, "-jndi", INVERT_JNDI_FLAG, ALWAYS_JNDI_FLAG, args))
                 .lookup(flag(ctx, true, "-lookup", INVERT_LOOKUP_FLAG, ALWAYS_LOOKUP_FLAG, args))
                 .paulscode(flag(ctx, "-paulscode", INVERT_PAULS_FLAG, ALWAYS_PAULS_FLAG, args))
-                .noOut(quit || CommandUtil.hasFlag("-noout", args))
+                .noOut(noOut)
                 .forceSimple(CommandUtil.hasFlag("-forceSimple", args))
                 .forceBoot(CommandUtil.hasFlag("-forceBoot", args))
                 .parseJvmArgs(args)
                 .xvfb(xvfb)
-                .noIn(quit);
+                .noIn(noIn);
         }
 
         public LaunchOptionsBuilder parseJvmArgs(String... args) {

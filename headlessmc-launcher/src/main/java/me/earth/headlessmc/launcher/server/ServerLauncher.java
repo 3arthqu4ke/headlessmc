@@ -16,7 +16,6 @@ import me.earth.headlessmc.launcher.command.download.VersionInfoUtil;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
-import me.earth.headlessmc.launcher.test.ServerTest;
 import me.earth.headlessmc.launcher.util.IOUtil;
 import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +27,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -186,18 +184,16 @@ public class ServerLauncher {
         command.addAll(Arrays.asList(defaultServerArgs));
 
         log.debug("Launching server " + command);
-        boolean pipeOut = serverTest || options.isNoOut();
-        boolean pipeIn = serverTest || options.isNoIn();
         ProcessBuilder processBuilder = new ProcessBuilder()
                 .command(command)
                 .directory(server.getPath().toFile())
-                .redirectError(pipeOut
+                .redirectError(options.isNoOut()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT)
-                .redirectOutput(pipeOut
+                .redirectOutput(options.isNoOut()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT)
-                .redirectInput(pipeIn
+                .redirectInput(options.isNoIn()
                         ? ProcessBuilder.Redirect.PIPE
                         : ProcessBuilder.Redirect.INHERIT);
         if (!isJar) {
@@ -212,31 +208,7 @@ public class ServerLauncher {
             }
         }
 
-        Process process = processBuilder.start();
-        if (!eula && serverTest) {
-            runServerTest(process);
-        }
-
-        return process;
-    }
-
-    private void runServerTest(Process process) throws LaunchException, IOException {
-        ServerTest test = new ServerTest(process);
-        Thread testThread = test.start();
-        try {
-            testThread.join(Duration.ofMinutes(5).toMillis());
-            test.stop();
-            test.awaitExitOrKill();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new LaunchException(e);
-        }
-
-        if (!test.wasSuccessful()) {
-            throw new LaunchException("Server Test unsuccessful");
-        }
-
-        log.info("Server Test successful");
+        return processBuilder.start();
     }
 
     // Forge .bat ends with pause so the program always ends with "Press any key to continue..."
