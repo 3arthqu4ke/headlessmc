@@ -68,7 +68,7 @@ jobs:
           hmc.gamedir=$PWD/run
           hmc.offline=true
           hmc.assets.dummy=true
-          hmc.jline.enabled=true
+          hmc.jline.enabled=false
           hmc.rethrow.launch.exceptions=true
           hmc.exit.on.failed.command=true
           hmc.server.test=true

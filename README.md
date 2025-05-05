@@ -78,6 +78,45 @@ Secondly, there is [container2wasm](https://github.com/headlesshq/hmc-container2
 which can translate the HeadlessMc Docker container
 to WebAssembly and the run it inside the browser, but this is extremely slow.
 
+### Servers
+
+HeadlessMc also has support for Minecraft servers.
+It can install and run Paper, Fabric, Vanilla, Forge and Neoforge servers.
+Instrumentation for servers is currently not supported.
+
+### Testing
+
+One primary goal of HeadlessMc is to enable testing for both production servers and clients.
+For this purpose it is used in the [mc-runtime-test](https://github.com/3arthqu4ke/mc-runtime-test).
+It also has a built-in command testing framework.
+It can send commands to a running process and check the output.
+Tests can be specified in a json format.
+As an example, the workflow to test if **any** Minecraft server boots successfully:
+```json
+{
+  "name": "Server Test",
+  "steps": [
+    {
+      "type": "ENDS_WITH",
+      "message": "For help, type \"help\""
+    },
+    {
+      "type": "SEND",
+      "message": "stop",
+      "timeout": 120
+    }
+  ]
+}
+```
+It checks for a log message that ends with `For help, type "help"`, 
+something all versions of the Minecraft server output upon successful launch.
+You can write your own test and even run it against the client instead of the server,
+provided the client has command support, e.g. via the [hmc-specifics](https://github.com/3arthqu4ke/hmc-specifics).
+Just specify the location of your test file in the config with the key
+`hmc.test.filename`.
+An example CI workflow that tests if HeadlessMc can launch the game with the
+hmc-specifics can be found [here](.github/workflows/hmc-specifics-test.yml).
+
 ### Optimizations 
 
 HeadlessMc achieves headless mode by patching the LWJGL library: 
