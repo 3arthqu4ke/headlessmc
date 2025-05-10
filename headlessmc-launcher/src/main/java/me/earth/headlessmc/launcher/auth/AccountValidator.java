@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.google.gson.annotations.SerializedName;
 import lombok.CustomLog;
 import lombok.Data;
+import me.earth.headlessmc.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.util.JsonUtil;
 import me.earth.headlessmc.launcher.util.URLs;
 import net.lenni0451.commons.httpclient.HttpClient;

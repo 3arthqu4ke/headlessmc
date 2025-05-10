@@ -11,7 +11,7 @@ import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.launcher.auth.AccountManager;
 import me.earth.headlessmc.launcher.auth.AccountStore;
 import me.earth.headlessmc.launcher.auth.AccountValidator;
-import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.command.download.VersionInfoCache;
 import me.earth.headlessmc.launcher.download.ChecksumService;
 import me.earth.headlessmc.launcher.download.DownloadService;

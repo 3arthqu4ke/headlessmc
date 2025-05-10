@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.auth;
 
 import lombok.*;
 import me.earth.headlessmc.api.config.Config;
+import me.earth.headlessmc.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
