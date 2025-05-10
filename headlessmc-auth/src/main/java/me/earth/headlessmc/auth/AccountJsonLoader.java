@@ -38,7 +38,7 @@ public class AccountJsonLoader {
             je = JsonParser.parseReader(ir);
         }
 
-        if (je == null) {
+        if (je == null || je.isJsonNull()) {
             return new ArrayList<>(0);
         }
 
