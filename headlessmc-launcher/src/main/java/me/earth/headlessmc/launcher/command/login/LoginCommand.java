@@ -5,7 +5,7 @@ import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.auth.AuthException;
-import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.auth.ValidatedAccount;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
 
 @CustomLog

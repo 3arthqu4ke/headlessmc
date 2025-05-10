@@ -6,7 +6,7 @@ import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.auth.LaunchAccount;
-import me.earth.headlessmc.launcher.auth.ValidatedAccount;
+import me.earth.headlessmc.auth.ValidatedAccount;
 import me.earth.headlessmc.launcher.command.download.AbstractDownloadingVersionCommand;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.launch.LaunchOptions;
@@ -88,12 +88,20 @@ public class LaunchCommand extends AbstractDownloadingVersionCommand {
                 throw new AuthException("You can't play the game without an account! Please use the login command.");
             } else {
                 account = ctx.getAccountManager().refreshAccount(account);
-                return account.toLaunchAccount();
+                return toLaunchAccount(account);
             }
 
         } catch (AuthException e) {
             throw new CommandException(e.getMessage());
         }
+    }
+
+    private LaunchAccount toLaunchAccount(ValidatedAccount account) {
+        return new LaunchAccount("msa",
+                account.getSession().getMcProfile().getName(),
+                account.getSession().getMcProfile().getId().toString(),
+                account.getSession().getMcProfile().getMcToken().getAccessToken(),
+                account.getXuid());
     }
 
 }

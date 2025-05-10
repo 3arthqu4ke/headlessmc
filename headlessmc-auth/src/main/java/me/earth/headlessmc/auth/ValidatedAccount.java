@@ -1,4 +1,4 @@
-package me.earth.headlessmc.launcher.auth;
+package me.earth.headlessmc.auth;
 
 import com.google.gson.JsonObject;
 import lombok.Data;
@@ -14,14 +14,6 @@ public class ValidatedAccount implements HasName {
     @Override
     public String getName() {
         return session.getMcProfile().getName();
-    }
-
-    public LaunchAccount toLaunchAccount() {
-        return new LaunchAccount("msa",
-                                 session.getMcProfile().getName(),
-                                 session.getMcProfile().getId().toString(),
-                                 session.getMcProfile().getMcToken().getAccessToken(),
-                                 xuid);
     }
 
     public JsonObject toJson() {
