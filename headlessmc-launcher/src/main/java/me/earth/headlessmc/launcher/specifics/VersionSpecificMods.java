@@ -15,14 +15,14 @@ public class VersionSpecificMods {
      * @see <a href=https://github.com/3arthqu4ke/hmc-specifics>https://github.com/3arthqu4ke/hmc-specifics</a>
      */
     public static final VersionSpecificModRepository HMC_SPECIFICS =
-        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/hmc-specifics/releases/download/"), "hmc-specifics", "2.1.0", "-release");
+        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/hmc-specifics/releases/download/"), "hmc-specifics", "2.2.0", "-release");
 
     /**
      * Mods that join a SinglePlayer world, run GameTests and exit the game, for testing purposes.
      * @see <a href=https://github.com/3arthqu4ke/mc-runtime-test>https://github.com/3arthqu4ke/mc-runtime-test</a>
      */
     public static final VersionSpecificModRepository MC_RUNTIME_TEST =
-        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/mc-runtime-test/releases/download/"), "mc-runtime-test", "2.4.0", "-release");
+        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/mc-runtime-test/releases/download/"), "mc-runtime-test", "3.1.0", "-release");
 
     /**
      * Version specific optimizations for HeadlessMc. In addition to HeadlessMc's lwjgl patching it patches out all rendering related code.
