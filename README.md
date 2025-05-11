@@ -81,7 +81,7 @@ to WebAssembly and the run it inside the browser, but this is extremely slow.
 ### Servers
 
 HeadlessMc also has support for Minecraft servers.
-It can install and run Paper, Fabric, Vanilla, Forge and Neoforge servers.
+It can install and run Paper, Fabric, Vanilla, Purpur, Forge and Neoforge servers.
 Instrumentation for servers is currently not supported.
 Use the following commands:
 ```

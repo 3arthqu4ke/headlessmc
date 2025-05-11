@@ -10,10 +10,7 @@ import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.modlauncher.Modlauncher;
-import me.earth.headlessmc.launcher.server.downloader.FabricDownloader;
-import me.earth.headlessmc.launcher.server.downloader.ForgeDownloader;
-import me.earth.headlessmc.launcher.server.downloader.PaperDownloader;
-import me.earth.headlessmc.launcher.server.downloader.VanillaDownloader;
+import me.earth.headlessmc.launcher.server.downloader.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -157,6 +154,7 @@ public class ServerManager extends LazyService<Server> {
         serverManager.getServerTypes().add(new ServerType("paper", new PaperDownloader()));
         serverManager.getServerTypes().add(new ServerType("fabric", new FabricDownloader(new VanillaDownloader())));
         serverManager.getServerTypes().add(new ServerType("vanilla", new VanillaDownloader()));
+        serverManager.getServerTypes().add(new ServerType("purpur", new PurpurDownloader()));
         serverManager.getServerTypes().add(new ServerType("neoforge", new ForgeDownloader(new VanillaDownloader(), Modlauncher.NEOFORGE)));
         serverManager.getServerTypes().add(new ServerType("forge", new ForgeDownloader(new VanillaDownloader(), Modlauncher.LEXFORGE)));
         return serverManager;
