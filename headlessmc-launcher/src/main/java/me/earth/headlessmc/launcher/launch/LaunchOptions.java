@@ -26,6 +26,7 @@ public class LaunchOptions {
     private final Launcher launcher;
     private final FileManager files;
     private final List<String> additionalJvmArgs;
+    private final List<String> additionalGameArgs;
     private final LaunchAccount account;
     private final boolean server;
     private final boolean runtime;
@@ -47,6 +48,7 @@ public class LaunchOptions {
     public static class LaunchOptionsBuilder {
         private LaunchOptionsBuilder() {
             this.additionalJvmArgs = Collections.emptyList();
+            this.additionalGameArgs = Collections.emptyList();
         }
 
         public LaunchOptionsBuilder parseFlags(
@@ -90,6 +92,7 @@ public class LaunchOptions {
                 .forceSimple(CommandUtil.hasFlag("-forceSimple", args))
                 .forceBoot(CommandUtil.hasFlag("-forceBoot", args))
                 .parseJvmArgs(args)
+                .parseGameArgs(args)
                 .xvfb(xvfb)
                 .noIn(noIn);
         }
@@ -97,8 +100,16 @@ public class LaunchOptions {
         public LaunchOptionsBuilder parseJvmArgs(String... args) {
             String jvmArgs = CommandUtil.getOption("--jvm", args);
             if (jvmArgs != null) {
-                this.additionalJvmArgs = new ArrayList<>(
-                    Arrays.asList(CommandUtil.split(jvmArgs)));
+                this.additionalJvmArgs = new ArrayList<>(Arrays.asList(CommandUtil.split(jvmArgs)));
+            }
+
+            return this;
+        }
+
+        public LaunchOptionsBuilder parseGameArgs(String... args) {
+            String gameArgs = CommandUtil.getOption("--game-args", args);
+            if (gameArgs != null) {
+                this.additionalGameArgs = new ArrayList<>(Arrays.asList(CommandUtil.split(gameArgs)));
             }
 
             return this;

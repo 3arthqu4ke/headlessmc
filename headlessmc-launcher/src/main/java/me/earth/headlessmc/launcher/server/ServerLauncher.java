@@ -182,6 +182,7 @@ public class ServerLauncher {
         );
 
         command.addAll(Arrays.asList(defaultServerArgs));
+        command.addAll(options.getAdditionalGameArgs());
 
         log.debug("Launching server " + command);
         ProcessBuilder processBuilder = new ProcessBuilder()
