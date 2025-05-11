@@ -45,6 +45,7 @@ jobs:
           - { mc: 1.21.5, type: vanilla, java: 21 }
           - { mc: 1.21.5, type: paper, java: 21 }
           - { mc: 1.21.5, type: forge, java: 21 }
+          - { mc: 1.21.5, type: purpur, java: 21 }
           - { mc: 1.21.4, type: neoforge, java: 21 }
           - { mc: 1.21.4, type: fabric, java: 21 }
     runs-on: ubuntu-latest
