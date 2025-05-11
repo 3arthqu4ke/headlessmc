@@ -126,4 +126,6 @@ public interface LauncherProperties extends HmcProperties {
 
     Property<Boolean> AUTO_DOWNLOAD_SPECIFICS = bool("hmc.auto.download.specifics");
 
+    Property<Boolean> ARM_FIX_LIBRARIES = bool("hmc.arm.fix.libraries");
+
 }
