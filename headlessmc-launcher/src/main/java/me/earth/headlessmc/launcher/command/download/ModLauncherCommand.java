@@ -1,7 +1,7 @@
 package me.earth.headlessmc.launcher.command.download;
 
 import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.launcher.command.FindByCommand;
+import me.earth.headlessmc.api.command.FindByCommand;
 import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;
 

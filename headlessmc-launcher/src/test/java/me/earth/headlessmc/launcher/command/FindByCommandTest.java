@@ -5,6 +5,7 @@ import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.AbstractCommand;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.FindByCommand;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

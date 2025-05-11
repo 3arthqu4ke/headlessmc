@@ -8,7 +8,7 @@ import me.earth.headlessmc.api.command.YesNoContext;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
-import me.earth.headlessmc.launcher.command.FindByCommand;
+import me.earth.headlessmc.api.command.FindByCommand;
 import me.earth.headlessmc.launcher.command.VersionTypeFilter;
 import me.earth.headlessmc.launcher.version.Version;
 import org.jetbrains.annotations.Nullable;

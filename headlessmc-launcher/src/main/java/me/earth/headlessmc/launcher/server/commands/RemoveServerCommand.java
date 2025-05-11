@@ -4,7 +4,7 @@ import lombok.CustomLog;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
-import me.earth.headlessmc.launcher.command.FindByCommand;
+import me.earth.headlessmc.api.command.FindByCommand;
 import me.earth.headlessmc.launcher.server.Server;
 
 import java.io.IOException;

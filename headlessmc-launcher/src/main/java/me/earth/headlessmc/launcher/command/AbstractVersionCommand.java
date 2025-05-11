@@ -2,6 +2,7 @@ package me.earth.headlessmc.launcher.command;
 
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;
+import me.earth.headlessmc.api.command.FindByCommand;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.download.VersionArgument;
 import me.earth.headlessmc.launcher.modlauncher.Modlauncher;
