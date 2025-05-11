@@ -91,6 +91,7 @@ public class ProcessFactory {
             launcher.getCommandLine().close();
         }
 
+        System.gc(); // suggest JVM to clean up before running mc
         if (options.isInMemory()) {
             inMemoryLaunch(new InMemoryLauncher(options, commandBuilder, version, launcher.getJavaService().getCurrent()));
             return null;
