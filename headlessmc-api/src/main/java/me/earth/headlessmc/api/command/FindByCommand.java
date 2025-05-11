@@ -1,11 +1,7 @@
-package me.earth.headlessmc.launcher.command;
+package me.earth.headlessmc.api.command;
 
 import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
-import me.earth.headlessmc.api.command.Command;
-import me.earth.headlessmc.api.command.CommandException;
-import me.earth.headlessmc.api.command.CommandUtil;
-import me.earth.headlessmc.api.command.HasDescription;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.AbstractMap;
@@ -55,12 +51,18 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
                 + objectArg + "'!");
     }
 
-    default @Nullable T findObject(boolean byId, boolean byRegex, String versionArg, String... args) throws CommandException {
-        return byId
-                ? HasId.getById(versionArg, getIterable())
+    default @Nullable T findObject(boolean byId, boolean byRegex, String objectArg, String... args) throws CommandException {
+        T result = byId
+                ? HasId.getById(objectArg, getIterable())
                 : byRegex
-                 ? HasName.getByRegex(Pattern.compile(versionArg), getIterable())
-                 : HasName.getByName(versionArg, getIterable());
+                 ? HasName.getByRegex(Pattern.compile(objectArg), getIterable())
+                 : HasName.getByName(objectArg, getIterable());
+
+        if (result == null && !byId && !byRegex) {
+            result = HasId.getById(objectArg, getIterable());
+        }
+
+        return result;
     }
 
     @Override

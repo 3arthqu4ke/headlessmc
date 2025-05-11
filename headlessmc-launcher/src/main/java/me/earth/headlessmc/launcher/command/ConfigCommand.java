@@ -3,6 +3,7 @@ package me.earth.headlessmc.launcher.command;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
+import me.earth.headlessmc.api.command.FindByCommand;
 import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
