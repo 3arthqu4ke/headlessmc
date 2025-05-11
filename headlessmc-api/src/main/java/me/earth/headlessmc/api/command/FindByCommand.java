@@ -4,10 +4,7 @@ import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.AbstractMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -71,9 +68,14 @@ public interface FindByCommand<T extends HasName & HasId> extends Command {
         if (args.length == 2) {
             String arg = args[1].toLowerCase(Locale.ENGLISH);
             for (T t : getIterable()) {
-                if (t.getName().toLowerCase(Locale.ENGLISH).startsWith(arg)) {
+                if (t.getName().toLowerCase(Locale.ENGLISH).startsWith(arg)
+                    && !t.getName().equalsIgnoreCase(arg)) {
                     completions.add(new AbstractMap.SimpleEntry<>(t.getName(), t instanceof HasDescription ? ((HasDescription) t).getDescription() : null));
                 }
+            }
+        } else if (args.length == 1 && line.startsWith(getName().toLowerCase(Locale.ENGLISH) + " ")) {
+            for (T t : getIterable()) {
+                completions.add(new AbstractMap.SimpleEntry<>(t.getName(), t instanceof HasDescription ? ((HasDescription) t).getDescription() : null));
             }
         }
     }
