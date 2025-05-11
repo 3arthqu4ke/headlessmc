@@ -16,6 +16,7 @@ jobs:
           - { os: windows-latest, name: headlessmc-launcher-windows-x64 }
           - { os: ubuntu-latest, name: headlessmc-launcher-linux-x64 }
           - { os: macos-latest, name: headlessmc-launcher-macos-x64 }
+          - { os: ubuntu-24.04-arm, name: headlessmc-launcher-linux-arm64 }
           # TODO Use https://github.com/marketplace/actions/run-on-architecture to support ARM
 
     steps:
