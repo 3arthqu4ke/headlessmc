@@ -165,6 +165,8 @@ public class LaunchTest {
                 .stream()
                 .anyMatch(s -> s.getVersion().getServerType().getName().equals(modlauncher))));
 
+        is.add("server remove 0 -id");
+
         is.add("server add purpur " + vanilla);
         is.add("server list");
         is.add(ps -> assertTrue(launcher.getServerManager()
