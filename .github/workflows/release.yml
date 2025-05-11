@@ -96,3 +96,5 @@ jobs:
             ./merged-artifacts/headlessmc-launcher-linux-x64
             ./merged-artifacts/headlessmc-launcher-windows-x64.exe
             ./merged-artifacts/headlessmc-launcher-macos-x64
+            ./merged-artifacts/headlessmc-launcher-linux-arm64
+            ./merged-artifacts/headlessmc-launcher-macos-arm64

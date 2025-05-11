@@ -15,8 +15,10 @@ jobs:
         os:
           - { os: windows-latest, name: headlessmc-launcher-windows-x64 }
           - { os: ubuntu-latest, name: headlessmc-launcher-linux-x64 }
-          - { os: macos-latest, name: headlessmc-launcher-macos-x64 }
-          # TODO Use https://github.com/marketplace/actions/run-on-architecture to support ARM
+          - { os: macos-13, name: headlessmc-launcher-macos-x64 }
+          #- { os: windows-11-arm, name: headlessmc-launcher-windows-arm64 } no graalvm for windows arm64 :(
+          - { os: ubuntu-24.04-arm, name: headlessmc-launcher-linux-arm64 }
+          - { os: macos-latest, name: headlessmc-launcher-macos-arm64 }
 
     steps:
       - uses: actions/checkout@v4
