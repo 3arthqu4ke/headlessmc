@@ -35,7 +35,7 @@ public class LibraryDownloader {
 
         String url = library.getUrl(libPath);
         if (shouldLog) {
-            log.info(library.isNativeLibrary() + " " + libPath + " is missing, downloading from " + url);
+            log.info(libPath + " is missing, downloading from " + url);
         }
 
         download(url, to, library.getSha1(), library.getSize());
