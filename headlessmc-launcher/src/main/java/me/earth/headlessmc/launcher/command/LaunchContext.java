@@ -10,6 +10,7 @@ import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.command.download.DownloadCommand;
 import me.earth.headlessmc.launcher.command.forge.ForgeCommand;
 import me.earth.headlessmc.launcher.command.login.LoginCommand;
+import me.earth.headlessmc.launcher.mods.command.ModCommand;
 import me.earth.headlessmc.launcher.server.ServerCommand;
 
 public class LaunchContext extends CommandContextImpl {
@@ -34,6 +35,7 @@ public class LaunchContext extends CommandContextImpl {
         add(new ConfigCommand(ctx));
         add(new PasswordCommand(ctx));
         add(new ServerCommand(ctx));
+        add(ModCommand.forClientVersions(ctx));
         if (addLoginCommand) {
             add(new LoginCommand(ctx));
         }

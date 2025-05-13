@@ -13,8 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-public abstract class AbstractVersionCommand extends AbstractLauncherCommand
-    implements FindByCommand<Version> {
+public abstract class AbstractVersionCommand extends AbstractLauncherCommand implements FindByCommand<Version> {
     public AbstractVersionCommand(Launcher ctx, String name, String desc) {
         super(ctx, name, desc);
     }

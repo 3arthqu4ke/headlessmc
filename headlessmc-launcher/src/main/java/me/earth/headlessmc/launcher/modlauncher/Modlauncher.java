@@ -2,17 +2,20 @@ package me.earth.headlessmc.launcher.modlauncher;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.launcher.api.Platform;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
+// This is just Platforms for the client, and should have a different name
 @Getter
 @RequiredArgsConstructor
 public enum Modlauncher {
-    FABRIC("fabric", "fabric"),
-    LEXFORGE("forge", "lexforge"),
-    NEOFORGE("neoforge", "neoforge");
+    FABRIC(Platform.FABRIC, "fabric", "fabric"),
+    LEXFORGE(Platform.FORGE, "forge", "lexforge"),
+    NEOFORGE(Platform.NEOFORGE, "neoforge", "neoforge");
 
+    private final Platform platform;
     private final String officialName;
     private final String hmcName;
 

@@ -33,6 +33,7 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
+import me.earth.headlessmc.launcher.mods.ModDistributionPlatformManager;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
@@ -173,7 +174,8 @@ public class CheerpJLauncher {
                 new ChecksumService(), downloadService,
                 new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault(),
-                ServerManager.create(hmc, files), versionInfoCache);
+                ServerManager.create(hmc, files), versionInfoCache,
+                ModDistributionPlatformManager.create(downloadService));
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");

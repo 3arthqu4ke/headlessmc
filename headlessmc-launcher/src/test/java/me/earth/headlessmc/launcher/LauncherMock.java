@@ -21,6 +21,7 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.MockProcessFactory;
+import me.earth.headlessmc.launcher.mods.ModDistributionPlatformManager;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
@@ -69,7 +70,8 @@ public class LauncherMock {
                 new ChecksumService(), new MockDownloadService(),
                 new MockProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager(), new JavaDownloaderManager(),
-                ServerManager.create(hmc, fileManager), versionInfoCache);
+                ServerManager.create(hmc, fileManager), versionInfoCache,
+                ModDistributionPlatformManager.create(downloadService));
 
         launcher.getConfigService().setConfig(ConfigImpl.empty());
 

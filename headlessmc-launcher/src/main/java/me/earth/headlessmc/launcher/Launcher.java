@@ -17,6 +17,9 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
+import me.earth.headlessmc.launcher.mods.Mod;
+import me.earth.headlessmc.launcher.mods.ModDistributionPlatform;
+import me.earth.headlessmc.launcher.mods.ModManager;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
@@ -91,7 +94,11 @@ public class Launcher implements HeadlessMc {
     /**
      * Cache for vanilla {@link VersionInfo}s.
      */
-    private VersionInfoCache versionInfoCache = new VersionInfoCache();
+    private VersionInfoCache versionInfoCache;
+    /**
+     * Manages {@link Mod}s.
+     */
+    private ModManager modManager;
 
     /**
      * The FileManager managing the HeadlessMc config, log and other files.
