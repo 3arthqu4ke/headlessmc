@@ -4,12 +4,17 @@ import lombok.Cleanup;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.LazyService;
 import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.modlauncher.Modlauncher;
+import me.earth.headlessmc.launcher.api.VersionId;
+import me.earth.headlessmc.launcher.mods.ModdableGame;
+import me.earth.headlessmc.launcher.mods.ModdableGameProvider;
+import me.earth.headlessmc.launcher.api.Platform;
 import me.earth.headlessmc.launcher.server.downloader.*;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +30,7 @@ import java.util.stream.Stream;
 @Getter
 @CustomLog
 @RequiredArgsConstructor
-public class ServerManager extends LazyService<Server> {
+public class ServerManager extends LazyService<Server> implements ModdableGameProvider {
     private final List<ServerType> serverTypes = new ArrayList<>();
     private final HasConfig config;
     private final Path serversDir;
@@ -151,12 +156,12 @@ public class ServerManager extends LazyService<Server> {
     public static ServerManager create(HasConfig config, FileManager launcherFileManager) {
         Path serversDir = launcherFileManager.createRelative("servers").getBase().toPath();
         ServerManager serverManager = new ServerManager(config, serversDir, false);
-        serverManager.getServerTypes().add(new ServerType("paper", new PaperDownloader()));
-        serverManager.getServerTypes().add(new ServerType("fabric", new FabricDownloader(new VanillaDownloader())));
-        serverManager.getServerTypes().add(new ServerType("vanilla", new VanillaDownloader()));
-        serverManager.getServerTypes().add(new ServerType("purpur", new PurpurDownloader()));
-        serverManager.getServerTypes().add(new ServerType("neoforge", new ForgeDownloader(new VanillaDownloader(), Modlauncher.NEOFORGE)));
-        serverManager.getServerTypes().add(new ServerType("forge", new ForgeDownloader(new VanillaDownloader(), Modlauncher.LEXFORGE)));
+        serverManager.getServerTypes().add(new ServerType(Platform.PAPER, new PaperDownloader()));
+        serverManager.getServerTypes().add(new ServerType(Platform.FABRIC, new FabricDownloader(new VanillaDownloader())));
+        serverManager.getServerTypes().add(new ServerType(Platform.VANILLA, new VanillaDownloader()));
+        serverManager.getServerTypes().add(new ServerType(Platform.PURPUR, new PurpurDownloader()));
+        serverManager.getServerTypes().add(new ServerType(Platform.NEOFORGE, new ForgeDownloader(new VanillaDownloader(), Modlauncher.NEOFORGE)));
+        serverManager.getServerTypes().add(new ServerType(Platform.FORGE, new ForgeDownloader(new VanillaDownloader(), Modlauncher.LEXFORGE)));
         return serverManager;
     }
 
@@ -277,6 +282,32 @@ public class ServerManager extends LazyService<Server> {
                 new ServerVersion(testType, testVersion, testBuild),
                 0
         );
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Iterable<ModdableGame> getGames() {
+        return (Iterable) getContents();
+    }
+
+    @Override
+    public boolean providesOnlyServers() {
+        return true;
+    }
+
+    @Override
+    public void download(Launcher launcher, VersionId version, String... args) throws CommandException {
+        ServerType serverType = getServerType(version.getPlatform().getName());
+        if (serverType == null) {
+            throw new CommandException("Server type not found: " + version.getPlatform().getName());
+        }
+
+        try {
+            add(launcher, serverType, null, version.getName(), version.getBuild(), args);
+        } catch (IOException e) {
+            log.error("Failed to download " + version, e);
+            throw new CommandException(e.getMessage());
+        }
     }
 
 }

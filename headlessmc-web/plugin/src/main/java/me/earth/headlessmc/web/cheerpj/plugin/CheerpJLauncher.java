@@ -15,6 +15,7 @@ import me.earth.headlessmc.api.config.HasConfig;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.api.process.InAndOutProvider;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
+import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.java.download.JavaDownloaderManager;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
@@ -32,6 +33,8 @@ import me.earth.headlessmc.launcher.files.FileManager;
 import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.files.MinecraftFinder;
 import me.earth.headlessmc.launcher.java.JavaService;
+import me.earth.headlessmc.launcher.mods.ModDistributionPlatformManager;
+import me.earth.headlessmc.launcher.mods.ModManager;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.server.ServerManager;
 import me.earth.headlessmc.launcher.specifics.VersionSpecificModManager;
@@ -49,6 +52,7 @@ import me.earth.headlessmc.runtime.commands.RuntimeContext;
 import net.lenni0451.commons.httpclient.constants.ContentTypes;
 import net.lenni0451.commons.httpclient.constants.Headers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -148,7 +152,12 @@ public class CheerpJLauncher {
         versions.setRetries(10);
         versions.refresh();
 
-        val javas = Service.refresh(new JavaService(configs, os));
+        val javas = Service.refresh(new JavaService(configs, os) {
+            @Override
+            public Java getCurrent() {
+                return new Java("cheerpj", 8);
+            }
+        });
 
         val accountStore = new AccountStore(launcherConfig);
         val accounts = new AccountManager(new AccountValidator(), new OfflineChecker(configs), accountStore);
@@ -166,7 +175,8 @@ public class CheerpJLauncher {
                 new ChecksumService(), downloadService,
                 new CheerpJProcessFactory(downloadService, launcherConfig, os), configs,
                 javas, accounts, versionSpecificModManager, new PluginManager(), JavaDownloaderManager.getDefault(),
-                ServerManager.create(hmc, files), versionInfoCache);
+                ServerManager.create(hmc, files), versionInfoCache,
+                ModManager.create(downloadService));
 
         deleteOldFiles(launcher, logger);
         System.setProperty(LauncherProperties.KEEP_FILES.getName(), "true");

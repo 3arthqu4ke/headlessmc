@@ -7,6 +7,7 @@ import me.earth.headlessmc.api.command.impl.QuitCommand;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.command.AbstractLauncherCommand;
+import me.earth.headlessmc.launcher.mods.command.ModCommand;
 
 import java.util.Locale;
 
@@ -18,6 +19,7 @@ public class ServerCommandContext extends CommandContextImpl {
         add(new RemoveServerCommand(launcher));
         add(new ListServersCommand(launcher));
         add(new EulaCommand(launcher));
+        add(new ModCommand(launcher, launcher.getServerManager()));
         if (launcher.getConfig().get(LauncherProperties.SERVER_TEST_CACHE, false)) {
             add(new CacheServerCommand(launcher));
         }

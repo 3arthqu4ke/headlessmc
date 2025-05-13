@@ -147,6 +147,7 @@ public class ServerLauncher {
             System.setProperty("log4j.shutdownHookEnabled", "false");
 
             try {
+                System.gc(); // suggest JVM to clean up before running mc
                 new ServerInMemoryLauncher(options, launcher.getJavaService().getCurrent(), server).launch();
             } catch (AuthException e) {
                 throw new IllegalStateException(e);
@@ -185,6 +186,7 @@ public class ServerLauncher {
         command.addAll(options.getAdditionalGameArgs());
 
         log.debug("Launching server " + command);
+        System.gc(); // suggest JVM to clean up before running mc
         ProcessBuilder processBuilder = new ProcessBuilder()
                 .command(command)
                 .directory(server.getPath().toFile())

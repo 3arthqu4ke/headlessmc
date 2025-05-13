@@ -82,6 +82,7 @@ public interface LauncherProperties extends HmcProperties {
     Property<Boolean> ALWAYS_IN_MEMORY = bool("hmc.always.in.memory");
 
     Property<Boolean> REFRESH_ON_LAUNCH = bool("hmc.account.refresh.on.launch");
+    Property<Boolean> REFRESH_ON_GAME_LAUNCH = bool("hmc.account.refresh.on.game.launch");
 
     // TODO: actual cache for each version?
     Property<String> EXTRACTED_FILE_CACHE_UUID = string("hmc.extracted.file.cache.uuid");

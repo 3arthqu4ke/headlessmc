@@ -5,12 +5,12 @@ import me.earth.headlessmc.api.command.CommandException;
 import me.earth.headlessmc.api.command.CommandUtil;
 import me.earth.headlessmc.api.command.FindByCommand;
 import me.earth.headlessmc.api.config.Config;
+import me.earth.headlessmc.api.config.PropertyTypes;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 
 // TODO: this!
-public class ConfigCommand extends AbstractLauncherCommand
-    implements FindByCommand<Config> {
+public class ConfigCommand extends AbstractLauncherCommand implements FindByCommand<Config> {
     public ConfigCommand(Launcher ctx) {
         super(ctx, "config", "Manage your configs.");
         args.put("-refresh", "Reloads all configs from the disk.");
@@ -18,6 +18,20 @@ public class ConfigCommand extends AbstractLauncherCommand
 
     @Override
     public void execute(String line, String... args) throws CommandException {
+        String property = CommandUtil.getOption("--property", args);
+        if (property != null) {
+            if (property.contains("=")) {
+                String[] split = property.split("=", 2);
+                String value = split.length > 1 ? split[1] : "";
+                System.setProperty(split[0], value);
+                ctx.log("Set property " + split[0] + " to " + value);
+            } else {
+                ctx.log(property + " = " + ctx.getConfig().get(PropertyTypes.string(property)));
+            }
+
+            return;
+        }
+
         if (CommandUtil.hasFlag("-refresh", args)) {
             ctx.getConfigService().refresh();
         }

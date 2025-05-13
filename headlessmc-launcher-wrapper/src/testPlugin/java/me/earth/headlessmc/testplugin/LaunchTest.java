@@ -4,8 +4,11 @@ import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
+import me.earth.headlessmc.launcher.mods.files.ModFileReadResult;
+import me.earth.headlessmc.launcher.server.Server;
 import me.earth.headlessmc.launcher.version.Version;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 import java.util.Optional;
@@ -14,8 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LaunchTest {
     public static void build(Java java, Launcher launcher, TestInputStream is) {
@@ -168,10 +170,45 @@ public class LaunchTest {
         is.add("server remove 0 -id");
 
         is.add("server add purpur " + vanilla);
+        is.add("server server mod search simple-voice-chat");
         is.add("server list");
         is.add(ps -> assertTrue(launcher.getServerManager()
                 .stream()
                 .anyMatch(s -> s.getVersion().getServerType().getName().equals("purpur"))));
+
+        is.add("server mod add 0 simple-voice-chat");
+        is.add("server mod list 0");
+        is.add(ps -> {
+            Server server = launcher.getServerManager()
+                    .stream()
+                    .filter(s -> s.getVersion().getServerType().getName().equals("purpur"))
+                    .findFirst()
+                    .orElseThrow(IllegalStateException::new);
+
+            try {
+                ModFileReadResult result = launcher.getModManager().getModFileReaderManager().read(server);
+                assertEquals(1, result.getMods().size());
+                assertEquals("voicechat", result.getMods().get(0).getName());
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        });
+
+        is.add("server mod remove 0 0");
+        is.add("server mod list 0");
+        is.add(ps -> {
+            Server server = launcher.getServerManager()
+                    .stream()
+                    .filter(s -> s.getVersion().getServerType().getName().equals("purpur"))
+                    .findFirst()
+                    .orElseThrow(IllegalStateException::new);
+            try {
+                ModFileReadResult result = launcher.getModManager().getModFileReaderManager().read(server);
+                assertEquals(0, result.getMods().size());
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        });
 
         is.add("server remove 0 -id");
 

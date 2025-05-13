@@ -54,7 +54,7 @@ public class DownloadService extends IOService implements DownloadClient {
     public HttpResponse download(URL from) throws IOException {
         HttpResponse httpResponse = get(from);
         if (httpResponse.getStatusCode() > 299 || httpResponse.getStatusCode() < 200) {
-            throw new IOException("Failed to download " + from + ", response " + httpResponse.getStatusCode() + ": " + httpResponse.getContentAsString());
+            throw new IOException("Failed to get " + from + ", response " + httpResponse.getStatusCode() + ": " + httpResponse.getContentAsString());
         }
 
         return httpResponse;

@@ -4,6 +4,8 @@ import lombok.CustomLog;
 import lombok.Data;
 import me.earth.headlessmc.api.HasId;
 import me.earth.headlessmc.api.HasName;
+import me.earth.headlessmc.launcher.mods.ModdableGame;
+import me.earth.headlessmc.launcher.api.Platform;
 import me.earth.headlessmc.os.OS;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +18,7 @@ import java.util.stream.Stream;
 
 @Data
 @CustomLog
-public class Server implements HasName, HasId {
+public class Server implements HasName, HasId, ModdableGame {
     public static final String DEFAULT_JAR = "server.jar";
 
     private final Path path;
@@ -73,6 +75,35 @@ public class Server implements HasName, HasId {
 
     public static String getName(ServerType type, String version, @Nullable String typeVersion) {
         return type.getName() + "-" + version + (typeVersion == null ? "" : "-" + typeVersion);
+    }
+
+    @Override
+    public Path getModsDirectory() {
+        if (getPlatform() == Platform.PURPUR || getPlatform() == Platform.PAPER) {
+            return path.resolve("plugins");
+        }
+
+        return path.resolve("mods");
+    }
+
+    @Override
+    public String getVersionName() {
+        return version.getVersion();
+    }
+
+    @Override
+    public Platform getPlatform() {
+        return this.getVersion().getServerType().getPlatform();
+    }
+
+    @Override
+    public @Nullable String getBuild() {
+        return version.getTypeVersion();
+    }
+
+    @Override
+    public boolean isServer() {
+        return true;
     }
 
 }
