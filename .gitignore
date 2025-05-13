@@ -49,3 +49,4 @@ run
 *.jar
 !*gradle-wrapper.jar
 /mc/
+/launcher-wrapper-java8-jar/
