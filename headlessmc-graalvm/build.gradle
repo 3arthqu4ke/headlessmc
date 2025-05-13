@@ -27,7 +27,7 @@ dependencies {
 
 processResources {
     into('headlessmc') {
-        from project(':headlessmc-launcher-wrapper')['shadowJar']
+        from file(hmc_graal_wrapper_jar)
         rename 'headlessmc-launcher(.*).jar', 'headlessmc-launcher-wrapper.jar'
     }
 }
