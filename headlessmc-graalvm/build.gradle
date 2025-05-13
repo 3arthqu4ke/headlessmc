@@ -25,9 +25,13 @@ dependencies {
     implementation 'me.tongfei:progressbar:0.9.5'
 }
 
+if (!new File(rootProject.projectDir, hmc_graal_wrapper_jar).exists()) {
+    throw new IllegalStateException("$hmc_graal_wrapper_jar does not exist!")
+}
+
 processResources {
     into('headlessmc') {
-        from file(hmc_graal_wrapper_jar)
+        from file(new File(rootProject.projectDir, hmc_graal_wrapper_jar))
         rename 'headlessmc-launcher(.*).jar', 'headlessmc-launcher-wrapper.jar'
     }
 }
@@ -43,6 +47,7 @@ graalvmNative {
             sharedLibrary = false
             buildArgs.add('--enable-url-protocols=https')
             buildArgs.add('-O4')
+            javaLauncher
         }
     }
 }
