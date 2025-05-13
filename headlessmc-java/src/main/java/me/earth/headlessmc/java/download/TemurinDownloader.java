@@ -65,7 +65,7 @@ public class TemurinDownloader implements JavaDownloader {
             return "x64";
         }
 
-        if ("arm64".equalsIgnoreCase(os.getArchitecture())) {
+        if (os.isArm()) {
             return "aarch64";
         }
 

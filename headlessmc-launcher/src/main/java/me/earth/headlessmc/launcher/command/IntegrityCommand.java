@@ -48,6 +48,9 @@ public class IntegrityCommand extends AbstractVersionCommand {
             int[] values = { failed, successful, notThere };
             checkAssets(version, values, args);
             ctx.log("Integrity check finished, " + values[0] + " failed, " + values[1] + " successful and " + values[2] + " not found.");
+            if (ctx.getProcessFactory().getOs().isArm()) {
+                ctx.log("Your processor uses ARM, integrity check might not work properly.");
+            }
         } catch (IOException e) {
             throw new CommandException("Failed to check integrity: " + e.getMessage());
         }

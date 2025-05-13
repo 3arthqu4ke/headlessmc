@@ -22,6 +22,11 @@ public class OS implements HasName {
         this(name, type, version, b64 ? "x64" : "x86", b64);
     }
 
+    public boolean isArm() {
+        return "arm64".equalsIgnoreCase(architecture)
+                || "aarch64".equalsIgnoreCase(architecture);
+    }
+
     public boolean is64bit() {
         return b64;
     }

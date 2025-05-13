@@ -19,6 +19,10 @@ public interface Library extends HasName {
 
     boolean isNativeLibrary();
 
+    default boolean isOrContainsNatives(OS os) {
+        return isNativeLibrary() || getPath(os).contains("natives");
+    }
+
     default String getPackage() {
         return getName().split(":")[0];
     }
