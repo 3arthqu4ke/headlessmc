@@ -63,6 +63,9 @@ jobs:
         uses: actions/download-artifact@v4
       - name: Display structure of downloaded files
         run: ls -R
+      - uses: geekyeggo/delete-artifact@v5
+        with:
+          name: launcher-wrapper-java8-jar
 
       - name: Output Graal Info
         run: |
