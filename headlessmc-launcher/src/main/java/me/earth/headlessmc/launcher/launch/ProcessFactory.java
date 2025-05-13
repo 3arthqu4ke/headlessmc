@@ -118,6 +118,7 @@ public class ProcessFactory {
                 .classpath(classpath)
                 .os(os)
                 .jvmArgs(options.getAdditionalJvmArgs())
+                .gameArgs(options.getAdditionalGameArgs())
                 .natives(natives.getBase().getAbsolutePath())
                 .runtime(options.isRuntime())
                 .version(version)

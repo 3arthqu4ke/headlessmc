@@ -3,8 +3,8 @@ package me.earth.headlessmc.launcher.launch;
 import lombok.Builder;
 import lombok.CustomLog;
 import lombok.Getter;
-import lombok.val;
 import me.earth.headlessmc.api.command.line.CommandLineReader;
+import me.earth.headlessmc.api.config.Config;
 import me.earth.headlessmc.api.config.HmcProperties;
 import me.earth.headlessmc.java.Java;
 import me.earth.headlessmc.jline.JLineCommandLineReader;
@@ -35,6 +35,7 @@ public class JavaLaunchCommandBuilder {
     private final LaunchAccount account;
     private final List<String> classpath;
     private final List<String> jvmArgs;
+    private final List<String> gameArgs;
     private final Launcher launcher;
     private final Version version;
     private final String natives;
@@ -44,7 +45,7 @@ public class JavaLaunchCommandBuilder {
     private final OS os;
 
     public List<String> build() throws LaunchException, AuthException {
-        val config = launcher.getConfig();
+        Config config = launcher.getConfig();
         Java java;
         try {
             java = inMemory ? launcher.getJavaService().getCurrent() : launcher.getJavaService().findBestVersion(launcher, version.getJava());
@@ -79,7 +80,7 @@ public class JavaLaunchCommandBuilder {
                                           + version.getJava());
         }
 
-        val result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         result.add(java.getExecutable());
         result.addAll(Arrays.asList(config.get(LauncherProperties.JVM_ARGS, new String[0])));
         if (config.get(LauncherProperties.SET_LIBRARY_DIR, true)) {
@@ -127,12 +128,13 @@ public class JavaLaunchCommandBuilder {
         result.add("-cp");
         result.add(String.join("" + File.pathSeparatorChar, classpath) + config.get(LauncherProperties.CLASS_PATH, ""));
 
-        val adapter = ArgumentAdapterHelper.create(launcher, version, natives, account);
+        ArgumentAdapter adapter = ArgumentAdapterHelper.create(launcher, version, natives, account);
         result.addAll(adapter.build(os, Features.EMPTY, "jvm"));
         addIgnoreList(result);
         getActualMainClass(result);
         result.addAll(adapter.build(os, Features.EMPTY, "game"));
         result.addAll(Arrays.asList(config.get(LauncherProperties.GAME_ARGS, new String[0])));
+        result.addAll(gameArgs);
         return result;
     }
 
