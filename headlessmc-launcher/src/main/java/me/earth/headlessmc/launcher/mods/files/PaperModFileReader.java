@@ -1,10 +1,7 @@
 package me.earth.headlessmc.launcher.mods.files;
 
-import me.earth.headlessmc.launcher.util.IOUtil;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.events.Event;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;

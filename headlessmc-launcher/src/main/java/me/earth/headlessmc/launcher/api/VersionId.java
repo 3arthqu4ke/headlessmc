@@ -1,6 +1,5 @@
 package me.earth.headlessmc.launcher.api;
 
-import lombok.Builder;
 import lombok.Data;
 import me.earth.headlessmc.api.HasName;
 import me.earth.headlessmc.api.command.CommandException;

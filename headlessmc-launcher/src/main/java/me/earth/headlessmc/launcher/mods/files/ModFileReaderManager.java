@@ -1,6 +1,5 @@
 package me.earth.headlessmc.launcher.mods.files;
 
-import lombok.Data;
 import me.earth.headlessmc.launcher.api.Platform;
 import me.earth.headlessmc.launcher.mods.ModdableGame;
 import org.jetbrains.annotations.Nullable;

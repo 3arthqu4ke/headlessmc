@@ -18,7 +18,6 @@ import me.earth.headlessmc.launcher.files.LauncherConfig;
 import me.earth.headlessmc.launcher.java.JavaService;
 import me.earth.headlessmc.launcher.launch.ProcessFactory;
 import me.earth.headlessmc.launcher.mods.Mod;
-import me.earth.headlessmc.launcher.mods.ModDistributionPlatform;
 import me.earth.headlessmc.launcher.mods.ModManager;
 import me.earth.headlessmc.launcher.plugin.PluginManager;
 import me.earth.headlessmc.launcher.server.ServerManager;
