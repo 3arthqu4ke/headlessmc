@@ -131,9 +131,6 @@ jobs:
             ./headlessmc-scripts/hmc
             ./headlessmc-scripts/hmc.bat
 
-      - name: Rename launcher jar
-        run: mv headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*.jar headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-wrapper.jar
-
       - name: Delete Web dev jar
         run: rm headlessmc-web/build/libs/headlessmc-web-*-dev.jar
       - name: Delete Web javadoc jar
@@ -495,7 +492,7 @@ jobs:
           hmc.jline.enabled=false
           hmc.rethrow.launch.exceptions=true
           hmc.exit.on.failed.command=true
-          hmc.test.filename=./hmc-test/hmc-specifics-test.json
+          hmc.test.filename=./headlessmc-test/hmc-specifics-test.json
           hmc.loglevel=INFO
           EOF
         shell: bash
