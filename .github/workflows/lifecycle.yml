@@ -555,7 +555,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker meta
-        if: startsWith(github.ref, 'refs/tags/')
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -563,7 +563,7 @@ jobs:
           tags: type=raw,value=${{ github.ref_name }}
 
       - name: Docker meta
-        if: !startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/')
         id: meta
         uses: docker/metadata-action@v5
         with:
