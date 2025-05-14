@@ -6,6 +6,21 @@ to get a list of all available commands.
 By default, [JLine](https://jline.org/) is enabled,
 allowing you to get suggestions for commands and completing them by pressing TAB.
 
+#### Logging in
+Before you can launch the game, you first need to login to your Minecraft account.
+For this use the `login` command:
+```
+> login
+Starting login process 0, enter 'login -cancel 0' to cancel the login process.
+Go to https://www.microsoft.com/link?otc=...
+```
+Open the link shown in your browser (can even be on another device),
+and log into your Microsoft account.
+Then return to HeadlessMc,
+after a few seconds you should be logged in.
+
+#### Launching
+
 To launch the client, the `launch` command can be used.
 ```
 launch 1.21.5
@@ -15,7 +30,19 @@ you can also specify a modloader to use like this:
 ```
 launch fabric:1.21.5
 ```
-Currently HeadlessMc supports the modloaders `fabric`, `forge` and `neoforge`.
+Currently HeadlessMc supports the client modloaders `fabric`, `forge` and `neoforge`.
+
+#### Headless Launch
+One of the main features of HeadlessMc is,
+that it can launch the client in headless mode,
+without displaying a GUI.
+This is achieved by patching the LWJGL library to not render anything
+and allows you to run the client on servers
+or in CI/CD pipelines without graphics devices.
+In order to launch the game in headless mode, add the `-lwjgl` flag:
+```
+launch <version> -lwjgl
+```
 
 #### Managing Versions
 You can get a list of all currently downloaded client versions with the `versions`
