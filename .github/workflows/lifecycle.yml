@@ -25,6 +25,25 @@ env:
   REGISTRY_IMAGE: 3arthqu4ke/headlessmc
 
 jobs:
+  build-java-8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 8
+          distribution: adopt
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build
+        run: ./gradlew build --stacktrace
+      - name: Publish Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: launcher-wrapper-java8-jar
+          path: |
+            ./headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-wrapper.jar
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -107,12 +126,12 @@ jobs:
       - name: Rename launcher jar
         run: mv headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-*.jar headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-wrapper.jar
 
-      - name: Publish Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: launcher-wrapper-java8-jar
-          path: |
-            ./headlessmc-launcher-wrapper/build/libs/headlessmc-launcher-wrapper.jar
+      - name: Delete Web dev jar
+        run: rm headlessmc-web/build/libs/headlessmc-web-*-dev.jar
+      - name: Delete Web javadoc jar
+        run: rm headlessmc-web/build/libs/headlessmc-web-*-javadoc.jar
+      - name: Delete Web sources jar
+        run: rm headlessmc-web/build/libs/headlessmc-web-*-sources.jar
 
       # Prepare Site deployment
       - name: Rename Web jar
@@ -139,19 +158,6 @@ jobs:
       - name: Upload Web page artifact
         if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
         uses: actions/upload-pages-artifact@v3.0.1
-
-  build-java-8:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: 8
-          distribution: adopt
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-      - name: Build
-        run: ./gradlew build --stacktrace
 
   deploy-pages:
     if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
@@ -182,7 +188,7 @@ jobs:
         startsWith(github.ref, 'refs/tags/') ||
         github.ref == 'refs/heads/main'
       )
-    needs: build
+    needs: build-java-8
     strategy:
       matrix:
         os:
@@ -235,7 +241,7 @@ jobs:
 
   run:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-java-8
     strategy:
       matrix:
         version:
@@ -368,7 +374,7 @@ jobs:
           - { mc: 1.7.10, type: lexforge, modloader: forge, regex: .*orge.*, java: 8 }
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
-    needs: build
+    needs: build-java-8
     steps:
       - name: Install Java
         uses: actions/setup-java@v4
@@ -408,7 +414,7 @@ jobs:
           - { mc: 1.21.5, type: fabric, java: 21 }
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
-    needs: build
+    needs: build-java-8
     steps:
       - name: Install Java
         uses: actions/setup-java@v4
@@ -454,7 +460,7 @@ jobs:
           - { mc: 1.21.5, modloader: fabric, java: 21 }
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name
-    needs: build
+    needs: build-java-8
     steps:
       - uses: actions/checkout@v4
       - name: Install Java
