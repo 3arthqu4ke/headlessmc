@@ -142,7 +142,7 @@ We are wearing armor and have some items in our hotbar:
   <code style="white-space: pre;">id   text                       x     y     w    h    type</code>
   <code style="white-space: pre;">0                               306   84    18   18   Slot</code>
   <code style="white-space: pre;">...</code>
-  <code style="white-space: pre;">5    <span style="color:white;">[Diamond Helmet]</span>          160   64    18   18   Slot</code>
+  <code style="white-space: pre;">5    <span style="color:white;">[Diamond Helmet]</span>           160   64    18   18   Slot</code>
   <code style="white-space: pre;">6    <span style="color:white;">[Diamond Chestplate]</span>       160   82    18   18   Slot</code>
   <code style="white-space: pre;">7    <span style="color:white;">[Diamond Leggings]</span>         160   100   18   18   Slot</code>
   <code style="white-space: pre;">8    <span style="color:white;">[Diamond Boots]</span>            160   118   18   18   Slot</code>

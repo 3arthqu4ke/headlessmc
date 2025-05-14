@@ -23,14 +23,14 @@
 > Offline accounts can only be used to run the game headlessly in CI/CD pipelines.
 
 HeadlessMc (HMC) allows you to launch Minecraft Java Edition from the command line.
-It can also modify the game while and before running it.
-This feature can be used to make the Minecraft client run in headless mode, 
-without displaying a UI, controlled by the command line.
-HeadlessMc also patches the Log4J vulnerability 
-and can be used
-to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.com/headlesshq/mc-runtime-test).
+It can manage clients, servers and mods.
+It can run the client in headless mode, without a Screen, controlled by the command line.
+This e.g. can allow you to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.com/headlesshq/mc-runtime-test).
 
-## How to use
+> [!TIP]  
+> Read our new, beautiful documentation [here](https://3arthqu4ke.github.io/headlessmc/docs).
+
+## Quickstart
 
 1. Download the `headlessmc-launcher.jar` from the releases tab and install a Java version &geq; 8.
     - If you want additional features such as plugins and launching the game inside the same JVM, use the `headlessmc-launcher-wrapper.jar` instead.
@@ -42,6 +42,8 @@ Login to your Minecraft account by executing the `login` command and follow the 
 4. Launch the game with `launch <modloader>:<version>`, e.g. `launch fabric:1.21.4 -lwjgl`.
 The `lwjgl` flag will make the game run in headless mode.
 
+Read [more](https://3arthqu4ke.github.io/headlessmc/docs/getting-started/).
+
 ### HeadlessMc-Specifics
 
 The [hmc-specifics](https://github.com/3arthqu4ke/hmc-specifics) are mods
@@ -49,6 +51,8 @@ that you can place inside your .minecraft/mods folder.
 Together with HeadlessMc they allow you to control the game via the command line, e.g.
 by sending chat messages and commands with `msg "<message>"`,
 visualizing the menus displayed by Minecraft via `gui` and clicking through menus via `click`.
+
+Read [more](https://3arthqu4ke.github.io/headlessmc/docs/specifics/).
 
 ### Docker 
 
@@ -149,6 +153,9 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 [Xvfb](https://www.x.org/releases/X11R7.6/doc/man/man1/Xvfb.1.xhtml).
 
 ### Configuring HeadlessMc
+> [!NOTE]  
+> All configuration options are listed [here](https://3arthqu4ke.github.io/headlessmc/docs/configuration/)
+
 - HeadlessMc stores its configuration in `HeadlessMC/config.properties`.
 - On Windows and Linux Java versions in certain folders get detected automatically
   and HeadlessMc can download missing Java distributions.
