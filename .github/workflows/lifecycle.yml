@@ -556,7 +556,7 @@ jobs:
 
       - name: Docker meta
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        id: meta
+        id: meta1
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
@@ -564,7 +564,7 @@ jobs:
 
       - name: Docker meta
         if: startsWith(github.ref, 'refs/tags/')
-        id: meta
+        id: meta2
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
@@ -583,8 +583,14 @@ jobs:
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)          
 
       - name: Inspect image
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}          
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta1.outputs.version }}   
+
+      - name: Inspect image
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta2.outputs.version }}          
 
   merge:
     runs-on: ubuntu-latest
