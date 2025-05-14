@@ -15,7 +15,7 @@ public class VersionSpecificMods {
      * @see <a href=https://github.com/3arthqu4ke/hmc-specifics>https://github.com/3arthqu4ke/hmc-specifics</a>
      */
     public static final VersionSpecificModRepository HMC_SPECIFICS =
-        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/hmc-specifics/releases/download/"), "hmc-specifics", "2.2.0", "-release");
+        new VersionSpecificModRepository(URLs.url("https://github.com/3arthqu4ke/hmc-specifics/releases/download/"), "hmc-specifics", "2.2.1", "-release");
 
     /**
      * Mods that join a SinglePlayer world, run GameTests and exit the game, for testing purposes.

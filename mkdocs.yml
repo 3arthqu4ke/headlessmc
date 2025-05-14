@@ -90,6 +90,7 @@ nav:
   - 'Introduction': 'index.md'
   - 'Getting Started': 'getting-started.md'
   - 'Launching': 'launch.md'
+  - 'Specifics': 'specifics.md'
   - 'Servers': 'servers.md'
   - 'Mods': 'mods.md'
   - 'Commands': 'commands.md'
@@ -99,4 +100,3 @@ nav:
   - 'Developer Guide':
     - 'Getting Started': 'dev-getting-started.md'
     - 'CI/CD': 'dev-ci-cd.md'
-    - 'Plugins': 'dev-plugins.md'
