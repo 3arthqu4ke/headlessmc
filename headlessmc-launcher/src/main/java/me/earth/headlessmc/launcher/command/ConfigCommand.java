@@ -9,6 +9,11 @@ import me.earth.headlessmc.api.config.PropertyTypes;
 import me.earth.headlessmc.api.util.Table;
 import me.earth.headlessmc.launcher.Launcher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 // TODO: this!
 public class ConfigCommand extends AbstractLauncherCommand implements FindByCommand<Config> {
     public ConfigCommand(Launcher ctx) {
@@ -29,6 +34,17 @@ public class ConfigCommand extends AbstractLauncherCommand implements FindByComm
                 ctx.log(property + " = " + ctx.getConfig().get(PropertyTypes.string(property)));
             }
 
+            return;
+        } else if (CommandUtil.hasFlag("--property", args)) {
+            Map<String, String> map = new HashMap<>();
+            System.getProperties().forEach((key, value) -> map.put(String.valueOf(key), String.valueOf(value)));
+            List<Map.Entry<String, String>> entries = new ArrayList<>(map.entrySet());
+            entries.sort(Map.Entry.comparingByKey());
+            ctx.log(new Table<Map.Entry<String, String>>()
+                    .withColumn("name", Map.Entry::getKey)
+                    .withColumn("value", Map.Entry::getValue)
+                    .addAll(entries)
+                    .build());
             return;
         }
 
