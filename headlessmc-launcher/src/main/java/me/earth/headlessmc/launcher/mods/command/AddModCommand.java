@@ -20,7 +20,7 @@ public class AddModCommand extends AbstractDownloadingModdableGameCommand {
         }
 
         String modName = args[2];
-        ModDistributionPlatform modDistributionPlatform = getPlatform(modName);
+        ModDistributionPlatform modDistributionPlatform = getPlatform(args);
         try {
             modDistributionPlatform.download(game, modName);
             ctx.log("Downloaded mod " + modName + " from " + modDistributionPlatform.getName() + " successfully.");
