@@ -21,6 +21,9 @@ concurrency: # FIXME: prevent release commit cancellation
     ${{ github.event.inputs.ref || github.ref }}
   cancel-in-progress: true
 
+env:
+  REGISTRY_IMAGE: 3arthqu4ke/headlessmc
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -595,7 +598,7 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-    needs: [docker-release, run, run-command-test, server-test, run-with-xvfb, deploy-pages]
+    needs: [build, build-natives, docker-release, run, run-command-test, server-test, run-with-xvfb, deploy-pages]
     steps:
       - name: Cleanup
         uses: geekyeggo/delete-artifact@v5
