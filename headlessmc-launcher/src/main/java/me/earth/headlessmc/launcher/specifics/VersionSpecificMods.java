@@ -22,7 +22,7 @@ public class VersionSpecificMods {
      * @see <a href=https://github.com/headlesshq/mc-runtime-test>https://github.com/headlesshq/mc-runtime-test</a>
      */
     public static final VersionSpecificModRepository MC_RUNTIME_TEST =
-        new VersionSpecificModRepository(URLs.url("https://github.com/headlesshq/mc-runtime-test/releases/download/"), "mc-runtime-test", "3.1.0", "-release");
+        new VersionSpecificModRepository(URLs.url("https://github.com/headlesshq/mc-runtime-test/releases/download/"), "mc-runtime-test", "3.1.1", "-release");
 
     /**
      * Version specific optimizations for HeadlessMc. In addition to HeadlessMc's lwjgl patching it patches out all rendering related code.
