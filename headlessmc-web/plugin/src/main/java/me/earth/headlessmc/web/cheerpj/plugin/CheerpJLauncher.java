@@ -84,7 +84,7 @@ public class CheerpJLauncher {
         Logger logger = LoggerFactory.getLogger("HeadlessMc");
         logger.info("Initializing HeadlessMc...");
         logger.info("This is just a demo!");
-        logger.info("You can find the javadocs at https://3arthqu4ke.github.io/headlessmc/javadoc");
+        logger.info("You can find the documentation at https://3arthqu4ke.github.io/headlessmc/docs");
         logger.info("Powered by CheerpJ!");
         logger.info("https://cheerpj.com/");
         logger.info("CheerpJ currently does not support some features we need, so you will probably not be able to launch the game yet!");
