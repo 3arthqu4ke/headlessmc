@@ -16,7 +16,7 @@ public class OfflineCommand extends AbstractLauncherCommand {
         }
 
         ctx.getAccountManager().getOfflineChecker().setOffline(value);
-        ctx.log("You are now " + (value ? "offline." : "online"));
+        ctx.log("You are now " + (value ? "offline." : "online."));
     }
 
 }
