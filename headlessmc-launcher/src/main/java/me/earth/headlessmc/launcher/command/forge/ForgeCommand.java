@@ -67,7 +67,7 @@ public class ForgeCommand extends AbstractDownloadingVersionCommand implements M
         return versions.stream()
                 .findFirst()
                 .orElseThrow(() -> new CommandException(
-                        "Couldn't find Forge for version "
+                        "Couldn't find " + installer.getForgeName() + " for version "
                                 + ver.getName() + (uid == null
                                 ? "!"
                                 : " and uid " + uid + "!")));
@@ -87,9 +87,9 @@ public class ForgeCommand extends AbstractDownloadingVersionCommand implements M
 
         boolean server = CommandUtil.hasFlag("-server", args);
         if (server) {
-            ctx.log("Installing Forge Server " + version.getFullName());
+            ctx.log("Installing " + installer.getForgeName() + " Server " + version.getFullName());
         } else {
-            ctx.log("Installing Forge " + version.getFullName());
+            ctx.log("Installing " + installer.getForgeName() + " " + version.getFullName());
         }
 
         val uuid = UUID.randomUUID();
@@ -104,7 +104,7 @@ public class ForgeCommand extends AbstractDownloadingVersionCommand implements M
                 ctx.getVersionService().refresh();
             }
         } catch (IOException e) {
-            val message = "Failed to install forge for version " + ver.getName()
+            val message = "Failed to install " + installer.getForgeName() + " for version " + ver.getName()
                 + ": " + e.getMessage();
             log.error(message);
             throw new CommandException(message);
@@ -118,7 +118,7 @@ public class ForgeCommand extends AbstractDownloadingVersionCommand implements M
     }
 
     private void logTable(Iterable<ForgeVersion> versions) {
-        ctx.log("Forge versions:");
+        ctx.log(installer.getForgeName() + " versions:");
         ctx.log(new Table<ForgeVersion>()
                     .addAll(versions)
                     .withColumn("version", ForgeVersion::getVersion)

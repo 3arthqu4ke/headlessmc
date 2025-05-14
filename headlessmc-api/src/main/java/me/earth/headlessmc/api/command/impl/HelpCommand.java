@@ -6,6 +6,9 @@ import me.earth.headlessmc.api.command.*;
 import me.earth.headlessmc.api.command.line.CommandLine;
 import me.earth.headlessmc.api.util.Table;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,12 +54,18 @@ public class HelpCommand extends AbstractCommand {
                 throw new CommandException(String.format("Couldn't find command %s", args[1]));
             }
         } else {
+            List<Command> commands = new ArrayList<>();
+            for (Command command : ctx.getCommandLine().getCommandContext()) {
+                commands.add(command);
+            }
+
+            commands.sort(Comparator.comparing(HasName::getName));
             ctx.log(
                 new Table<Command>()
                     .withColumn("command", HasName::getName)
                     .withColumn("description", HasDescription::getDescription)
                     .withColumn("args", HelpCommand::argsToString)
-                    .addAll(ctx.getCommandLine().getCommandContext())
+                    .addAll(commands)
                     .build()
             );
         }

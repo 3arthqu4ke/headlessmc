@@ -2,7 +2,7 @@
 <h1 align="center" style="font-weight: normal;"><b>HeadlessMc</b></h1>
 <p align="center">A command line launcher for Minecraft Java Edition.</p>
 <p align="center"><img src="headlessmc-web/page/logo.png" alt="logo" style="width:200px;"></p>
-<p align="center"><a href="https://github.com/3arthqu4ke/mc-runtime-test">Mc-Runtime-Test</a> | HMC | <a href="https://github.com/3arthqu4ke/hmc-specifics">HMC-Specifics</a> | <a href="https://github.com/3arthqu4ke/hmc-optimizations">HMC-Optimizations</a></p>
+<p align="center"><a href="https://github.com/headlesshq/mc-runtime-test">Mc-Runtime-Test</a> | HMC | <a href="https://github.com/3arthqu4ke/hmc-specifics">HMC-Specifics</a> | <a href="https://github.com/3arthqu4ke/hmc-optimizations">HMC-Optimizations</a></p>
 
 <div align="center">
 
@@ -28,7 +28,7 @@ This feature can be used to make the Minecraft client run in headless mode,
 without displaying a UI, controlled by the command line.
 HeadlessMc also patches the Log4J vulnerability 
 and can be used
-to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.com/3arthqu4ke/mc-runtime-test).
+to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.com/headlesshq/mc-runtime-test).
 
 ## How to use
 
@@ -102,7 +102,7 @@ id   type    version   name
 ### Testing
 
 One primary goal of HeadlessMc is to enable testing for both production servers and clients.
-For this purpose it is used in the [mc-runtime-test](https://github.com/3arthqu4ke/mc-runtime-test).
+For this purpose it is used in the [mc-runtime-test](https://github.com/headlesshq/mc-runtime-test).
 It also has a built-in command testing framework.
 It can send commands to a running process and check the output.
 Tests can be specified in a json format.

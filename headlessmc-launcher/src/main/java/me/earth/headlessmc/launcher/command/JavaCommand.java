@@ -50,7 +50,8 @@ public class JavaCommand extends AbstractLauncherCommand {
             boolean jdk = args.length > 3 && args[3].equalsIgnoreCase("-jdk");
 
             try {
-                if (!ctx.getConfig().get(JLineProperties.ENABLE_PROGRESS_BAR, true)) {
+                if (!ctx.getConfig().get(JLineProperties.ENABLE_PROGRESS_BAR, true)
+                    || !ctx.getConfig().get(JLineProperties.ENABLED, true)) {
                     ctx.log("Downloading " + javaVersion + (jdk ? " (JDK)" : "") + " from " + distribution + ".");
                 }
 
@@ -67,7 +68,8 @@ public class JavaCommand extends AbstractLauncherCommand {
                 );
 
                 ctx.getJavaService().refreshHeadlessMcJavaVersions();
-                if (!ctx.getConfig().get(JLineProperties.ENABLE_PROGRESS_BAR, true)) {
+                if (!ctx.getConfig().get(JLineProperties.ENABLE_PROGRESS_BAR, true)
+                        || !ctx.getConfig().get(JLineProperties.ENABLED, true)) {
                     ctx.log("Success.");
                 }
             } catch (IOException e) {
