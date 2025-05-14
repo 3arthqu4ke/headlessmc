@@ -1,0 +1,102 @@
+site_name: 'HeadlessMc'
+site_description: 'Minecraft on the command line'
+site_author: '3arthqu4ke'
+copyright: 'Copyright &copy; 2022-2025 3arthqu4ke and contributors'
+
+theme:
+  name: 'material'
+  features:
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/link
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off
+        name: Switch to system preference
+  font:
+    text: 'Source Sans Pro'
+    code: 'Source Code Pro'
+  favicon: assets/favicon.ico
+  logo: assets/logo.png
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/mkdocs.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+repo_name: '3arthqu4ke/headlessmc'
+repo_url: 'https://github.com/3arthqu4ke/headlessmc'
+
+extra_css: []
+
+nav:
+  - 'Introduction': 'index.md'
+  - 'Getting Started': 'getting-started.md'
+  - 'Launching': 'launch.md'
+  - 'Headless': 'headless.md'
+  - 'Server': 'servers.md'
+  - 'Mods': 'mods.md'
+  - 'Configuration': 'configuration.md'
+  - 'Plugins': 'plugins.md'
+  - 'In-Memory': 'in-memory.md'
+  - 'Developer Guide':
+    - 'Getting Started': 'dev-getting-started.md'
+    - 'CI/CD': 'dev-ci-cd.md'
+    - 'Plugins': 'dev-plugins.md'
