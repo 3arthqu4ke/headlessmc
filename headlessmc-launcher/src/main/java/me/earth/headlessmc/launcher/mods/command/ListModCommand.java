@@ -25,6 +25,7 @@ public class ListModCommand extends AbstractModdableGameCommand {
             }
 
             ctx.log(new Table<ModFile>()
+                    .withColumn("id", m -> String.valueOf(m.getId()))
                     .withColumn("name", Mod::getName)
                     .withColumn("description", Mod::getDescription)
                     .withColumn("authors", m -> String.join(", ", m.getAuthors()))

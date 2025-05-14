@@ -44,6 +44,7 @@ public class RemoveModCommand extends AbstractModdableGameCommand {
             }
 
             Files.deleteIfExists(modFile.getPath());
+            ctx.log("Mod '" + modFile.getName() + "' deleted successfully.");
         } catch (IOException e) {
             throw new CommandException(e.getMessage());
         }

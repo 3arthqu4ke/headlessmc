@@ -11,7 +11,7 @@ public class ServerCommand extends AbstractLauncherCommandCtxCommand {
     public ServerCommand(Launcher ctx) {
         super(ctx, "server", "Configure Servers with HeadlessMc.",
                 new ServerCommandContext(ctx, false));
-        args.put("[add/launch/remove/list/eula/rename]", "Action to perform.");
+        args.put("[add/launch/remove/list/eula/mod/rename]", "Action to perform.");
     }
 
     @Override
