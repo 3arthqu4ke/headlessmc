@@ -557,6 +557,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
+          context: .
           file: ./Fast.Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
