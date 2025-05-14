@@ -36,8 +36,8 @@ public class DownloadCommand extends AbstractLauncherCommand
 
         args.put("<version/id>", "The name/id of the version to download." +
                 " If you use the id you also need to use the -id flag.");
-        args.put("-id", "If you specified the version via id you" +
-                " need to add this flag.");
+        args.put("-id", "If you specified the version via id you need to add this flag.");
+        args.put("-refresh", "Refresh the list of Minecraft versions.");
         args.putAll(VersionTypeFilter.getArgs());
     }
 
