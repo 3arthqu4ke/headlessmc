@@ -3,6 +3,7 @@ package io.github.headlesshq.headlessmc.modlauncher;
 import dev.xdark.deencapsulation.Deencapsulation;
 
 import java.io.IOException;
+import java.lang.ModuleLayer;
 import java.lang.module.Configuration;
 import java.lang.module.ModuleFinder;
 import java.lang.module.ModuleReference;
