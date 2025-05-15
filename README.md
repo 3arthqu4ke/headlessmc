@@ -28,7 +28,7 @@ It can run the client in headless mode, without a Screen, controlled by the comm
 This e.g. can allow you to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.com/headlesshq/mc-runtime-test).
 
 > [!TIP]  
-> Read our new, beautiful documentation [here](https://3arthqu4ke.github.io/headlessmc/docs).
+> Read our new, beautiful documentation [here](https://3arthqu4ke.github.io/headlessmc).
 
 ## Quickstart
 
@@ -42,7 +42,7 @@ Login to your Minecraft account by executing the `login` command and follow the 
 4. Launch the game with `launch <modloader>:<version>`, e.g. `launch fabric:1.21.4 -lwjgl`.
 The `lwjgl` flag will make the game run in headless mode.
 
-Read [more](https://3arthqu4ke.github.io/headlessmc/docs/getting-started/).
+Read [more](https://3arthqu4ke.github.io/headlessmc/getting-started/).
 
 ### HeadlessMc-Specifics
 
@@ -52,7 +52,7 @@ Together with HeadlessMc they allow you to control the game via the command line
 by sending chat messages and commands with `msg "<message>"`,
 visualizing the menus displayed by Minecraft via `gui` and clicking through menus via `click`.
 
-Read [more](https://3arthqu4ke.github.io/headlessmc/docs/specifics/).
+Read [more](https://3arthqu4ke.github.io/headlessmc/specifics/).
 
 ### Docker 
 
@@ -154,7 +154,7 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 
 ### Configuring HeadlessMc
 > [!NOTE]  
-> All configuration options are listed [here](https://3arthqu4ke.github.io/headlessmc/docs/configuration/)
+> All configuration options are listed [here](https://3arthqu4ke.github.io/headlessmc/configuration/)
 
 - HeadlessMc stores its configuration in `HeadlessMC/config.properties`.
 - On Windows and Linux Java versions in certain folders get detected automatically
