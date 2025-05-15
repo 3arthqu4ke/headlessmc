@@ -15,11 +15,11 @@
             height: 100svh;
         }
     </style>
-    <link rel="apple-touch-icon" sizes="180x180" href="/headlessmc/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/headlessmc/favicon-32x32.png">
-    <!--<link rel="icon" type="image/png" sizes="16x16" href="/headlessmc/favicon-16x16.png"> -->
-    <link rel="manifest" href="/headlessmc/site.webmanifest">
-    <link rel="mask-icon" href="/headlessmc/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="apple-touch-icon" sizes="180x180" href="/headlessmc/cheerpj/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/headlessmc/cheerpj/favicon-32x32.png">
+    <!--<link rel="icon" type="image/png" sizes="16x16" href="/headlessmc/cheerpj/favicon-16x16.png"> -->
+    <link rel="manifest" href="/headlessmc/cheerpj/site.webmanifest">
+    <link rel="mask-icon" href="/headlessmc/cheerpj/safari-pinned-tab.svg" color="#5bbad5">
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 </head>
@@ -33,8 +33,8 @@
     const height = rect.height;
 
     cheerpjCreateDisplay(-1, -1, element);
-    const lib = await cheerpjRunLibrary("/app/headlessmc/headlessmc-web.jar");
-    const Resizer = await lib.me.earth.headlessmc.web.cheerpj.Resizer;
+    const lib = await cheerpjRunLibrary("/app/headlessmc/cheerpj/headlessmc-web.jar");
+    const Resizer = await lib.io.github.headlesshq.headlessmc.web.cheerpj.Resizer;
     const resizer = await Resizer.getInstance();
     await resizer.setVersion("1.0.0");
     await resizer.setSize(width, height)
@@ -46,7 +46,7 @@
     });
 
     resizeObserver.observe(element)
-    const Main = await lib.me.earth.headlessmc.web.cheerpj.Main;
+    const Main = await lib.io.github.headlesshq.headlessmc.web.cheerpj.Main;
     await Main.init()
     console.log("Main.init() finished.")
 </script>

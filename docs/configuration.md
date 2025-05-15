@@ -765,7 +765,7 @@ Enables a hack that quits and garbage collects the launcher once the game has st
 but still listens to the running process.
 
 #### hmc.wrapper.wrapped.main
-Type: `#!java String` Default: `#!java "me.earth.headlessmc.launcher.Main"`
+Type: `#!java String` Default: `#!java "io.github.headlesshq.headlessmc.launcher.Main"`
 
 The Main method to call from the wrapper.
 

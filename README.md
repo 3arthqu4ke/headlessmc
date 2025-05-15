@@ -28,7 +28,7 @@ It can run the client in headless mode, without a Screen, controlled by the comm
 This e.g. can allow you to test the game in your CI/CD pipeline with [mc-runtime-test](https://github.com/headlesshq/mc-runtime-test).
 
 > [!TIP]  
-> Read our new, beautiful documentation [here](https://3arthqu4ke.github.io/headlessmc/docs).
+> Read our new, beautiful documentation [here](https://3arthqu4ke.github.io/headlessmc).
 
 ## Quickstart
 
@@ -42,7 +42,7 @@ Login to your Minecraft account by executing the `login` command and follow the 
 4. Launch the game with `launch <modloader>:<version>`, e.g. `launch fabric:1.21.4 -lwjgl`.
 The `lwjgl` flag will make the game run in headless mode.
 
-Read [more](https://3arthqu4ke.github.io/headlessmc/docs/getting-started/).
+Read [more](https://3arthqu4ke.github.io/headlessmc/getting-started/).
 
 ### HeadlessMc-Specifics
 
@@ -52,7 +52,7 @@ Together with HeadlessMc they allow you to control the game via the command line
 by sending chat messages and commands with `msg "<message>"`,
 visualizing the menus displayed by Minecraft via `gui` and clicking through menus via `click`.
 
-Read [more](https://3arthqu4ke.github.io/headlessmc/docs/specifics/).
+Read [more](https://3arthqu4ke.github.io/headlessmc/specifics/).
 
 ### Docker 
 
@@ -154,7 +154,7 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 
 ### Configuring HeadlessMc
 > [!NOTE]  
-> All configuration options are listed [here](https://3arthqu4ke.github.io/headlessmc/docs/configuration/)
+> All configuration options are listed [here](https://3arthqu4ke.github.io/headlessmc/configuration/)
 
 - HeadlessMc stores its configuration in `HeadlessMC/config.properties`.
 - On Windows and Linux Java versions in certain folders get detected automatically
@@ -168,12 +168,12 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 - Restart HeadlessMc or use `config -refresh` and then `java -refresh`, HeadlessMc should now know which Java versions to use.
 
 Properties can also be passed as SystemProperties from the command line.
-For available properties see the [HmcProperties](headlessmc-api/src/main/java/me/earth/headlessmc/api/config/HmcProperties.java), the
-[LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
-[JLineProperties](headlessmc-jline/src/main/java/me/earth/headlessmc/jline/JLineProperties.java), the
-[LoggingProperties](headlessmc-logging/src/main/java/me/earth/headlessmc/logging/LoggingProperties.java), the
-[RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
-[LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
+For available properties see the [HmcProperties](headlessmc-api/src/main/java/io/github/headlesshq/headlessmc/api/config/HmcProperties.java), the
+[LauncherProperties](headlessmc-launcher/src/main/java/io/github/headlesshq/headlessmc/launcher/LauncherProperties.java), the
+[JLineProperties](headlessmc-jline/src/main/java/io/github/headlesshq/headlessmc/jline/JLineProperties.java), the
+[LoggingProperties](headlessmc-logging/src/main/java/io/github/headlesshq/headlessmc/logging/LoggingProperties.java), the
+[RuntimeProperties](headlessmc-runtime/src/main/java/io/github/headlesshq/headlessmc/runtime/RuntimeProperties.java) or the
+[LwjglProperties](headlessmc-lwjgl/src/main/java/io/github/headlesshq/headlessmc/lwjgl/LwjglProperties.java).
 
 You can e.g. set `hmc.gamedir` to run the game inside another directory.
 

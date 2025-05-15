@@ -36,7 +36,7 @@ cases to ensure that the game does not crash.
 E.g. for all methods returning Buffers, 
 as those classes cannot be instantiated easily.
 All redirections can be found in the
-[redirections package](src/main/java/me/earth/headlessmc/lwjgl/redirections).
+[redirections package](src/main/java/io/github/headlesshq/headlessmc/lwjgl/redirections).
 An example:
 
 ```java

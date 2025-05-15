@@ -1,7 +1,9 @@
 package org.lwjgl;
 
+import io.github.headlesshq.headlessmc.lwjgl.LwjglInstrumentationTest;
+
 /**
- * {@link me.earth.headlessmc.lwjgl.LwjglInstrumentationTest}
+ * {@link LwjglInstrumentationTest}
  */
 @SuppressWarnings("unused")
 public interface LwjglInterface {

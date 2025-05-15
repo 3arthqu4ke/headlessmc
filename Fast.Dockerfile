@@ -15,6 +15,7 @@ FROM eclipse-temurin:21-jre-noble
 COPY --from=java8 /opt/java/openjdk /opt/java/java8
 COPY --from=java17 /opt/java/openjdk /opt/java/java17
 
+COPY --from=build /headlessmc/headlessmc-scripts/HeadlessMC /headlessmc/HeadlessMC
 COPY --from=build /headlessmc/headlessmc-scripts/version-independent /headlessmc
 COPY --from=build /headlessmc/headlessmc-launcher-wrapper.jar /headlessmc
 

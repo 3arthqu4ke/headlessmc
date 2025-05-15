@@ -3,7 +3,7 @@ plugins {
     id 'org.graalvm.buildtools.native' version '0.10.4'
 }
 
-def MAIN_CLASS = 'me.earth.headlessmc.graalvm.Main'
+def MAIN_CLASS = 'io.github.headlesshq.headlessmc.graalvm.Main'
 application {
     mainClass.set(MAIN_CLASS)
 }
@@ -61,14 +61,14 @@ tasks.withType(JacocoReport) {
                     '**/headlessmc/headlessmc-lwjgl.jar',
                     '**/headlessmc/forge-cli.jar',
                     '**/org/objectweb/**',
-                    'me/earth/headlessmc/lwjgl/agent/**',
-                    'me/earth/headlessmc/web/**',
-                    'me/earth/headlessmc/web/**/*.*',
-                    'me/earth/headlessmc/web/cheerpj/**/*.*',
-                    'me/earth/headlessmc/web/cheerpj/plugin/**',
-                    'me/earth/headlessmc/web/cheerpj/plugin/*.*'
+                    'io/github/headlesshq/headlessmc/lwjgl/agent/**',
+                    'io/github/headlesshq/headlessmc/web/**',
+                    'io/github/headlesshq/headlessmc/web/**/*.*',
+                    'io/github/headlesshq/headlessmc/web/cheerpj/**/*.*',
+                    'io/github/headlesshq/headlessmc/web/cheerpj/plugin/**',
+                    'io/github/headlesshq/headlessmc/web/cheerpj/plugin/*.*'
             ])
-            // because 'me/earth/headlessmc/web/cheerpj/plugin/**' does not work
+            // because 'io/github/headlesshq/headlessmc/web/cheerpj/plugin/**' does not work
             return tree.exclude { details ->
                 return details.file.canonicalPath.contains('headlessmc-web')
                     || details.file.canonicalPath.contains('headlessmc-graalvm')

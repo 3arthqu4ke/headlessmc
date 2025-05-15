@@ -26,7 +26,7 @@ if __name__ == '__main__':
         update(path.join(base, 'headlessmc-scripts', 'hmw'), r"(.*headlessmc-launcher-wrapper-).*(.jar.*)", version)
         update(path.join(base, 'headlessmc-scripts', 'hmc.bat'), r"(.*headlessmc-launcher-wrapper-).*(.jar.*)", version)
         update(path.join(base, 'gradle.properties'), r"(project_version=).*(.*)", version)
-        update(path.join(base, 'headlessmc-api', 'src', 'main', 'java', 'me', 'earth', 'headlessmc',
+        update(path.join(base, 'headlessmc-api', 'src', 'main', 'java', 'io', 'github', 'headlesshq', 'headlessmc',
                          'api', 'HeadlessMcApi.java'), r"(.*VERSION = \").*(\";.*)", version)
     else:
         print("Cancelled version update!")

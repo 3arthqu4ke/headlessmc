@@ -2,7 +2,7 @@ plugins {
     id 'application'
 }
 
-def MAIN_CLASS = 'me.earth.headlessmc.launcher.Main'
+def MAIN_CLASS = 'io.github.headlesshq.headlessmc.launcher.Main'
 application {
     mainClass.set(MAIN_CLASS)
 }
@@ -113,7 +113,7 @@ shadowJar {
     exclude("META-INF/maven/com.google.code.gson/**")
     exclude("META-INF/versions/**")
     exclude("headlessmc/META-INF/**")
-    exclude("me/earth/headlessmc/runtime/**")
+    exclude("io/github/headlesshq/headlessmc/runtime/**")
     exclude("dev/xdark/**")
     exclude("net/kunmc/lab/**")
     exclude("module-info.class")

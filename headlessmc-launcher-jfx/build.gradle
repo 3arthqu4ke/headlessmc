@@ -1,10 +1,9 @@
-
 plugins {
     id 'application'
     id 'headlessmc-modules'
 }
 
-def MAIN_CLASS = 'me.earth.headlessmc.wrapper.Main'
+def MAIN_CLASS = 'io.github.headlesshq.headlessmc.wrapper.Main'
 application {
     mainClass = MAIN_CLASS
 }

@@ -1,9 +1,11 @@
 package org.lwjgl;
 
+import io.github.headlesshq.headlessmc.lwjgl.LwjglInstrumentationTest;
+
 import java.nio.ByteBuffer;
 
 /**
- * {@link me.earth.headlessmc.lwjgl.LwjglInstrumentationTest}
+ * {@link LwjglInstrumentationTest}
  */
 @SuppressWarnings("unused")
 public abstract class AbstractLwjglClass {

@@ -141,6 +141,8 @@ jobs:
 
       - name: Create site dir
         run: mkdir _site
+      - name: Create CheerpJ site dir
+        run: mkdir _site/cheerpj
 
       - uses: actions/setup-python@v5
         with:
@@ -154,7 +156,7 @@ jobs:
             mkdocs-material-
       - run: pip install mkdocs-material
       - name: Build documentation
-        run: mkdocs build -d _site/docs
+        run: mkdocs build -d _site
 
       # Prepare Site deployment
       - name: Rename Web jar
@@ -162,10 +164,10 @@ jobs:
         run: mv headlessmc-web/build/libs/headlessmc-web-*.jar headlessmc-web/build/libs/headlessmc-web.jar
       - name: Copy Web jar
         if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
-        run: cp headlessmc-web/build/libs/headlessmc-web.jar _site/
+        run: cp headlessmc-web/build/libs/headlessmc-web.jar _site/cheerpj/
       - name: Copy web page files
         if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
-        run: cp -a headlessmc-web/page/. _site/
+        run: cp -a headlessmc-web/page/. _site/cheerpj/
       - name: Copy javadoc
         if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
         run: cp -r build/docs/javadoc/ _site/

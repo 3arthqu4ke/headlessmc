@@ -70,7 +70,7 @@
           "url": "http://library_download"
         }
       },
-      "name": "me.earth:logging:1.0.0"
+      "name": "io.github.headlesshq:logging:1.0.0"
     }
   ],
   "logging": {
