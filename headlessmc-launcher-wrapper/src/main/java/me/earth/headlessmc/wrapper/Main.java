@@ -16,13 +16,19 @@ public class Main {
     public static final String CLOSE_CLASSLOADER_PROPERTY = "hmc.wrapper.close.classloader";
     public static final String WRAPPED_MAIN_PROPERTY = "hmc.wrapper.wrapped.main";
     public static final String DEFAULT_MAIN = "me.earth.headlessmc.launcher.Main";
+    public static final String GARBAGE_COLLECT_HMC = "hmc.wrapper.garbage.collect.hmc";
 
     public static void main(String[] args) throws Exception {
+        if (Boolean.parseBoolean(System.getProperty(GARBAGE_COLLECT_HMC, "false"))) {
+            ProcessThread.getInstance().start();
+        }
+
         Path root = createRootDirectory();
         // TODO: save file with hash in name, then check if it already exists!
         Path jarPath = root.resolve("headlessmc-launcher.jar");
         extractResource("headlessmc/headlessmc-launcher.jar", jarPath);
 
+        ClassLoader classLoaderBefore = Thread.currentThread().getContextClassLoader();
         TransformingClassloader classloader = null;
         try {
             TransformingPluginFinder pluginFinder = HeadlessMcWrapper.getPluginFinderFactory().apply(root.resolve("transformers"));
@@ -34,9 +40,14 @@ public class Main {
             Method main = mainClass.getMethod("main", String[].class);
             main.invoke(null, (Object) args);
         } finally {
+            ProcessThread.getInstance().mainThreadEnded();
             if (classloader != null && Boolean.parseBoolean(System.getProperty(CLOSE_CLASSLOADER_PROPERTY, "true"))) {
                 classloader.close();
+                HeadlessMcWrapper.setClassLoader(null);
+                Thread.currentThread().setContextClassLoader(classLoaderBefore);
             }
+
+            System.gc();
         }
     }
 

@@ -11,6 +11,7 @@ import me.earth.headlessmc.launcher.Launcher;
 import me.earth.headlessmc.launcher.LauncherProperties;
 import me.earth.headlessmc.launcher.auth.AuthException;
 import me.earth.headlessmc.launcher.files.FileManager;
+import me.earth.headlessmc.launcher.launch.ExitToWrapperException;
 import me.earth.headlessmc.launcher.launch.LaunchException;
 import me.earth.headlessmc.launcher.server.commands.LaunchServerCommand;
 import me.earth.headlessmc.launcher.test.CommandTest;
@@ -18,6 +19,7 @@ import me.earth.headlessmc.launcher.test.CrashReportWatcher;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,6 +38,8 @@ import static me.earth.headlessmc.launcher.LauncherProperties.RE_THROW_LAUNCH_EX
 @CustomLog
 @RequiredArgsConstructor
 public abstract class AbstractLaunchProcessLifecycle {
+    private static final String GARBAGE_COLLECT_HMC = "hmc.wrapper.garbage.collect.hmc";
+
     protected final Launcher ctx;
     protected final String[] args;
 
@@ -56,6 +60,7 @@ public abstract class AbstractLaunchProcessLifecycle {
 
         quit = flag(ctx, "-quit", LauncherProperties.INVERT_QUIT_FLAG, LauncherProperties.ALWAYS_QUIT_FLAG, args);
         int status = 0;
+        boolean exitToWrapper = false;
         try {
             status = runProcess();
         } catch (LaunchException | AuthException e) {
@@ -69,6 +74,9 @@ public abstract class AbstractLaunchProcessLifecycle {
             if (ctx.getConfig().get(RE_THROW_LAUNCH_EXCEPTIONS, false)) {
                 throw new IllegalStateException(e);
             }
+        } catch (ExitToWrapperException e) {
+            exitToWrapper = true;
+            throw e;
         } catch (Throwable t) {
             status = -1;
             val msg = String.format("Couldn't launch %s: %s", version.getName(), t.getMessage());
@@ -76,9 +84,11 @@ public abstract class AbstractLaunchProcessLifecycle {
             ctx.log(msg);
             throw t;
         } finally {
-            cleanup(files, args);
-            if (!prepare && !CommandUtil.hasFlag("-stay", args)) {
-                ctx.getExitManager().exit(status);
+            if (!exitToWrapper) {
+                cleanup(files, args);
+                if (!prepare && !CommandUtil.hasFlag("-stay", args)) {
+                    ctx.getExitManager().exit(status);
+                }
             }
         }
 
@@ -151,6 +161,7 @@ public abstract class AbstractLaunchProcessLifecycle {
                     return 0;
                 }
 
+                garbageCollectHmc(process);
                 try {
                     status = process.waitFor();
                     ctx.log("Minecraft exited with code: " + status);
@@ -166,6 +177,9 @@ public abstract class AbstractLaunchProcessLifecycle {
 
                     break;
                 }
+            } catch (ExitToWrapperException e) {
+                log.info("Exiting to wrapper.");
+                throw e;
             } catch (Throwable t) {
                 status = -1;
                 log.error("Failed to start Minecraft on try " + i, t);
@@ -186,6 +200,25 @@ public abstract class AbstractLaunchProcessLifecycle {
         }
 
         return handleLaunchException(status, throwable);
+    }
+
+    private void garbageCollectHmc(@Nullable Process process) throws LaunchException {
+        if (process == null) {
+            return;
+        }
+
+        if (Boolean.parseBoolean(System.getProperty(GARBAGE_COLLECT_HMC, "false"))) {
+            try {
+                Class<?> processThread = Class.forName("me.earth.headlessmc.wrapper.ProcessThread");
+                Method method = processThread.getDeclaredMethod("setProcessInstance", Process.class);
+                method.invoke(null, process);
+                throw new ExitToWrapperException();
+            } catch (ReflectiveOperationException e) {
+                log.error(e);
+                process.destroyForcibly();
+                throw new LaunchException(e);
+            }
+        }
     }
 
     private void runTest(@Nullable Process process) throws Exception {
