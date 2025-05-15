@@ -2,9 +2,11 @@ package me.earth.headlessmc.launcher;
 
 import lombok.CustomLog;
 import lombok.experimental.UtilityClass;
+import me.earth.headlessmc.api.HeadlessMcApi;
 import me.earth.headlessmc.api.exit.ExitManager;
 import me.earth.headlessmc.auth.AbstractLoginCommand;
 import me.earth.headlessmc.launcher.auth.AuthException;
+import me.earth.headlessmc.launcher.launch.ExitToWrapperException;
 import me.earth.headlessmc.launcher.version.VersionUtil;
 
 /**
@@ -22,24 +24,29 @@ public final class Main {
             throwable = t;
         } finally {
             exitManager.onMainThreadEnd(throwable);
-            // These "System.exit()" calls are here because of the LoginCommands
-            // -webview option. It seems that after closing the JFrame there is
-            // still either the AWT, Webview or Javafx thread running, keeping the
-            // program alive.
-            try {
-                if (throwable == null) {
-                    exitManager.exit(0);
-                } else {
-                    log.error(throwable);
-                    exitManager.exit(-1);
-                }
-            } catch (Throwable exitThrowable) {
-                // it is possible, if we launch in memory, that forge prevents us from calling System.exit through their SecurityManager
-                if (throwable != null && exitThrowable.getClass() == throwable.getClass()) { // we have logged FMLSecurityManager$ExitTrappedException before
-                    log.error("Failed to exit!", exitThrowable);
-                }
+            if (throwable instanceof ExitToWrapperException) {
+                HeadlessMcApi.setInstance(null);
+                LauncherApi.setLauncher(null);
+            } else {
+                // These "System.exit()" calls are here because of the LoginCommands
+                // -webview option. It seems that after closing the JFrame there is
+                // still either the AWT, Webview or Javafx thread running, keeping the
+                // program alive.
+                try {
+                    if (throwable == null) {
+                        exitManager.exit(0);
+                    } else {
+                        log.error(throwable);
+                        exitManager.exit(-1);
+                    }
+                } catch (Throwable exitThrowable) {
+                    // it is possible, if we launch in memory, that forge prevents us from calling System.exit through their SecurityManager
+                    if (throwable != null && exitThrowable.getClass() == throwable.getClass()) { // we have logged FMLSecurityManager$ExitTrappedException before
+                        log.error("Failed to exit!", exitThrowable);
+                    }
 
-                // TODO: exit gracefully, try to call Forge to exit
+                    // TODO: exit gracefully, try to call Forge to exit
+                }
             }
         }
     }

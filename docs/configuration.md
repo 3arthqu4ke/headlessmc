@@ -747,6 +747,28 @@ Type: `#!java int` Default: `#!java 128`
 
 Size of the headlessmc-runtime VM memory.
 
+#### hmc.wrapper.close.classloader
+Type: `#!java boolean` Default: `#!java true`
+
+Closes the Wrapper classloader after use.
+For debugging purposes.
+
+#### hmc.wrapper.debug.classes
+Type: `#!java boolean` Default: `#!java false`
+
+Outputs classes loaded by the HeadlessMcWrapper.
+
+#### hmc.wrapper.garbage.collect.hmc
+Type: `#!java boolean` Default: `#!java false`
+
+Enables a hack that quits and garbage collects the launcher once the game has started,
+but still listens to the running process.
+
+#### hmc.wrapper.wrapped.main
+Type: `#!java String` Default: `#!java "me.earth.headlessmc.launcher.Main"`
+
+The Main method to call from the wrapper.
+
 #### hmc.xuid
 Type: `#!java String` Default: `#!java ""`
 
