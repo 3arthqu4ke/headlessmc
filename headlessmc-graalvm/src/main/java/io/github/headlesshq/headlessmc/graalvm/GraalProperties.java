@@ -2,6 +2,8 @@ package io.github.headlesshq.headlessmc.graalvm;
 
 import io.github.headlesshq.headlessmc.api.config.Property;
 
+import static io.github.headlesshq.headlessmc.api.config.PropertyTypes.*;
+
 public interface GraalProperties {
     Property<Long> JAVA_VERSION = number("hmc.graal.java.version");
     Property<String> JAVA_DISTRIBUTION = string("hmc.graal.distribution");
