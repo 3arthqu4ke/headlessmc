@@ -82,7 +82,7 @@ MC-Runtime-Test supports Minecraft’s [Game-Test Framework](https://www.minecra
 
 !!! tip "Neoforge/Forge GameTests"
 
-    Currently, Forge and NeoForge GameTest discovery may require additional setup, [hacks](gametest/src/main/java/me/earth/clientgametest/mixin/MixinGameTestRegistry.java), or other modifications to register structure templates correctly. We expect to simplify this for future releases.
+    Currently, Forge and NeoForge GameTest discovery may require additional setup, [hacks](gametest/src/main/java/io/github/headlesshq/clientgametest/mixin/MixinGameTestRegistry.java), or other modifications to register structure templates correctly. We expect to simplify this for future releases.
 
 You can also use the `headlessmc-command` input to specify a JVM argument to enforce the minimum number of GameTests you expect to be executed:
 

@@ -12,12 +12,12 @@ module {
     name = 'headlessmc.lwjgl'
     access = ACC_OPEN
 
-    exports 'me/earth/headlessmc/lwjgl'
-    exports 'me/earth/headlessmc/lwjgl/api'
-    exports 'me/earth/headlessmc/lwjgl/transformer'
-    exports 'me/earth/headlessmc/lwjgl/redirections'
-    exports 'me/earth/headlessmc/lwjgl/util'
-    exports 'me/earth/headlessmc/lwjgl/agent'
+    exports 'io/github/headlesshq/headlessmc/lwjgl'
+    exports 'io/github/headlesshq/headlessmc/lwjgl/api'
+    exports 'io/github/headlesshq/headlessmc/lwjgl/transformer'
+    exports 'io/github/headlesshq/headlessmc/lwjgl/redirections'
+    exports 'io/github/headlesshq/headlessmc/lwjgl/util'
+    exports 'io/github/headlesshq/headlessmc/lwjgl/agent'
 
     requires 'java.desktop'
     requires 'java.instrument', ACC_STATIC
@@ -57,9 +57,9 @@ dependencies {
 jar {
     //noinspection GroovyAssignabilityCheck
     manifest {
-        attributes 'TweakClass': 'me.earth.headlessmc.lwjgl.launchwrapper.LwjglTweaker'
-        attributes 'Premain-Class': 'me.earth.headlessmc.lwjgl.agent.LwjglAgent'
-        attributes 'Agent-Class': 'me.earth.headlessmc.lwjgl.agent.LwjglAgent'
+        attributes 'TweakClass': 'io.github.headlesshq.headlessmc.lwjgl.launchwrapper.LwjglTweaker'
+        attributes 'Premain-Class': 'io.github.headlesshq.headlessmc.lwjgl.agent.LwjglAgent'
+        attributes 'Agent-Class': 'io.github.headlesshq.headlessmc.lwjgl.agent.LwjglAgent'
         attributes 'Can-Redefine-Classes': true
         attributes 'Can-Retransform-Classes': true
     }
@@ -93,7 +93,7 @@ tasks.register('testAgent', Test) {
     ]
 
     filter {
-        includeTestsMatching 'me.earth.headlessmc.lwjgl.agent.AgentTest'
+        includeTestsMatching 'io.github.headlesshq.headlessmc.lwjgl.agent.AgentTest'
     }
 }
 

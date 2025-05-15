@@ -15,7 +15,7 @@ gradlePlugin {
     plugins {
         headlessMcModules {
             id = 'headlessmc-modules'
-            implementationClass = 'me.earth.headlessmc.gradle.ModulePlugin'
+            implementationClass = 'io.github.headlesshq.headlessmc.gradle.ModulePlugin'
         }
     }
 }

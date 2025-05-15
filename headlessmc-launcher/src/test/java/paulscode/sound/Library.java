@@ -1,7 +1,7 @@
 package paulscode.sound;
 
 import lombok.Getter;
-import me.earth.headlessmc.launcher.instrumentation.paulscode.PaulscodeTransformerTest;
+import io.github.headlesshq.headlessmc.launcher.instrumentation.paulscode.PaulscodeTransformerTest;
 
 /**
  * This is a mock of the paulscode Library class which we instrument.

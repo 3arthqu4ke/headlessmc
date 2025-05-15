@@ -168,12 +168,12 @@ You can also achieve headless mode without patching lwjgl by running headlessmc 
 - Restart HeadlessMc or use `config -refresh` and then `java -refresh`, HeadlessMc should now know which Java versions to use.
 
 Properties can also be passed as SystemProperties from the command line.
-For available properties see the [HmcProperties](headlessmc-api/src/main/java/me/earth/headlessmc/api/config/HmcProperties.java), the
-[LauncherProperties](headlessmc-launcher/src/main/java/me/earth/headlessmc/launcher/LauncherProperties.java), the
-[JLineProperties](headlessmc-jline/src/main/java/me/earth/headlessmc/jline/JLineProperties.java), the
-[LoggingProperties](headlessmc-logging/src/main/java/me/earth/headlessmc/logging/LoggingProperties.java), the
-[RuntimeProperties](headlessmc-runtime/src/main/java/me/earth/headlessmc/runtime/RuntimeProperties.java) or the
-[LwjglProperties](headlessmc-lwjgl/src/main/java/me/earth/headlessmc/lwjgl/LwjglProperties.java).
+For available properties see the [HmcProperties](headlessmc-api/src/main/java/io/github/headlesshq/headlessmc/api/config/HmcProperties.java), the
+[LauncherProperties](headlessmc-launcher/src/main/java/io/github/headlesshq/headlessmc/launcher/LauncherProperties.java), the
+[JLineProperties](headlessmc-jline/src/main/java/io/github/headlesshq/headlessmc/jline/JLineProperties.java), the
+[LoggingProperties](headlessmc-logging/src/main/java/io/github/headlesshq/headlessmc/logging/LoggingProperties.java), the
+[RuntimeProperties](headlessmc-runtime/src/main/java/io/github/headlesshq/headlessmc/runtime/RuntimeProperties.java) or the
+[LwjglProperties](headlessmc-lwjgl/src/main/java/io/github/headlesshq/headlessmc/lwjgl/LwjglProperties.java).
 
 You can e.g. set `hmc.gamedir` to run the game inside another directory.
 

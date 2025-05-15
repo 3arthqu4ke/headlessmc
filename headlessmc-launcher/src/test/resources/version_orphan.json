@@ -4,7 +4,7 @@
   "releaseTime": "2022-06-17T19:10:29+0000",
   "time": "2022-06-17T19:10:29+0000",
   "type": "release",
-  "mainClass": "me.earth.headlessmc.runtime.Main",
+  "mainClass": "io.github.headlesshq.headlessmc.runtime.Main",
   "arguments": {
     "game": [],
     "jvm": [

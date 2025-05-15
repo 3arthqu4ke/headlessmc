@@ -1,7 +1,7 @@
 package org.lwjgl;
 
 import lombok.RequiredArgsConstructor;
-import me.earth.headlessmc.lwjgl.api.Transformer;
+import io.github.headlesshq.headlessmc.lwjgl.api.Transformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 /**
  * This classloader can load all classes inside the {@code
- * me.earth.headlessmc.lwjgl.lwjgltestclasses} package (which are on the
+ * io.github.headlesshq.headlessmc.lwjgl.lwjgltestclasses} package (which are on the
  * SystemClassLoaders classpath), running them through the given {@link
  * Transformer}. Every other class will be loaded by the SystemClassLoader.
  */

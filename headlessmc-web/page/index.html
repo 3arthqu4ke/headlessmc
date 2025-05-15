@@ -34,7 +34,7 @@
 
     cheerpjCreateDisplay(-1, -1, element);
     const lib = await cheerpjRunLibrary("/app/headlessmc/headlessmc-web.jar");
-    const Resizer = await lib.me.earth.headlessmc.web.cheerpj.Resizer;
+    const Resizer = await lib.io.github.headlesshq.headlessmc.web.cheerpj.Resizer;
     const resizer = await Resizer.getInstance();
     await resizer.setVersion("1.0.0");
     await resizer.setSize(width, height)
@@ -46,7 +46,7 @@
     });
 
     resizeObserver.observe(element)
-    const Main = await lib.me.earth.headlessmc.web.cheerpj.Main;
+    const Main = await lib.io.github.headlesshq.headlessmc.web.cheerpj.Main;
     await Main.init()
     console.log("Main.init() finished.")
 </script>

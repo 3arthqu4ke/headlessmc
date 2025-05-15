@@ -19,7 +19,7 @@ You can either use Jitpack or my maven to download it.
     </repositories>
 
     <dependency>
-        <groupId>me.earth.headlessmc</groupId>
+        <groupId>io.github.headlesshq.headlessmc</groupId>
         <artifactId>headlessmc-launcher</artifactId>
         <version>$VERSION</version>
     </dependency>
@@ -35,7 +35,7 @@ You can either use Jitpack or my maven to download it.
     }
 
     dependencies {
-        implementation 'me.earth.headlessmc:headlessmc-launcher:$VERSION'
+        implementation 'io.github.headlesshq.headlessmc:headlessmc-launcher:$VERSION'
     }
     ```
 

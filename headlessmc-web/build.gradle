@@ -2,7 +2,7 @@ plugins {
     id 'application'
 }
 
-def MAIN_CLASS = 'me.earth.headlessmc.web.cheerpj.Main'
+def MAIN_CLASS = 'io.github.headlesshq.headlessmc.web.cheerpj.Main'
 application {
     mainClass = MAIN_CLASS
 }
