@@ -167,7 +167,7 @@ jobs:
         run: cp headlessmc-web/build/libs/headlessmc-web.jar _site/cheerpj
       - name: Copy web page files
         if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
-        run: cp -a headlessmc-web/page/. _site/cheerpj/
+        run: cp -a headlessmc-web/page/. _site/cheerpj
       - name: Copy javadoc
         if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/') || github.ref == 'refs/heads/main')
         run: cp -r build/docs/javadoc/ _site/
