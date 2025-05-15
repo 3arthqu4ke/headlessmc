@@ -202,7 +202,7 @@ public abstract class AbstractLaunchProcessLifecycle {
         return handleLaunchException(status, throwable);
     }
 
-    private void garbageCollectHmc(@Nullable Process process) {
+    private void garbageCollectHmc(@Nullable Process process) throws LaunchException {
         if (process == null) {
             return;
         }
@@ -211,11 +211,12 @@ public abstract class AbstractLaunchProcessLifecycle {
             try {
                 Class<?> processThread = Class.forName("me.earth.headlessmc.wrapper.ProcessThread");
                 Method method = processThread.getDeclaredMethod("setProcessInstance", Process.class);
-                method.setAccessible(true);
                 method.invoke(null, process);
                 throw new ExitToWrapperException();
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException(e);
+                log.error(e);
+                process.destroyForcibly();
+                throw new LaunchException(e);
             }
         }
     }
