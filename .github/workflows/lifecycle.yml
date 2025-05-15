@@ -593,7 +593,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: 3arthqu4ke
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push by digest
@@ -647,25 +647,16 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Docker meta
-        if: ${{ github.ref_name != 'main' && !startsWith(github.ref, 'refs/tags/') }}
-        id: meta1
+        id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY_IMAGE }}
-          tags: type=raw,value=${{ github.ref_name }}
-
-      - name: Docker meta
-        if: ${{ !(github.ref_name != 'main' && !startsWith(github.ref, 'refs/tags/')) }}
-        id: meta2
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-          tags: type=raw,value=latest
+          tags: type=raw,value=${{ github.ref_name == 'main' && 'latest' || github.ref_name }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: 3arthqu4ke
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Create manifest list and push
@@ -675,14 +666,8 @@ jobs:
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)          
 
       - name: Inspect image
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta1.outputs.version }}   
-
-      - name: Inspect image
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta2.outputs.version }}          
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}       
 
   merge:
     runs-on: ubuntu-latest
