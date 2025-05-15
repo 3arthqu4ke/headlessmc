@@ -11,6 +11,7 @@ import java.lang.module.ModuleReader;
 import java.lang.module.ModuleReference;
 import java.lang.module.ResolvedModule;
 import java.lang.reflect.Field;
+import java.lang.ModuleLayer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -25,7 +26,7 @@ import java.util.logging.Logger;
 /**
  * An {@link URLClassLoader} that looks through the modules of the given java.lang.module.Configuration to find classes.
  */
-@SuppressWarnings("Since15")
+@SuppressWarnings({"Since15", "RedundantSuppression"})
 public class ModuleURLClassLoader extends URLClassLoader implements Java9Classloader {
     private static final Logger LOGGER = Logger.getLogger(ModuleURLClassLoader.class.getName());
     private static final MethodHandle LAYER_BIND_TO_LOADER;
