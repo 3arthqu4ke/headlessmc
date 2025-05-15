@@ -152,6 +152,20 @@ allprojects {
 
     jar {
         archiveClassifier.set('dev')
+        manifest {
+            attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": version,
+            )
+        }
+
+        if (project != project(':headlessmc-lwjgl')) {
+            manifest {
+                attributes(
+                    "Automatic-Module-Name": "io.github.headlesshq.${project.name.replace("launcher-", "").replace('-', '.')}"
+                )
+            }
+        }
     }
 
     shadowJar {
