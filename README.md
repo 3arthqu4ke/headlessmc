@@ -15,6 +15,9 @@
 
 </div>
 
+> [!NOTE]
+> We are currently working hard on HeadlessMc 3.0, which will revamp it completly!
+
 > [!WARNING]
 > NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 > 
