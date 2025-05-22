@@ -1,7 +1,7 @@
 package io.github.headlesshq.headlessmc.launcher.specifics;
 
 import lombok.Data;
-import io.github.headlesshq.headlessmc.api.HasName;
+import io.github.headlesshq.headlessmc.api.traits.HasName;
 
 import java.net.MalformedURLException;
 import java.net.URL;
