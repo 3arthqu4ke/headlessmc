@@ -1,5 +1,6 @@
 package io.github.headlesshq.headlessmc.api.exit;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
@@ -10,6 +11,7 @@ import java.util.function.Consumer;
  * Manages the exit of HeadlessMc, by default {@link System#exit(int)}.
  */
 @Setter
+@ApplicationScoped
 public class ExitManager {
     /**
      * Called by {@link #exit(int)}.
