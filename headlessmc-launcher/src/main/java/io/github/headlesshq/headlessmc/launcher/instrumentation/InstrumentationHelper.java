@@ -14,7 +14,6 @@ import java.util.ArrayList;
 @CustomLog
 @UtilityClass
 public class InstrumentationHelper {
-    public static final String RUNTIME_JAR = "headlessmc-runtime.jar";
     public static final String LWJGL_JAR = "headlessmc-lwjgl.jar";
 
     public static Instrumentation create(LaunchOptions options) {
@@ -30,10 +29,6 @@ public class InstrumentationHelper {
 
         if (options.isJndi()) {
             transformers.add(Patchers.JNDI);
-        }
-
-        if (options.isRuntime()) {
-            transformers.add(new ResourceExtractor(options.getFiles(), RUNTIME_JAR));
         }
 
         if (options.isLookup()) {
